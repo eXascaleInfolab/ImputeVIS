@@ -6,6 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression, Ridge
 import time
 
+# TODO Does scaling break predictions?
 
 def knn_recovery(matrix, matrix_nan, k):
     knn_euc = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
@@ -17,6 +18,7 @@ def knn_recovery(matrix, matrix_nan, k):
 def learning(knn_euc, matrix, matrix_nan):
     model_params = []
     neighbors = []
+    # TODO Use np.where is not nan!
     matrix_scaled = (matrix * 1000).astype(int)  # convert float to int, minimizing rounding via multiplication
     incomplete_tuples = np.array(np.where(np.isnan(matrix_nan)))
     knn_euc.fit(np.arange(matrix.shape[0]).reshape(-1, 1), matrix_scaled)
@@ -26,6 +28,8 @@ def learning(knn_euc, matrix, matrix_nan):
 
         lr = Ridge()  # According to IIM paper, use Ridge regression
         # Fit linear regression based on neighbors of missing tuple
+        # TODO apparently attribute instead of tuple???
+        # TODO Model is learned for EACH neighbor!!!
         lr.fit(learning_neighbors[1], tuple)
         model_params.append(lr)  # alternatively: pass lr coefficients?
     k = 5
@@ -49,8 +53,10 @@ def imputation(matrix, incomplete_tuples, k, model_params, matrix_nan, imputatio
             if np.isnan(tuple_with_missing_val[i]):
                 # impute missing value
                 # TODO Fix exception thrown for 1 entry!
+                # TODO Apparently once per neighbor, then aggregated?
                 tuple_with_missing_val[i] = model_params[i].predict(current_imputation_neighbors.reshape(1, -1))
 
+                # TODO Weighting of neighbors for aggregated imputation
     return matrix
 
 
