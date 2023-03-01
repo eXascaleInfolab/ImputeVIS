@@ -6,6 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression, Ridge
 import time
 
+
 # TODO Does scaling break predictions?
 
 def knn_recovery(matrix, matrix_nan, k):
@@ -19,19 +20,20 @@ def learning(knn_euc, matrix, matrix_nan):
     model_params = []
     neighbors = []
     # TODO Use np.where is not nan!
+    # TODO Normalization? (Only care about neighbors but still relevant
     matrix_scaled = (matrix * 1000).astype(int)  # convert float to int, minimizing rounding via multiplication
     incomplete_tuples = np.array(np.where(np.isnan(matrix_nan)))
-    knn_euc.fit(np.arange(matrix.shape[0]).reshape(-1, 1), matrix_scaled)
-    for tuple in incomplete_tuples:  # for t_i in r
-        learning_neighbors = knn_euc.kneighbors(tuple.reshape(-1, 1))  # k nearest neighbors
+    knn_euc.fit(matrix, np.arange(matrix.shape[0]).reshape(-1, 1))
+    for tuple_index in incomplete_tuples[0]:  # for t_i in r
+        learning_neighbors = knn_euc.kneighbors(np.array(matrix[tuple_index, :]).reshape(1, -1))  # k nearest neighbors
         neighbors.append(learning_neighbors[1])
 
         lr = Ridge()  # According to IIM paper, use Ridge regression
         # Fit linear regression based on neighbors of missing tuple
         # TODO apparently attribute instead of tuple???
-        # TODO Model is learned for EACH neighbor!!!
-        lr.fit(learning_neighbors[1], tuple)
-        model_params.append(lr)  # alternatively: pass lr coefficients?
+        for neighbor in learning_neighbors[1]:
+            lr.fit(matrix[neighbor, :], matrix[neighbor, :])
+            model_params.append(lr)  # alternatively: pass lr coefficients?
     k = 5
     imputation(matrix, incomplete_tuples, k, model_params, matrix_nan, neighbors[1])
 
@@ -54,7 +56,8 @@ def imputation(matrix, incomplete_tuples, k, model_params, matrix_nan, imputatio
                 # impute missing value
                 # TODO Fix exception thrown for 1 entry!
                 # TODO Apparently once per neighbor, then aggregated?
-                tuple_with_missing_val[i] = model_params[i].predict(current_imputation_neighbors.reshape(1, -1))
+                for imputation_neighbor in current_imputation_neighbors:
+                    tuple_with_missing_val[i] = model_params[i].predict(matrix(imputation_neighbor.reshape(1, -1), i))
 
                 # TODO Weighting of neighbors for aggregated imputation
     return matrix
