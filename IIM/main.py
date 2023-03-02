@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
@@ -41,6 +40,7 @@ def imputation(matrix, incomplete_tuples, k, model_params, matrix_nan, imputatio
 
     knn_euc.fit(np.arange(matrix.shape[0]).reshape(-1, 1), matrix_scaled)
     i = 0
+    imputed_values = []
     # For each missing tuple
     for tuple_index in incomplete_tuples[0]:  # for t_i in r
         imputation_neighbors = np.array(knn_euc.kneighbors()[1])  # k nearest neighbors
@@ -52,15 +52,35 @@ def imputation(matrix, incomplete_tuples, k, model_params, matrix_nan, imputatio
         for attribute in range(len(tuple_with_missing_val)):
             if np.isnan(tuple_with_missing_val[attribute]):
                 # impute missing value
-                # TODO Aigthen aggregated?
                 candidate_suggestions = []
                 for impute_neighbor in current_imputation_neighbors:
                     candidate_suggestions.append(
                         (model_params[i].predict(matrix[impute_neighbor, :].reshape(1, -1)))[0][attribute])
 
-                # TODO Weighting of neighbors for aggregated imputation
+                distances = []
+                for candidate in candidate_suggestions:
+                    distances.append(candidate_distances(candidate, candidate_suggestions))
+
+                weights = []
+                for dist in distances:
+                    weights.append(candidate_weight(dist, distances))
+
+                impute_result = sum(np.asarray(candidate_suggestions) * np.asarray(weights))
+                imputed_values.append([tuple_index, attribute, impute_result])
         i = i + 1
-    return matrix
+    return imputed_values
+
+
+def candidate_distances(candidate, candidate_suggestions):
+    distances = []
+    for candidate_2 in candidate_suggestions:
+        distances.append(np.sum(np.abs(candidate - candidate_2)))
+    return sum(distances)
+
+
+# Weights are normed, all weights together sum up to 1
+def candidate_weight(candidate_distance, all_distances):
+    return (1 / candidate_distance) / (sum(1 / np.asarray(all_distances)))
 
 
 def main(alg_code, filename_input, filename_output, runtime):
