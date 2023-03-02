@@ -7,8 +7,6 @@ from sklearn.linear_model import LinearRegression, Ridge
 import time
 
 
-# TODO Does scaling break predictions?
-
 def knn_recovery(matrix, matrix_nan, k):
     knn_euc = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
     learning(knn_euc, matrix, matrix_nan)
@@ -17,12 +15,11 @@ def knn_recovery(matrix, matrix_nan, k):
 
 # Algorithm 1: Learning
 def learning(knn_euc, matrix, matrix_nan):
-    model_params = []
-    neighbors = []
-    # TODO Use np.where is not nan!
-    # TODO Normalization? (Only care about neighbors but still relevant
-    matrix_scaled = (matrix * 1000).astype(int)  # convert float to int, minimizing rounding via multiplication
+    model_params, neighbors = [], []
+    # TODO When to use complete and when to use masked matrix
+    # TODO Normalization? (Only care about neighbors but still relevant?
     incomplete_tuples = np.array(np.where(np.isnan(matrix_nan)))
+    complete_tuples = np.array(np.where(~np.isnan(matrix_nan)))
     knn_euc.fit(matrix, np.arange(matrix.shape[0]).reshape(-1, 1))
     for tuple_index in incomplete_tuples[0]:  # for t_i in r
         learning_neighbors = knn_euc.kneighbors(np.array(matrix[tuple_index, :]).reshape(1, -1))  # k nearest neighbors
@@ -30,12 +27,11 @@ def learning(knn_euc, matrix, matrix_nan):
 
         lr = Ridge()  # According to IIM paper, use Ridge regression
         # Fit linear regression based on neighbors of missing tuple
-        # TODO apparently attribute instead of tuple???
         for neighbor in learning_neighbors[1]:
             lr.fit(matrix[neighbor, :], matrix[neighbor, :])
             model_params.append(lr)  # alternatively: pass lr coefficients?
     k = 5
-    imputation(matrix, incomplete_tuples, k, model_params, matrix_nan, neighbors[1])
+    imputation(matrix, incomplete_tuples, k, model_params, matrix_nan, neighbors)
 
 
 # Algorithm 2: Imputation
@@ -44,22 +40,26 @@ def imputation(matrix, incomplete_tuples, k, model_params, matrix_nan, imputatio
     knn_euc = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
 
     knn_euc.fit(np.arange(matrix.shape[0]).reshape(-1, 1), matrix_scaled)
-    # should be for each missing tuple
+    i = 0
+    # For each missing tuple
     for tuple_index in incomplete_tuples[0]:  # for t_i in r
         imputation_neighbors = np.array(knn_euc.kneighbors()[1])  # k nearest neighbors
 
         # impute missing values
         tuple_with_missing_val = matrix_nan[tuple_index]
+        # TODO Fix number of neighbors, shouldn't calculate for _all_ fields!!!
         current_imputation_neighbors = imputation_neighbors[tuple_index]
-        for i in range(len(tuple_with_missing_val)):
-            if np.isnan(tuple_with_missing_val[i]):
+        for attribute in range(len(tuple_with_missing_val)):
+            if np.isnan(tuple_with_missing_val[attribute]):
                 # impute missing value
-                # TODO Fix exception thrown for 1 entry!
-                # TODO Apparently once per neighbor, then aggregated?
-                for imputation_neighbor in current_imputation_neighbors:
-                    tuple_with_missing_val[i] = model_params[i].predict(matrix(imputation_neighbor.reshape(1, -1), i))
+                # TODO Aigthen aggregated?
+                candidate_suggestions = []
+                for impute_neighbor in current_imputation_neighbors:
+                    candidate_suggestions.append(
+                        (model_params[i].predict(matrix[impute_neighbor, :].reshape(1, -1)))[0][attribute])
 
                 # TODO Weighting of neighbors for aggregated imputation
+        i = i + 1
     return matrix
 
 
