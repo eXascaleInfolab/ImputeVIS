@@ -167,12 +167,12 @@ def candidate_weight(candidate_distance: float, all_distances: list[float]):
     return (1 / candidate_distance) / (sum(1 / np.asarray(all_distances)))
 
 
-def main(alg_code: int, filename_input: str, filename_output: str, runtime: int):
+def main(alg_code: str, filename_input: str, filename_output: str, runtime: int):
     """TODO
 
     Parameters
     ----------
-    alg_code : int
+    alg_code : str
         The algorithm to be used. [Not implemented]
     filename_input : str
         The input matrix to be imputed.
