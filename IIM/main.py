@@ -52,11 +52,10 @@ def learning(knn_euc: KNeighborsClassifier, matrix, matrix_nan):
     neighbors
         The learning neighbors of each missing tuple.
     """
-    # TODO When to use complete and when to use masked matrix
-    # TODO Normalization? (Only care about neighbors but still relevant?
+    # TODO When to use complete and when to use masked matrix? What about normalization?
     model_params, neighbors = [], []
     incomplete_tuples = np.array(np.where(np.isnan(matrix_nan)))
-    complete_tuples = np.array(np.where(~np.isnan(matrix_nan)))
+    # complete_tuples = np.array(np.where(~np.isnan(matrix_nan)))
     for tuple_index in incomplete_tuples[0]:  # for t_i in r
         learning_neighbors = knn_euc.kneighbors(np.array(matrix[tuple_index, :]).reshape(1, -1))  # k nearest neighbors
         neighbors.append(learning_neighbors[1])
@@ -112,14 +111,8 @@ def imputation(matrix, incomplete_tuples, knn_euc: KNeighborsClassifier, lr_mode
                     candidate_suggestions.append(
                         (lr_models[i].predict(matrix[impute_neighbor, :].reshape(1, -1)))[0][attribute])
 
-                distances = []
-                for candidate in candidate_suggestions:
-                    distances.append(candidate_distances(candidate, candidate_suggestions))
-
-                weights = []
-                for idx, dist in enumerate(distances):
-                    dist_without_self = distances[:idx] + distances[idx + 1:]
-                    weights.append(candidate_weight(dist, dist_without_self))
+                distances = compute_distances(candidate_suggestions)
+                weights = compute_weights(distances)
 
                 impute_result = sum(np.asarray(candidate_suggestions) * np.asarray(weights))
                 # Create tuple with index, attribute, imputed value
@@ -127,15 +120,13 @@ def imputation(matrix, incomplete_tuples, knn_euc: KNeighborsClassifier, lr_mode
     return imputed_values
 
 
-def candidate_distances(candidate: float, candidate_suggestions: list[float]):
-    """For a single candidate, calculate the sum of distances to all other candidates (Manhattan)
+def compute_distances(candidate_suggestions: list[float]):
+    """ Calculate the sum of distances to all other candidates (Manhattan) for each candidate
 
     Parameters
     ----------
-    candidate : float
-        The candidate's value to be regarded
     candidate_suggestions : list[float]
-        All other candidates to compare the values to
+        All other candidates to compare the values to.
 
     Returns
     -------
@@ -143,20 +134,21 @@ def candidate_distances(candidate: float, candidate_suggestions: list[float]):
         The sum of distances to all other candidates.
     """
     distances = []
-    for candidate_2 in candidate_suggestions:
-        distances.append(np.sum(np.abs(candidate - candidate_2)))
-    return sum(distances)
+    for candidate in candidate_suggestions:
+        temp_distances = []
+        for candidate_2 in candidate_suggestions:
+            temp_distances.append(np.sum(np.abs(candidate - candidate_2)))
+        distances.append(sum(temp_distances))
+    return distances
 
 
-def candidate_weight(candidate_distance: float, all_distances: list[float]):
+def compute_weights(distances: list[float]):
     """ A candidate's weight is determined by normalizing by all other candidates' values.
     All weights together sum up to 1.
 
     Parameters
     ----------
-    candidate_distance : float
-        The distance to be weighted.
-    all_distances : list[float]
+    distances : list[float]
         A list of all distances.
 
     Returns
@@ -164,7 +156,12 @@ def candidate_weight(candidate_distance: float, all_distances: list[float]):
     weight
         The weight of the candidate.
     """
-    return (1 / candidate_distance) / (sum(1 / np.asarray(all_distances)))
+
+    weights = []
+    for idx, dist in enumerate(distances):
+        dist_without_self = distances[:idx] + distances[idx + 1:]
+        weights.append((1 / dist) / (sum(1 / np.asarray(dist_without_self))))
+    return weights
 
 
 def main(alg_code: str, filename_input: str, filename_output: str, runtime: int):
