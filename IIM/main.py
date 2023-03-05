@@ -117,8 +117,9 @@ def imputation(matrix, incomplete_tuples, knn_euc: KNeighborsClassifier, lr_mode
                     distances.append(candidate_distances(candidate, candidate_suggestions))
 
                 weights = []
-                for dist in distances:
-                    weights.append(candidate_weight(dist, distances))
+                for idx, dist in enumerate(distances):
+                    dist_without_self = distances[:idx] + distances[idx + 1:]
+                    weights.append(candidate_weight(dist, dist_without_self))
 
                 impute_result = sum(np.asarray(candidate_suggestions) * np.asarray(weights))
                 # Create tuple with index, attribute, imputed value
@@ -126,7 +127,6 @@ def imputation(matrix, incomplete_tuples, knn_euc: KNeighborsClassifier, lr_mode
     return imputed_values
 
 
-# TODO Prevent self-comparison! (?)
 def candidate_distances(candidate: float, candidate_suggestions: list[float]):
     """For a single candidate, calculate the sum of distances to all other candidates (Manhattan)
 
@@ -168,7 +168,7 @@ def candidate_weight(candidate_distance: float, all_distances: list[float]):
 
 
 def main(alg_code: str, filename_input: str, filename_output: str, runtime: int):
-    """TODO
+    """Executes the imputation algorithm given an input matrix.
 
     Parameters
     ----------
@@ -193,6 +193,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     # beginning of imputation process - start time measurement
     start_time = time.time()
 
+    # Imputation
     matrix_imputed = iim_recovery(matrix, matrix_with_nan, 5)
 
     # imputation is complete - stop time measurement
@@ -201,7 +202,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     # calculate the time elapsed in [!] microseconds
     exec_time = (end_time - start_time) * 1000 * 1000
 
-    # verification
+    # verification TODO?
     # nan_mask = np.isnan(matrix_imputed)
     # matrix_imputed[nan_mask] = np.sqrt(np.finfo('d').max / 100000.0)
 
