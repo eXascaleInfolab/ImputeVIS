@@ -1,13 +1,10 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.impute import KNNImputer
 from sklearn.linear_model import LinearRegression, Ridge
 import time
 
 
-def iim_recovery(matrix_nan, k: int = 5):
+def iim_recovery(matrix_nan: np.ndarray, k: int = 5):
     """Implementation of the IIM algorithm
     TODO More desc
 
@@ -29,17 +26,17 @@ def iim_recovery(matrix_nan, k: int = 5):
     incomplete_tuples_indices = np.array(np.where(tuples_with_nan == True))
     incomplete_tuples = matrix_nan[tuples_with_nan]
     complete_tuples = matrix_nan[~tuples_with_nan]  # Only return rows that do not contain a NaN value
-    knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]).reshape(-1, 1))
+    knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]))
     lr_models, neighbors = learning(knn_euc, complete_tuples, incomplete_tuples)
     imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
 
     for result in imputation_result:
-        matrix_nan[np.array(incomplete_tuples_indices)[:,result[0]], result[1]] = result[2]
+        matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
     return matrix_nan
 
 
 #  Algorithm 1: Learning
-def learning(knn_euc: KNeighborsClassifier, complete_tuples, incomplete_tuples):
+def learning(knn_euc: KNeighborsClassifier, complete_tuples: np.ndarray, incomplete_tuples: np.ndarray):
     """Learns individual regression models for each learning partner
 
     Parameters
@@ -76,7 +73,8 @@ def learning(knn_euc: KNeighborsClassifier, complete_tuples, incomplete_tuples):
 
 
 # Algorithm 2: Imputation
-def imputation(complete_tuples, incomplete_tuples, lr_models: list[Ridge], imputation_neighbors: list[np.ndarray]):
+def imputation(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, lr_models: list[Ridge],
+               imputation_neighbors: list[np.ndarray]):
     """ Imputes the missing values of the incomplete tuples using the learned linear regression models.
 
     Parameters
@@ -183,7 +181,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
         The sum of distances to all other candidates.
     """
     # read input matrix
-    matrix = np.loadtxt(filename_input, delimiter=' ',)
+    matrix = np.loadtxt(filename_input, delimiter=' ', )
 
     # For asf dataset:
     # matrix = np.loadtxt(filename_input, delimiter=',', skiprows=1)
@@ -200,9 +198,9 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     # calculate the time elapsed in [!] microseconds
     exec_time = (end_time - start_time) * 1000 * 1000
 
-    # verification TODO?
-    # nan_mask = np.isnan(matrix_imputed)
-    # matrix_imputed[nan_mask] = np.sqrt(np.finfo('d').max / 100000.0)
+    # verification to check for NaN. If found, attribute absurdly high value to them.
+    nan_mask = np.isnan(matrix_imputed)
+    matrix_imputed[nan_mask] = np.sqrt(np.finfo('d').max / 100000.0)
 
     print("Time", alg_code, ":", exec_time)
 
