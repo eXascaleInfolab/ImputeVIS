@@ -165,8 +165,11 @@ def compute_weights(distances: list[float]):
 
     weights = []
     for idx, dist in enumerate(distances):
-        dist_without_self = distances[:idx] + distances[idx + 1:]
-        weights.append((1 / dist) / (sum(1 / np.asarray(dist_without_self))))
+        dist_without_self = np.asarray(distances[:idx] + distances[idx + 1:])
+        if np.all(np.asarray(distances) == 0):  # If all 0, just weigh equally, TODO Is this okay?
+            weights.append(1 / len(distances))
+        else:
+            weights.append((1 / dist) / (sum(1 / np.asarray(dist_without_self))))
     return weights
 
 
