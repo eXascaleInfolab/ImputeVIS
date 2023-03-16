@@ -2,18 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.impute import KNNImputer
 from sklearn.linear_model import LinearRegression, Ridge
 import time
 
 
-def iim_recovery(matrix, matrix_nan, k: int = 5):
+def iim_recovery(matrix_nan, k: int = 5):
     """Implementation of the IIM algorithm
     TODO More desc
 
     Parameters
     ----------
-    matrix : np.ndarray
-        The complete matrix of values without missing values.
     matrix_nan : np.ndarray
         The complete matrix of values with missing values in the form of NaN.
     k : int, optional
@@ -25,25 +24,34 @@ def iim_recovery(matrix, matrix_nan, k: int = 5):
         Returns the imputed values in the form of a list of lists, where each list contains the tuple index,
         the attribute index and the imputed value.
     """
-    knn_euc = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
-    knn_euc.fit(matrix, np.arange(matrix.shape[0]).reshape(-1, 1))
-    lr_models, neighbors = learning(knn_euc, matrix, matrix_nan)
-    incomplete_tuples = np.array(np.where(np.isnan(matrix_nan)))
-    return imputation(matrix, incomplete_tuples, knn_euc, lr_models, matrix_nan, neighbors)
+    knn_euc = KNeighborsClassifier(n_neighbors=k, metric='nan_euclidean')
+    tuples_with_nan = np.isnan(matrix_nan).any(axis=1)
+    incomplete_tuples_indices = np.array(np.where(tuples_with_nan == True))
+    incomplete_tuples = matrix_nan[tuples_with_nan]
+    complete_tuples = matrix_nan[~tuples_with_nan]  # Only return rows that do not contain a NaN value
+    knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]).reshape(-1, 1))
+    lr_models, neighbors = learning(knn_euc, complete_tuples, incomplete_tuples)
+    imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
+
+    for result in imputation_result:
+        matrix_nan[np.array(incomplete_tuples_indices)[:,result[0]], result[1]] = result[2]
+    return matrix_nan
 
 
 #  Algorithm 1: Learning
-def learning(knn_euc: KNeighborsClassifier, matrix, matrix_nan):
+def learning(knn_euc: KNeighborsClassifier, complete_tuples, incomplete_tuples):
     """Learns individual regression models for each learning partner
 
     Parameters
     ----------
     knn_euc : KNeighborsClassifier
         K neighbors classifier, euclidean with custom k.
-    matrix : np.ndarray
+    complete_tuples : np.ndarray
         The complete matrix of values without missing values.
-    matrix_nan : np.ndarray
+        Should already be normalized.
+    incomplete_tuples : np.ndarray
         The complete matrix of values with missing values in the form of NaN.
+        Should already be normalized.
 
     Returns
     -------
@@ -52,39 +60,35 @@ def learning(knn_euc: KNeighborsClassifier, matrix, matrix_nan):
     neighbors
         The learning neighbors of each missing tuple.
     """
-    # TODO When to use complete and when to use masked matrix? What about normalization?
+
     model_params, neighbors = [], []
-    incomplete_tuples = np.array(np.where(np.isnan(matrix_nan)))
-    # complete_tuples = np.array(np.where(~np.isnan(matrix_nan)))
-    for tuple_index in incomplete_tuples[0]:  # for t_i in r
-        learning_neighbors = knn_euc.kneighbors(np.array(matrix[tuple_index, :]).reshape(1, -1))  # k nearest neighbors
+    for incomplete_tuple in incomplete_tuples:  # for t_i in r
+        # If all imputed values are in a single col, the following line could be foregone to simply ignore that col
+        learning_neighbors = knn_euc.kneighbors(np.nan_to_num(incomplete_tuple).reshape(1, -1))  # k nearest neighbors
         neighbors.append(learning_neighbors[1])
 
         lr = Ridge()  # According to IIM paper, use Ridge regression
         # Fit linear regression based on neighbors of missing tuple
         for neighbor in learning_neighbors[1]:
-            lr.fit(matrix[neighbor, :], matrix[neighbor, :])
+            lr.fit(complete_tuples[neighbor, :], complete_tuples[neighbor, :])
             model_params.append(lr)  # alternatively: pass lr coefficients?
     return model_params, neighbors
 
 
 # Algorithm 2: Imputation
-def imputation(matrix, incomplete_tuples, knn_euc: KNeighborsClassifier, lr_models: list[Ridge], matrix_nan: np.ndarray,
-               imputation_neighbors: list[np.ndarray]):
-    """Gets and prints the spreadsheet's header columns
+def imputation(complete_tuples, incomplete_tuples, lr_models: list[Ridge], imputation_neighbors: list[np.ndarray]):
+    """ Imputes the missing values of the incomplete tuples using the learned linear regression models.
 
     Parameters
     ----------
-    matrix : np.ndarray
+    complete_tuples : np.ndarray
         The complete matrix of values without missing values.
-    incomplete_tuples :
-        A flag used to print the columns to the console (default is False)
-    knn_euc : KNeighborsClassifier
-        K neighbors classifier, euclidean with custom k
+        Should already be normalized.
+    incomplete_tuples : np.ndarray
+        The complete matrix of values with missing values in the form of NaN.
+        Should already be normalized.
     lr_models : list[Ridge]
         The learned regression models
-    matrix_nan : np.ndarray
-        The complete matrix of values with missing values in the form of NaN.
     imputation_neighbors : list[np.ndarray]
         The learning neighbors of each missing tuple
 
@@ -96,27 +100,22 @@ def imputation(matrix, incomplete_tuples, knn_euc: KNeighborsClassifier, lr_mode
     """
     imputed_values = []
     # For each missing tuple
-    for i, tuple_index in enumerate(incomplete_tuples[0]):  # for t_i in r
-        imputation_neighbors = np.array(knn_euc.kneighbors()[1])  # k nearest neighbors
+    for i, incomplete_tuple in enumerate(incomplete_tuples):  # for t_i in r
 
         # impute missing values
-        tuple_with_missing_val = matrix_nan[tuple_index]
-        # TODO Fix number of neighbors, shouldn't calculate for _all_ fields!!!
-        current_imputation_neighbors = imputation_neighbors[tuple_index]
-        for attribute in range(len(tuple_with_missing_val)):
-            if np.isnan(tuple_with_missing_val[attribute]):  # if attribute is missing
-                # impute missing value
+        for attribute in range(len(incomplete_tuple)):
+            if np.isnan(incomplete_tuple[attribute]):  # if attribute is missing, impute
                 candidate_suggestions = []
-                for impute_neighbor in current_imputation_neighbors:
-                    candidate_suggestions.append(
-                        (lr_models[i].predict(matrix[impute_neighbor, :].reshape(1, -1)))[0][attribute])
+                for impute_neighbor in np.nditer(imputation_neighbors[i]):
+                    candidate_suggestions.append((lr_models[i].predict(complete_tuples[impute_neighbor, :]
+                                                                       .reshape(1, -1)))[0][attribute])
 
                 distances = compute_distances(candidate_suggestions)
                 weights = compute_weights(distances)
 
                 impute_result = sum(np.asarray(candidate_suggestions) * np.asarray(weights))
-                # Create tuple with index, attribute, imputed value
-                imputed_values.append([tuple_index, attribute, impute_result])
+                # Create tuple with index (in missing tuples), attribute, imputed value
+                imputed_values.append([i, attribute, impute_result])
     return imputed_values
 
 
@@ -184,14 +183,16 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
         The sum of distances to all other candidates.
     """
     # read input matrix
-    matrix = np.loadtxt(filename_input, delimiter=' ')
-    matrix_with_nan = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny_with_NaN.txt", delimiter=' ')
+    matrix = np.loadtxt(filename_input, delimiter=' ',)
+
+    # For asf dataset:
+    # matrix = np.loadtxt(filename_input, delimiter=',', skiprows=1)
 
     # beginning of imputation process - start time measurement
     start_time = time.time()
 
     # Imputation
-    matrix_imputed = iim_recovery(matrix, matrix_with_nan, 5)
+    matrix_imputed = iim_recovery(matrix, 5)
 
     # imputation is complete - stop time measurement
     end_time = time.time()
@@ -216,4 +217,6 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
 
 
 if __name__ == '__main__':
-    main("iim", "../Datasets/bafu/raw_matrices/BAFU_tiny.txt", "../Results/Bafu.csv", 0)
+    dataset = "BAFU_tiny_with_NaN.txt"
+    # dataset = "asf1_0.1miss.csv"
+    main("iim", "../Datasets/bafu/raw_matrices/" + dataset, "../Results/" + dataset, 0)
