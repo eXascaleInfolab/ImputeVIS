@@ -4,7 +4,7 @@ from sklearn.linear_model import LinearRegression, Ridge
 import time
 
 
-def iim_recovery(matrix_nan: np.ndarray, adaptive: bool = False, k: int = 5):
+def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, k: int = 5):
     """Implementation of the IIM algorithm
     TODO More desc
 
@@ -12,7 +12,7 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive: bool = False, k: int = 5):
     ----------
     matrix_nan : np.ndarray
         The complete matrix of values with missing values in the form of NaN.
-    adaptive : bool, optional
+    adaptive_flag : bool, optional
         Whether to use the adaptive version of the algorithm, by default False.
     k : int, optional
         The number of neighbors to use for the KNN classifier, by default 5.
@@ -26,15 +26,18 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive: bool = False, k: int = 5):
     tuples_with_nan = np.isnan(matrix_nan).any(axis=1)
     incomplete_tuples_indices = np.array(np.where(tuples_with_nan == True))
     incomplete_tuples = matrix_nan[tuples_with_nan]
+    columns_with_nan = np.array(np.where(np.isnan(matrix_nan).any(axis=0) == True))
     complete_tuples = matrix_nan[~tuples_with_nan]  # Rows that do not contain a NaN value
-    if adaptive:
-        for l in range(1, complete_tuples.shape[0]):
+    if adaptive_flag:
+        for l in range(1, complete_tuples.shape[0]):  # for l in 1..n
             knn_euc = KNeighborsClassifier(n_neighbors=l, metric='euclidean')
             knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]))
             lr_models, neighbors = learning(knn_euc, complete_tuples, incomplete_tuples)
+            adaptive(complete_tuples, incomplete_tuples, columns_with_nan, knn_euc, 5, lr_models)
             imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
+
     else:
-        knn_euc = KNeighborsClassifier(n_neighbors=k, metric='euclidean') 
+        knn_euc = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
         knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]))
         lr_models, neighbors = learning(knn_euc, complete_tuples, incomplete_tuples)
         imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
@@ -126,6 +129,48 @@ def imputation(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, lr_mo
     return imputed_values
 
 
+# Algorithm 3: Adaptive
+def adaptive(complete_tuples: np.ndarray, incomplete_attribute: np.ndarray, columns_with_nan: np.ndarray, knn_euc: KNeighborsClassifier, k: int,
+             lr_models: list[Ridge]):
+    """Adaptive imputation of missing values
+
+    Parameters
+    ----------
+    complete_tuples : np.ndarray
+        The complete matrix of values without missing values.
+        Should already be normalized.
+    incomplete_attribute : int
+        The index of the missing attribute.
+    columns_with_nan : np.ndarray
+        The indices of the columns with missing values.
+    knn_euc : KNeighborsClassifier
+        K neighbors classifier, euclidean with custom k.
+    k : int
+        The number of neighbors to use for the k nearest neighbors classifier.
+    lr_models : list[Ridge]
+        The learned regression models
+
+    Returns
+    -------
+    costs
+
+    """
+
+    costs = np.zeros((k*complete_tuples.shape[0], complete_tuples.shape[0]))
+    for complete_tuple in complete_tuples:  # for t_i in r
+        neighbors = knn_euc.kneighbors(complete_tuple.reshape(1, -1))  # Line 4
+        for i, neighbor in enumerate(neighbors[1]):  # Line 5
+            for l in range(1, complete_tuples.shape[0]):  # Line 6, for l in 1..n
+                for attribute in np.nditer(columns_with_nan):  # Line 6, for a in A
+                    # Line 7, calculating the squared difference for each column with missing values to imputed value
+                    costs[i, l] += np.power(np.abs(complete_tuple[attribute] -
+                                                   (lr_models[i].predict(complete_tuples[neighbor, :].
+                                                                         reshape(1, -1)))[0][attribute]), 2)
+
+    # TODO Line 8-10 and then clean-up
+    # for i, incomplete_tuple in enumerate(incomplete_tuples):  # for t_i in r
+
+
 def compute_distances(candidate_suggestions: list[float]):
     """ Calculate the sum of distances to all other candidates (Manhattan) for each candidate
 
@@ -179,7 +224,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     Parameters
     ----------
     alg_code : str
-        The algorithm to be used. [Not implemented]
+        The algorithm and its parameters. [Not implemented, TODO]
     filename_input : str
         The input matrix to be imputed.
     filename_output : str
@@ -202,7 +247,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     start_time = time.time()
 
     # Imputation
-    matrix_imputed = iim_recovery(matrix)
+    matrix_imputed = iim_recovery(matrix, adaptive_flag=True, k=5)
 
     # imputation is complete - stop time measurement
     end_time = time.time()
