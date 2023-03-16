@@ -4,7 +4,7 @@ from sklearn.linear_model import LinearRegression, Ridge
 import time
 
 
-def iim_recovery(matrix_nan: np.ndarray, k: int = 5):
+def iim_recovery(matrix_nan: np.ndarray, adaptive: bool = False, k: int = 5):
     """Implementation of the IIM algorithm
     TODO More desc
 
@@ -12,6 +12,8 @@ def iim_recovery(matrix_nan: np.ndarray, k: int = 5):
     ----------
     matrix_nan : np.ndarray
         The complete matrix of values with missing values in the form of NaN.
+    adaptive : bool, optional
+        Whether to use the adaptive version of the algorithm, by default False.
     k : int, optional
         The number of neighbors to use for the KNN classifier, by default 5.
 
@@ -21,14 +23,21 @@ def iim_recovery(matrix_nan: np.ndarray, k: int = 5):
         Returns the imputed values in the form of a list of lists, where each list contains the tuple index,
         the attribute index and the imputed value.
     """
-    knn_euc = KNeighborsClassifier(n_neighbors=k, metric='nan_euclidean')
     tuples_with_nan = np.isnan(matrix_nan).any(axis=1)
     incomplete_tuples_indices = np.array(np.where(tuples_with_nan == True))
     incomplete_tuples = matrix_nan[tuples_with_nan]
-    complete_tuples = matrix_nan[~tuples_with_nan]  # Only return rows that do not contain a NaN value
-    knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]))
-    lr_models, neighbors = learning(knn_euc, complete_tuples, incomplete_tuples)
-    imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
+    complete_tuples = matrix_nan[~tuples_with_nan]  # Rows that do not contain a NaN value
+    if adaptive:
+        for l in range(1, complete_tuples.shape[0]):
+            knn_euc = KNeighborsClassifier(n_neighbors=l, metric='euclidean')
+            knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]))
+            lr_models, neighbors = learning(knn_euc, complete_tuples, incomplete_tuples)
+            imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
+    else:
+        knn_euc = KNeighborsClassifier(n_neighbors=k, metric='euclidean') 
+        knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]))
+        lr_models, neighbors = learning(knn_euc, complete_tuples, incomplete_tuples)
+        imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
 
     for result in imputation_result:
         matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
@@ -190,7 +199,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     start_time = time.time()
 
     # Imputation
-    matrix_imputed = iim_recovery(matrix, 5)
+    matrix_imputed = iim_recovery(matrix)
 
     # imputation is complete - stop time measurement
     end_time = time.time()
