@@ -83,8 +83,11 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
 
         lr = Ridge()  # According to IIM paper, use Ridge regression
         # Fit linear regression based on neighbors of missing tuple
-        for neighbor in learning_neighbors[1]:
-            lr.fit(complete_tuples[neighbor, :], complete_tuples[neighbor, :])
+
+        # TODO Is this correct? It looks like we are ignoring the most useful values in the tuple
+        mask_nans = ~np.isnan(incomplete_tuple)  # mask of attributes that are not missing
+        for neighbor in learning_neighbors:
+            lr.fit(complete_tuples[neighbor][mask_nans].reshape(1, -1), incomplete_tuple[mask_nans].reshape(1, -1))
             model_params.append(lr)  # alternatively: pass lr coefficients?
     if return_neighbors:
         return model_params, neighbors
@@ -177,7 +180,8 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, columns
                     error = complete_tuple[attribute] - (phi_list[l][i].predict(complete_tuples[neighbor].reshape(1, -1)
                                                                                 ))[0][attribute]
                     costs[i, l] += np.power(error, 2)  # Essentially we are just summing the errors for each attribute
-        # if log > 50: break  # uncomment to short-circuit for debug purposes
+        # uncomment following line to short-circuit for debug purposes
+        # if log > 50: break
 
     # Line 8-10 Select best model for each tuple
     best_models_indices = np.argmin(costs, axis=0)
@@ -267,7 +271,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     if len(alg_code) > 3:
         matrix_imputed = iim_recovery(matrix, adaptive_flag=alg_code[3] == "adaptive", k=int(alg_code[2]))
     else:
-        matrix_imputed = iim_recovery(matrix, adaptive_flag=False, k=int(alg_code[1]))
+        matrix_imputed = iim_recovery(matrix, adaptive_flag=False, k=int(alg_code[2]))
 
 
     # imputation is complete - stop time measurement
