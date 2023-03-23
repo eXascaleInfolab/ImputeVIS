@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import NearestNeighbors
 from sklearn.linear_model import LinearRegression, Ridge
 import time
 
@@ -29,9 +30,9 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, k: int = 5
     columns_with_nan = np.array(np.where(np.isnan(matrix_nan).any(axis=0) == True))
     complete_tuples = matrix_nan[~tuples_with_nan]  # Rows that do not contain a NaN value
     if adaptive_flag:
-        lr_models, neighbors = learning(complete_tuples, incomplete_tuples, return_neighbors=True)
-        lr_models = adaptive(complete_tuples, incomplete_tuples, columns_with_nan, k)
-        imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
+        lr_models, neighbors = learning(complete_tuples, incomplete_tuples, return_neighbors=True)  # lines 1-2 of Alg 3
+        lr_models = adaptive(complete_tuples, incomplete_tuples, columns_with_nan, k)  # rest of Alg 3 (lines 3-11)
+        imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)  # TODO Correct params passed?
 
     else:
         lr_models, neighbors = learning(complete_tuples, incomplete_tuples, return_neighbors=True)
@@ -156,16 +157,15 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, columns
 
     phi_list = [learning(complete_tuples, incomplete_tuples, l)
                            for l in range(1, complete_tuples.shape[0] + 1)]  # for l in 1..n
-    knn_euc = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
-    knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]))
-    costs = np.zeros((k*complete_tuples.shape[0], complete_tuples.shape[0]))
+    nn = NearestNeighbors(n_neighbors=k, metric='euclidean')
+    nn.fit(complete_tuples)
+    costs = np.zeros((complete_tuples.shape[0], complete_tuples.shape[0]-1))
     for log, complete_tuple in enumerate(complete_tuples):  # for t_i in r
         if (log + 1 % 100) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(log))
-        neighbors = knn_euc.kneighbors(complete_tuple.reshape(1, -1))  # Line 4
-        # neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0] TODO Remove
-        for i, neighbor in enumerate(neighbors[1]):  # Line 5
+        neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0]
+        for i, neighbor in enumerate(neighbors):  # Line 5
             for l in range(0, complete_tuples.shape[0]-1):  # Line 6, for l in 1..n
-                for attribute in np.nditer(columns_with_nan):  # Line 6, for a in A
+                for attribute in np.nditer(columns_with_nan):  # iterate over all columns, as not just a single column is of interest
                     # Line 7, calculating the squared difference for each column with missing values to imputed value
                     # TODO Fix cost assignment
                     costs[i, l] += np.power(np.abs(complete_tuple[attribute] -
@@ -255,7 +255,13 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     start_time = time.time()
 
     # Imputation
-    matrix_imputed = iim_recovery(matrix, adaptive_flag=True, k=5)
+    alg_code = alg_code.split()
+
+    if len(alg_code) > 3:
+        matrix_imputed = iim_recovery(matrix, adaptive_flag=alg_code[3] == "adaptive", k=int(alg_code[2]))
+    else:
+        matrix_imputed = iim_recovery(matrix, adaptive_flag=False, k=int(alg_code[1]))
+
 
     # imputation is complete - stop time measurement
     end_time = time.time()
@@ -283,4 +289,4 @@ if __name__ == '__main__':
     dataset = "BAFU_tiny_with_NaN.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
-    main("iim", "../Datasets/bafu/raw_matrices/" + dataset, "../Results/" + dataset, 0)
+    main("-algx iim 5 adaptive ", "../Datasets/bafu/raw_matrices/" + dataset, "../Results/" + dataset, 0)
