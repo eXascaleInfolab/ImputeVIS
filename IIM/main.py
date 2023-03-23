@@ -7,7 +7,10 @@ import time
 
 def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, k: int = 5):
     """Implementation of the IIM algorithm
-    TODO More desc
+    Via the adaptive flag, the algorithm can be run in two modes:
+    - Adaptive: The algorithm will run the adaptive version of the algorithm, as described in the paper
+        - Essentially, the algorithm will determine the best number of learning neighbors
+    - Non-adaptive: The algorithm will run the non-adaptive version of the algorithm, as described in the paper
 
     Parameters
     ----------
@@ -30,11 +33,13 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, k: int = 5
     columns_with_nan = np.array(np.where(np.isnan(matrix_nan).any(axis=0) == True))
     complete_tuples = matrix_nan[~tuples_with_nan]  # Rows that do not contain a NaN value
     if adaptive_flag:
+        print("Running IIM algorithm with adaptive algorithm, k = " + str(k) + "...")
         lr_models, neighbors = learning(complete_tuples, incomplete_tuples, return_neighbors=True)  # lines 1-2 of Alg 3
         lr_models = adaptive(complete_tuples, incomplete_tuples, columns_with_nan, k)  # rest of Alg 3 (lines 3-11)
         imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)  # TODO Correct params passed?
 
     else:
+        print("Running IIM algorithm with k = " + str(k) + "...")
         lr_models, neighbors = learning(complete_tuples, incomplete_tuples, return_neighbors=True)
         imputation_result = imputation(complete_tuples, incomplete_tuples, lr_models, neighbors)
 
@@ -68,13 +73,13 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
         The learning neighbors of each missing tuple.
     """
 
-    knn_euc = KNeighborsClassifier(n_neighbors=l, metric='euclidean')
-    knn_euc.fit(complete_tuples, np.arange(complete_tuples.shape[0]))
+    knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean')
+    knn_euc.fit(complete_tuples)
     model_params, neighbors = [], []
     for incomplete_tuple in incomplete_tuples:  # for t_i in r
         # If all imputed values are in a single col, the following line could be foregone to simply ignore that col
-        learning_neighbors = knn_euc.kneighbors(np.nan_to_num(incomplete_tuple).reshape(1, -1))  # k nearest neighbors
-        neighbors.append(learning_neighbors[1])
+        learning_neighbors = knn_euc.kneighbors(np.nan_to_num(incomplete_tuple).reshape(1, -1), return_distance=False)[0]  # k nearest neighbors
+        neighbors.append(learning_neighbors)
 
         lr = Ridge()  # According to IIM paper, use Ridge regression
         # Fit linear regression based on neighbors of missing tuple
@@ -134,7 +139,7 @@ def imputation(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, lr_mo
 
 # Algorithm 3: Adaptive
 def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, columns_with_nan: np.ndarray, k: int):
-    """Adaptive imputation of missing values
+    """Adaptive learning of regression parameters
 
     Parameters
     ----------
@@ -154,23 +159,25 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, columns
     phi: np.ndarray
         The learned regression parameters for all tuples in r.
     """
-
-    phi_list = [learning(complete_tuples, incomplete_tuples, l)
-                           for l in range(1, complete_tuples.shape[0] + 1)]  # for l in 1..n
+    print("Starting Algorithm 3 'adaptive'")
+    phi_list = [learning(complete_tuples, incomplete_tuples, l_learning)
+                for l_learning in range(1, complete_tuples.shape[0] + 1)]  # for l in 1..n
+    # print("Finished learning, starting imputation")
     nn = NearestNeighbors(n_neighbors=k, metric='euclidean')
     nn.fit(complete_tuples)
     costs = np.zeros((complete_tuples.shape[0], complete_tuples.shape[0]-1))
-    for log, complete_tuple in enumerate(complete_tuples):  # for t_i in r
-        if (log + 1 % 100) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(log))
+    print("Finished learning; Starting main loop of Algorithm 3 'adaptive'")
+    for log, complete_tuple in enumerate(complete_tuples, 1):  # for t_i in r
+        if (log % 100) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
         neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0]
         for i, neighbor in enumerate(neighbors):  # Line 5
             for l in range(0, complete_tuples.shape[0]-1):  # Line 6, for l in 1..n
-                for attribute in np.nditer(columns_with_nan):  # iterate over all columns, as not just a single column is of interest
+                for attribute in np.nditer(columns_with_nan):  # iterate over all columns with missing values
                     # Line 7, calculating the squared difference for each column with missing values to imputed value
-                    # TODO Fix cost assignment
-                    costs[i, l] += np.power(np.abs(complete_tuple[attribute] -
-                                                   (phi_list[l][i].predict(complete_tuples[neighbor, :]))[0][attribute])
-                                            , 2)
+                    error = complete_tuple[attribute] - (phi_list[l][i].predict(complete_tuples[neighbor].reshape(1, -1)
+                                                                                ))[0][attribute]
+                    costs[i, l] += np.power(error, 2)  # Essentially we are just summing the errors for each attribute
+        # if log > 50: break  # uncomment to short-circuit for debug purposes
 
     # Line 8-10 Select best model for each tuple
     best_models_indices = np.argmin(costs, axis=0)
