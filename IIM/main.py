@@ -86,9 +86,12 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
 
         # TODO Is this correct? It looks like we are ignoring the most useful values in the tuple
         mask_nans = ~np.isnan(incomplete_tuple)  # mask of attributes that are not missing
+        # for neighbor in learning_neighbors:
+        #     lr.fit(complete_tuples[neighbor][mask_nans].reshape(1, -1), incomplete_tuple[mask_nans].reshape(1, -1))
+        #     model_params.append(lr)  # alternatively: pass lr coefficients?
         for neighbor in learning_neighbors:
-            lr.fit(complete_tuples[neighbor][mask_nans].reshape(1, -1), incomplete_tuple[mask_nans].reshape(1, -1))
-            model_params.append(lr)  # alternatively: pass lr coefficients?
+            lr.fit(complete_tuples[neighbor].reshape(1, -1), complete_tuples[neighbor].reshape(1, -1))
+            model_params.append(lr)
     if return_neighbors:
         return model_params, neighbors
     else:
@@ -300,4 +303,4 @@ if __name__ == '__main__':
     dataset = "BAFU_tiny_with_NaN.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
-    main("-algx iim 5 adaptive ", "../Datasets/bafu/raw_matrices/" + dataset, "../Results/" + dataset, 0)
+    main("-algx iim 5 adaptive", "../Datasets/bafu/raw_matrices/" + dataset, "../Results/5l_adaptive_" + dataset, 0)
