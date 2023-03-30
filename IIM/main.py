@@ -40,7 +40,7 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
 
         else:
             print("Running IIM algorithm with k = " + str(learning_neighbors) + "...")
-            lr_models = learning(complete_tuples, incomplete_tuples)
+            lr_models = learning(complete_tuples, incomplete_tuples, learning_neighbors)
             imputation_result = imputation(incomplete_tuples, lr_models, learning_neighbors)
 
         for result in imputation_result:
@@ -83,13 +83,12 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
             0]  # k nearest neighbors
         neighbors.append(learning_neighbors)
 
-        lr = Ridge(tol=1e-10)  # According to IIM paper, use Ridge regression
-
         # Fit linear regression based on neighbors of missing tuple
         nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
 
         # learn the relevant value/column
         for neighbor_index, neighbor in enumerate(learning_neighbors):
+            lr = Ridge(tol=1e-10)  # According to IIM paper, use Ridge regression
             lr.fit(complete_tuples[neighbor][~nan_indicator].reshape(1, -1),
                    complete_tuples[neighbor][nan_indicator])
             model_params[tuple_index, neighbor_index] = lr
@@ -136,7 +135,7 @@ def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_n
 
 
 # Algorithm 3: Adaptive
-def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int):
+def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 100):
     """Adaptive learning of regression parameters
 
     Parameters
@@ -149,6 +148,8 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int)
         Should already be normalized.
     k : int
         The number of neighbors to use for the k nearest neighbors classifier.
+    max_learning_neighbors : int, optional
+        The maximum number of neighbors to use for the learning phase, by default 200.
 
     Returns
     -------
@@ -156,7 +157,7 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int)
         The learned regression parameters for all tuples in r.
     """
     print("Starting Algorithm 3 'adaptive'")
-    all_entries = int(complete_tuples.shape[0] / 20)
+    all_entries = min(int(complete_tuples.shape[0]), max_learning_neighbors)
     phi_list = [learning(complete_tuples, incomplete_tuples, l_learning)  # for l in 1..n
                 for l_learning in
                 range(1, all_entries + 1)]
@@ -184,6 +185,8 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int)
 
     # Line 8-10 Select best model for each tuple
     best_models_indices = np.argmin(costs, axis=1)
+    print("Determined following learning neighbors for each tuple with missing attributes: {}"
+          .format(best_models_indices))
     phi = [phi_list[best_models_indices[i]][i] for i in range(len(incomplete_tuples))]
     return phi
 
@@ -268,7 +271,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     alg_code = alg_code.split()
 
     if len(alg_code) > 3:
-        matrix_imputed = iim_recovery(matrix, adaptive_flag=alg_code[3] == "adaptive",
+        matrix_imputed = iim_recovery(matrix, adaptive_flag=alg_code[3].startswith("a"),
                                       learning_neighbors=int(alg_code[2]))
     else:
         matrix_imputed = iim_recovery(matrix, adaptive_flag=False, learning_neighbors=int(alg_code[2]))
@@ -299,4 +302,4 @@ if __name__ == '__main__':
     dataset = "BAFU_tiny_with_NaN.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
-    main("-algx iim 5 adaptive", "../Datasets/bafu/raw_matrices/" + dataset, "../Results/5l_temp_adaptive" + dataset, 0)
+    main("-algx iim 5 a", "../Datasets/bafu/raw_matrices/" + dataset, "../Results/5l_adaptive_" + dataset, 0)
