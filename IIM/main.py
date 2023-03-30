@@ -70,8 +70,6 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
     -------
     model_params
         The learned regression models.
-    neighbors
-        The learning neighbors of each missing tuple.
     """
 
     knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean')
