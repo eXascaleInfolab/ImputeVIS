@@ -35,8 +35,7 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
         col_with_max_nan = np.argmax(np.count_nonzero(np.isnan(matrix_nan), axis=0))
         if adaptive_flag:
             print("Running IIM algorithm with adaptive algorithm, k = " + str(learning_neighbors) + "...")
-            lr_models = adaptive(complete_tuples, incomplete_tuples, col_with_max_nan,
-                                 learning_neighbors)  # rest of Alg 3 (lines 3-11)
+            lr_models = adaptive(complete_tuples, incomplete_tuples, learning_neighbors)
             imputation_result = imputation(incomplete_tuples, lr_models, learning_neighbors)
 
         else:
@@ -77,22 +76,23 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
     knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean')
     knn_euc.fit(complete_tuples)
     model_params, neighbors = [], []
-    for incomplete_tuple in incomplete_tuples:  # for t_i in r
+    model_params = np.empty((len(incomplete_tuples),l), dtype=object)
+    for tuple_index, incomplete_tuple in enumerate(incomplete_tuples):  # for t_i in r
         # If all imputed values are in a single col, the following line could be foregone to simply ignore that col
         learning_neighbors = knn_euc.kneighbors(np.nan_to_num(incomplete_tuple).reshape(1, -1), return_distance=False)[
             0]  # k nearest neighbors
         neighbors.append(learning_neighbors)
 
-        lr = Ridge()  # According to IIM paper, use Ridge regression
+        lr = Ridge(tol=1e-10)  # According to IIM paper, use Ridge regression
 
         # Fit linear regression based on neighbors of missing tuple
         nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
 
         # learn the relevant value/column
-        for neighbor in learning_neighbors:
+        for neighbor_index, neighbor in enumerate(learning_neighbors):
             lr.fit(complete_tuples[neighbor][~nan_indicator].reshape(1, -1),
-                   complete_tuples[neighbor][nan_indicator].reshape(1, -1))
-            model_params.append(lr)
+                   complete_tuples[neighbor][nan_indicator])
+            model_params[tuple_index, neighbor_index] = lr
     return model_params
 
 
@@ -124,14 +124,11 @@ def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_n
         # impute missing values
         missing_attribute_index = int(np.where(nan_indicator)[0])  # index of missing attribute
         candidate_suggestions = []
-        # For each learning neighbor's model for the corresponding tuple
-        for model_index in range(i * learning_neighbors, learning_neighbors + i * learning_neighbors - 1):
-            candidate_suggestions.append((lr_models[model_index]
-                                          .predict(incomplete_tuple[~nan_indicator].reshape(1, -1))
-                                          ).item())
+        for neighbor in range(learning_neighbors):
+            candidate_suggestions.append((lr_models[i][neighbor].predict(incomplete_tuple[~nan_indicator]
+                                                                         .reshape(1, -1))).item())
         distances = compute_distances(candidate_suggestions)
         weights = compute_weights(distances)
-
         impute_result = sum(np.asarray(candidate_suggestions) * np.asarray(weights))
         # Create tuple with index (in missing tuples), attribute, imputed value
         imputed_values.append([i, missing_attribute_index, impute_result])
@@ -139,7 +136,7 @@ def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_n
 
 
 # Algorithm 3: Adaptive
-def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, col_with_most_nan: np.ndarray, k: int):
+def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int):
     """Adaptive learning of regression parameters
 
     Parameters
@@ -150,8 +147,6 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, col_wit
     incomplete_tuples : np.ndarray
         The complete matrix of values with missing values in the form of NaN.
         Should already be normalized.
-    col_with_most_nan : np.ndarray
-        The indices of the columns with missing values.
     k : int
         The number of neighbors to use for the k nearest neighbors classifier.
 
@@ -167,29 +162,29 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, col_wit
                 range(1, all_entries + 1)]
     nn = NearestNeighbors(n_neighbors=k, metric='euclidean')
     nn.fit(complete_tuples)
-    costs = np.zeros((k, all_entries - 1))
+    costs = np.zeros((len(incomplete_tuples), all_entries - 1))
     print("Finished learning; Starting main loop of Algorithm 3 'adaptive'")
     for log, complete_tuple in enumerate(complete_tuples[:all_entries, ], 1):  # for t_i in r
         if (log % 100) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
         neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0]
-        for i, neighbor in enumerate(neighbors):  # Line 5
-            for l in range(0, all_entries - 1):  # Line 6, for l in 1..n
-                # for attribute in np.nditer(columns_with_nan):  # iterate over all columns with missing values
-                error = 0
-                number_of_models_considered = 0
-
-                for phi_index, phi in enumerate(phi_list[l], 1):  # Iterate over all models using l neighbors
-                    # Line 7, calculate squared error for column with most NaNs
-                    error += float(complete_tuple[col_with_most_nan]
-                                   - (phi.predict(np.delete(complete_tuples[neighbor],
-                                                            col_with_most_nan).reshape(1, -1)))
-                                   )
-                    number_of_models_considered = phi_index  # Used to take average error
-                costs[i, l] += np.power(error / number_of_models_considered, 2)
+        for incomplete_tuple_idx, incomplete_tuple in enumerate(incomplete_tuples):
+            nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
+            for i, neighbor in enumerate(neighbors):  # Line 5
+                for l in range(0, all_entries - 1):  # Line 6, for l in 1..n
+                    error = 0
+                    number_of_models_considered = 0
+                    for phi_index, phi in enumerate(phi_list[l][incomplete_tuple_idx], 1):  # Iterate over all models using l neighbors
+                        # Line 7, calculate squared error for column with most NaNs
+                        error += abs(float(complete_tuple[nan_indicator]
+                                           - (phi.predict(np.delete(complete_tuples[neighbor], nan_indicator)
+                                                          .reshape(1, -1)))
+                                           ))
+                        number_of_models_considered = phi_index  # Used to take average error
+                    costs[incomplete_tuple_idx, l] += np.power(error / number_of_models_considered, 2)
 
     # Line 8-10 Select best model for each tuple
-    best_models_indices = np.argmin(costs, axis=0)
-    phi = [phi_list[best_models_indices[i]] for i in range(len(incomplete_tuples))]
+    best_models_indices = np.argmin(costs, axis=1)
+    phi = [phi_list[best_models_indices[i]][i] for i in range(len(incomplete_tuples))]
     return phi
 
 
