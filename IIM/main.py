@@ -1,7 +1,7 @@
 import numpy as np
-from sklearn.neighbors import KNeighborsClassifier
+import re
 from sklearn.neighbors import NearestNeighbors
-from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.linear_model import Ridge
 import time
 
 
@@ -76,7 +76,7 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
     knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean')
     knn_euc.fit(complete_tuples)
     model_params, neighbors = [], []
-    model_params = np.empty((len(incomplete_tuples),l), dtype=object)
+    model_params = np.empty((len(incomplete_tuples), l), dtype=object)
     for tuple_index, incomplete_tuple in enumerate(incomplete_tuples):  # for t_i in r
         # If all imputed values are in a single col, the following line could be foregone to simply ignore that col
         learning_neighbors = knn_euc.kneighbors(np.nan_to_num(incomplete_tuple).reshape(1, -1), return_distance=False)[
@@ -174,7 +174,8 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
                 for l in range(0, all_entries - 1):  # Line 6, for l in 1..n
                     error = 0
                     number_of_models_considered = 0
-                    for phi_index, phi in enumerate(phi_list[l][incomplete_tuple_idx], 1):  # Iterate over all models using l neighbors
+                    for phi_index, phi in enumerate(phi_list[l][incomplete_tuple_idx],
+                                                    1):  # Iterate over all models using l neighbors
                         # Line 7, calculate squared error for column with most NaNs
                         error += abs(float(complete_tuple[nan_indicator]
                                            - (phi.predict(np.delete(complete_tuples[neighbor], nan_indicator)
@@ -270,11 +271,14 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     # Imputation
     alg_code = alg_code.split()
 
-    if len(alg_code) > 3:
-        matrix_imputed = iim_recovery(matrix, adaptive_flag=alg_code[3].startswith("a"),
-                                      learning_neighbors=int(alg_code[2]))
-    else:
-        matrix_imputed = iim_recovery(matrix, adaptive_flag=False, learning_neighbors=int(alg_code[2]))
+    if len(alg_code) > 1:
+        match = re.match(r"([0-9]+)([a-zA-Z]+)", alg_code[1], re.I)
+        if match:
+            neighbors, adaptive_flag = match.groups()
+            matrix_imputed = iim_recovery(matrix, adaptive_flag=adaptive_flag.startswith("a"),
+                                          learning_neighbors=int(neighbors))
+        else:
+            matrix_imputed = iim_recovery(matrix, adaptive_flag=False, learning_neighbors=int(alg_code[1]))
 
     # imputation is complete - stop time measurement
     end_time = time.time()
@@ -302,4 +306,8 @@ if __name__ == '__main__':
     dataset = "BAFU_tiny_with_NaN.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
-    main("-algx iim 5 a", "../Datasets/bafu/raw_matrices/" + dataset, "../Results/5l_adaptive_" + dataset, 0)
+    # example arguments: "iim 5a" -> 5 neighbors & adaptive, "iim 10" -> 10  neighbors and not adaptive
+    neighbors = str(10)
+    adaptive_flag = "a"
+    main("iim" + " " + neighbors + adaptive_flag, "../Datasets/bafu/raw_matrices/" + dataset, "../Results/"
+         + neighbors + adaptive_flag + "_" + dataset, 0)
