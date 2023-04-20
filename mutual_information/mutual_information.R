@@ -1,3 +1,50 @@
+####################### Mutual Information
+library(infotheo)
+
+# Get the path to the current R script
+setwd(getSrcDirectory(function(){})[1])
+print(getwd())
+
+file_path <- "Datasets/bafu/raw_matrices/BAFU_tiny.txt" # Replace with the path to your file
+data <- read.table(file_path, sep = " ", header = FALSE, na.strings = "NaN")
+nan_file_path <- "Datasets/bafu/raw_matrices/BAFU_tiny_with_NaN.txt" # Replace with the path to your file
+nan_data <- read.table(nan_file_path, sep = " ", header = FALSE, na.strings = "NaN")
+imputed_file_path <- "Results/5_BAFU_tiny_with_NaN.txt" # Replace with the path to your file
+imputed_data <- read.table(imputed_file_path, sep = " ", header = FALSE, na.strings = "NaN")
+
+# Find the indices of NaN entries
+nan_indices <- which(is.na(nan_data), arr.ind = TRUE)
+print(nan_indices) # Print the indices
+
+# Set the number of bins equal to number of values
+bins <- dim(nan_indices)[1]
+mutual_info <- mutinformation(discretize(data[nan_indices], nbins=bins), discretize(imputed_data[nan_indices], nbins=bins))
+print(mutual_info)
+
+####################### Sample data for testing
+# time_series_matrix <- matrix(runif(50), nrow = 10, ncol = 10)
+# imputed_matrix <- matrix(runif(50), nrow = 10, ncol = 10)
+# discretized_time_series <- discretize(time_series_matrix, nbins = 10)
+# discretized_imputed <- discretize(imputed_matrix, nbins = 10)
+
+####################### Calculate mutual information for each pair of corresponding columns
+# mutual_info <- sapply(1:ncol(time_series_matrix), function(i) {
+#   mutinformation(discretized_time_series[, i], discretized_imputed[, i])
+# })
+
+
+####################### Iterating over all files in a folder
+# folder_path <- "Datasets/bafu/raw_matrices" # Replace with the path to your folder
+# text_files <- list.files(path = folder_path, pattern = "\\.txt$", full.names = TRUE)
+# process_text_file <- function(file_path) {
+#   data <- read.table(file_path, sep = " ", header = FALSE, na.strings = "NaN")
+#   nan_indices <- which(is.na(data), arr.ind = TRUE)
+#   cat("Indices of NaN entries in", file_path, ":\n")
+#   print(nan_indices)
+# }
+# lapply(text_files, process_text_file) # Apply the function to each text file in the folder
+
+####################### Old content
 # options
 #########################
 # lengths <- seq.int(from = {start}, to = {end}, by = {tick});
@@ -47,24 +94,3 @@
 # 		}
 # 	}
 # }
-
-### Mutual Information
-# Load infotheo package
-library(infotheo)
-
-# Define the time-series matrix and imputed time-series matrix
-# Fake data to be replaced:
-time_series_matrix <- matrix(runif(50), nrow = 10, ncol = 10)
-imputed_matrix <- matrix(runif(50), nrow = 10, ncol = 10)
-
-# Discretize continuous data
-discretized_time_series <- discretize(time_series_matrix, nbins = 10)
-discretized_imputed <- discretize(imputed_matrix, nbins = 10)
-
-# Calculate mutual information for each pair of corresponding columns
-mutual_info <- sapply(1:ncol(time_series_matrix), function(i) {
-  mutinformation(discretized_time_series[, i], discretized_imputed[, i])
-})
-
-# For debug purposes Print mutual information values for each column
-print(mutual_info)
