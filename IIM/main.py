@@ -43,12 +43,24 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
             lr_models = learning(complete_tuples, incomplete_tuples, learning_neighbors)
             imputation_result = imputation(incomplete_tuples, lr_models, learning_neighbors)
 
-        for result in imputation_result:
-            matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
+        determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan)
+        # To ignore RMSE, uncomment the following lines and comment the above line
+        # for result in imputation_result:
+        #     matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
         return matrix_nan
     else:
         print("No missing values as NaN, returning original matrix")
         return matrix_nan
+
+
+def determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan):
+    rmse = []
+
+    complete_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_small.txt", delimiter=' ', )
+    for result in imputation_result:
+        matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
+        rmse.append((result[2] - complete_matrix[result[0], result[1]]) ** 2)
+    print("RMSE: " + str(np.sqrt(np.mean(rmse))))
 
 
 #  Algorithm 1: Learning
@@ -135,7 +147,7 @@ def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_n
 
 
 # Algorithm 3: Adaptive
-def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 100):
+def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 100, step_size: int = 4):
     """Adaptive learning of regression parameters
 
     Parameters
@@ -149,7 +161,9 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
     k : int
         The number of neighbors to use for the k nearest neighbors classifier.
     max_learning_neighbors : int, optional
-        The maximum number of neighbors to use for the learning phase, by default 200.
+        The maximum number of neighbors to use for the learning phase, by default 100.
+    step_size : int, optional
+        The step size for the learning phase, by default 4.
 
     Returns
     -------
@@ -160,18 +174,18 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
     all_entries = min(int(complete_tuples.shape[0]), max_learning_neighbors)
     phi_list = [learning(complete_tuples, incomplete_tuples, l_learning)  # for l in 1..n
                 for l_learning in
-                range(1, all_entries + 1)]
+                range(1, all_entries + 1, step_size)]
     nn = NearestNeighbors(n_neighbors=k, metric='euclidean')
     nn.fit(complete_tuples)
-    costs = np.zeros((len(incomplete_tuples), all_entries - 1))
+    costs = np.zeros((len(incomplete_tuples), len(phi_list) - 1))
     print("Finished learning; Starting main loop of Algorithm 3 'adaptive'")
-    for log, complete_tuple in enumerate(complete_tuples[:all_entries, ], 1):  # for t_i in r
-        if (log % 100) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
+    for log, complete_tuple in enumerate(complete_tuples[:all_entries, ], 1):  # for t_i in r  # TODO Recheck if this correct, we're ignoring some tuples
+        if (log % 10) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
         neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0]
         for incomplete_tuple_idx, incomplete_tuple in enumerate(incomplete_tuples):
             nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
             for i, neighbor in enumerate(neighbors):  # Line 5
-                for l in range(0, all_entries - 1):  # Line 6, for l in 1..n
+                for l in range(0, len(phi_list) - 1):  # Line 6, for l in 1..n
                     error = 0
                     number_of_models_considered = 0
                     for phi_index, phi in enumerate(phi_list[l][incomplete_tuple_idx],
@@ -303,11 +317,11 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
 
 
 if __name__ == '__main__':
-    dataset = "BAFU_tiny_with_NaN.txt"
+    dataset = "BAFU_small_with_NaN.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
     # example arguments: "iim 5a" -> 5 neighbors & adaptive, "iim 10" -> 10  neighbors and not adaptive
-    neighbors = str(10)
+    neighbors = str(7)
     adaptive_flag = "a"
     main("iim" + " " + neighbors + adaptive_flag, "../Datasets/bafu/raw_matrices/" + dataset, "../Results/"
          + neighbors + adaptive_flag + "_" + dataset, 0)
