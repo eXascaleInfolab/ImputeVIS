@@ -5,7 +5,7 @@ from sklearn.linear_model import Ridge
 import time
 
 
-def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_neighbors: int = 5):
+def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_neighbors: int = 10):
     """Implementation of the IIM algorithm
     Via the adaptive flag, the algorithm can be run in two modes:
     - Adaptive: The algorithm will run the adaptive version of the algorithm, as described in the paper
@@ -19,7 +19,7 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
     adaptive_flag : bool, optional
         Whether to use the adaptive version of the algorithm, by default False.
     learning_neighbors : int, optional
-        The number of neighbors to use for the KNN classifier, by default 5.
+        The number of neighbors to use for the KNN classifier, by default 10.
 
     Returns
     -------
@@ -64,7 +64,7 @@ def determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan):
 
 
 #  Algorithm 1: Learning
-def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int = 5):
+def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int = 10):
     """Learns individual regression models for each learning neighbor,
         by fitting on the other attributes and the missing attribute
 
@@ -77,23 +77,19 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
         The complete matrix of values with missing values in the form of NaN.
         Should already be normalized.
     l : int, optional
-        The number of neighbors to use for the KNN classifier, by default 5.
+        The number of neighbors to use for the KNN classifier, by default 10.
 
     Returns
     -------
-    model_params
+    model_params: np.ndarray[Ridge]
         The learned regression models.
     """
 
-    knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean')
-    knn_euc.fit(complete_tuples)
-    model_params, neighbors = [], []
-    model_params = np.empty((len(incomplete_tuples), l), dtype=object)
+    knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean').fit(complete_tuples)
+    model_params = np.empty((len(incomplete_tuples), l), dtype=Ridge)
     for tuple_index, incomplete_tuple in enumerate(incomplete_tuples):  # for t_i in r
         # If all imputed values are in a single col, the following line could be foregone to simply ignore that col
-        learning_neighbors = knn_euc.kneighbors(np.nan_to_num(incomplete_tuple).reshape(1, -1), return_distance=False)[
-            0]  # k nearest neighbors
-        neighbors.append(learning_neighbors)
+        learning_neighbors = knn_euc.kneighbors(np.nan_to_num(incomplete_tuple).reshape(1, -1), return_distance=False)[0]  # k nearest neighbors
 
         # Fit linear regression based on neighbors of missing tuple
         nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
@@ -108,7 +104,7 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
 
 
 # Algorithm 2: Imputation
-def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_neighbors: int = 5):
+def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_neighbors: int = 10):
     """ Imputes the missing values of the incomplete tuples using the learned linear regression models.
 
     Parameters
@@ -119,7 +115,7 @@ def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_n
     lr_models : list[Ridge]
         The learned regression models
     learning_neighbors : int, optional
-        The number of neighbors to use for the KNN classifier, by default 5.
+        The number of neighbors to use for the KNN classifier, by default 10.
 
     Returns
     -------
@@ -147,7 +143,7 @@ def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_n
 
 
 # Algorithm 3: Adaptive
-def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 100, step_size: int = 4):
+def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 10, step_size: int = 5):
     """Adaptive learning of regression parameters
 
     Parameters
@@ -163,11 +159,11 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
     max_learning_neighbors : int, optional
         The maximum number of neighbors to use for the learning phase, by default 100.
     step_size : int, optional
-        The step size for the learning phase, by default 4.
+        The step size for the learning phase, by default 3.
 
     Returns
     -------
-    phi: np.ndarray
+    phi: np.ndarray[Ridge]
         The learned regression parameters for all tuples in r.
     """
     print("Starting Algorithm 3 'adaptive'")
@@ -175,21 +171,20 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
     phi_list = [learning(complete_tuples, incomplete_tuples, l_learning)  # for l in 1..n
                 for l_learning in
                 range(1, all_entries + 1, step_size)]
-    nn = NearestNeighbors(n_neighbors=k, metric='euclidean')
-    nn.fit(complete_tuples)
-    costs = np.zeros((len(incomplete_tuples), len(phi_list) - 1))
+    nn = NearestNeighbors(n_neighbors=k, metric='euclidean').fit(complete_tuples)
+    number_of_models = len(phi_list) - 1
+    costs = np.zeros((len(incomplete_tuples), number_of_models))
     print("Finished learning; Starting main loop of Algorithm 3 'adaptive'")
-    for log, complete_tuple in enumerate(complete_tuples[:all_entries, ], 1):  # for t_i in r  # TODO Recheck if this correct, we're ignoring some tuples
+    for log, complete_tuple in enumerate(complete_tuples, 1):  # for t_i in r
         if (log % 10) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
         neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0]
         for incomplete_tuple_idx, incomplete_tuple in enumerate(incomplete_tuples):
             nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
             for i, neighbor in enumerate(neighbors):  # Line 5
-                for l in range(0, len(phi_list) - 1):  # Line 6, for l in 1..n
+                for l in range(0, number_of_models):  # Line 6, for l in 1..n
                     error = 0
                     number_of_models_considered = 0
-                    for phi_index, phi in enumerate(phi_list[l][incomplete_tuple_idx],
-                                                    1):  # Iterate over all models using l neighbors
+                    for phi_index, phi in enumerate(phi_list[l][incomplete_tuple_idx], 1):  # Iterate over all models using l neighbors
                         # Line 7, calculate squared error for column with most NaNs
                         error += abs(float(complete_tuple[nan_indicator]
                                            - (phi.predict(np.delete(complete_tuples[neighbor], nan_indicator)
@@ -286,7 +281,7 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
     alg_code = alg_code.split()
 
     if len(alg_code) > 1:
-        match = re.match(r"([0-9]+)([a-zA-Z]+)", alg_code[1], re.I)
+        match = re.match(r"(\d+)([a-zA-Z]+)", alg_code[1], re.I)
         if match:
             neighbors, adaptive_flag = match.groups()
             matrix_imputed = iim_recovery(matrix, adaptive_flag=adaptive_flag.startswith("a"),
