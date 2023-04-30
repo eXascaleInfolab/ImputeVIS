@@ -173,26 +173,27 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
                 range(1, all_entries + 1, step_size)]
     nn = NearestNeighbors(n_neighbors=k, metric='euclidean').fit(complete_tuples)
     number_of_models = len(phi_list) - 1
-    costs = np.zeros((len(incomplete_tuples), number_of_models))
+    number_of_incomplete_tuples = len(incomplete_tuples)
+    costs = np.zeros((number_of_incomplete_tuples, number_of_models))
     print("Finished learning; Starting main loop of Algorithm 3 'adaptive'")
     for log, complete_tuple in enumerate(complete_tuples, 1):  # for t_i in r
-        if (log % 25) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
+        if (log % 50) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
         neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0]
         for incomplete_tuple_idx, incomplete_tuple in enumerate(incomplete_tuples):
             nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
             for i, neighbor in enumerate(neighbors):  # Line 5
+                neighbor_filtered = np.delete(complete_tuples[neighbor], nan_indicator).reshape(1, -1)
                 for l in range(0, number_of_models):  # Line 6, for l in 1..n
-                    error = [complete_tuple[nan_indicator]
-                             - (phi.predict(np.delete(complete_tuples[neighbor], nan_indicator)
-                                            .reshape(1, -1)))
+                    error = [complete_tuple[nan_indicator] - (phi.predict(neighbor_filtered))
                              for phi in phi_list[l][incomplete_tuple_idx]]
-                    costs[incomplete_tuple_idx, l] += np.power(np.sum(np.abs(error)) / len(phi_list[l][incomplete_tuple_idx]), 2)
+                    costs[incomplete_tuple_idx, l] += np.power(np.sum(np.abs(error)) /
+                                                               len(phi_list[l][incomplete_tuple_idx]), 2)
 
     # Line 8-10 Select best model for each tuple
     best_models_indices = np.argmin(costs, axis=1)
     print("Determined following learning neighbors for each tuple with missing attributes: {}"
           .format(best_models_indices))
-    phi = [phi_list[best_models_indices[i]][i] for i in range(len(incomplete_tuples))]
+    phi = [phi_list[best_models_indices[i]][i] for i in range(number_of_incomplete_tuples)]
     return phi
 
 
