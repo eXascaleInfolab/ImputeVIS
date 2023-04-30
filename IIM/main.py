@@ -104,7 +104,7 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
 
 
 # Algorithm 2: Imputation
-def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_neighbors: int = 10):
+def imputation(incomplete_tuples: np.ndarray, lr_models: list[Ridge], learning_neighbors: int = 100):
     """ Imputes the missing values of the incomplete tuples using the learned linear regression models.
 
     Parameters
@@ -176,22 +176,17 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
     costs = np.zeros((len(incomplete_tuples), number_of_models))
     print("Finished learning; Starting main loop of Algorithm 3 'adaptive'")
     for log, complete_tuple in enumerate(complete_tuples, 1):  # for t_i in r
-        if (log % 10) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
+        if (log % 25) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
         neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0]
         for incomplete_tuple_idx, incomplete_tuple in enumerate(incomplete_tuples):
             nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
             for i, neighbor in enumerate(neighbors):  # Line 5
                 for l in range(0, number_of_models):  # Line 6, for l in 1..n
-                    error = 0
-                    number_of_models_considered = 0
-                    for phi_index, phi in enumerate(phi_list[l][incomplete_tuple_idx], 1):  # Iterate over all models using l neighbors
-                        # Line 7, calculate squared error for column with most NaNs
-                        error += abs(float(complete_tuple[nan_indicator]
-                                           - (phi.predict(np.delete(complete_tuples[neighbor], nan_indicator)
-                                                          .reshape(1, -1)))
-                                           ))
-                        number_of_models_considered = phi_index  # Used to take average error
-                    costs[incomplete_tuple_idx, l] += np.power(error / number_of_models_considered, 2)
+                    error = [complete_tuple[nan_indicator]
+                             - (phi.predict(np.delete(complete_tuples[neighbor], nan_indicator)
+                                            .reshape(1, -1)))
+                             for phi in phi_list[l][incomplete_tuple_idx]]
+                    costs[incomplete_tuple_idx, l] += np.power(np.sum(np.abs(error)) / len(phi_list[l][incomplete_tuple_idx]), 2)
 
     # Line 8-10 Select best model for each tuple
     best_models_indices = np.argmin(costs, axis=1)
