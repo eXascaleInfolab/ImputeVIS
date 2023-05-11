@@ -3,6 +3,7 @@ import re
 from sklearn.neighbors import NearestNeighbors
 from sklearn.linear_model import Ridge
 import time
+from multiprocessing import Pool
 
 
 def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_neighbors: int = 10):
@@ -35,7 +36,7 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
         # col_with_max_nan = np.argmax(np.count_nonzero(np.isnan(matrix_nan), axis=0))
         if adaptive_flag:
             print("Running IIM algorithm with adaptive algorithm, k = " + str(learning_neighbors) + "...")
-            lr_models = adaptive(complete_tuples, incomplete_tuples, learning_neighbors)
+            lr_models = adaptive_multi(complete_tuples, incomplete_tuples, learning_neighbors)
             imputation_result = imputation(incomplete_tuples, lr_models)
 
         else:
@@ -187,6 +188,7 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
             nan_indicator = np.isnan(incomplete_tuple)  # Show which attribute is missing as NaN
             neighbors_filtered = np.delete(complete_tuples[neighbors], nan_indicator, axis=1)
             for l in range(0, number_of_models):  # Line 6, for l in 1..n
+                # TODO Find a way to do this better with the expanded_coef matrix
                 # Define a 3D matrix where coef is expanded along the third dimension
                 expanded_coef = np.array([coef for coef, _ in phi_list[l][incomplete_tuple_idx]])
 
@@ -197,6 +199,54 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
                 costs[incomplete_tuple_idx, l] += np.sum(np.power(errors, 2)) / len(phi_list[l][incomplete_tuple_idx])
 
     # Line 8-10 Select best model for each tuple
+    best_models_indices = np.argmin(costs, axis=1)
+    learning_neighbors = [range(1, all_entries + 1, step_size)[best_models_index]
+                          for best_models_index in best_models_indices]
+    print("Determined following learning neighbors for each tuple with missing attributes: {}"
+          .format(learning_neighbors))
+    phi = [phi_list[best_models_indices[i]][i] for i in range(number_of_incomplete_tuples)]
+    return phi
+
+
+def compute_cost_for_tuple(args):
+    complete_tuple, log, complete_tuples, incomplete_tuples, nn, number_of_models, phi_list = args
+    if (log % 50) == 0: print("Algorithm 3 'adaptive', processing tuple {}".format(str(log)))
+    neighbors = nn.kneighbors(complete_tuple.reshape(1, -1), return_distance=False)[0]
+    costs = np.zeros((len(incomplete_tuples), number_of_models))
+    for incomplete_tuple_idx, incomplete_tuple in enumerate(incomplete_tuples):
+        nan_indicator = np.isnan(incomplete_tuple)
+        neighbors_filtered = np.delete(complete_tuples[neighbors], nan_indicator, axis=1)
+        for l in range(0, number_of_models):
+            # TODO Find a way to do this with expanded coef better
+            expanded_coef = np.array([coef for coef, _ in phi_list[l][incomplete_tuple_idx]])
+            phi_models = (expanded_coef @ neighbors_filtered[:, :, None]).squeeze() + np.array(
+                [intercept for _, intercept in phi_list[l][incomplete_tuple_idx]])
+            errors = np.abs(complete_tuple[nan_indicator] - phi_models)
+            costs[incomplete_tuple_idx, l] += np.sum(np.power(errors, 2)) / len(phi_list[l][incomplete_tuple_idx])
+    return costs
+
+
+def adaptive_multi(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 100,
+             step_size: int = 4):
+    print("Starting Algorithm 3 'adaptive'")
+    all_entries = min(int(complete_tuples.shape[0]), max_learning_neighbors)
+    phi_list = [learning(complete_tuples, incomplete_tuples, l_learning)
+                for l_learning in
+                range(1, all_entries + 1, step_size)]
+    nn = NearestNeighbors(n_neighbors=k, metric='euclidean').fit(complete_tuples)
+    number_of_models = len(phi_list) - 1
+    number_of_incomplete_tuples = len(incomplete_tuples)
+    print("Finished learning; Starting main loop of Algorithm 3 'adaptive'")
+
+    # Create a pool of worker processes
+    with Pool() as p:
+        # Create an iterable of arguments to pass to the worker function
+        args = ((complete_tuple, log, complete_tuples, incomplete_tuples, nn, number_of_models, phi_list)
+                for log, complete_tuple in enumerate(complete_tuples, 1))
+        # Map the function to the pool of processes
+        costs = p.map(compute_cost_for_tuple, args)
+    costs = np.sum(costs, axis=0)
+
     best_models_indices = np.argmin(costs, axis=1)
     learning_neighbors = [range(1, all_entries + 1, step_size)[best_models_index]
                           for best_models_index in best_models_indices]
