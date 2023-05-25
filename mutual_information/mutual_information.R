@@ -5,19 +5,21 @@ library(infotheo)
 setwd(getSrcDirectory(function(){})[1])
 print(getwd())
 
-file_path <- "Datasets/bafu/raw_matrices/BAFU_tiny.txt" # Replace with the path to your file
+file_path <- "Datasets/bafu/raw_matrices/BAFU_small.txt" # Replace with the path to your file
 data <- read.table(file_path, sep = " ", header = FALSE, na.strings = "NaN")
-nan_file_path <- "Datasets/bafu/raw_matrices/BAFU_tiny_with_NaN.txt" # Replace with the path to your file
+nan_file_path <- "Datasets/bafu/raw_matrices/BAFU_small_with_NaN.txt" # Replace with the path to your file
 nan_data <- read.table(nan_file_path, sep = " ", header = FALSE, na.strings = "NaN")
-imputed_file_path <- "Results/5_BAFU_tiny_with_NaN.txt" # Replace with the path to your file
+imputed_file_path <- "Results/7a_BAFU_small_with_NaN.txt" # Replace with the path to your file
 imputed_data <- read.table(imputed_file_path, sep = " ", header = FALSE, na.strings = "NaN")
 
 # Find the indices of NaN entries
 nan_indices <- which(is.na(nan_data), arr.ind = TRUE)
 print(nan_indices) # Print the indices
-
+print('---')
 # Set the number of bins equal to number of values
 bins <- dim(nan_indices)[1]
+print(bins)
+print('---')
 mutual_info <- mutinformation(discretize(data[nan_indices], nbins=bins), discretize(imputed_data[nan_indices], nbins=bins))
 print(mutual_info)
 
