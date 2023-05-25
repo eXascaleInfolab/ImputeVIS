@@ -5,7 +5,7 @@ from sklearn.linear_model import Ridge
 import time
 from multiprocessing import Pool
 
-
+global rmse;
 def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_neighbors: int = 10):
     """Implementation of the IIM algorithm
     Via the adaptive flag, the algorithm can be run in two modes:
@@ -55,13 +55,15 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
 
 
 def determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan):
-    rmse = []
+    individual_rmse = []
 
     complete_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_small.txt", delimiter=' ', )
     for result in imputation_result:
         matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
-        rmse.append((result[2] - complete_matrix[result[0], result[1]]) ** 2)
-    print("RMSE: " + str(np.sqrt(np.mean(rmse))))
+        individual_rmse.append((result[2] - complete_matrix[result[0], result[1]]) ** 2)
+    global rmse
+    rmse = np.sqrt(np.mean(individual_rmse))
+    print("RMSE: " + str(rmse))
 
 
 #  Algorithm 1: Learning
@@ -303,7 +305,8 @@ def compute_weights(distances: list[float]):
     return weights
 
 
-def main(alg_code: str, filename_input: str, filename_output: str, runtime: int):
+def main(alg_code: str, filename_input: str = "../Datasets/bafu/raw_matrices/BAFU_small_with_NaN.txt",
+         filename_output: str = "../Results/2_BAFU_small_with_NaN.txt", runtime: int = 0):
     """Executes the imputation algorithm given an input matrix.
 
     Parameters
@@ -328,6 +331,8 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
 
     # For dataset delimited by ',' and having a header
     # matrix = np.loadtxt(filename_input, delimiter=',', skiprows=1)
+
+    global rmse
 
     # beginning of imputation process - start time measurement
     start_time = time.time()
@@ -365,13 +370,16 @@ def main(alg_code: str, filename_input: str, filename_output: str, runtime: int)
         # Tuple_Index (row), Attribute_Index (column), Imputed_Value
         np.savetxt(filename_output, matrix_imputed, fmt='%f', delimiter=' ')
 
+    print("will return", rmse)
+    return rmse
+
 
 if __name__ == '__main__':
     dataset = "BAFU_small_with_NaN.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
     # example arguments: "iim 5a" -> 5 neighbors & adaptive, "iim 10" -> 10  neighbors and not adaptive
-    neighbors = str(7)
-    adaptive_flag = "a"
+    neighbors = str(3)
+    adaptive_flag = ""
     main("iim" + " " + neighbors + adaptive_flag, "../Datasets/bafu/raw_matrices/" + dataset, "../Results/"
          + neighbors + adaptive_flag + "_" + dataset, 0)
