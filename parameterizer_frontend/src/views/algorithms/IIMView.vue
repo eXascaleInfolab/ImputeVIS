@@ -1,23 +1,35 @@
 <template>
-  <div>
-    I am IIM page.
+  <div class="container">
+    <h1 class="mb-4">I am IIM page.</h1>
     <form @submit.prevent="submitForm">
-      <label for="name">Name:</label>
-      <input id="name" v-model="name" type="text" required> <br>
+      <div class="mb-3">
+        <label for="name" class="form-label">Name:</label>
+        <input id="name" v-model="name" type="text" class="form-control" required>
+      </div>
 
-      <label for="alg_code">Algorithm Code:</label>
-      <input id="alg_code" v-model="alg_code" type="text" required> <br>
+      <div class="mb-3">
+        <label for="alg_code" class="form-label">Algorithm Code:</label>
+        <input id="alg_code" v-model="alg_code" type="text" class="form-control" required>
+      </div>
 
-<!--      <label for="filename_input">Input Filename:</label>-->
-<!--      <input id="filename_input" v-model="filename_input" type="text" required> <br>-->
+      <!--
+      <div class="mb-3">
+        <label for="filename_input" class="form-label">Input Filename:</label>
+        <input id="filename_input" v-model="filename_input" type="text" class="form-control" required>
+      </div>
 
-<!--      <label for="filename_output">Output Filename:</label>-->
-<!--      <input id="filename_output" v-model="filename_output" type="text" required> <br>-->
+      <div class="mb-3">
+        <label for="filename_output" class="form-label">Output Filename:</label>
+        <input id="filename_output" v-model="filename_output" type="text" class="form-control" required>
+      </div>
 
-<!--      <label for="runtime">Runtime:</label>-->
-<!--      <input id="runtime" v-model="runtime" type="number" required> <br>-->
+      <div class="mb-3">
+        <label for="runtime" class="form-label">Runtime:</label>
+        <input id="runtime" v-model="runtime" type="number" class="form-control" required>
+      </div>
+      -->
 
-      <button type="submit">Submit</button>
+      <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>
 </template>
