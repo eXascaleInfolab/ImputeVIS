@@ -28,9 +28,9 @@ def submit_name(request):
         # filename_output = data.get('filename_output', '../Results/')
         # runtime = data.get('runtime', 0)
 
-        rmse = main(alg_code)
+        rmse, matrix_imputed = main(alg_code)
         print("finished! ", rmse)
 
-        return JsonResponse({'rmse': rmse}, status=200)
+        return JsonResponse({'rmse': rmse, 'matrix_imputed': matrix_imputed}, status=200)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)

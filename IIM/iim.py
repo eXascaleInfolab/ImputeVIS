@@ -370,8 +370,8 @@ def main(alg_code: str, filename_input: str = "../Datasets/bafu/raw_matrices/BAF
         # Tuple_Index (row), Attribute_Index (column), Imputed_Value
         np.savetxt(filename_output, matrix_imputed, fmt='%f', delimiter=' ')
 
-    print("will return", rmse)
-    return rmse
+    print("will return", rmse, matrix_imputed.tolist())
+    return rmse, matrix_imputed.tolist()
 
 
 if __name__ == '__main__':
