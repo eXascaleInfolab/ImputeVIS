@@ -31,6 +31,8 @@
 
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+
+    <h2> RMSE: {{rmse}}</h2>
   </div>
 </template>
 
@@ -45,6 +47,7 @@ export default {
     const filename_input = ref('');
     const filename_output = ref('');
     const runtime = ref(0);
+    const rmse = ref(null);
 
     const submitForm = async () => {
       try {
@@ -62,11 +65,13 @@ export default {
             }
           }
         );
+        rmse.value = response.data.rmse;
         console.log(response.data);
       } catch (error) {
         console.error(error);
       }
     }
+
 
     return {
       name,
@@ -74,7 +79,8 @@ export default {
       filename_input,
       filename_output,
       runtime,
-      submitForm
+      submitForm,
+      rmse
     }
   }
 }

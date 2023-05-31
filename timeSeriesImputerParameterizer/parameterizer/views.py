@@ -31,6 +31,6 @@ def submit_name(request):
         rmse = main(alg_code)
         print("finished! ", rmse)
 
-        return JsonResponse({'message': 'Success!'}, status=200)
+        return JsonResponse({'rmse': rmse}, status=200)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
