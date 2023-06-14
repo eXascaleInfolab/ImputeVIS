@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container">
     <h1 class="mb-4">IIM Detail</h1>
     <form @submit.prevent="submitForm">
       <div class="mb-3">

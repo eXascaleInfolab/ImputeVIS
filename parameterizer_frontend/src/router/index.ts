@@ -22,6 +22,12 @@ const router = createRouter({
             name: 'iim',
             // route level code-splitting
             component: () => import('../views/algorithms/IIMView.vue')
+        },
+        {
+            path: '/algorithms/m-rnn',
+            name: 'm-rnn',
+            // route level code-splitting
+            component: () => import('../views/algorithms/M-RNNView.vue')
         }
     ]
 })
