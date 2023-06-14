@@ -1,4 +1,5 @@
-<script setup lang="ts">
+<!--TODO Clean-up: Delete-->
+<!--<script setup lang="ts">
 defineProps<{
   msg: string
 }>()
@@ -37,4 +38,4 @@ h3 {
     text-align: left;
   }
 }
-</style>
+</style>-->
