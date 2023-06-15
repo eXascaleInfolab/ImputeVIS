@@ -8,10 +8,6 @@
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="position-fixed sidebar">
         <div class="mb-3">
-          <label for="alg_code" class="form-label">Algorithm Code:</label>
-          <input id="alg_code" v-model="alg_code" type="text" class="form-control" required>
-        </div>
-        <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
             <option value="Bafu">Bafu</option>
@@ -27,8 +23,8 @@
         <div class="mb-3">
           <label for="typeSelect" class="form-label">Learning Type:</label>
           <select id="typeSelect" v-model="typeSelect" class="form-control">
-            <option value="Normal">Normal</option>
-            <option value="Adaptive">Adaptive</option>
+            <option value="">Normal</option>
+            <option value="a">Adaptive</option>
           </select>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -54,11 +50,9 @@ export default {
     highcharts: Chart
   },
   setup() {
-
-    const alg_code = ref('iim 3');
     const dataSelect = ref('Bafu') // Default data is BAFU
-    const numberSelect = ref(1); // Default selected learning neighborsx§ is 1
-    const typeSelect = ref('Normal'); // Default selected type is "Normal"
+    const numberSelect = ref(1); // Default selected learning neighbors is 1
+    const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
     const rmse = ref(null);
 
     const chartOptions = ref({
@@ -84,9 +78,10 @@ export default {
 
     const submitForm = async () => {
       try {
+        const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
         const response = await axios.post('http://localhost:8000/api/submit-name/',
             {
-              alg_code: alg_code.value,
+              alg_code: formattedAlgCode,
             },
             {
               headers: {
@@ -95,9 +90,6 @@ export default {
             }
         );
         rmse.value = response.data.rmse;
-        console.log(dataSelect.value); // You can use these in your form submission
-        console.log(numberSelect.value); // You can use these in your form submission
-        console.log(typeSelect.value); // You can use these in your form submission
         console.log(response.data);
       } catch (error) {
         console.error(error);
@@ -105,7 +97,6 @@ export default {
     }
 
     return {
-      alg_code,
       submitForm,
       rmse,
       chartOptions,
