@@ -12,13 +12,20 @@
           <input id="alg_code" v-model="alg_code" type="text" class="form-control" required>
         </div>
         <div class="mb-3">
-          <label for="numberSelect" class="form-label">Number Select:</label>
+          <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
+          <select id="dataSelect" v-model="dataSelect" class="form-control">
+            <option value="Bafu">Bafu</option>
+            <option value="TODO">Other Data</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="numberSelect" class="form-label">Select Learning Neighbors:</label>
           <select id="numberSelect" v-model="numberSelect" class="form-control">
             <option v-for="number in Array.from({ length: 100 }, (_, i) => i + 1)" :key="number">{{ number }}</option>
           </select>
         </div>
         <div class="mb-3">
-          <label for="typeSelect" class="form-label">Type Select:</label>
+          <label for="typeSelect" class="form-label">Learning Type:</label>
           <select id="typeSelect" v-model="typeSelect" class="form-control">
             <option value="Normal">Normal</option>
             <option value="Adaptive">Adaptive</option>
@@ -48,7 +55,8 @@ export default {
   },
   setup() {
 
-    const alg_code = ref('');
+    const alg_code = ref('iim 3');
+    const dataSelect = ref('Bafu') // Default data is BAFU
     const numberSelect = ref(1); // Default selected learning neighborsx§ is 1
     const typeSelect = ref('Normal'); // Default selected type is "Normal"
     const rmse = ref(null);
@@ -70,7 +78,7 @@ export default {
           //... more data points
         ],
         name: 'Example Data',
-        showInLegend: false
+        showInLegend: true
       }]
     });
 
@@ -87,6 +95,7 @@ export default {
             }
         );
         rmse.value = response.data.rmse;
+        console.log(dataSelect.value); // You can use these in your form submission
         console.log(numberSelect.value); // You can use these in your form submission
         console.log(typeSelect.value); // You can use these in your form submission
         console.log(response.data);
@@ -101,7 +110,8 @@ export default {
       rmse,
       chartOptions,
       numberSelect,
-      typeSelect
+      typeSelect,
+      dataSelect
     }
   }
 }
