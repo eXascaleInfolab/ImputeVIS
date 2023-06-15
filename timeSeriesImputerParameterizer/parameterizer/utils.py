@@ -26,6 +26,9 @@ def obfuscate_data(filename_input, percentage, allow_full_nan_line=False):
     # Load the data from the input file.
     data = np.loadtxt(filename_input, delimiter=' ')
 
+    # Keep a copy of the original data for restoring values.
+    original_data = data.copy()
+
     # Calculate the total number of elements in the data.
     total_elements = data.size
 
@@ -46,8 +49,16 @@ def obfuscate_data(filename_input, percentage, allow_full_nan_line=False):
     data[indices] = np.nan
 
     # If lines that are entirely NaN are not allowed and such a line exists, retry the obfuscation.
-    if not allow_full_nan_line and np.isnan(data).all(axis=1).any():
-        return obfuscate_data(filename_input, percentage, allow_full_nan_line)
+    # If lines that are entirely NaN are not allowed, iteratively update blocks of data until no rows are entirely NaN.
+    if not allow_full_nan_line:
+        while np.isnan(data).all(axis=1).any():
+            # Find the indices of the rows that are entirely NaN.
+            nan_rows = np.where(np.isnan(data).all(axis=1))[0]
+            for row in nan_rows:
+                # Generate a random index for the column.
+                col = random.randint(0, shape[1] - 1)
+                # Replace the NaN value at the randomly selected index with the original value from the data.
+                data[row, col] = original_data[row, col]
 
     # Create the output directory if it does not exist.
     # output_dir = os.path.join('..', '..', 'Datasets', 'Obfuscated')
