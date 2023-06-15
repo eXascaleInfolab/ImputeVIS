@@ -1,18 +1,32 @@
 <template>
-  <div class="container">
-    <h1 class="mb-4">IIM Detail</h1>
-    <form @submit.prevent="submitForm">
-      <div class="mb-3">
-        <label for="alg_code" class="form-label">Algorithm Code:</label>
-        <input id="alg_code" v-model="alg_code" type="text" class="form-control" required>
-      </div>
-
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-
-    <h2> RMSE: {{ rmse }}</h2>
-
-    <highcharts :options="chartOptions"></highcharts>
+  <h1 class="mb-4 text-center">IIM Detail</h1>
+  <div class="d-flex">
+    <div class="col-lg-8">
+      <h2> RMSE: {{ rmse }}</h2>
+      <highcharts :options="chartOptions"></highcharts>
+    </div>
+    <div class="col-lg-4">
+      <form @submit.prevent="submitForm" class="position-fixed sidebar">
+        <div class="mb-3">
+          <label for="alg_code" class="form-label">Algorithm Code:</label>
+          <input id="alg_code" v-model="alg_code" type="text" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="numberSelect" class="form-label">Number Select:</label>
+          <select id="numberSelect" v-model="numberSelect" class="form-control">
+            <option v-for="number in Array.from({ length: 100 }, (_, i) => i + 1)" :key="number">{{ number }}</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="typeSelect" class="form-label">Type Select:</label>
+          <select id="typeSelect" v-model="typeSelect" class="form-control">
+            <option value="Normal">Normal</option>
+            <option value="Adaptive">Adaptive</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -35,6 +49,8 @@ export default {
   setup() {
 
     const alg_code = ref('');
+    const numberSelect = ref(1); // Default selected learning neighborsx§ is 1
+    const typeSelect = ref('Normal'); // Default selected type is "Normal"
     const rmse = ref(null);
 
     const chartOptions = ref({
@@ -71,6 +87,8 @@ export default {
             }
         );
         rmse.value = response.data.rmse;
+        console.log(numberSelect.value); // You can use these in your form submission
+        console.log(typeSelect.value); // You can use these in your form submission
         console.log(response.data);
       } catch (error) {
         console.error(error);
@@ -81,8 +99,17 @@ export default {
       alg_code,
       submitForm,
       rmse,
-      chartOptions
+      chartOptions,
+      numberSelect,
+      typeSelect
     }
   }
 }
 </script>
+
+<style scoped>
+.sidebar {
+  margin-left: 35px;  /* Change this value to increase or decrease the margin */
+}
+</style>
+
