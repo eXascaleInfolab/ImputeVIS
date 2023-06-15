@@ -15,9 +15,6 @@
           <li class="nav-item active">
             <RouterLink class="nav-link" to="/">Home</RouterLink>
           </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link" to="/about">About</RouterLink>
-          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Algorithms
@@ -27,9 +24,24 @@
               <RouterLink class="dropdown-item" to="/algorithms/m-rnn">M-RNN (WIP)</RouterLink>
             </div>
           </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-data" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Datasets
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-data">
+              <RouterLink class="dropdown-item" to="#">BAFU TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="#">Dataset 2 TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="#">Dataset 3 TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="#">Dataset 4 TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="#">Dataset 5 TODO</RouterLink>
+            </div>
+          </li>
           <!-- Add your additional links here -->
           <li class="nav-item">
             <RouterLink class="nav-link" to="/dummy2">Dummy Link 2</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/about">About</RouterLink>
           </li>
         </ul>
       </div>
