@@ -11,7 +11,8 @@ from tensorflow.python.framework import ops
 
 #%% Main Function
 
-def M_RNN (trainZ, trainM, trainT, testZ, testM, testT):
+
+def M_RNN(trainZ, trainM, trainT, testZ, testM, testT, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob_var=1.0):
 
     # Graph Initialization
     ops.reset_default_graph()
@@ -19,10 +20,10 @@ def M_RNN (trainZ, trainM, trainT, testZ, testM, testT):
     #%% Parameters
     seq_length = len(trainZ[0,:,0])
     feature_dim = len(trainZ[0,0,:])
-    hidden_dim = 10
+    # hidden_dim = 10   # hidden state dimension, default = 10
 
-    learning_rate = 0.01
-    iterations = 1000
+    # learning_rate = 0.01  # learning rate, default = 0.01
+    # iterations = 1000  # iterations, default = 1000
 
     #%% input place holders (Y: target, M: Mask)
     tf.compat.v1.disable_eager_execution()  # Added for compatibility
@@ -376,13 +377,14 @@ def M_RNN (trainZ, trainM, trainT, testZ, testM, testT):
     sess = tf.compat.v1.Session()
     sess.run(tf.compat.v1.global_variables_initializer())
 
+    # keep_prob_var = 1.0      # For the dropout, renamned to keep_prob_var. 1.0 means no dropout (which is default)
     # Training step
     for i in range(iterations):
-        _, step_loss = sess.run([train, loss], feed_dict={Y: col_trainZ, Z: col_rec_trainZ, M: col_trainM, keep_prob: 1.0})
+        _, step_loss = sess.run([train, loss], feed_dict={Y: col_trainZ, Z: col_rec_trainZ, M: col_trainM, keep_prob: keep_prob_var})
 
         # Test step
-    train_predict = sess.run(outputs, feed_dict={Y: col_trainZ, Z: col_rec_trainZ, M: col_trainM, keep_prob: 1.0})
-    test_predict = sess.run(outputs, feed_dict={Y: col_testZ, Z: col_rec_testZ, M: col_testM, keep_prob: 1.0})
+    train_predict = sess.run(outputs, feed_dict={Y: col_trainZ, Z: col_rec_trainZ, M: col_trainM, keep_prob:keep_prob_var})
+    test_predict = sess.run(outputs, feed_dict={Y: col_testZ, Z: col_rec_testZ, M: col_testM, keep_prob:keep_prob_var})
 
     output_train_temp = np.reshape(train_predict,[Train_No, Seq_No, feature_dim])
     output_test_temp = np.reshape(test_predict,[Test_No, Seq_No, feature_dim])

@@ -83,7 +83,7 @@ export default {
 
     const submitForm = async () => {
       try {
-        const response = await axios.post('http://localhost:8000/api/submit-name/',
+        const response = await axios.post('http://localhost:8000/api/mrnn/',
             {
               alg_code: alg_code.value,
             },
