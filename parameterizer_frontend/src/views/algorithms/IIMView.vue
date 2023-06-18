@@ -36,7 +36,7 @@
 <script lang="ts">
 import {ref} from 'vue';
 import axios from 'axios';
-import {Chart} from 'highcharts-vue'
+import {Chart, StockChart, MapChart, ChartCompositionApi} from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
@@ -47,7 +47,11 @@ HC_exportData(Highcharts)
 
 export default {
   components: {
-    highcharts: Chart
+    highcharts: Chart,
+    chart: Chart,
+    stockChart: StockChart,
+    mapChart: MapChart,
+    chartCompositionApi: ChartCompositionApi
   },
   setup() {
     const dataSelect = ref('Bafu') // Default data is BAFU
@@ -91,6 +95,12 @@ export default {
         );
         rmse.value = response.data.rmse;
         console.log(response.data);
+        chartOptions.value.series[0].data = [          [Date.UTC(2024, 0, 1), 11],
+          [Date.UTC(2024, 0, 2), 20],
+          [Date.UTC(2024, 0, 3), 33],
+          [Date.UTC(2024, 0, 4), 44],
+          [Date.UTC(2024, 0, 5), 55],];
+        chartOptions.value.title.text = response.data.title;
       } catch (error) {
         console.error(error);
       }
