@@ -33,7 +33,7 @@ def iim(request):
         # runtime = data.get('runtime', 0)
 
         folder_path = '../Datasets'
-        search_string = 'BAFU_tiny'
+        search_string = 'BAFU_small'
 
         clean_file_path = utils.find_non_obfuscated_file(folder_path, search_string)
         print(f'Found clean file at: {clean_file_path}')
@@ -46,7 +46,7 @@ def iim(request):
             obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished iim! ", rmse)
-            return JsonResponse({'rmse': rmse, 'matrix_imputed': imputed_matrix}, status=200)
+            return JsonResponse({'rmse': rmse, 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}, status=200)
         else:
             print('No matching file found')
 
