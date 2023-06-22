@@ -11,7 +11,7 @@
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
             <option value="BAFU_small">BAFU 1/2 Size</option>
-            <option value="BAFU_tiny">Bafu 1/4 Size</option>
+            <option value="BAFU_tiny">BAFU 1/4 Size</option>
           </select>
         </div>
         <div class="mb-3">

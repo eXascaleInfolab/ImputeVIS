@@ -2,12 +2,12 @@
   <h1 class="mb-4 text-center">IIM Detail</h1>
   <div class="d-flex">
     <div class="col-lg-8 ps-4">
-      <p class="lead">
-        BAFU dataset provided by the BundesAmt Für Umwelt (the Swiss Federal Office for the Environment).
-        <br>
-      This dataset contains water discharge time series of 12 different Swiss rivers recorded every 30 min during
-      2010 – 2015 resulting in 80k records per time series.
-      </p>
+<!--      <p class="lead">-->
+<!--        BAFU dataset provided by the BundesAmt Für Umwelt (the Swiss Federal Office for the Environment).-->
+<!--        <br>-->
+<!--      This dataset contains water discharge time series of 12 different Swiss rivers recorded every 30 min during-->
+<!--      2010 – 2015 resulting in 80k records per time series.-->
+<!--      </p>-->
       <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
       <highcharts :options="chartOptions"></highcharts>
     </div>
@@ -16,8 +16,8 @@
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
-            <option value="Bafu_small">BAFU 1/2 Size</option>
-            <option value="Bafu_tiny">Bafu 1/4 Size</option>
+            <option value="BAFU_small">BAFU 1/2 Size</option>
+            <option value="BAFU_tiny">BAFU 1/4 Size</option>
           </select>
         </div>
         <div class="mb-3">
@@ -30,7 +30,7 @@
           <label for="typeSelect" class="form-label">Learning Type:</label>
           <select id="typeSelect" v-model="typeSelect" class="form-control">
             <option value="">Normal</option>
-            <option value="a">Adaptive</option>
+            <option value="a">Adaptive (High Processing Cost)</option>
           </select>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -60,7 +60,7 @@ export default {
     chartCompositionApi: ChartCompositionApi
   },
   setup() {
-    const dataSelect = ref('Bafu_tiny') // Default data is BAFU
+    const dataSelect = ref('BAFU_tiny') // Default data is BAFU
     const numberSelect = ref(1); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
     const rmse = ref(null);
