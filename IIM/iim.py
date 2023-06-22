@@ -68,8 +68,8 @@ def determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan):
 
 #  Algorithm 1: Learning
 def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int = 10):
-    """Learns individual regression models for each learning neighbor,
-        by fitting on the other attributes and the missing attribute
+    """Learns individual regression models for each learning neighbor and each attribute,
+       by fitting on the other attributes and the missing attribute
 
     Parameters
     ----------
@@ -85,11 +85,15 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
     Returns
     -------
     model_params: np.ndarray[Ridge]
-        The learned regression models.
+        The learned regression models. The structure of this array is as follows:
+        - First dimension: which tuple we are looking at
+        - Second dimension: which attribute we are looking at
+        - Third dimension: which learning neighbor we are looking at
     """
 
     knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean').fit(complete_tuples)
-    model_params = np.empty((len(incomplete_tuples), l), dtype=object)
+    number_of_attributes = incomplete_tuples.shape[1]  # Number of attributes, should be 12
+    model_params = np.empty((len(incomplete_tuples), number_of_attributes, l), dtype=object)
 
     # Replace NaN values with 0
     incomplete_tuples_no_nan = np.nan_to_num(incomplete_tuples)
@@ -100,11 +104,28 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
     for tuple_index, incomplete_tuple in enumerate(incomplete_tuples):
         nan_indicator = np.isnan(incomplete_tuple)
 
-        # Learn the relevant value/column
-        X = complete_tuples[learning_neighbors[tuple_index]][:, ~nan_indicator]
-        y = complete_tuples[learning_neighbors[tuple_index]][:, nan_indicator]
-        models = [(Ridge(tol=1e-20).fit(X_i.reshape(1, -1), y_i)) for X_i, y_i in zip(X, y)]
-        model_params[tuple_index] = [(model.coef_, model.intercept_) for model in models]
+        # Check if there is more than one NaN value in the tuple
+        if np.count_nonzero(nan_indicator) == 1:
+            nan_index = np.where(nan_indicator)[0][0]  # Get the index of the NaN value
+
+            # Learn the relevant value/column
+            X = complete_tuples[learning_neighbors[tuple_index]][:, ~nan_indicator]
+            y = complete_tuples[learning_neighbors[tuple_index]][:, nan_indicator]
+            models = [Ridge(tol=1e-20).fit(X_i.reshape(1, -1), y_i) for X_i, y_i in zip(X, y)]
+            model_params[tuple_index, nan_index] = models
+        else:
+            # If there are multiple NaNs in the tuple
+            for missing_value_index in np.where(nan_indicator)[0]:
+                # Create a new indicator for this specific NaN
+                current_nan_indicator = np.zeros_like(nan_indicator)
+                current_nan_indicator[missing_value_index] = True
+
+                # Learn the relevant value/column
+                X = complete_tuples[learning_neighbors[tuple_index]][:, ~current_nan_indicator]
+                y = complete_tuples[learning_neighbors[tuple_index]][:, current_nan_indicator]
+                models = [Ridge(tol=1e-20).fit(X_i.reshape(1, -1), y_i) for X_i, y_i in zip(X, y)]
+                model_params[tuple_index, missing_value_index] = models
+
     return model_params
 
 
@@ -127,24 +148,26 @@ def imputation(incomplete_tuples: np.ndarray, lr_coef_and_threshold: np.ndarray)
         where each list contains the tuple index, the attribute index and the imputed value.
     """
     imputed_values = []
+
     # For each missing tuple
     for i, incomplete_tuple in enumerate(incomplete_tuples):  # for t_i in r
         nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
-
-        missing_attribute_index = int(np.where(nan_indicator)[0])  # index of missing attribute
+        missing_attributes_indices = np.where(nan_indicator)[0]  # indices of missing attributes
 
         # Prepare the input array for multiple samples
         incomplete_tuple_no_nan = incomplete_tuple[~nan_indicator]
 
-        # Predict the missing values using the learned Ridge models
-        candidate_suggestions = np.array([coef @ incomplete_tuple_no_nan + intercept for coef, intercept in lr_coef_and_threshold[i]])
+        # For each missing attribute
+        for missing_attribute_index in missing_attributes_indices:
+            # Predict the missing values using the learned Ridge models
+            candidate_suggestions = np.array([model.predict(incomplete_tuple_no_nan.reshape(1, -1)) for model in lr_coef_and_threshold[i, missing_attribute_index]])
 
-        distances = compute_distances(candidate_suggestions)
-        weights = compute_weights(distances)
+            distances = compute_distances(candidate_suggestions)
+            weights = compute_weights(distances)
 
-        impute_result = np.sum(candidate_suggestions * weights)
-        # Create tuple with index (in missing tuples), attribute, imputed value
-        imputed_values.append([i, missing_attribute_index, impute_result])
+            impute_result = np.sum(candidate_suggestions * weights)
+            # Create tuple with index (in missing tuples), attribute, imputed value
+            imputed_values.append([i, missing_attribute_index, impute_result])
 
     return imputed_values
 
@@ -272,11 +295,9 @@ def compute_distances(candidate_suggestions: np.ndarray):
         The sum of distances to all other candidates.
     """
     distances = []
-    for candidate in candidate_suggestions:
-        temp_distances = []
-        for candidate_2 in candidate_suggestions:
-            temp_distances.append(np.sum(np.abs(candidate - candidate_2)))
-        distances.append(sum(temp_distances))
+    for i in range(len(candidate_suggestions)):
+        temp_distances = np.abs(candidate_suggestions[i] - np.delete(candidate_suggestions, i))
+        distances.append(np.sum(temp_distances))
     return distances
 
 
@@ -295,18 +316,36 @@ def compute_weights(distances: list[float]):
         The weight of the candidate.
     """
 
-    weights = []
-    for idx, dist in enumerate(distances):
-        dist_without_self = np.asarray(distances[:idx] + distances[idx + 1:])
-        if np.all(np.asarray(distances) == 0):  # If all 0, just weigh equally, TODO Is this okay?
-            weights.append(1 / len(distances))
-        else:
-            weights.append((1 / dist) / (sum(1 / np.asarray(dist_without_self))))
+    distances = np.array(distances)
+    weights = np.zeros(distances.shape)
+
+    nonzero_indices = distances != 0
+    weights[nonzero_indices] = 1 / distances[nonzero_indices] / np.sum(1 / distances[nonzero_indices])
+
+    # Handle the case where all distances are zero
+    if np.sum(weights) == 0:
+        weights = np.ones(distances.shape) / len(distances)
+
     return weights
 
 
-def main(alg_code: str, filename_input: str = "../Datasets/bafu/raw_matrices/BAFU_small_with_NaN.txt",
-         filename_output: str = "../Results/2_BAFU_small_with_NaN.txt", runtime: int = 0):
+def count_nans(list_of_arrays: list[np.ndarray]):
+    """ Counts the number of NaNs in a list of arrays.
+
+    Parameters
+    ----------
+    list_of_arrays : list[np.ndarray]
+        The list of arrays to count the NaNs in.
+
+    Returns
+    -------
+    int
+        The number of NaNs in the list of arrays.
+    """
+    return sum(np.isnan(arr).sum() for arr in list_of_arrays)
+
+def main(alg_code: str, filename_input: str = "../Datasets/bafu/raw_matrices/BAFU_tiny_with_NaN.txt",
+         filename_output: str = "../Results/2_BAFU_tiny_with_NaN.txt", runtime: int = 0):
     """Executes the imputation algorithm given an input matrix.
 
     Parameters
@@ -375,11 +414,11 @@ def main(alg_code: str, filename_input: str = "../Datasets/bafu/raw_matrices/BAF
 
 
 if __name__ == '__main__':
-    dataset = "BAFU_small_with_NaN.txt"
+    dataset = "BAFU_tiny_with_NaN.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
     # example arguments: "iim 5a" -> 5 neighbors & adaptive, "iim 10" -> 10  neighbors and not adaptive
-    neighbors = str(3)
+    neighbors = str(1)
     adaptive_flag = ""
     main("iim" + " " + neighbors + adaptive_flag, "../Datasets/bafu/raw_matrices/" + dataset, "../Results/"
          + neighbors + adaptive_flag + "_" + dataset, 0)
