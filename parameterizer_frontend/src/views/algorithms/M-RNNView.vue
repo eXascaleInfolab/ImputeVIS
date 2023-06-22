@@ -10,8 +10,19 @@
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
-            <option value="Bafu_small">BAFU 1/2 Size</option>
-            <option value="Bafu_tiny">Bafu 1/4 Size</option>
+            <option value="BAFU_small">BAFU 1/2 Size</option>
+            <option value="BAFU_tiny">Bafu 1/4 Size</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="missingRate" class="form-label">Missing Rates</label>
+          <select id="missingRate" v-model="missingRate" class="form-control">
+            <option value="1">1%</option>
+            <option value="10">10%</option>
+            <option value="20">20%</option>
+            <option value="40">40%</option>
+            <option value="60">60%</option>
+            <option value="80">80%</option>
           </select>
         </div>
         <!-- Learning Rate -->
@@ -60,7 +71,8 @@ export default {
     highcharts: Chart
   },
   setup() {
-    const dataSelect = ref('Bafu_tiny') // Default data is BAFU
+    const dataSelect = ref('BAFU_tiny') // Default data is BAFU
+    const missingRate = ref('1'); // Default missing rate is 1%
     const learningRate = ref(0.01); // Default learning rate is 0.01
     const hiddenDim = ref(10); // Default hidden dimension size is 10
     const iterations = ref(500); // Default number of iterations is 1000
@@ -148,9 +160,11 @@ export default {
 
     const submitForm = async () => {
       try {
+        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+        console.log(dataSet);
         const response = await axios.post('http://localhost:8000/api/mrnn/',
             {
-              data_set: dataSelect.value,
+              data_set: dataSet,
               hidden_dim: hiddenDim.value,
               learning_rate: learningRate.value,
               iterations: iterations.value,
@@ -191,7 +205,8 @@ export default {
       learningRate,
       hiddenDim,
       iterations,
-      keepProb
+      keepProb,
+      missingRate
     }
   }
 }

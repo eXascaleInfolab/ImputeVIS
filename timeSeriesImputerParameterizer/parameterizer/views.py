@@ -91,7 +91,7 @@ def load_from_request(request):
 
 def get_file_paths(search_string: str = 'BAFU_small'):
     folder_path = '../Datasets'
-    clean_file_path = utils.find_non_obfuscated_file(folder_path, search_string)
+    clean_file_path = utils.find_non_obfuscated_file(folder_path, search_string.split('_obfuscate')[0])
     print(f'Found clean file at: {clean_file_path}')
     obfuscated_file_path = utils.find_obfuscated_file(folder_path, search_string)
     print(f'Found obfuscated file at: {obfuscated_file_path}')

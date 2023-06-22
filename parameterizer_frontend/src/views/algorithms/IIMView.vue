@@ -143,12 +143,13 @@ export default {
     });
 
     const submitForm = async () => {
+      let dataSet = dataSelect.value + "_obfuscated_";
       try {
         const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
         const response = await axios.post('http://localhost:8000/api/iim/',
             {
               alg_code: formattedAlgCode,
-              data_set: dataSelect.value
+              data_set: dataSet
             },
             {
               headers: {

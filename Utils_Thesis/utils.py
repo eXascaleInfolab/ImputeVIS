@@ -114,7 +114,7 @@ def find_obfuscated_file(target_dir: str, start_string: str) -> Optional[str]:
     """
     for dirpath, dirs, files in os.walk(target_dir):
         if 'obfuscated' in dirpath:
-            for filename in fnmatch.filter(files, start_string+'*obfuscated*'):
+            for filename in fnmatch.filter(files, start_string+'*.txt'):
                 return os.path.abspath(os.path.join(dirpath, filename))
 
     return None
