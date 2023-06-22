@@ -37,7 +37,7 @@ def iim(request):
             ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
             obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
-            print("Finished iim! ", rmse)
+            print("Finished IIM! RMSE: ", rmse)
             return JsonResponse({'rmse': rmse, 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}, status=200)
         else:
             print('No matching file found or erroneous configuration, stopping imputation.')
@@ -52,11 +52,9 @@ def mrnn(request):
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
         hidden_dim = data.get('hidden_dim', 10)
         learning_rate = data.get('learning_rate', 0.01)
-        iterations = data.get('iterations', 1000)
+        iterations = data.get('iterations', 100)
         keep_prob = data.get('keep_prob', 1.0)
 
-        # Call the main function with parameters from the request
-        alg_code = data.get('alg_code', 'default_alg_code')
         # filename_input = data.get('filename_input', '../Datasets/bafu/raw_matrices/BAFU_small_with_NaN.txt')
         # filename_output = data.get('filename_output', '../Results/')
         # runtime = data.get('runtime', 0)
@@ -65,6 +63,7 @@ def mrnn(request):
 
             ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
             obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            # Call the main function with parameters from the request
             imputed_matrix = M_RNN.testerMRNN.mrnn_recov(obfuscated_file_path,
                                                          runtime=0,
                                                          hidden_dim=hidden_dim,
@@ -73,7 +72,7 @@ def mrnn(request):
                                                          keep_prob=keep_prob
                                                          )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
-            print("Finished iim! ", rmse)
+            print("Finished M-RNN! RMSE: ", rmse)
             return JsonResponse({'rmse': rmse, 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
                                 , status=200)
         else:
@@ -84,8 +83,7 @@ def mrnn(request):
 
 def load_from_request(request):
     data = json.loads(request.body)
-    name = data.get('name')
-    print(f"Received name: {name}")
+    print(f"Received data: {data}")
     data_set = data.get('data_set')
     print(f"Received dataset: {data_set}")
     return data, data_set

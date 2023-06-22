@@ -73,7 +73,7 @@ def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iteratio
     return np.asarray(x).tolist()
 
 
-def main(filename_input: str = "../Datasets/bafu/raw_matrices/BAFU_tiny_with_NaN.txt",
+def main(filename_input: str = "../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_40.txt",
          filename_output: str = "../Results/M-RNN/BAFU_temp.txt", runtime: int = 0):
     """Executes M-RNN algorithm given an input matrix.
 

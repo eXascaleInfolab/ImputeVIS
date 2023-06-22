@@ -2,15 +2,11 @@
   <h1 class="mb-4 text-center">M-RNN Detail</h1>
   <div class="d-flex">
     <div class="col-lg-8">
-      <h2> RMSE: {{ rmse }}</h2>
+      <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="position-fixed sidebar">
-        <div class="mb-3">
-          <label for="alg_code" class="form-label">Algorithm Code:</label>
-          <input id="alg_code" v-model="alg_code" type="text" class="form-control" required>
-        </div>
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
@@ -18,18 +14,28 @@
             <option value="Bafu_tiny">Bafu 1/4 Size</option>
           </select>
         </div>
+        <!-- Learning Rate -->
         <div class="mb-3">
-          <label for="numberSelect" class="form-label">Number Select:</label>
-          <select id="numberSelect" v-model="numberSelect" class="form-control">
-            <option v-for="number in Array.from({ length: 100 }, (_, i) => i + 1)" :key="number">{{ number }}</option>
-          </select>
+          <label for="learningRate" class="form-label">Learning Rate: {{ learningRate }}</label>
+          <input id="learningRate" v-model.number="learningRate" type="range" min="0.001" max="0.1" step="0.005" class="form-control">
         </div>
+
+        <!-- Hidden Dimension Size -->
         <div class="mb-3">
-          <label for="typeSelect" class="form-label">Select Something WIP:</label>
-          <select id="typeSelect" v-model="typeSelect" class="form-control">
-            <option value="Normal">Normal</option>
-            <option value="Adaptive">Adaptive</option>
-          </select>
+          <label for="hidden_dim" class="form-label">Hidden Dimension Size: {{ hiddenDim }}</label>
+          <input id="hidden_dim" v-model.number="hiddenDim" type="range" min="1" max="20" step="1" class="form-control">
+        </div>
+
+        <!-- Number of Iterations -->
+        <div class="mb-3">
+          <label for="iterations" class="form-label">Number of Iterations: {{ iterations }}</label>
+          <input id="iterations" v-model.number="iterations" type="range" min="100" max="2000" step="100" class="form-control">
+        </div>
+
+        <!-- Keep Rate -->
+        <div class="mb-3">
+          <label for="keepProb" class="form-label">Keep Rate: {{ keepProb }}</label>
+          <input id="keepProb" v-model.number="keepProb" type="range" min="0" max="1" step="0.1" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
@@ -54,8 +60,11 @@ export default {
     highcharts: Chart
   },
   setup() {
-    const alg_code = ref('Connection Unimplemented');
     const dataSelect = ref('Bafu_tiny') // Default data is BAFU
+    const learningRate = ref(0.01); // Default learning rate is 0.01
+    const hiddenDim = ref(10); // Default hidden dimension size is 10
+    const iterations = ref(500); // Default number of iterations is 1000
+    const keepProb = ref(0.5); // Default keep probability is 0.5
     const numberSelect = ref(1); // Default selected learning neighborsx§ is 1
     const typeSelect = ref('Normal'); // Default selected type is "Normal"
     const rmse = ref(null);
@@ -141,8 +150,11 @@ export default {
       try {
         const response = await axios.post('http://localhost:8000/api/mrnn/',
             {
-              alg_code: "mrnn",
-              data_set: dataSelect.value
+              data_set: dataSelect.value,
+              hidden_dim: hiddenDim.value,
+              learning_rate: learningRate.value,
+              iterations: iterations.value,
+              keep_prob: keepProb.value,
             },
             {
               headers: {
@@ -175,7 +187,11 @@ export default {
       chartOptions,
       numberSelect,
       typeSelect,
-      dataSelect
+      dataSelect,
+      learningRate,
+      hiddenDim,
+      iterations,
+      keepProb
     }
   }
 }

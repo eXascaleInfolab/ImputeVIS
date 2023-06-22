@@ -8,7 +8,7 @@
       This dataset contains water discharge time series of 12 different Swiss rivers recorded every 30 min during
       2010 – 2015 resulting in 80k records per time series.
       </p>
-      <h2> RMSE: {{ rmse }}</h2>
+      <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
