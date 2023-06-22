@@ -16,8 +16,8 @@
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
-            <option value="Bafu">Bafu</option>
-            <option value="TODO">Other Data</option>
+            <option value="Bafu_small">BAFU 1/2 Size</option>
+            <option value="Bafu_tiny">Bafu 1/4 Size</option>
           </select>
         </div>
         <div class="mb-3">
@@ -60,7 +60,7 @@ export default {
     chartCompositionApi: ChartCompositionApi
   },
   setup() {
-    const dataSelect = ref('Bafu') // Default data is BAFU
+    const dataSelect = ref('Bafu_tiny') // Default data is BAFU
     const numberSelect = ref(1); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
     const rmse = ref(null);
@@ -91,10 +91,6 @@ export default {
                 position: 'relative',
                 "font-family": "Arial"
             },
-            // inputDateParser: function (value) {
-            //     value = value.split(/[:\.]/);
-            //     return 1
-            // },
             enabled: true,
             inputEnabled: false,
             // inputDateFormat: '%y',
@@ -144,7 +140,6 @@ export default {
       //     pointInterval: 100000 * 1000 // one day
       //   }
       // },
-    //  TODO Range selector
     });
 
     const submitForm = async () => {
@@ -153,6 +148,7 @@ export default {
         const response = await axios.post('http://localhost:8000/api/iim/',
             {
               alg_code: formattedAlgCode,
+              data_set: dataSelect.value
             },
             {
               headers: {
@@ -161,135 +157,23 @@ export default {
             }
         );
         rmse.value = response.data.rmse;
-        console.log(response.data.matrix_imputed[0]);
-        chartOptions.value.series[0] = {
-          name: 'Imputed Data',
-          data: response.data.matrix_imputed[0],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[1] = {
-          name: 'Imputed Data Col 2',
-          data: response.data.matrix_imputed[1],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[2] = {
-          name: 'Imputed Data Col 3',
-          data: response.data.matrix_imputed[2],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[3] = {
-          name: 'Imputed Data Col 4',
-          data: response.data.matrix_imputed[3],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[4] = {
-          name: 'Imputed Data Col 5',
-          data: response.data.matrix_imputed[4],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[5] = {
-          name: 'Imputed Data Col 6',
-          data: response.data.matrix_imputed[5],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[6] = {
-          name: 'Imputed Data Col 7',
-          data: response.data.matrix_imputed[6],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[7] = {
-          name: 'Imputed Data Col 8',
-          data: response.data.matrix_imputed[7],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[8] = {
-          name: 'Imputed Data Col 9',
-          data: response.data.matrix_imputed[8],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30,
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[9] = {
-          name: 'Imputed Data Col 10',
-          data: response.data.matrix_imputed[9],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30,
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[10] = {
-          name: 'Imputed Data Col 11',
-          data: response.data.matrix_imputed[10],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30,
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        chartOptions.value.series[11] = {
-          name: 'Imputed Data Col 12',
-          data: response.data.matrix_imputed[11],
-          pointStart: Date.UTC(2010, 1, 1),
-          pointInterval: 1000 * 60 * 30,
-          tooltip: {
-            valueDecimals: 2
-          }
-        };
-        // chartOptions.value.series[0].data = [[Date.UTC(2024, 0, 1), 11],
-        //   [Date.UTC(2024, 0, 2), 20],
-        //   [Date.UTC(2024, 0, 3), 33],
-        //   [Date.UTC(2024, 0, 4), 44],
-        //   [Date.UTC(2024, 0, 5), 55],];
-        // chartOptions.value.title.text = response.data.title;
-        // chartOptions.value.series[1] = {
-        //   data: [
-        //     [Date.UTC(2024, 0, 1), 11],
-        //     [Date.UTC(2024, 0, 2), 202],
-        //     [Date.UTC(2024, 0, 3), 333],
-        //     [Date.UTC(2024, 0, 4), 444],
-        //     [Date.UTC(2024, 0, 5), 555],],
-        //   name: 'Imputed Data',
-        //   showInLegend: true
-        // };
+        response.data.matrix_imputed.forEach((data: number[], index: number) => {
+          chartOptions.value.series[index] = createSeries(index, data);
+        });
       } catch (error) {
         console.error(error);
       }
     }
+
+    const createSeries = (index: number, data: number[]) => ({
+      name: `Imputed Data: Station ${index + 1}`,
+      data,
+      pointStart: Date.UTC(2010, 1, 1),
+      pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+      tooltip: {
+        valueDecimals: 2
+      }
+    });
 
     return {
       submitForm,

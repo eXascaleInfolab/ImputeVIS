@@ -1,22 +1,26 @@
 import time
 import numpy as np
-from M_RNN import M_RNN
+
+import M_RNN
+from M_RNN import MRNN
+from M_RNN import Data_Loader
 
 
-def mrnn_recov(matrix_in, matrix_out, runtime, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob=1.0):
+def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob=1.0,
+               matrix_out:str = "../Results/M-RNN/BAFU_temp.txt"):
     seq_length = 7
 
-    _, trainZ, trainM, trainT, testX, testZ, testM, testT, dmin, dmax, train_size, x = Data_Loader_Incomplete(
+    _, trainZ, trainM, trainT, testX, testZ, testM, testT, dmin, dmax, train_size, x = Data_Loader.Data_Loader_Incomplete(
         seq_length, matrix_in)
 
     start_time = time.time()
 
-    _, Recover_testX = M_RNN(trainZ, trainM, trainT, testZ, testM, testT,
-                             hidden_dim=hidden_dim,
-                             learning_rate=learning_rate,
-                             iterations=iterations,
-                             keep_prob_var=keep_prob
-                             )
+    _, Recover_testX = MRNN.M_RNN(trainZ, trainM, trainT, testZ, testM, testT,
+                                  hidden_dim=hidden_dim,
+                                  learning_rate=learning_rate,
+                                  iterations=iterations,
+                                  keep_prob_var=keep_prob
+                                  )
 
     m = len(x[0])  # columns
 
@@ -66,9 +70,11 @@ def mrnn_recov(matrix_in, matrix_out, runtime, hidden_dim=10, learning_rate=0.01
     else:
         np.savetxt(matrix_out, x, fmt='%f', delimiter=' ')
 
+    return np.asarray(x).tolist()
 
-def main(filename_input: str = "../Datasets/bafu/raw_matrices/BAFU_small_with_NaN.txt",
-         filename_output: str = "../Results/2_BAFU_small_with_NaN.txt", runtime: int = 0):
+
+def main(filename_input: str = "../Datasets/bafu/raw_matrices/BAFU_tiny_with_NaN.txt",
+         filename_output: str = "../Results/M-RNN/BAFU_temp.txt", runtime: int = 0):
     """Executes M-RNN algorithm given an input matrix.
 
     Parameters
@@ -86,7 +92,7 @@ def main(filename_input: str = "../Datasets/bafu/raw_matrices/BAFU_small_with_Na
         The sum of distances to all other candidates.
     """
     # matrix = np.loadtxt(filename_input, delimiter=' ', )
-    mrnn_recov(filename_input, filename_output, runtime)
+    mrnn_recov(filename_input, matrix_out=filename_output, runtime=runtime)
 
 
 # TODO Pass parameters

@@ -11,6 +11,7 @@ from Utils_Thesis import utils, statistics
 
 import IIM.iim as iim_alg
 import M_RNN.testerMRNN
+import M_RNN.Data_Loader
 
 
 # TODO Can be removed later on
@@ -22,9 +23,8 @@ def index(request):
 @csrf_exempt
 def iim(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        name = data.get('name')
-        print(f"Received name: {name}")
+        data, data_set = load_from_request(request)
+        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
 
         # Call the main function with parameters from the request
         alg_code = data.get('alg_code', 'default_alg_code')
@@ -32,15 +32,7 @@ def iim(request):
         # filename_output = data.get('filename_output', '../Results/')
         # runtime = data.get('runtime', 0)
 
-        folder_path = '../Datasets'
-        search_string = 'BAFU_small'
-
-        clean_file_path = utils.find_non_obfuscated_file(folder_path, search_string)
-        print(f'Found clean file at: {clean_file_path}')
-        obfuscated_file_path = utils.find_obfuscated_file(folder_path, search_string)
-        print(f'Found obfuscated file at: {obfuscated_file_path}')
-
-        if obfuscated_file_path is not None:
+        if clean_file_path is not None and obfuscated_file_path is not None:
             imputed_matrix = iim_alg.main(alg_code, obfuscated_file_path)
             ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
             obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
@@ -48,7 +40,7 @@ def iim(request):
             print("Finished iim! ", rmse)
             return JsonResponse({'rmse': rmse, 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}, status=200)
         else:
-            print('No matching file found')
+            print('No matching file found or erroneous configuration, stopping imputation.')
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
@@ -56,9 +48,12 @@ def iim(request):
 @csrf_exempt
 def mrnn(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        name = data.get('name')
-        print(f"Received name: {name}")
+        data, data_set = load_from_request(request)
+        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+        hidden_dim = data.get('hidden_dim', 10)
+        learning_rate = data.get('learning_rate', 0.01)
+        iterations = data.get('iterations', 1000)
+        keep_prob = data.get('keep_prob', 1.0)
 
         # Call the main function with parameters from the request
         alg_code = data.get('alg_code', 'default_alg_code')
@@ -66,9 +61,40 @@ def mrnn(request):
         # filename_output = data.get('filename_output', '../Results/')
         # runtime = data.get('runtime', 0)
 
-        rmse, matrix_imputed = M_RNN.testerMRNN.main(alg_code)
-        print("finished MRNN! ", rmse)
+        if clean_file_path is not None and obfuscated_file_path is not None:
 
-        return JsonResponse({'rmse': rmse, 'matrix_imputed': matrix_imputed}, status=200)
+            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
+            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            imputed_matrix = M_RNN.testerMRNN.mrnn_recov(obfuscated_file_path,
+                                                         runtime=0,
+                                                         hidden_dim=hidden_dim,
+                                                         learning_rate=learning_rate,
+                                                         iterations=iterations,
+                                                         keep_prob=keep_prob
+                                                         )
+            rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            print("Finished iim! ", rmse)
+            return JsonResponse({'rmse': rmse, 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
+                                , status=200)
+        else:
+            print('No matching file found or erroneous configuration, stopping imputation.')
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
+
+def load_from_request(request):
+    data = json.loads(request.body)
+    name = data.get('name')
+    print(f"Received name: {name}")
+    data_set = data.get('data_set')
+    print(f"Received dataset: {data_set}")
+    return data, data_set
+
+
+def get_file_paths(search_string: str = 'BAFU_small'):
+    folder_path = '../Datasets'
+    clean_file_path = utils.find_non_obfuscated_file(folder_path, search_string)
+    print(f'Found clean file at: {clean_file_path}')
+    obfuscated_file_path = utils.find_obfuscated_file(folder_path, search_string)
+    print(f'Found obfuscated file at: {obfuscated_file_path}')
+    return clean_file_path, obfuscated_file_path

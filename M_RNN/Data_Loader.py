@@ -24,6 +24,8 @@ def Data_Loader_Incomplete(seq_length, filename):
         return numerator / (denominator + 1e-8), dmin, dmax
 
     # %% Data Preprocessing
+    print("Loading data...")
+    print(filename)
     xy = np.loadtxt(filename, delimiter=" ", skiprows=0)
     # xy = xy[::-1]
     xy, dmin, dmax = MinMaxScaler(xy)

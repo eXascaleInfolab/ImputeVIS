@@ -14,8 +14,8 @@
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
-            <option value="Bafu">Bafu</option>
-            <option value="TODO">Other Data</option>
+            <option value="Bafu_small">BAFU 1/2 Size</option>
+            <option value="Bafu_tiny">Bafu 1/4 Size</option>
           </select>
         </div>
         <div class="mb-3">
@@ -55,37 +55,94 @@ export default {
   },
   setup() {
     const alg_code = ref('Connection Unimplemented');
-    const dataSelect = ref('Bafu') // Default data is BAFU
+    const dataSelect = ref('Bafu_tiny') // Default data is BAFU
     const numberSelect = ref(1); // Default selected learning neighborsx§ is 1
     const typeSelect = ref('Normal'); // Default selected type is "Normal"
     const rmse = ref(null);
 
+
     const chartOptions = ref({
+      credits: {
+        enabled: false
+      },
       title: {
         text: 'Time-series Data'
       },
       xAxis: {
         type: 'datetime'
       },
-      series: [{
-        data: [
-          [Date.UTC(2023, 0, 1), 1],
-          [Date.UTC(2023, 0, 2), 2],
-          [Date.UTC(2023, 0, 3), 3],
-          [Date.UTC(2023, 0, 4), 4],
-          [Date.UTC(2023, 0, 5), 5],
-          //... more data points
-        ],
-        name: 'Example Data',
-        showInLegend: true
-      }]
+      chart: {
+        type: 'line',
+        zoomType: 'x',
+        panning: true,
+        panKey: 'shift'
+      },
+      rangeSelector: {
+            x: 0,
+            // floating: true,
+            style: {
+                color: 'black',
+                fontWeight: 'bold',
+                position: 'relative',
+                "font-family": "Arial"
+            },
+            enabled: true,
+            inputEnabled: false,
+            // inputDateFormat: '%y',
+            // inputEditDateFormat: '%y',
+            buttons: [{
+                type: 'hour',
+                count: 1,
+                text: 'H'
+            },
+                {
+                    type: 'day',
+                    count: 1,
+                    text: 'D'
+                },
+
+                 {
+                    type: 'month',
+                    count: 1,
+                    text: 'M'
+                },
+                 {
+                    type: 'year',
+                    count: 1,
+                    text: 'Y'
+                },
+
+                {
+                    type: 'all',
+                    text: 'All',
+                    align: 'right',
+                    x: 1000,
+                    y: 100,
+                }],
+        },
+        series: [{
+          name: 'Original Data',
+          data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random()*0)),
+          pointStart: Date.UTC(2010, 1, 1),
+          pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+          tooltip: {
+            valueDecimals: 2
+          }
+        }],
+      // plotOptions: {
+      //   series: {
+      //     pointStart: Date.UTC(2010, 0, 1),
+      //     pointInterval: 100000 * 1000 // one day
+      //   }
+      // },
     });
 
     const submitForm = async () => {
       try {
         const response = await axios.post('http://localhost:8000/api/mrnn/',
             {
-              alg_code: alg_code.value,
+              alg_code: "mrnn",
+              data_set: dataSelect.value
             },
             {
               headers: {
@@ -94,17 +151,25 @@ export default {
             }
         );
         rmse.value = response.data.rmse;
-        console.log(dataSelect.value); // You can use these in your form submission
-        console.log(numberSelect.value); // You can use these in your form submission
-        console.log(typeSelect.value); // You can use these in your form submission
-        console.log(response.data);
+        response.data.matrix_imputed.forEach((data: number[], index: number) => {
+          chartOptions.value.series[index] = createSeries(index, data);
+        });
       } catch (error) {
         console.error(error);
       }
     }
 
+    const createSeries = (index: number, data: number[]) => ({
+      name: `Imputed Data: Station ${index + 1}`,
+      data,
+      pointStart: Date.UTC(2010, 1, 1),
+      pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+      tooltip: {
+        valueDecimals: 2
+      }
+    });
+
     return {
-      alg_code,
       submitForm,
       rmse,
       chartOptions,
