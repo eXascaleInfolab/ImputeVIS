@@ -57,7 +57,7 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
 def determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan):
     individual_rmse = []
 
-    complete_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_small.txt", delimiter=' ', )
+    complete_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=' ', )
     for result in imputation_result:
         matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
         individual_rmse.append((result[2] - complete_matrix[result[0], result[1]]) ** 2)
@@ -112,7 +112,7 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
             X = complete_tuples[learning_neighbors[tuple_index]][:, ~nan_indicator]
             y = complete_tuples[learning_neighbors[tuple_index]][:, nan_indicator]
             models = [Ridge(tol=1e-20).fit(X_i.reshape(1, -1), y_i) for X_i, y_i in zip(X, y)]
-            model_params[tuple_index, nan_index] = models
+            model_params[tuple_index, nan_index] = [(model.coef_, model.intercept_) for model in models]
         else:
             # If there are multiple NaNs in the tuple
             for missing_value_index in np.where(nan_indicator)[0]:
@@ -124,7 +124,7 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
                 X = complete_tuples[learning_neighbors[tuple_index]][:, ~current_nan_indicator]
                 y = complete_tuples[learning_neighbors[tuple_index]][:, current_nan_indicator]
                 models = [Ridge(tol=1e-20).fit(X_i.reshape(1, -1), y_i) for X_i, y_i in zip(X, y)]
-                model_params[tuple_index, missing_value_index] = models
+                model_params[tuple_index, missing_value_index] = [(model.coef_, model.intercept_) for model in models]
 
     return model_params
 
@@ -160,7 +160,7 @@ def imputation(incomplete_tuples: np.ndarray, lr_coef_and_threshold: np.ndarray)
         # For each missing attribute
         for missing_attribute_index in missing_attributes_indices:
             # Predict the missing values using the learned Ridge models
-            candidate_suggestions = np.array([model.predict(incomplete_tuple_no_nan.reshape(1, -1)) for model in lr_coef_and_threshold[i, missing_attribute_index]])
+            candidate_suggestions = np.array([coef @ incomplete_tuple_no_nan + intercept for coef, intercept in lr_coef_and_threshold[i, missing_attribute_index]])
 
             distances = compute_distances(candidate_suggestions)
             weights = compute_weights(distances)
@@ -344,7 +344,7 @@ def count_nans(list_of_arrays: list[np.ndarray]):
     """
     return sum(np.isnan(arr).sum() for arr in list_of_arrays)
 
-def main(alg_code: str, filename_input: str = "../Datasets/bafu/raw_matrices/BAFU_tiny_with_NaN.txt",
+def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_80.txt",
          filename_output: str = "../Results/2_BAFU_tiny_with_NaN.txt", runtime: int = 0):
     """Executes the imputation algorithm given an input matrix.
 
@@ -414,11 +414,11 @@ def main(alg_code: str, filename_input: str = "../Datasets/bafu/raw_matrices/BAF
 
 
 if __name__ == '__main__':
-    dataset = "BAFU_tiny_with_NaN.txt"
+    dataset = "BAFU_tiny_obfuscated_10.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
     # example arguments: "iim 5a" -> 5 neighbors & adaptive, "iim 10" -> 10  neighbors and not adaptive
     neighbors = str(1)
     adaptive_flag = ""
-    main("iim" + " " + neighbors + adaptive_flag, "../Datasets/bafu/raw_matrices/" + dataset, "../Results/"
+    main("iim" + " " + neighbors + adaptive_flag, "../Datasets/bafu/obfuscated/" + dataset, "../Results/"
          + neighbors + adaptive_flag + "_" + dataset, 0)
