@@ -3,6 +3,8 @@
   <div class="d-flex">
     <div class="col-lg-8">
       <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
+      <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
+      <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
@@ -80,6 +82,8 @@ export default {
     const numberSelect = ref(1); // Default selected learning neighborsx§ is 1
     const typeSelect = ref('Normal'); // Default selected type is "Normal"
     const rmse = ref(null);
+    const mae = ref(null);
+    const mi = ref(null);
 
 
     const chartOptions = ref({
@@ -176,7 +180,9 @@ export default {
               }
             }
         );
-        rmse.value = response.data.rmse;
+        rmse.value = response.data.rmse.toFixed(3);
+        mae.value = response.data.mae.toFixed(3);
+        mi.value = response.data.mi.toFixed(3);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           chartOptions.value.series[index] = createSeries(index, data);
         });
@@ -198,6 +204,8 @@ export default {
     return {
       submitForm,
       rmse,
+      mae,
+      mi,
       chartOptions,
       numberSelect,
       typeSelect,

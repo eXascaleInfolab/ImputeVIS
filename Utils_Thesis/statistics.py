@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.feature_selection import mutual_info_regression
 import sys
 import os
 
@@ -38,7 +39,80 @@ def determine_rmse(ground_truth_matrix, imputed_matrix, obfuscated_matrix):
     return rmse
 
 
-# def determine_mae(ground_truth_matrix, imputed_matrix, obfuscated_matrix):
+def determine_mae(ground_truth_matrix, imputed_matrix, obfuscated_matrix):
+    """
+    Calculate the Mean Absolute Error (MAE) between ground truth data and imputed data.
+
+    Parameters
+    ----------
+    ground_truth_matrix : numpy.ndarray
+        The ground truth matrix.
+    imputed_matrix : numpy.ndarray
+        The imputed matrix.
+    obfuscated_matrix : numpy.ndarray
+        The obfuscated matrix
+
+    Returns
+    -------
+    float
+        The MAE between the ground truth and the imputed matrix.
+    """
+
+    individual_errors = []
+    tuples_with_nan = np.isnan(obfuscated_matrix).any(axis=1)
+
+    incomplete_tuples_rows = np.array(np.where(tuples_with_nan == True))
+    for row in (incomplete_tuples_rows[0]):
+        nan_positions = np.where(np.isnan(obfuscated_matrix[row]) == True)
+        for column in nan_positions[0]:
+            ground_truth_value = ground_truth_matrix[row][column]
+            imputed_value = imputed_matrix[row][column]
+            individual_errors.append(np.abs(ground_truth_value - imputed_value))
+
+    mae = np.mean(individual_errors)
+    return mae
+
+
+def determine_mutual_info(ground_truth_matrix, imputed_matrix, nan_matrix):
+    """
+    Calculate the mutual information between ground truth data and imputed data.
+    https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_regression.html
+
+    Parameters
+    ----------
+    ground_truth_matrix : numpy.ndarray
+        The ground truth matrix.
+    imputed_matrix : numpy.ndarray
+        The imputed matrix.
+    nan_matrix : numpy.ndarray
+        The matrix with NaN values.
+
+    Returns
+    -------
+    mi : numpy.ndarray
+        Mutual information between the imputed matrix and the ground truth matrix.
+
+    Raises
+    ------
+    ValueError
+        If the shapes of ground_truth_matrix and imputed_matrix are not the same.
+    """
+
+    # Check if the matrices have the same shape, otherwise raise an error
+    if ground_truth_matrix.shape != imputed_matrix.shape:
+        raise ValueError("The shapes of ground_truth_matrix and imputed_matrix are not the same")
+
+    # Get locations of NaN values in the nan_matrix
+    nan_locations = np.isnan(nan_matrix)
+
+    # Flatten ground_truth_matrix to be used as the target vector
+    target_vector = ground_truth_matrix[nan_locations].flatten()
+
+    # Calculate mutual information between imputed_matrix and target_vector
+    mi = mutual_info_regression(imputed_matrix[nan_locations].reshape(-1, 1), target_vector, random_state=42)
+
+    print("Mutual information:", mi)
+    return mi[0]
 
 # Uncomment for testing and troubleshooting
 # sys.path.insert(0, os.path.abspath(".."))

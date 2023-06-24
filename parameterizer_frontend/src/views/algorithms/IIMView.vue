@@ -9,6 +9,8 @@
 <!--      2010 – 2015 resulting in 80k records per time series.-->
 <!--      </p>-->
       <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
+      <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
+      <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
@@ -46,6 +48,7 @@ import {Chart, StockChart, MapChart, ChartCompositionApi} from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
+import {round} from "@popperjs/core/lib/utils/math";
 
 // Initialize exporting modules
 HC_exporting(Highcharts)
@@ -64,6 +67,8 @@ export default {
     const numberSelect = ref(1); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
     const rmse = ref(null);
+    const mae = ref(null);
+    const mi = ref(null);
 
     //TODO Improve tooltip
     const chartOptions = ref({
@@ -157,7 +162,9 @@ export default {
               }
             }
         );
-        rmse.value = response.data.rmse;
+        rmse.value = response.data.rmse.toFixed(3);
+        mae.value = response.data.mae.toFixed(3);
+        mi.value = response.data.mi.toFixed(3);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           chartOptions.value.series[index] = createSeries(index, data);
         });
@@ -179,6 +186,8 @@ export default {
     return {
       submitForm,
       rmse,
+      mae,
+      mi,
       chartOptions,
       numberSelect,
       typeSelect,

@@ -19,7 +19,6 @@ def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
-
 @csrf_exempt
 def iim(request):
     if request.method == 'POST':
@@ -37,8 +36,11 @@ def iim(request):
             ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
             obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished IIM! RMSE: ", rmse)
-            return JsonResponse({'rmse': rmse, 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}, status=200)
+            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
+                                 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}, status=200)
         else:
             print('No matching file found or erroneous configuration, stopping imputation.')
 
@@ -72,8 +74,11 @@ def mrnn(request):
                                                          keep_prob=keep_prob
                                                          )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished M-RNN! RMSE: ", rmse)
-            return JsonResponse({'rmse': rmse, 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
+            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
+                                 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
                                 , status=200)
         else:
             print('No matching file found or erroneous configuration, stopping imputation.')
