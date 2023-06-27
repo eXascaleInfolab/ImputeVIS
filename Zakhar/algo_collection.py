@@ -122,7 +122,7 @@ def native_cd(__py_matrix, __py_rank):
 
 
 def native_cdrec(__py_matrix, __py_rank):
-    # type: (__numpy_import.array, int, float) -> __numpy_import.array
+    # type: (__numpy_import.array, int) -> __numpy_import.array
     """
     Recovers missing values (designated as NaN) in a matrix
     :param __py_matrix: 2D array
@@ -159,15 +159,14 @@ def native_cdrec(__py_matrix, __py_rank):
 # end function
 
 
-def native_cdrec_param(__py_matrix, __py_rank, __py_eps, __py_normalize, __py_signvectorstrategy):
-    # type: (__numpy_import.array, int, float, bool, int, string) -> __numpy_import.array
+def native_cdrec_param(__py_matrix, __py_rank, __py_eps, __py_iters):
+    # type: (__numpy_import.array, int, float, int) -> __numpy_import.array
     """
     Recovers missing values (designated as NaN) in a matrix. Supports additional parameters
     :param __py_matrix: 2D array
     :param __py_rank: truncation rank to be used (0 = detect truncation automatically)
     :param __py_eps: threshold for difference during recovery
-    :param __py_normalize: flag whether to use normalization before the recovery
-    :param __py_signvectorstrategy: sign vector strategy ("default" will use the default one of the library)
+    :param __py_iters: maximum number of allowed iterations for the algorithms
     :return: 2D array recovered matrix
     """
     __py_sizen = len(__py_matrix);
@@ -175,52 +174,103 @@ def native_cdrec_param(__py_matrix, __py_rank, __py_eps, __py_normalize, __py_si
 
     assert (__py_rank >= 0);
     assert (__py_rank < __py_sizem);
-    assert (__py_optimization >= 0);
-
-    __py_strategycode = -1;
-    if str.lower(__py_signvectorstrategy) == "default":
-        __py_strategycode = 0;
-    elif str.lower(__py_signvectorstrategy) == "issv-base":
-        __py_strategycode = 1;
-    elif str.lower(__py_signvectorstrategy) == "issv+-base":
-        __py_strategycode = 2;
-    elif str.lower(__py_signvectorstrategy) == "issv-init":
-        __py_strategycode = 11;
-    elif str.lower(__py_signvectorstrategy) == "issv+-init":
-        __py_strategycode = 12;
-    elif str.lower(__py_signvectorstrategy) == "lsv-base":
-        __py_strategycode = 21;
-    elif str.lower(__py_signvectorstrategy) == "lsv-noinit":
-        __py_strategycode = 22;
-
-    assert (__py_strategycode != -1);
+    assert (__py_eps > 0);
+    assert (__py_iters > 0);
 
     __ctype_sizen = __native_c_types_import.c_ulonglong(__py_sizen);
     __ctype_sizem = __native_c_types_import.c_ulonglong(__py_sizem);
+    
     __ctype_rank = __native_c_types_import.c_ulonglong(__py_rank);
     __ctype_eps = __native_c_types_import.c_double(__py_eps);
-    
-    if __py_normalize:
-        __ctype_normalize = __native_c_types_import.c_ulonglong(1);
-    else:
-        __ctype_normalize = __native_c_types_import.c_ulonglong(0);
-    # end if
-    
-    __ctype_strategycode = __native_c_types_import.c_ulonglong(__py_strategycode);
+    __ctype_iters = __native_c_types_import.c_ulonglong(__py_iters);
 
     # Native code uses linear matrix layout, and also it's easier to pass it in like this
     __ctype_input_matrix = __marshal_as_native_column(__py_matrix);
 
     # extern "C" void
-    # recoveryOfMissingValuesParametrized(
+    # cdrec_imputation_parametrized(
     #         double *matrixNative, size_t dimN, size_t dimM,
-    #         size_t truncation, double epsilon,
-    #         size_t useNormalization, size_t signVectorStrategyCode
+    #         size_t truncation, double epsilon, size_t iters
     # )
-    __ctype_libcd_native.recoveryOfMissingValuesParametrized(
+    __ctype_libcd_native.cdrec_imputation_parametrized(
         __ctype_input_matrix, __ctype_sizen, __ctype_sizem,
-        __ctype_rank, __ctype_eps,
-        __ctype_normalize, __ctype_strategycode
+        __ctype_rank, __ctype_eps, __ctype_iters
+    );
+
+    __py_recovered = __marshal_as_numpy_column(__ctype_input_matrix, __py_sizen, __py_sizem);
+
+    return __py_recovered;
+
+# end function
+
+
+def native_stmvl(__py_matrix):
+    # type: (__numpy_import.array) -> __numpy_import.array
+    """
+    Recovers missing values (designated as NaN) in a matrix
+    :param __py_matrix: 2D array
+    :return: 2D array recovered matrix
+    """
+    __py_sizen = len(__py_matrix);
+    __py_sizem = len(__py_matrix[0]);
+
+    __ctype_sizen = __native_c_types_import.c_ulonglong(__py_sizen);
+    __ctype_sizem = __native_c_types_import.c_ulonglong(__py_sizem);
+
+    # Native code uses linear matrix layout, and also it's easier to pass it in like this
+    __ctype_input_matrix = __marshal_as_native_column(__py_matrix); # MUTABLE
+
+    # extern "C" void
+    # stmvl_imputation_simple(
+    #         double *matrixNative, size_t dimN, size_t dimM
+    # )
+    __ctype_libcd_native.stmvl_imputation_simple(
+        __ctype_input_matrix, __ctype_sizen, __ctype_sizem
+    );
+
+    __py_recovered = __marshal_as_numpy_column(__ctype_input_matrix, __py_sizen, __py_sizem);
+
+    return __py_recovered;
+
+# end function
+
+
+def native_stmvl_param(__py_matrix, __py_window, __py_gamma, __py_alpha):
+    # type: (__numpy_import.array, int, float, int) -> __numpy_import.array
+    """
+    Recovers missing values (designated as NaN) in a matrix. Supports additional parameters
+    :param __py_matrix: 2D array
+    :param __py_window: window size for temporal component
+    :param __py_gamma: smoothing parameter for temporal weight
+    :param __py_alpha: power for spatial weight
+    :return: 2D array recovered matrix
+    """
+    __py_sizen = len(__py_matrix);
+    __py_sizem = len(__py_matrix[0]);
+
+    assert (__py_window >= 2);
+    assert (__py_gamma > 0.0);
+    assert (__py_gamma < 1.0);
+    assert (__py_alpha > 0.0);
+
+    __ctype_sizen = __native_c_types_import.c_ulonglong(__py_sizen);
+    __ctype_sizem = __native_c_types_import.c_ulonglong(__py_sizem);
+    
+    __ctype_window = __native_c_types_import.c_ulonglong(__py_window);
+    __ctype_gamma = __native_c_types_import.c_double(__py_gamma);
+    __ctype_alpha = __native_c_types_import.c_double(__py_alpha);
+
+    # Native code uses linear matrix layout, and also it's easier to pass it in like this
+    __ctype_input_matrix = __marshal_as_native_column(__py_matrix);
+
+    # extern "C" void
+    # stmvl_imputation_parametrized(
+    #         double *matrixNative, size_t dimN, size_t dimM,
+    #         size_t window_size, double gamma, double alpha
+    # )
+    __ctype_libcd_native.stmvl_imputation_parametrized(
+        __ctype_input_matrix, __ctype_sizen, __ctype_sizem,
+        __ctype_window, __ctype_gamma, __ctype_alpha
     );
 
     __py_recovered = __marshal_as_numpy_column(__ctype_input_matrix, __py_sizen, __py_sizem);
