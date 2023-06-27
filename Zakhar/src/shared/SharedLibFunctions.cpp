@@ -120,34 +120,98 @@ cdrec_imputation_simple(
     // [!] input already modified
 }
 
-/*
 void
-recoveryOfMissingValuesParametrized(
+cdrec_imputation_parametrized(
         double *matrixNative, size_t dimN, size_t dimM,
-        size_t truncation, double epsilon,
-        size_t useNormalization, size_t optimization,
-        size_t signVectorStrategyCode
+        size_t truncation, double epsilon, size_t iters
 )
 {
-    Algebra::Matrix matrix(dimN, dimM, matrixNative, true);
+    arma::mat input = marshal_as_arma(matrixNative, dimN, dimM);
     
-    Algorithms::MissingValueRecovery rmv(matrix);
+    // Local
+    int64_t result;
+    Algorithms::CDMissingValueRecovery rmv(input, iters, epsilon);
+    std::chrono::steady_clock::time_point begin;
+    std::chrono::steady_clock::time_point end;
     
+    // Recovery
     rmv.setReduction(truncation);
-    rmv.epsPrecision = epsilon;
-    rmv.useNormalization = useNormalization != 0;
-    rmv.optimization = optimization;
+    rmv.disableCaching = false;
+    rmv.useNormalization = false;
     
-    if (signVectorStrategyCode > 0)
-    {
-        Algorithms::CDSignVectorStrategy signVectorStrategy = (Algorithms::CDSignVectorStrategy) signVectorStrategyCode;
-        assert(Algorithms::isValidStrategy(signVectorStrategy));
-        rmv.passSignVectorStrategy(signVectorStrategy);
-    }
-    
+    begin = std::chrono::steady_clock::now();
     rmv.autoDetectMissingBlocks();
     rmv.performRecovery(truncation == 0);
+    end = std::chrono::steady_clock::now();
+    
+    result = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+    
+    verifyRecovery(input);
+    
+    (void)result;
+    
     // [!] input already modified
 }
-*/
+
+void
+stmvl_imputation_simple(
+        double *matrixNative, size_t dimN, size_t dimM
+)
+{
+    arma::mat input = marshal_as_arma(matrixNative, dimN, dimM);
+    
+    // Local
+    int64_t result;
+
+    Algorithms::ST_MVL stmvl(input, 2.0, 0.85, 7);
+
+    std::chrono::steady_clock::time_point begin;
+    std::chrono::steady_clock::time_point end;
+
+    // Recovery
+
+    begin = std::chrono::steady_clock::now();
+    stmvl.Run();
+    end = std::chrono::steady_clock::now();
+
+    result = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+    
+    verifyRecovery(input);
+    
+    (void)result;
+    
+    // [!] input already modified
+}
+
+void
+stmvl_imputation_parametrized(
+        double *matrixNative, size_t dimN, size_t dimM,
+        size_t window_size, double gamma, double alpha
+)
+{
+    arma::mat input = marshal_as_arma(matrixNative, dimN, dimM);
+    
+    // Local
+    int64_t result;
+
+    Algorithms::ST_MVL stmvl(input, alpha, gamma, window_size);
+
+    std::chrono::steady_clock::time_point begin;
+    std::chrono::steady_clock::time_point end;
+
+    // Recovery
+
+    begin = std::chrono::steady_clock::now();
+    stmvl.Run();
+    end = std::chrono::steady_clock::now();
+
+    result = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+    
+    verifyRecovery(input);
+    
+    (void)result;
+    
+    // [!] input already modified
+}
+
 }

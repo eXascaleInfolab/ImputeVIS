@@ -42,4 +42,21 @@ cdrec_imputation_simple(
         size_t truncation
 );
 
+void
+cdrec_imputation_parametrized(
+        double *matrixNative, size_t dimN, size_t dimM,
+        size_t truncation, double epsilon, size_t iters
+);
+
+void
+stmvl_imputation_simple(
+        double *matrixNative, size_t dimN, size_t dimM
+);
+
+void
+stmvl_imputation_parametrized(
+        double *matrixNative, size_t dimN, size_t dimM,
+        size_t window_size, double gamma, double alpha
+);
+
 }

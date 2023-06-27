@@ -35,9 +35,8 @@ inline double ST_MVL::ComputeTemporalWeight(uint64_t timespan)
 
 // construction
 
-ST_MVL::ST_MVL(arma::mat &_missing, const std::string &latlong,
-               double _alpha, double _gamma,
-               uint64_t _windowSize
+ST_MVL::ST_MVL(arma::mat &_missing, double _alpha,
+               double _gamma, uint64_t _windowSize
 )
         : rowCount(_missing.n_rows), columnCount(_missing.n_cols),
           alpha(_alpha), gamma(_gamma),
@@ -52,21 +51,23 @@ ST_MVL::ST_MVL(arma::mat &_missing, const std::string &latlong,
     std::vector<double> latitude;
     std::vector<double> longitude;
     
-    std::ifstream latlongFile;
-    latlongFile.open(latlong, std::ios::in);
+    double lat = 39.954047;
+    double lng = 116.348991;
     
-    std::string buffer;
-    std::getline(latlongFile, buffer); //drop header line
-    
-    while (latlongFile.peek() != EOF)
+    for (uint64_t i = 0; i < columnCount; i++)
     {
-        std::getline(latlongFile, buffer, ',');//drop station #
-        std::getline(latlongFile, buffer, ',');//lat
-        latitude.emplace_back(std::stod(buffer));
-        std::getline(latlongFile, buffer);//long
-        longitude.emplace_back(std::stod(buffer));
+        latitude.emplace_back(lat);
+        longitude.emplace_back(lng);
+        
+        if (i % 2 == 0)
+        {
+            lat += 0.01;
+        }
+        else
+        {
+            lng += 0.01;   
+        }
     }
-    latlongFile.close();
     
     //
     // Step 2 : process distances
@@ -102,49 +103,19 @@ ST_MVL::ST_MVL(arma::mat &_missing, const std::string &latlong,
     }
 }
 
-void ST_MVL::Run(bool isBlockMissing)
+void ST_MVL::Run()
 {
-    if (isBlockMissing)
-    {
-        InitializeMissing();
-    }
+    InitializeMissing();
     
-    GenerateTrainingCase();
+    std::vector<arma::mat> trainingMatrices = GenerateTrainingCase();
     
-    FourView(columnCount);
+    arma::mat equation = FourView(columnCount, trainingMatrices);
     
-    doSTMVL();
+    doSTMVL(equation);
 }
 
-void ST_MVL::doSTMVL()
+void ST_MVL::doSTMVL(arma::mat &equation)
 {
-    std::cout << "Do STMVL... " << std::endl;
-    
-    std::string buffer;
-    arma::mat equation(columnCount, 5); // 5 means 4 four views and residual
-    
-    std::ifstream srEquation;
-    srEquation.open(equationFile, std::ios::in);
-    
-    uint64_t count = 0;
-    
-    while (srEquation.peek() != EOF)
-    {
-        for (uint64_t i = 0; i < 4; ++i)
-        {
-            std::getline(srEquation, buffer, ',');
-            equation(count, i) = std::stod(buffer);
-        }
-        // i=5
-        {
-            std::getline(srEquation, buffer);
-            equation(count, 4) = std::stod(buffer);
-        }
-        // tick
-        count++;
-    }
-    srEquation.close();
-    
     for (uint64_t i = 0; i < rowCount; i++)
     {
         for (uint64_t j = 0; j < columnCount; j++)
@@ -161,8 +132,6 @@ void ST_MVL::doSTMVL()
 
 void ST_MVL::InitializeMissing()
 {
-    std::cout << "Initialize Missing... " << std::endl;
-    
     for (uint64_t i = 0; i < rowCount; i++)
     {
         for (uint64_t j = 0; j < columnCount; j++)
@@ -490,9 +459,9 @@ double ST_MVL::IDW(uint64_t ti, uint64_t tj, arma::mat &dataMatrix)
     return spatialPredict;
 }
 
-void ST_MVL::GenerateTrainingCase()
+std::vector<arma::mat> ST_MVL::GenerateTrainingCase()
 {
-    std::cout << "Generate Training Case... " << std::endl;
+    std::vector<arma::mat> trainingMatrices(columnCount);
     
     for (uint64_t j = 0; j < columnCount; j++)
     {
@@ -509,10 +478,9 @@ void ST_MVL::GenerateTrainingCase()
             }
         }
         
-        std::ofstream swTrain;
-        swTrain.open(trainingFolder + "train_" + std::to_string(j) + ".txt", std::ios::out);
-        swTrain << caseCount << std::endl;
-        swTrain << std::setprecision(15);//appx. matches C#
+        trainingMatrices[j] = arma::zeros(caseCount, viewCount + 1);
+
+        uint64_t counter = 0;
         
         for (uint64_t i = 0; i < rowCount; i++)
         {
@@ -520,13 +488,14 @@ void ST_MVL::GenerateTrainingCase()
             {
                 if (checkContextData(i, j) == 1)
                 {
-                    outputCase(i, j, swTrain);
+                    outputCase(i, j, trainingMatrices[j], counter);
+                    counter++;
                 }
             }
         }
-        
-        swTrain.close();
     }
+    
+    return trainingMatrices;
 }
 
 uint64_t ST_MVL::checkContextData(uint64_t ti, uint64_t tj)
@@ -571,7 +540,7 @@ uint64_t ST_MVL::checkContextData(uint64_t ti, uint64_t tj)
     return 1;
 }
 
-void ST_MVL::outputCase(uint64_t i, uint64_t j, std::ofstream &swTrain)
+void ST_MVL::outputCase(uint64_t i, uint64_t j, arma::mat &trainingMatrix, uint64_t position)
 {
     double result_UCF = UCF(i, j, temporaryMatrix);
     double result_ICF = ICF(i, j, temporaryMatrix);
@@ -580,89 +549,36 @@ void ST_MVL::outputCase(uint64_t i, uint64_t j, std::ofstream &swTrain)
     
     if (!ismissing(result_UCF) && !ismissing(result_ICF) && !ismissing(result_IDW) && !ismissing(result_SES))
     {
-        swTrain << missingMatrix.at(i, j) << "," << result_UCF << "," << result_IDW << "," << result_ICF << ","
-                << result_SES << std::endl;
+        trainingMatrix.at(position, 0) = missingMatrix.at(i, j);
+        trainingMatrix.at(position, 1) = result_UCF;
+        trainingMatrix.at(position, 2) = result_IDW;
+        trainingMatrix.at(position, 3) = result_ICF;
+        trainingMatrix.at(position, 4) = result_SES;
     }
 }
 
-void ST_MVL::FourView(uint64_t sensorCount)
+arma::mat ST_MVL::FourView(uint64_t sensorCount, const std::vector<arma::mat> trainingMatrices)
 {
-    // local const
-    
-    std::cout << "Run Square Error..." << std::endl;
-    
-    std::ofstream sw;
-    sw.open(equationFile, std::ios::out);
-    sw << std::setprecision(15);//appx. matches C#
-    //std::cout << "training error(MAE): " << std::endl;
+    arma::mat equation = arma::zeros(sensorCount, viewCount + 1);
     
     for (uint64_t j = 0; j < sensorCount; j++)
     {
-        std::ifstream sr;
-        sr.open(trainingFolder + "train_" + std::to_string(j) + ".txt", std::ios::in);
-        std::string buffer;
-        uint64_t count = 0;
-        
-        std::getline(sr, buffer);
-        uint64_t rowNum = std::stoull(buffer);
-        
         std::array<double, viewCount + 1> a{};
         std::array<double, viewCount> v{};
         std::array<double, 4> dt{};
-        arma::mat x(viewCount, rowNum);
-        arma::vec y(rowNum);
         
-        while (sr.peek() != EOF)
-        {
-            std::getline(sr, buffer);
-            
-            const std::string separator = ",";
-            
-            size_t pos = 0;
-            
-            // i = -1
-            {
-                size_t newpos = buffer.find(separator, pos + 1);
-                y[count] = std::stod(buffer.substr(pos, newpos - pos));
-                pos = newpos + 1;
-            }
-            
-            uint64_t i = 0;
-            while (pos < buffer.size())
-            {
-                size_t newpos;
-                newpos = buffer.find(separator, pos + 1);
-                newpos = newpos == std::string::npos ? buffer.length() : newpos;
-                
-                std::string temp = buffer.substr(pos, newpos - pos);
-                
-                if (temp.empty())
-                { break; }
-                
-                x(i, count) = std::stod(temp);
-                
-                pos = newpos + 1;
-                
-                i++;
-            }
-            
-            count++;
-        }
-        sr.close();
+        arma::mat x = trainingMatrices[j].cols(1, trainingMatrices[j].n_cols - 1).t();
+        arma::vec y = trainingMatrices[j].col(0);
+        
         sqt2(x, y, a, dt, v);
         
-        sw << a[0] << "," << a[1] << "," << a[2] << "," << a[3] << "," << a[4] << std::endl;
-        
-        double error = 0;
-        for (uint64_t i = 0; i < rowNum; i++)
+        for (uint64_t i = 0; i < viewCount + 1; i++)
         {
-            double vvv = a[0] * x(0, i) + a[1] * x(1, i) + a[2] * x(2, i) + a[3] * x(3, i) + a[4];
-            error += fabs(vvv - y[i]);
+            equation.at(j, i) = a[i];
         }
-        //std::cout << j << "th sensor: " << error / (double)rowNum << std::endl;
     }
     
-    sw.close();
+    return equation;
 }
 
 

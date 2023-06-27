@@ -53,13 +53,12 @@ class ST_MVL
     inline double ComputeTemporalWeight(uint64_t timespan);
     
     // construct
-    explicit ST_MVL(arma::mat &_missing, const std::string &latlong,
-                    double _alpha, double _gamma,
-                    uint64_t _windowSize);
+    explicit ST_MVL(arma::mat &_missing, double _alpha, 
+                    double _gamma, uint64_t _windowSize);
     
-    void Run(bool isBlockMissing);
+    void Run();
     
-    void doSTMVL();
+    void doSTMVL(arma::mat &equation);
     
     void InitializeMissing();
     
@@ -79,13 +78,13 @@ class ST_MVL
     
     double IDW(uint64_t ti, uint64_t tj, arma::mat &dataMatrix);
     
-    void GenerateTrainingCase();
+    std::vector<arma::mat> GenerateTrainingCase();
     
     uint64_t checkContextData(uint64_t ti, uint64_t tj);
     
-    void outputCase(uint64_t i, uint64_t j, std::ofstream &swTrain);
+    void outputCase(uint64_t i, uint64_t j, arma::mat &trainingMatrix, uint64_t position);
     
-    void FourView(uint64_t sensorCount);
+    arma::mat FourView(uint64_t sensorCount, const std::vector<arma::mat> trainingMatrices);
     
     
     void sqt2(const arma::mat &x,
