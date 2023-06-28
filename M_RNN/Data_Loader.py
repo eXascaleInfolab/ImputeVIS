@@ -76,8 +76,8 @@ def Data_Loader_Incomplete(seq_length, filename):
 
         # %% Time gap generation
         t = np.ones([seq_length, col_no])
-        for j in range(col_no):
-            for k in range(seq_length):
+        for j in range(col_no):  # for each column
+            for k in range(seq_length):  # for each row (defined by length of sequences)
                 if (k > 0):
                     if (m[k, j] == 0):
                         t[k, j] = t[k - 1, j] + 1
@@ -93,7 +93,8 @@ def Data_Loader_Incomplete(seq_length, filename):
     '''
 
     # %% Train / Test Division
-    # train_size = int(len(dataX) * train_rate)
+    train_rate = 0.01
+    train_size = int(len(dataX) * train_rate)
 
     trainX, testX = np.array(dataX[0:train_size]), np.array(dataX[train_size:len(dataX)])
     trainZ, testZ = np.array(dataZ[0:train_size]), np.array(dataZ[train_size:len(dataX)])

@@ -100,12 +100,3 @@ if __name__ == '__main__':
 
     main("../Datasets/bafu/raw_matrices/" + dataset, "../Results/M-RNN/" + dataset, 0)
 
-
-# TODO: To have less issues with Django imports, duplicate Data_Loader.py here:
-# %% Google data loading
-
-'''
-1. train_rate: training / testing set ratio
-2. missing_rate: the amount of introducing missingness
-'''
-
