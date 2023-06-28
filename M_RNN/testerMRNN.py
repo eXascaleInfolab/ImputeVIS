@@ -61,6 +61,9 @@ def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iteratio
     # reverse changes introduced to data
     denominator = dmax - dmin
     x = (x * denominator) + dmin
+    # verification to check for NaN. If found, assign absurdly high value to them.
+    nan_mask = np.isnan(x)
+    x[nan_mask] = np.sqrt(np.finfo('d').max / 100000.0)
     #x = x[::-1]
 
     print("Time (M-RNN):", (timev * 1000 * 1000))
@@ -96,9 +99,9 @@ def main(filename_input: str = "../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated
 
 
 if __name__ == '__main__':
-    dataset = "BAFU_tiny.txt"
+    dataset = "BAFU_tiny_obfuscated_10.txt"
 
-    main("../Datasets/bafu/raw_matrices/" + dataset, "../Results/M-RNN/" + dataset, 0)
+    main("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", "../Results/M-RNN/" + dataset, 0)
 
 
 # TODO: To have less issues with Django imports, duplicate Data_Loader.py here:
