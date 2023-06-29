@@ -22,6 +22,8 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <RouterLink class="dropdown-item" to="/algorithms/iim">IIM (WIP)</RouterLink>
               <RouterLink class="dropdown-item" to="/algorithms/m-rnn">M-RNN (WIP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/algorithms/cdrec">CDRec (WIP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/algorithms/stmvl">STMVL (WIP)</RouterLink>
             </div>
           </li>
           <li class="nav-item dropdown">
@@ -29,17 +31,15 @@
               Datasets
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-data">
-              <RouterLink class="dropdown-item" to="#">BAFU TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="#">Dataset 2 TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="#">Dataset 3 TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="#">Dataset 4 TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="#">Dataset 5 TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="/datasets/bafu">BAFU TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="/datasets/chlorine">Chlorine TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="/datasets/climate">Climate TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="/datasets/drift">Drift TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="/datasets/electricity">Electricity TODO</RouterLink>
+              <RouterLink class="dropdown-item" to="/datasets/meteo">Meteo TODO</RouterLink>
             </div>
           </li>
           <!-- Add your additional links here -->
-          <li class="nav-item">
-            <RouterLink class="nav-link" to="/dummy2">Dummy Link 2</RouterLink>
-          </li>
           <li class="nav-item">
             <RouterLink class="nav-link" to="/about">About</RouterLink>
           </li>
@@ -57,7 +57,6 @@
 
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
 import Footer from './components/Footer.vue';
 
 </script>

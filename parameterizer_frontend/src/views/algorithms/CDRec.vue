@@ -1,5 +1,5 @@
 <template>
-  <h1 class="mb-4 text-center">M-RNN Detail</h1>
+  <h1 class="mb-4 text-center">CDRec Detail WIP</h1>
   <div class="d-flex">
     <div class="col-lg-8">
       <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
