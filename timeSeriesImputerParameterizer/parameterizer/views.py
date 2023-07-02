@@ -5,6 +5,7 @@ import json
 import os, sys
 import numpy as np
 
+import Wrapper.algo_collection
 
 sys.path.insert(0, os.path.abspath(".."))
 from Utils_Thesis import utils, statistics
@@ -18,6 +19,44 @@ import M_RNN.Data_Loader
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
+@csrf_exempt
+def cdrec(request):
+    if request.method == 'POST':
+        """
+        Recovers missing values (designated as NaN) in a matrix. Supports additional parameters
+        :param __py_matrix: 2D array
+        :param __py_rank: truncation rank to be used (0 = detect truncation automatically)
+        :param __py_eps: threshold for difference during recovery
+        :param __py_iters: maximum number of allowed iterations for the algorithms
+        :return: 2D array recovered matrix
+        """
+        data, data_set = load_from_request(request)
+        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+        truncation_rank = data.get('truncation_rank', 10)  # Truncation rank used (0 = detect truncation automatically)
+        epsilon = data.get('epsilon', 0.01)  # Threshold for difference during recovery
+        iterations = data.get('iterations', 100)  # Maximum number of allowed iterations for the algorithm
+
+        if clean_file_path is not None and obfuscated_file_path is not None:
+            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
+            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            # Call the main function with parameters from the request
+            imputed_matrix = Wrapper.algo_collection.native_cdrec_param(
+                __py_matrix=obfuscated_matrix,
+                __py_rank=truncation_rank,
+                __py_eps=epsilon,
+                __py_iters=iterations
+            )
+            rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            print("Finished CDRec! RMSE: ", rmse)
+            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
+                                 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
+                                , status=200)
+        else:
+            print('No matching datasets found for path: ', data_set)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
 
 @csrf_exempt
 def iim(request):
@@ -40,9 +79,10 @@ def iim(request):
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished IIM! RMSE: ", rmse)
             return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
-                                 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}, status=200)
+                                 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()},
+                                status=200)
         else:
-            print('No matching file found or erroneous configuration, stopping imputation.')
+            print('No matching datasets found for path: ', data_set)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
@@ -56,6 +96,7 @@ def mrnn(request):
         learning_rate = data.get('learning_rate', 0.01)
         iterations = data.get('iterations', 100)
         keep_prob = data.get('keep_prob', 1.0)
+        seq_len = data.get('seq_len', 7)
 
         # filename_input = data.get('filename_input', '../Datasets/bafu/raw_matrices/BAFU_small_with_NaN.txt')
         # filename_output = data.get('filename_output', '../Results/')
@@ -71,19 +112,53 @@ def mrnn(request):
                                                          hidden_dim=hidden_dim,
                                                          learning_rate=learning_rate,
                                                          iterations=iterations,
-                                                         keep_prob=keep_prob
+                                                         keep_prob=keep_prob,
+                                                         seq_length=seq_len,
                                                          )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished M-RNN! RMSE: ", rmse)
             return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
+                                 'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()},
+                                status=200)
+        else:
+            print('No matching datasets found for path: ', data_set)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def stmvl(request):
+    if request.method == 'POST':
+        data, data_set = load_from_request(request)
+        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+        window_size = data.get('window_size', 10)  # window size for temporal component
+        gamma = data.get('gamma', 0.01)  # smoothing parameter for temporal weight
+        alpha = data.get('alpha', 100)  # power for spatial weight
+
+        if clean_file_path is not None and obfuscated_file_path is not None:
+            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
+            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            # Call the main function with parameters from the request
+            imputed_matrix = Wrapper.algo_collection.native_stmvl_param(
+                __py_matrix=obfuscated_matrix,
+                __py_window=window_size,
+                __py_gamma=gamma,
+                __py_alpha=alpha
+            )
+            rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            print("Finished STMVL! RMSE: ", rmse)
+            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
                                 , status=200)
         else:
-            print('No matching file found or erroneous configuration, stopping imputation.')
+            print('No matching datasets found for path: ', data_set)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
 
 
 def load_from_request(request):

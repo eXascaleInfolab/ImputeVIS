@@ -129,3 +129,7 @@ dmypy.json
 .pyre/
 
 .idea
+/Datasets/electricity/raw_matrices/elec.txt
+/Datasets/electricity/raw_matrices/elec_half.txt
+/Datasets/electricity/raw_matrices/elec_quarter.txt
+/Datasets/electricity/obfuscated/

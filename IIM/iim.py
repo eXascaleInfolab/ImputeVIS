@@ -69,7 +69,7 @@ def determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan):
 #  Algorithm 1: Learning
 def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int = 10):
     """Learns individual regression models for each learning neighbor and each attribute,
-       by fitting on the other attributes and the missing attribute
+       by fitting on the other attributes and the missing attribute.
 
     Parameters
     ----------
@@ -84,16 +84,20 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
 
     Returns
     -------
-    model_params: np.ndarray[Ridge]
+    lr_coef_and_threshold_and_indices: np.ndarray
         The learned regression models. The structure of this array is as follows:
         - First dimension: which tuple we are looking at
         - Second dimension: which attribute we are looking at
         - Third dimension: which learning neighbor we are looking at
+        Each element is a tuple, where:
+        - First element: coefficients of the regression model
+        - Second element: intercept of the regression model
+        - Third element: indices of the features used in the regression model
     """
 
     knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean').fit(complete_tuples)
-    number_of_attributes = incomplete_tuples.shape[1]  # Number of attributes, should be 12
-    model_params = np.empty((len(incomplete_tuples), number_of_attributes, l), dtype=object)
+    number_of_attributes = incomplete_tuples.shape[1]
+    lr_coef_and_threshold_and_indices = np.empty((len(incomplete_tuples), number_of_attributes, l), dtype=object)
 
     # Replace NaN values with 0
     incomplete_tuples_no_nan = np.nan_to_num(incomplete_tuples)
@@ -111,26 +115,28 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
             # Learn the relevant value/column
             X = complete_tuples[learning_neighbors[tuple_index]][:, ~nan_indicator]
             y = complete_tuples[learning_neighbors[tuple_index]][:, nan_indicator]
-            models = [Ridge(tol=1e-20).fit(X_i.reshape(1, -1), y_i) for X_i, y_i in zip(X, y)]
-            model_params[tuple_index, nan_index] = [(model.coef_, model.intercept_) for model in models]
+            model = Ridge(fit_intercept=True, tol=1e-20).fit(X, y)  # train the model on all neighbors at once
+            features_indices = np.where(~nan_indicator)[0]  # store the indices of features used
+            lr_coef_and_threshold_and_indices[tuple_index, nan_index] = [(model.coef_, model.intercept_, features_indices)]
         else:
             # If there are multiple NaNs in the tuple
             for missing_value_index in np.where(nan_indicator)[0]:
                 # Create a new indicator for this specific NaN
-                current_nan_indicator = np.zeros_like(nan_indicator)
-                current_nan_indicator[missing_value_index] = True
+                current_nan_indicator = np.copy(nan_indicator)  # Make a copy of the original nan_indicator
+                current_nan_indicator[missing_value_index] = False  # Mark the current attribute as not missing
 
                 # Learn the relevant value/column
                 X = complete_tuples[learning_neighbors[tuple_index]][:, ~current_nan_indicator]
                 y = complete_tuples[learning_neighbors[tuple_index]][:, current_nan_indicator]
-                models = [Ridge(tol=1e-20).fit(X_i.reshape(1, -1), y_i) for X_i, y_i in zip(X, y)]
-                model_params[tuple_index, missing_value_index] = [(model.coef_, model.intercept_) for model in models]
+                model = Ridge(fit_intercept=True, tol=1e-20).fit(X, y)  # train the model on all neighbors at once
+                features_indices = np.where(~current_nan_indicator)[0]  # store the indices of features used
+                lr_coef_and_threshold_and_indices[tuple_index, missing_value_index] = [(model.coef_, model.intercept_, features_indices)]
 
-    return model_params
+    return lr_coef_and_threshold_and_indices
 
 
 # Algorithm 2: Imputation
-def imputation(incomplete_tuples: np.ndarray, lr_coef_and_threshold: np.ndarray):
+def imputation(incomplete_tuples: np.ndarray, lr_coef_and_threshold_and_indices: np.ndarray):
     """ Imputes the missing values of the incomplete tuples using the learned linear regression models.
 
     Parameters
@@ -138,8 +144,8 @@ def imputation(incomplete_tuples: np.ndarray, lr_coef_and_threshold: np.ndarray)
     incomplete_tuples : np.ndarray
         The complete matrix of values with missing values in the form of NaN.
         Should already be normalized.
-    lr_coef_and_threshold : np.ndarray[Ridge]
-        The learned regression models containing the coefficients and intercepts.
+    lr_coef_and_threshold_and_indices : np.ndarray
+        The learned regression models containing the coefficients, intercepts and feature indices.
 
     Returns
     -------
@@ -155,19 +161,32 @@ def imputation(incomplete_tuples: np.ndarray, lr_coef_and_threshold: np.ndarray)
         missing_attributes_indices = np.where(nan_indicator)[0]  # indices of missing attributes
 
         # Prepare the input array for multiple samples
-        incomplete_tuple_no_nan = incomplete_tuple[~nan_indicator]
+        non_nan_indices = np.where(~nan_indicator)[0]  # indices of non-missing attributes
+        incomplete_tuple_no_nan = incomplete_tuple[non_nan_indices]
 
         # For each missing attribute
         for missing_attribute_index in missing_attributes_indices:
             # Predict the missing values using the learned Ridge models
-            candidate_suggestions = np.array([coef @ incomplete_tuple_no_nan + intercept for coef, intercept in lr_coef_and_threshold[i, missing_attribute_index]])
+            for coef, intercept, indices in lr_coef_and_threshold_and_indices[i, missing_attribute_index]:
+                print(f"coef shape: {coef.shape}")
+                print(f"incomplete_tuple_no_nan[np.isin(non_nan_indices, indices)] shape: {incomplete_tuple_no_nan[np.isin(non_nan_indices, indices)].shape}")
+                print(f"indices: {indices}")
+                print(f"non_nan_indices: {non_nan_indices}")
+                # Find the matching indices between non_nan_indices and indices.
+                match_indices = np.isin(non_nan_indices, indices)
 
-            distances = compute_distances(candidate_suggestions)
-            weights = compute_weights(distances)
+                # Create a boolean mask for coef based on indices.
+                coef_mask = np.isin(np.arange(coef.shape[1]), indices)
 
-            impute_result = np.sum(candidate_suggestions * weights)
-            # Create tuple with index (in missing tuples), attribute, imputed value
-            imputed_values.append([i, missing_attribute_index, impute_result])
+                # Use the matching indices to select the corresponding elements from coef and incomplete_tuple_no_nan.
+                candidate_suggestion = coef[:, coef_mask] @ incomplete_tuple_no_nan[match_indices] + intercept
+
+                distances = compute_distances(candidate_suggestion)
+                weights = compute_weights(distances)
+
+                impute_result = np.sum(candidate_suggestion * weights)
+                # Create tuple with index (in missing tuples), attribute, imputed value
+                imputed_values.append([i, missing_attribute_index, impute_result])
 
     return imputed_values
 

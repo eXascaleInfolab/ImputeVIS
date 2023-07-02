@@ -6,9 +6,8 @@ from M_RNN import MRNN
 from M_RNN import Data_Loader
 
 
-def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob=1.0,
+def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob=1.0, seq_length=7,
                matrix_out="../Results/M-RNN/BAFU_temp.txt"):
-    seq_length = 7
 
     _, trainZ, trainM, trainT, testX, testZ, testM, testT, dmin, dmax, train_size, x = Data_Loader.Data_Loader_Incomplete(
         seq_length, matrix_in)
@@ -102,13 +101,3 @@ if __name__ == '__main__':
     dataset = "BAFU_tiny_obfuscated_10.txt"
 
     main("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", "../Results/M-RNN/" + dataset, 0)
-
-
-# TODO: To have less issues with Django imports, duplicate Data_Loader.py here:
-# %% Google data loading
-
-'''
-1. train_rate: training / testing set ratio
-2. missing_rate: the amount of introducing missingness
-'''
-

@@ -25,8 +25,8 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
         The path to the obfuscated output file, relative to the current directory.
     """
 
-    # Load the data from the input file.
-    data = np.loadtxt(filename_input, delimiter=' ')
+    # Load the data from the input file, adjust delimiter and skiprows as needed.
+    data = np.loadtxt(filename_input, delimiter=' ', skiprows=0)
 
     # Keep a copy of the original data for restoring values.
     original_data = data.copy()
@@ -35,7 +35,7 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
     total_elements = data.size
 
     # Calculate the number of elements to replace with NaN.
-    num_nan = int(total_elements * percentage / 100)
+    num_nan = max(1, int(total_elements * percentage / 100))
 
     # Get the shape of the data array for indexing.
     shape = data.shape
@@ -62,15 +62,12 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
                 # Replace the NaN value at the randomly selected index with the original value from the data.
                 data[row, col] = original_data[row, col]
 
-    # Create the output directory if it does not exist.
-    # output_dir = os.path.join('..', '..', 'Datasets', 'Obfuscated')
-    # if not os.path.exists(output_dir):
-    #     os.makedirs(output_dir)
-
     # Construct the output filename.
-    # filename_output = os.path.join(output_dir, os.path.splitext(os.path.basename(filename_input))[0] + f'_obfuscated_{percentage}.txt')
-    filename_output = os.path.join('/Datasets/bafu/obfuscated',
-                                   os.path.splitext(os.path.basename(filename_input))[0] + f'_obfuscated_{percentage}.txt')
+    output_dir = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'meteo', 'obfuscated')
+    filename_output = os.path.join(output_dir, os.path.splitext(os.path.basename(filename_input))[0] + f'_obfuscated_{percentage}.txt')
+
+    # Create the output directory if it does not exist.
+    os.makedirs(output_dir, exist_ok=True)
 
     # Save the obfuscated data to the output file.
     np.savetxt(filename_output, data, delimiter=' ', fmt='%f')
@@ -79,14 +76,65 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
 
 
 def automate_obfuscate():
-    # Use the function with the BAFU file and obfuscate 10%, 20%, 40% and 80% of its data.
-    for percentage in [10, 20, 40, 60, 80]:
-        for proportion in ["_tiny", "_small", ""]:
+    # Use the function with the matching file(s) and obfuscate 1%, 5%, 10%, 20%, 40% and 80% of its data with NaN.
+    for percentage in [1, 5, 10, 20, 40, 60, 80]:
+        for proportion in ["_half", "_quarter", ""]:
             # obfuscate_data(os.path.join(D:/Git/msc_thesis_timeseries/Datasets/bafu/raw_matrices/BAFU_{proportion}.txt'), percentage)
-            obfuscate_data(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices', f'BAFU{proportion}.txt'),
-                           percentage)
+            obfuscate_data(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'meteo', 'raw_matrices', f'meteo_total_08-12{proportion}.txt'),
+                           percentage, allow_full_nan_line=True)
 
 
+def split_file_lines(input_folder: str):
+    """
+    Iterates over each file in a directory, splits the content of the file into 1/2 and 1/4 based on number of lines,
+    and writes the split contents into new files. The new files have the same name as the original files, but
+    with '_half' and '_quarter' appended to the base of the filename.
+
+    Parameters
+    ----------
+    input_folder : str
+        The path to the directory containing the files to be split.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    This function does not return any value. It writes the split contents directly to new files in
+    the same directory as the original files. The function does not check if a file is a text file
+    before trying to split it, so it should be used with directories containing only text files that
+    can be split by lines.
+    """
+
+    # Iterate over all files in the input directory
+    for filename in os.listdir(input_folder):
+        filepath = os.path.join(input_folder, filename)
+
+        # Skip if it's a directory
+        if os.path.isdir(filepath):
+            continue
+
+        # Load all lines from the file
+        with open(filepath, 'r') as file:
+            lines = file.readlines()
+
+        # Split the lines into halves and quarters
+        half_lines = lines[:len(lines) // 2]
+        quarter_lines = lines[:len(lines) // 4]
+
+        # Save the halves and quarters to new files
+        base, ext = os.path.splitext(filename)
+        with open(os.path.join(input_folder, f'{base}_half{ext}'), 'w') as file:
+            file.writelines(half_lines)
+
+        with open(os.path.join(input_folder, f'{base}_quarter{ext}'), 'w') as file:
+            file.writelines(quarter_lines)
+
+
+if __name__ == '__main__':
+    # split_file_lines(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'electricity', 'raw_matrices'))
+    automate_obfuscate()
 
 def find_obfuscated_file(target_dir: str, start_string: str) -> Optional[str]:
     """

@@ -18,6 +18,12 @@ const router = createRouter({
             component: () => import('../views/AboutView.vue')
         },
         {
+            path: '/algorithms/CDRec',
+            name: 'cdrec',
+            // route level code-splitting
+            component: () => import('../views/algorithms/CDRec.vue')
+        },
+        {
             path: '/algorithms/iim',
             name: 'iim',
             // route level code-splitting
@@ -28,6 +34,48 @@ const router = createRouter({
             name: 'm-rnn',
             // route level code-splitting
             component: () => import('../views/algorithms/M-RNNView.vue')
+        },
+        {
+            path: '/algorithms/stmvl',
+            name: 'stmvl',
+            // route level code-splitting
+            component: () => import('../views/algorithms/STMVLView.vue')
+        },
+        {
+            path: '/datasets/bafu',
+            name: 'bafu',
+            // route level code-splitting
+            component: () => import('../views/datasets/BAFUView.vue')
+        },
+        {
+            path: '/datasets/chlorine',
+            name: 'chlorine',
+            // route level code-splitting
+            component: () => import('../views/datasets/ChlorineView.vue')
+        },
+        {
+            path: '/datasets/climate',
+            name: 'climate',
+            // route level code-splitting
+            component: () => import('../views/datasets/ClimateView.vue')
+        },
+        {
+            path: '/datasets/drift',
+            name: 'drift',
+            // route level code-splitting
+            component: () => import('../views/datasets/DriftView.vue')
+        },
+        {
+            path: '/datasets/electricity',
+            name: 'electricity',
+            // route level code-splitting
+            component: () => import('../views/datasets/ElectricityView.vue')
+        },
+        {
+            path: '/datasets/meteo',
+            name: 'meteo',
+            // route level code-splitting
+            component: () => import('../views/datasets/MeteoView.vue')
         }
     ]
 })

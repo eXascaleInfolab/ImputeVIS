@@ -89,7 +89,8 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
     """
 
     knn_euc = NearestNeighbors(n_neighbors=l, metric='euclidean').fit(complete_tuples)
-    model_params = [[] for _ in range(len(incomplete_tuples))]
+    total_length = len(incomplete_tuples)
+    model_params = np.empty((len(incomplete_tuples), l), dtype=object)
 
     # Replace NaN values with 0
     incomplete_tuples_no_nan = np.nan_to_num(incomplete_tuples)
@@ -104,13 +105,13 @@ def learning(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, l: int 
             X = complete_tuples[learning_neighbors[tuple_index]][:, ~nan_indicator]
             y = complete_tuples[learning_neighbors[tuple_index]][:, nan_indicator]
             models = [(Ridge(tol=1e-20).fit(X_i.reshape(1, -1), y_i)) for X_i, y_i in zip(X, y)]
-            model_params[tuple_index].extend([(model.coef_, model.intercept_) for model in models])
+            model_params[tuple_index] = [(model.coef_, model.intercept_) for model in models]
         else:
             # Find the positions of the NaNs in the tuple
             nan_positions = np.where(nan_indicator)[0]
 
             # For each NaN position, build a model to predict its value
-            for nan_position in nan_positions:
+            for nan_position, nan_positions in enumerate(nan_positions):
                 # Use the values of all other positions (not NaN) as features (X)
                 X = complete_tuples[learning_neighbors[tuple_index]][:, ~nan_indicator]
 
@@ -149,24 +150,20 @@ def imputation(incomplete_tuples: np.ndarray, lr_coef_and_threshold: np.ndarray)
     for i, incomplete_tuple in enumerate(incomplete_tuples):  # for t_i in r
         nan_indicator = np.isnan(incomplete_tuple)  # show which attribute is missing as NaN
 
-        # Indices of missing attributes
-        missing_attribute_indices = np.where(nan_indicator)[0]
+        missing_attribute_index = int(np.where(nan_indicator)[0])  # index of missing attribute
 
         # Prepare the input array for multiple samples
         incomplete_tuple_no_nan = incomplete_tuple[~nan_indicator]
 
-        for j, missing_attribute_index in enumerate(missing_attribute_indices):
-            # Unpack coef and intercept outside the list comprehension
-            coef, intercept = lr_coef_and_threshold[i][j]
-            candidate_suggestions = np.array([coef @ incomplete_tuple_no_nan + intercept])
+        # Predict the missing values using the learned Ridge models
+        candidate_suggestions = np.array([coef @ incomplete_tuple_no_nan + intercept for coef, intercept in lr_coef_and_threshold[i]])
 
-            distances = compute_distances(candidate_suggestions)
-            weights = compute_weights(distances)
+        distances = compute_distances(candidate_suggestions)
+        weights = compute_weights(distances)
 
-            impute_result = np.sum(candidate_suggestions * weights)
-
-            # Create tuple with index (in missing tuples), attribute, imputed value
-            imputed_values.append([i, missing_attribute_index, impute_result])
+        impute_result = np.sum(candidate_suggestions * weights)
+        # Create tuple with index (in missing tuples), attribute, imputed value
+        imputed_values.append([i, missing_attribute_index, impute_result])
 
     return imputed_values
 
@@ -327,7 +324,7 @@ def compute_weights(distances: list[float]):
     return weights
 
 
-def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt",
+def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_1.txt",
          filename_output: str = "../Results/2_BAFU_tiny_obfuscated_10.txt", runtime: int = 0):
     """Executes the imputation algorithm given an input matrix.
 
@@ -401,7 +398,7 @@ if __name__ == '__main__':
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
     # example arguments: "iim 5a" -> 5 neighbors & adaptive, "iim 10" -> 10  neighbors and not adaptive
-    neighbors = str(3)
-    adaptive_flag = "a"
+    neighbors = str(1)
+    adaptive_flag = ""
     main("iim" + " " + neighbors + adaptive_flag, "../Datasets/bafu/raw_matrices/" + dataset, "../Results/"
          + neighbors + adaptive_flag + "_" + dataset, 0)
