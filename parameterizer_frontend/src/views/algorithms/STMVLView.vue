@@ -28,35 +28,24 @@
             <option value="80">80%</option>
           </select>
         </div>
-        <!-- Learning Rate -->
+        <!--Window Size-->
         <div class="mb-3">
-          <label for="learningRate" class="form-label">Learning Rate: {{ learningRate }}</label>
-          <input id="learningRate" v-model.number="learningRate" type="range" min="0.001" max="0.1" step="0.005" class="form-control">
+          <label for="windowSize" class="form-label">Window Size: {{ windowSize }}</label>
+          <input id="windowSize" v-model.number="windowSize" type="range" min="2" max="100" step="1" class="form-control">
         </div>
 
-        <!-- Sequence Length -->
+        <!--Smoothing Parameter Gamma-->
         <div class="mb-3">
-          <label for="seq_len" class="form-label">Sequence Length: {{ seqLen }}</label>
-          <input id="seq_len" v-model.number="seqLen" type="range" min="1" max="100" step="1" class="form-control">
+          <label for="gamma" class="form-label">Smoothing Parameter Gamma: {{ gamma }}</label>
+          <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.05" class="form-control">
         </div>
 
-        <!-- Hidden Dimension Size -->
+        <!-- Power for Spatial Weight (Alpha) -->
         <div class="mb-3">
-          <label for="hidden_dim" class="form-label">Hidden Dimension Size: {{ hiddenDim }}</label>
-          <input id="hidden_dim" v-model.number="hiddenDim" type="range" min="1" max="20" step="1" class="form-control">
+          <label for="alpha" class="form-label">Power for Spatial Weight (alpha): {{ alpha }}</label>
+          <input id="alpha" v-model.number="alpha" type="range" min="0.5" max="20" step="0.5" class="form-control">
         </div>
 
-        <!-- Number of Iterations -->
-        <div class="mb-3">
-          <label for="iterations" class="form-label">Number of Iterations: {{ iterations }}</label>
-          <input id="iterations" v-model.number="iterations" type="range" min="100" max="2000" step="100" class="form-control">
-        </div>
-
-        <!-- Keep Rate -->
-        <div class="mb-3">
-          <label for="keepProb" class="form-label">Keep Rate: {{ keepProb }}</label>
-          <input id="keepProb" v-model.number="keepProb" type="range" min="0" max="1" step="0.1" class="form-control">
-        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
@@ -82,11 +71,9 @@ export default {
   setup() {
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
     const missingRate = ref('1'); // Default missing rate is 1%
-    const learningRate = ref(0.01); // Default learning rate is 0.01
-    const hiddenDim = ref(10); // Default hidden dimension size is 10
-    const iterations = ref(500); // Default number of iterations is 1000
-    const keepProb = ref(0.5); // Default keep probability is 0.5
-    const seqLen = ref(7); // Default sequence length is 7
+    const windowSize = ref('2'); // Default window size is 2
+    const gamma = ref('0.5') // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
+    const alpha = ref('2') // Default power for spatial weight (alpha) is 2, must be larger than 0.0
     const rmse = ref(null);
     const mae = ref(null);
     const mi = ref(null);
@@ -172,14 +159,12 @@ export default {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         console.log(dataSet);
-        const response = await axios.post('http://localhost:8000/api/mrnn/',
+        const response = await axios.post('http://localhost:8000/api/stmvl/',
             {
               data_set: dataSet,
-              hidden_dim: hiddenDim.value,
-              learning_rate: learningRate.value,
-              iterations: iterations.value,
-              keep_prob: keepProb.value,
-              seq_len: seqLen.value
+              window_size: windowSize.value,
+              gamma: gamma.value,
+              alpha: alpha.value,
             },
             {
               headers: {
@@ -215,12 +200,10 @@ export default {
       mi,
       chartOptions,
       dataSelect,
-      learningRate,
-      hiddenDim,
-      iterations,
-      keepProb,
+      windowSize,
+      gamma,
+      alpha,
       missingRate,
-      seqLen
     }
   }
 }

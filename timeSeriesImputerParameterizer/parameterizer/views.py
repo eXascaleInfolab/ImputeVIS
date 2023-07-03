@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-import os, sys
+import os
+import sys
 import numpy as np
 
 import Wrapper.algo_collection
@@ -66,9 +67,6 @@ def iim(request):
 
         # Call the main function with parameters from the request
         alg_code = data.get('alg_code', 'default_alg_code')
-        # filename_input = data.get('filename_input', '../Datasets/bafu/raw_matrices/BAFU_small_with_NaN.txt')
-        # filename_output = data.get('filename_output', '../Results/')
-        # runtime = data.get('runtime', 0)
 
         if clean_file_path is not None and obfuscated_file_path is not None:
             imputed_matrix = iim_alg.main(alg_code, obfuscated_file_path)
