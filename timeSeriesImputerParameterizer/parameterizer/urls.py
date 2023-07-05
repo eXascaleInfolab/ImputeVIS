@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path('cdrec/', views.cdrec, name='cdrec'),
     path('iim/', views.iim, name='iim'),
     path('mrnn/', views.mrnn, name='mrnn'),
+    path('stmvl/', views.stmvl, name='stmvl'),
 ]

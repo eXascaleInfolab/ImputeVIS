@@ -6,8 +6,8 @@ import os
 import sys
 import numpy as np
 
-import Wrapper.algo_collection
 
+import Wrapper.algo_collection
 sys.path.insert(0, os.path.abspath(".."))
 from Utils_Thesis import utils, statistics
 
@@ -43,9 +43,9 @@ def cdrec(request):
             # Call the main function with parameters from the request
             imputed_matrix = Wrapper.algo_collection.native_cdrec_param(
                 __py_matrix=obfuscated_matrix,
-                __py_rank=truncation_rank,
-                __py_eps=epsilon,
-                __py_iters=iterations
+                __py_rank=int(truncation_rank),
+                __py_eps=float("1" + epsilon),
+                __py_iters=int(iterations)
             )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
@@ -141,9 +141,9 @@ def stmvl(request):
             # Call the main function with parameters from the request
             imputed_matrix = Wrapper.algo_collection.native_stmvl_param(
                 __py_matrix=obfuscated_matrix,
-                __py_window=window_size,
-                __py_gamma=gamma,
-                __py_alpha=alpha
+                __py_window=int(window_size),
+                __py_gamma=float(gamma),
+                __py_alpha=int(alpha)
             )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)

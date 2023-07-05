@@ -20,9 +20,9 @@
               Algorithms
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <RouterLink class="dropdown-item" to="/algorithms/cdrec">CDRec (WIP)</RouterLink>
               <RouterLink class="dropdown-item" to="/algorithms/iim">IIM (WIP)</RouterLink>
               <RouterLink class="dropdown-item" to="/algorithms/m-rnn">M-RNN (WIP)</RouterLink>
-              <RouterLink class="dropdown-item" to="/algorithms/cdrec">CDRec (WIP)</RouterLink>
               <RouterLink class="dropdown-item" to="/algorithms/stmvl">STMVL (WIP)</RouterLink>
             </div>
           </li>

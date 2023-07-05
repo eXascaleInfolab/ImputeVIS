@@ -59,6 +59,14 @@ To start the development server.
 python manage.py runserver
 ```
 
+## WSL
+Navigate to directory, e.g.:
+```bash
+cd d/Git/msc_thesis_timeseries/timeSeriesImputerParameterizer/parameterizer/
+```
+
+
+
 ## Usage
 After setting up the frontend and backend, you can access the application by opening http://localhost:5173 in your browser.
 

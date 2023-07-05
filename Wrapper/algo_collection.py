@@ -14,7 +14,8 @@ import numpy as __numpy_import;
 
 __NATIVE_CENTROID_LIBRARY_PATH_DEBUG = "./src/libAlgoCollection.so"; # same folder
 __NATIVE_CENTROID_LIBRARY_PATH = "libAlgoCollection.so"; # will pick up from anything in $PATH
-__NATIVE_CENTROID_LIBRARY_PATH_ALT = "/mnt/x/WSL/Home/Dev/collection_wrap/src/libAlgoCollection.so"; # manual
+__NATIVE_CENTROID_LIBRARY_PATH_ALT = "/Home/Dev/Wrapper/src/libAlgoCollection.so"; # manual
+__NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL = "/mnt/d/Git/msc_thesis_timeseries/Wrapper/src/libAlgoCollection.so"; # manual
 
 __ctype_libcd_native = None;
 
@@ -29,6 +30,10 @@ elif __os_path_import.isfile(__NATIVE_CENTROID_LIBRARY_PATH):
 elif __os_path_import.isfile(__NATIVE_CENTROID_LIBRARY_PATH_ALT):
     __ctype_libcd_native = __native_c_types_import.cdll.LoadLibrary(
         __NATIVE_CENTROID_LIBRARY_PATH_ALT);
+
+elif __os_path_import.isfile(__NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL):
+    __ctype_libcd_native = __native_c_types_import.cdll.LoadLibrary(
+        __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL);
 
 else:
     print("Cannot load the shared library - file not found");
