@@ -1,3 +1,4 @@
+
 # msc_thesis_timeseries
 
 Repository for my Master Thesis' code base, that is under the [eXascale](https://exascale.info/) institute at University of Fribourg, Switzerland.
@@ -65,6 +66,10 @@ Navigate to directory, e.g.:
 cd d/Git/msc_thesis_timeseries/timeSeriesImputerParameterizer/parameterizer/
 ```
 
+Furthermore, the following dependency is needed:
+```bash
+sudo apt-get install libopenblas-dev
+```
 
 
 ## Usage
