@@ -63,7 +63,7 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
                 data[row, col] = original_data[row, col]
 
     # Construct the output filename.
-    output_dir = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'meteo', 'obfuscated')
+    output_dir = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'obfuscated')
     filename_output = os.path.join(output_dir, os.path.splitext(os.path.basename(filename_input))[0] + f'_obfuscated_{percentage}.txt')
 
     # Create the output directory if it does not exist.
@@ -80,7 +80,7 @@ def automate_obfuscate():
     for percentage in [1, 5, 10, 20, 40, 60, 80]:
         for proportion in ["_half", "_quarter", ""]:
             # obfuscate_data(os.path.join(D:/Git/msc_thesis_timeseries/Datasets/bafu/raw_matrices/BAFU_{proportion}.txt'), percentage)
-            obfuscate_data(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'meteo', 'raw_matrices', f'meteo_total_08-12{proportion}.txt'),
+            obfuscate_data(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices', f'BAFU{proportion}.txt'),
                            percentage, allow_full_nan_line=True)
 
 
@@ -133,7 +133,7 @@ def split_file_lines(input_folder: str):
 
 
 if __name__ == '__main__':
-    # split_file_lines(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'electricity', 'raw_matrices'))
+    # split_file_lines(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices'))
     automate_obfuscate()
 
 def find_obfuscated_file(target_dir: str, start_string: str) -> Optional[str]:

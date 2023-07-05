@@ -54,10 +54,10 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
             lr_models = learning(complete_tuples, incomplete_tuples, learning_neighbors)
             imputation_result = imputation(incomplete_tuples, lr_models)
 
-        determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan)
+        # determine_rmse(imputation_result, incomplete_tuples_indices, matrix_nan)
         # To ignore RMSE, uncomment the following lines and comment the above line
-        # for result in imputation_result:
-        #     matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
+        for result in imputation_result:
+            matrix_nan[np.array(incomplete_tuples_indices)[:, result[0]], result[1]] = result[2]
         return matrix_nan
     else:
         print("No missing values as NaN, returning original matrix")

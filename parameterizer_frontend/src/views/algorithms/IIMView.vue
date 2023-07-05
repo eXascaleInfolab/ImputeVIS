@@ -18,8 +18,30 @@
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
+            <option value="BAFU">BAFU</option>
             <option value="BAFU_small">BAFU 1/2 Size</option>
             <option value="BAFU_tiny">BAFU 1/4 Size</option>
+            <option value="cl2fullLarge">Chlorine</option>
+            <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>
+            <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>
+            <option value="climate">Climate</option>
+            <option value="climate_half">Climate 1/2 Size</option>
+            <option value="climate_quarter">Climate 1/4 Size</option>
+            <option value="meteo_total">Meteo</option>
+            <option value="meteo_total_half">Meteo 1/2 Size</option>
+            <option value="meteo_total_quarter">Meteo 1/4 Size</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="missingRate" class="form-label">Missing Rates</label>
+          <select id="missingRate" v-model="missingRate" class="form-control">
+            <option value="1">1%</option>
+            <option value="5">5%</option>
+            <option value="10">10%</option>
+            <option value="20">20%</option>
+            <option value="40">40%</option>
+            <option value="60">60%</option>
+            <option value="80">80%</option>
           </select>
         </div>
         <div class="mb-3">
@@ -64,6 +86,7 @@ export default {
   },
   setup() {
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
+    const missingRate = ref('1'); // Default missing rate is 1%
     const numberSelect = ref(1); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
     const rmse = ref(null);
@@ -148,7 +171,7 @@ export default {
     });
 
     const submitForm = async () => {
-      let dataSet = dataSelect.value + "_obfuscated_";
+      let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
       try {
         const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
         const response = await axios.post('http://localhost:8000/api/iim/',
@@ -165,6 +188,7 @@ export default {
         rmse.value = response.data.rmse.toFixed(3);
         mae.value = response.data.mae.toFixed(3);
         mi.value = response.data.mi.toFixed(3);
+        chartOptions.value.series.splice(0, chartOptions.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           chartOptions.value.series[index] = createSeries(index, data);
         });
@@ -191,7 +215,8 @@ export default {
       chartOptions,
       numberSelect,
       typeSelect,
-      dataSelect
+      dataSelect,
+      missingRate
     }
   }
 }

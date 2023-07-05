@@ -12,8 +12,18 @@
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
+            <option value="BAFU">BAFU</option>
             <option value="BAFU_small">BAFU 1/2 Size</option>
             <option value="BAFU_tiny">BAFU 1/4 Size</option>
+            <option value="cl2fullLarge">Chlorine</option>
+            <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>
+            <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>
+            <option value="climate">Climate</option>
+            <option value="climate_half">Climate 1/2 Size</option>
+            <option value="climate_quarter">Climate 1/4 Size</option>
+            <option value="meteo_total">Meteo</option>
+            <option value="meteo_total_half">Meteo 1/2 Size</option>
+            <option value="meteo_total_quarter">Meteo 1/4 Size</option>
           </select>
         </div>
         <div class="mb-3">
@@ -38,7 +48,6 @@
         <!-- Sequence Length -->
         <div class="mb-3">
           <label for="epsilon" class="form-label">Threshold for Difference: {{ epsilon }}</label>
-          <input id="epsilon" v-model.number="epsilon" type="range" min="1" max="100" step="1" class="form-control">
           <select id="epsilon" v-model="epsilon" class="form-control">
             <option value="E-9">E-9</option>
             <option value="E-8">E-8</option>
@@ -185,6 +194,7 @@ export default {
         rmse.value = response.data.rmse.toFixed(3);
         mae.value = response.data.mae.toFixed(3);
         mi.value = response.data.mi.toFixed(3);
+        chartOptions.value.series.splice(0, chartOptions.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           chartOptions.value.series[index] = createSeries(index, data);
         });
