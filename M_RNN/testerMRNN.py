@@ -7,7 +7,7 @@ from M_RNN import Data_Loader
 
 
 def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob=1.0, seq_length=7,
-               matrix_out="../Results/M-RNN/BAFU_temp.txt"):
+               matrix_out="../Results/M-RNN/BAFU_temp.txt", recursive=False):
 
     _, trainZ, trainM, trainT, testX, testZ, testM, testT, dmin, dmax, train_size, x = Data_Loader.Data_Loader_Incomplete(
         seq_length, matrix_in)
@@ -62,6 +62,18 @@ def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iteratio
     x = (x * denominator) + dmin
     # verification to check for NaN. If found, assign absurdly high value to them.
     nan_mask = np.isnan(x)
+    if recursive and len(nan_mask > 0):  # TODO Variable for recursive & NaN
+        print("NaNs remain, while recursive==True, (Re-)running M-RNN recursively.")
+        np.savetxt(matrix_out, x, fmt='%f', delimiter=' ')
+        mrnn_recov(matrix_out,
+                   runtime=runtime,
+                   hidden_dim=hidden_dim,
+                   learning_rate=learning_rate,
+                   iterations=iterations,
+                   keep_prob=keep_prob,
+                   seq_length=seq_length,
+                   matrix_out=matrix_out,
+                   recursive=recursive)
     x[nan_mask] = np.sqrt(np.finfo('d').max / 100000.0)
     #x = x[::-1]
 
@@ -98,6 +110,6 @@ def main(filename_input: str = "../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated
 
 
 if __name__ == '__main__':
-    dataset = "BAFU_tiny_obfuscated_10.txt"
+    dataset = "BAFU_tiny_obfuscated_40.txt"
 
-    main("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", "../Results/M-RNN/" + dataset, 0)
+    main("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", "../Results/M-RNN/" + dataset, runtime=0)
