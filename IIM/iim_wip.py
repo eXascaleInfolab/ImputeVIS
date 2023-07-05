@@ -38,9 +38,12 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
         print("Number of learning neighbors: " + str(learning_neighbors))
         # columns_with_nan = np.array(np.where(np.isnan(matrix_nan).any(axis=0) == True))
         # col_with_max_nan = np.argmax(np.count_nonzero(np.isnan(matrix_nan), axis=0))
+        if len(complete_tuples) == 0:
+            print("No complete tuples found, unable to proceed, returning original matrix")
+            return matrix_nan
         if adaptive_flag:
             print("Running IIM algorithm with adaptive algorithm, k = " + str(learning_neighbors) + "...")
-            lr_models = adaptive(complete_tuples, incomplete_tuples, learning_neighbors, max_learning_neighbors=min(len(complete_tuples), 100))
+            lr_models = adaptive(complete_tuples, incomplete_tuples, learning_neighbors, max_learning_neighbors=min(len(complete_tuples), 10))
             imputation_result = imputation(incomplete_tuples, lr_models)
 
         else:
@@ -234,7 +237,7 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
                 for l_learning in
                 range(1, all_entries + 1, step_size)]
     nn = NearestNeighbors(n_neighbors=k, metric='euclidean').fit(complete_tuples)
-    number_of_models = len(phi_list) - 1
+    number_of_models = max(len(phi_list) - 1, 1)
     number_of_incomplete_tuples = len(incomplete_tuples)
     costs = np.zeros((number_of_incomplete_tuples, number_of_models))
     print("Finished learning; Starting main loop of Algorithm 3 'adaptive'")
@@ -245,15 +248,20 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
             nan_indicator = np.isnan(incomplete_tuple)  # Show which attribute is missing as NaN
             neighbors_filtered = np.delete(complete_tuples[neighbors], nan_indicator, axis=1)
             for l in range(0, number_of_models):  # Line 6, for l in 1..n
-                # TODO Find a way to do this better with the expanded_coef matrix
-                # Define a 3D matrix where coef is expanded along the third dimension
-                expanded_coef = np.array([coef for coef, _ in phi_list[l][incomplete_tuple_idx]])
+                model_params_for_tuple = phi_list[l][incomplete_tuple_idx]
+                for attribute_index, model_params in enumerate(model_params_for_tuple):
+                  #  print(f"Attribute index: {attribute_index}, model_params: {model_params}")
 
-                # Add an extra dimension to neighbors_filtered and perform matrix multiplication
-                phi_models = (expanded_coef @ neighbors_filtered[:, :, None]).squeeze() + np.array(
-                    [intercept for _, intercept in phi_list[l][incomplete_tuple_idx]])
-                errors = np.abs(complete_tuple[nan_indicator] - phi_models)
-                costs[incomplete_tuple_idx, l] += np.sum(np.power(errors, 2)) / len(phi_list[l][incomplete_tuple_idx])
+                    if model_params is not None and not np.any(model_params == None):  # Only compute cost for NaN attributes
+                        coefs, intercepts = zip(*model_params)
+                        expanded_coef = np.array(coefs)
+                        # set NaN attributes in neighbors_filtered to 0 (Nan to Num should also work)
+                        neighbors_filtered_copy = np.nan_to_num(neighbors_filtered)
+
+                        print(expanded_coef.shape, neighbors_filtered_copy.shape)
+                        phi_models = (expanded_coef @ neighbors_filtered_copy[:, :, None]).squeeze() + np.array(intercepts)
+                        errors = np.abs(complete_tuple[attribute_index] - phi_models)
+                        costs[incomplete_tuple_idx, l] += np.sum(np.power(errors, 2)) / len(phi_models)
 
     # Line 8-10 Select best model for each tuple
     best_models_indices = np.argmin(costs, axis=1)
@@ -261,8 +269,15 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
                           for best_models_index in best_models_indices]
     print("Determined following learning neighbors for each tuple with missing attributes: {}"
           .format(learning_neighbors))
-    phi = [phi_list[best_models_indices[i]][i] for i in range(number_of_incomplete_tuples)]
-    return phi
+    # Organizing the model parameters into a numpy array
+    number_of_attributes = incomplete_tuples.shape[1]
+    lr_models = np.empty((number_of_incomplete_tuples, number_of_attributes, l), dtype=object)
+
+    for i in range(number_of_incomplete_tuples):
+        best_models_indices_for_tuple = best_models_indices[i]
+        lr_models[i] = phi_list[best_models_indices_for_tuple][i]
+
+    return lr_models
 
 
 def compute_cost_for_tuple(args):
@@ -446,7 +461,7 @@ def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_
 
 
 if __name__ == '__main__':
-    dataset = "BAFU_tiny_obfuscated_20.txt"
+    dataset = "BAFU_tiny_obfuscated_40.txt"
     # To use the dataset from the IIM paper, uncomment the following line and comment the previous one
     # dataset = "asf1_0.1miss.csv"
     # example arguments: "iim 5a" -> 5 neighbors & adaptive, "iim 10" -> 10  neighbors and not adaptive
