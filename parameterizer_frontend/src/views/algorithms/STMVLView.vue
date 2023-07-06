@@ -5,6 +5,7 @@
       <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
       <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
       <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
+      <h2 v-if="corr !== null && corr !== ''"> Correlation: {{ corr }}</h2>
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
@@ -87,6 +88,7 @@ export default {
     const rmse = ref(null);
     const mae = ref(null);
     const mi = ref(null);
+    const corr = ref(null);
 
 
     const chartOptions = ref({
@@ -185,6 +187,7 @@ export default {
         rmse.value = response.data.rmse.toFixed(3);
         mae.value = response.data.mae.toFixed(3);
         mi.value = response.data.mi.toFixed(3);
+        corr.value = response.data.corr.toFixed(3);
         chartOptions.value.series.splice(0, chartOptions.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           chartOptions.value.series[index] = createSeries(index, data);
@@ -209,6 +212,7 @@ export default {
       rmse,
       mae,
       mi,
+      corr,
       chartOptions,
       dataSelect,
       windowSize,

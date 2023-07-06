@@ -50,8 +50,9 @@ def cdrec(request):
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            corr = statistics.determine_correlation(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished CDRec! RMSE: ", rmse)
-            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
+            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi, 'corr': corr,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
                                 , status=200)
         else:
@@ -75,8 +76,9 @@ def iim(request):
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            corr = statistics.determine_correlation(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished IIM! RMSE: ", rmse)
-            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
+            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi, 'corr': corr,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()},
                                 status=200)
         else:
@@ -116,8 +118,9 @@ def mrnn(request):
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            corr = statistics.determine_correlation(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished M-RNN! RMSE: ", rmse)
-            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
+            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi, 'corr': corr,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()},
                                 status=200)
         else:
@@ -148,8 +151,9 @@ def stmvl(request):
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
+            corr = statistics.determine_correlation(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished STMVL! RMSE: ", rmse)
-            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi,
+            return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi, 'corr': corr,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
                                 , status=200)
         else:
