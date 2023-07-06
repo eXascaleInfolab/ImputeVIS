@@ -65,13 +65,12 @@
 </template>
 
 <script lang="ts">
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
 import axios from 'axios';
-import {Chart, StockChart, MapChart, ChartCompositionApi} from 'highcharts-vue'
+import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
-import {round} from "@popperjs/core/lib/utils/math";
 
 // Initialize exporting modules
 HC_exporting(Highcharts)
@@ -81,9 +80,6 @@ export default {
   components: {
     highcharts: Chart,
     chart: Chart,
-    stockChart: StockChart,
-    mapChart: MapChart,
-    chartCompositionApi: ChartCompositionApi
   },
   setup() {
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
@@ -172,6 +168,27 @@ export default {
       // },
     });
 
+    const fetchData = async () => {
+      try {
+        // TODO Implement this function, should also allow missingness rate to be selected
+        const response = await axios.post('http://localhost:8000/api/getData/',
+          {
+            data_set: dataSelect.value
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }
+        );
+        response.data.matrix_imputed.forEach((data: number[], index: number) => {
+          chartOptions.value.series[index] = createSeries(index, data);
+        });
+      } catch(error) {
+        console.error(error);
+      }
+    }
+
     const submitForm = async () => {
       let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
       try {
@@ -209,6 +226,9 @@ export default {
         valueDecimals: 2
       }
     });
+
+    // Watch for changes in dataSelect and call fetchData when it changes
+    watch(dataSelect, fetchData, { immediate: true });
 
     return {
       submitForm,
