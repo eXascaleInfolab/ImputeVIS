@@ -1,6 +1,6 @@
 <template>
   <h1 class="mb-4 text-center">IIM Detail</h1>
-  <div class="d-flex">
+  <div class="d-flex mb-auto">
     <div class="col-lg-8 ps-4">
 <!--      <p class="lead">-->
 <!--        BAFU dataset provided by the BundesAmt Für Umwelt (the Swiss Federal Office for the Environment).-->
@@ -15,7 +15,7 @@
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
-      <form @submit.prevent="submitForm" class="position-fixed sidebar">
+      <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">

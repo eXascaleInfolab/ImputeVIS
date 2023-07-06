@@ -48,7 +48,7 @@
     </nav>
   </header>
 
-  <div class="content pt-5 mt-2">
+  <div class="content pt-5 mt-2 flex-grow-1">
     <RouterView />
   </div>
   <Footer />

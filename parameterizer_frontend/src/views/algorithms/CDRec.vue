@@ -1,6 +1,6 @@
 <template>
   <h1 class="mb-4 text-center">CDRec Detail WIP</h1>
-  <div class="d-flex">
+  <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
       <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
@@ -9,7 +9,7 @@
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
-      <form @submit.prevent="submitForm" class="position-fixed sidebar">
+      <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <div class="mb-3">
           <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
           <select id="dataSelect" v-model="dataSelect" class="form-control">
