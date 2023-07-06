@@ -162,6 +162,21 @@ def stmvl(request):
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
 
+@csrf_exempt
+def fetch_data(request):
+    if request.method == 'POST':
+        data, data_set = load_from_request(request)
+        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+        if obfuscated_file_path is not None:
+            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            return JsonResponse({'matrix': np.transpose(obfuscated_matrix).tolist()},
+                                status=200)
+        if clean_file_path is not None:
+            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
+            return JsonResponse({'matrix': np.transpose(ground_truth_matrix).tolist()},
+                                status=200)
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
 
 def load_from_request(request):
     data = json.loads(request.body)

@@ -11,7 +11,7 @@
       <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
       <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
       <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
-      <h2 v-if="corr !== null && corr !== ''"> Correlation: {{ corr }}</h2>
+      <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
@@ -36,6 +36,7 @@
         <div class="mb-3">
           <label for="missingRate" class="form-label">Missing Rates</label>
           <select id="missingRate" v-model="missingRate" class="form-control">
+            <option value="0">0%</option>
             <option value="1">1%</option>
             <option value="5">5%</option>
             <option value="10">10%</option>
@@ -83,7 +84,7 @@ export default {
   },
   setup() {
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
-    const missingRate = ref('1'); // Default missing rate is 1%
+    const missingRate = ref('0'); // Default missing rate is 0%
     const numberSelect = ref(1); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
     const rmse = ref(null);
@@ -170,10 +171,11 @@ export default {
 
     const fetchData = async () => {
       try {
-        // TODO Implement this function, should also allow missingness rate to be selected
-        const response = await axios.post('http://localhost:8000/api/getData/',
+        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+        const response = await axios.post('http://localhost:8000/api/fetchData/',
           {
-            data_set: dataSelect.value
+            data_set: dataSet
+
           },
           {
             headers: {
@@ -181,7 +183,8 @@ export default {
             }
           }
         );
-        response.data.matrix_imputed.forEach((data: number[], index: number) => {
+        chartOptions.value.series.splice(0, chartOptions.value.series.length);
+        response.data.matrix.forEach((data: number[], index: number) => {
           chartOptions.value.series[index] = createSeries(index, data);
         });
       } catch(error) {
@@ -218,7 +221,7 @@ export default {
     }
 
     const createSeries = (index: number, data: number[]) => ({
-      name: `Imputed Data: Station ${index + 1}`,
+      name: `Imputed Data: Series ${index + 1}`,
       data,
       pointStart: Date.UTC(2010, 1, 1),
       pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
@@ -227,8 +230,18 @@ export default {
       }
     });
 
-    // Watch for changes in dataSelect and call fetchData when it changes
-    watch(dataSelect, fetchData, { immediate: true });
+    function resetMissingRate() {
+      missingRate.value = '0';
+    }
+    // Define a new function that calls both resetMissingRate and fetchData
+    const handleDataSelectChange = () => {
+      resetMissingRate();
+      fetchData();
+    }
+    // Watch for changes and call fetchData when it changes
+    watch(dataSelect, handleDataSelectChange, { immediate: true });
+    // TODO Missingness display
+    // watch(missingRate, fetchData, { immediate: true });
 
     return {
       submitForm,

@@ -5,7 +5,7 @@
       <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
       <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
       <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
-      <h2 v-if="corr !== null && corr !== ''"> Correlation: {{ corr }}</h2>
+      <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
       <highcharts :options="chartOptions"></highcharts>
     </div>
     <div class="col-lg-4">
@@ -30,6 +30,7 @@
         <div class="mb-3">
           <label for="missingRate" class="form-label">Missing Rates</label>
           <select id="missingRate" v-model="missingRate" class="form-control">
+            <option value="0">0%</option>
             <option value="1">1%</option>
             <option value="5">5%</option>
             <option value="10">10%</option>
@@ -73,7 +74,7 @@
 </template>
 
 <script lang="ts">
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
@@ -90,7 +91,7 @@ export default {
   },
   setup() {
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
-    const missingRate = ref('1'); // Default missing rate is 1%
+    const missingRate = ref('0'); // Default missing rate is 0%
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
     const epsilon = ref('E-7'); // Default epsilon is E-7
     const iterations = ref(500); // Default number of iterations is 1000
@@ -176,6 +177,33 @@ export default {
       // },
     });
 
+    const fetchData = async () => {
+      try {
+        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+        const response = await axios.post('http://localhost:8000/api/fetchData/',
+          {
+            data_set: dataSet
+
+          },
+          {
+            headers: {
+              'Content-Type': 'application/text',
+            }
+          }
+        );
+        chartOptions.value.series.splice(0, chartOptions.value.series.length);
+
+        response.data.matrix.forEach((data: number[], index: number) => {
+          console.log("Entered")
+          // Replace NaN with 0
+          const cleanData = data.map(value => isNaN(value) ? 0 : value);
+          chartOptions.value.series[index] = createSeries(index, cleanData);
+        });
+      } catch(error) {
+        console.error(error);
+      }
+    }
+
     const submitForm = async () => {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
@@ -207,7 +235,7 @@ export default {
     }
 
     const createSeries = (index: number, data: number[]) => ({
-      name: `Imputed Data: Station ${index + 1}`,
+      name: `Imputed Data: Series ${index + 1}`,
       data,
       pointStart: Date.UTC(2010, 1, 1),
       pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
@@ -215,6 +243,19 @@ export default {
         valueDecimals: 2
       }
     });
+
+    function resetMissingRate() {
+      missingRate.value = '0';
+    }
+    // Define a new function that calls both resetMissingRate and fetchData
+    const handleDataSelectChange = () => {
+      resetMissingRate();
+      fetchData();
+    }
+    // Watch for changes and call fetchData when it changes
+    watch(dataSelect, handleDataSelectChange, { immediate: true });
+    // TODO Missingness display
+    // watch(missingRate, fetchData, { immediate: true });
 
     return {
       submitForm,
