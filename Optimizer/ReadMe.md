@@ -1,0 +1,11 @@
+Successive Halving: This approach is a type of hyperparameter optimization where initially a large number of configurations are evaluated for a small number of iterations. Then in successive rounds, configurations are pruned, and the remaining ones are allocated more resources (iterations). The main advantage of successive halving is that it is computationally efficient, as it quickly discards poor configurations. However, a disadvantage is that it may discard configurations that would perform well when given more resources.
+
+Bayesian Optimization: This approach builds a probabilistic model of the objective function and uses this model to select the most promising parameters to evaluate in the real objective function. The idea is to spend more time selecting the next point to evaluate, but in return need fewer evaluations of the costly objective function. It is especially useful for expensive functions (like many machine learning algorithms), as it aims to find the best parameters with as few evaluations as possible. However, Bayesian optimization can sometimes get stuck in local minima, especially in high-dimensional parameter spaces.
+
+
+In both cases, there is no guarantee that the optimal solution will be found, but they usually provide a good approximation, especially for expensive objective functions where exhaustive search is not feasible.
+
+
+Particle Swarm Optimization (PSO) is a computational method that optimizes a problem by iteratively trying to improve a candidate solution, which is thought of as a particle flying through the parameter space. Each particle's movement is influenced by the position of the best solution it has encountered, as well as the best solution encountered by the entire swarm. This results in the swarm converging towards the best solution found in the search space.
+
+The advantage of PSO is that it is simple to implement and has few parameters to tune. It can be effective for a wide range of optimization problems. However, like other swarm intelligence algorithms, it may suffer from getting stuck in local minima, especially in high-dimensional spaces or complex objective functions. It's also worth noting that the quality of the solution can be sensitive to the parameter settings of the PSO algorithm.

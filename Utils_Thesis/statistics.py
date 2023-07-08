@@ -5,7 +5,7 @@ import sys
 import os
 
 
-def determine_rmse(ground_truth_matrix, imputed_matrix, obfuscated_matrix):
+def determine_rmse(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, obfuscated_matrix: np.ndarray):
     """Determines the RMSE between the ground truth and the imputed matrix.
 
     Parameters
@@ -24,23 +24,16 @@ def determine_rmse(ground_truth_matrix, imputed_matrix, obfuscated_matrix):
 
 
     """
-    individual_rmse = []
-    tuples_with_nan = np.isnan(obfuscated_matrix).any(axis=1)
+    nan_locations = np.isnan(obfuscated_matrix)
+    ground_truth_values = ground_truth_matrix[nan_locations]
+    imputed_values = imputed_matrix[nan_locations]
 
-    incomplete_tuples_rows = np.array(np.where(tuples_with_nan == True))
-    # incomplete_tuples = obfuscated_matrix[incomplete_tuples_rows]
-    for row in (incomplete_tuples_rows[0]):
-        nan_positions = np.where(np.isnan(obfuscated_matrix[row]) == True)
-        # nan_positions = np.where(np.isnan(incomplete_tuples[row]) == True)
-        for column in nan_positions[0]:
-            ground_truth_value = ground_truth_matrix[row][column]
-            imputed_value = imputed_matrix[row][column]
-            individual_rmse.append((ground_truth_value - imputed_value) ** 2)
+    individual_rmse = (ground_truth_values - imputed_values) ** 2
     rmse = np.sqrt(np.mean(individual_rmse))
     return rmse
 
 
-def determine_mae(ground_truth_matrix, imputed_matrix, obfuscated_matrix):
+def determine_mae(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, obfuscated_matrix: np.ndarray):
     """
     Calculate the Mean Absolute Error (MAE) between ground truth data and imputed data.
 
@@ -59,22 +52,16 @@ def determine_mae(ground_truth_matrix, imputed_matrix, obfuscated_matrix):
         The MAE between the ground truth and the imputed matrix.
     """
 
-    individual_errors = []
-    tuples_with_nan = np.isnan(obfuscated_matrix).any(axis=1)
+    nan_locations = np.isnan(obfuscated_matrix)
+    ground_truth_values = ground_truth_matrix[nan_locations]
+    imputed_values = imputed_matrix[nan_locations]
 
-    incomplete_tuples_rows = np.array(np.where(tuples_with_nan == True))
-    for row in (incomplete_tuples_rows[0]):
-        nan_positions = np.where(np.isnan(obfuscated_matrix[row]) == True)
-        for column in nan_positions[0]:
-            ground_truth_value = ground_truth_matrix[row][column]
-            imputed_value = imputed_matrix[row][column]
-            individual_errors.append(np.abs(ground_truth_value - imputed_value))
-
+    individual_errors = np.abs(ground_truth_values - imputed_values)
     mae = np.mean(individual_errors)
     return mae
 
 
-def determine_mutual_info(ground_truth_matrix, imputed_matrix, nan_matrix):
+def determine_mutual_info(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, nan_matrix: np.ndarray):
     """
     Calculate the mutual information between ground truth data and imputed data.
     https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_regression.html
@@ -115,7 +102,8 @@ def determine_mutual_info(ground_truth_matrix, imputed_matrix, nan_matrix):
     print("Mutual information:", mi)
     return mi[0]
 
-def determine_correlation(ground_truth_matrix, imputed_matrix, obfuscated_matrix):
+
+def determine_correlation(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, obfuscated_matrix: np.ndarray):
     """
     Calculate the Pearson correlation coefficient between ground truth data and imputed data.
 
@@ -134,20 +122,11 @@ def determine_correlation(ground_truth_matrix, imputed_matrix, obfuscated_matrix
         The Pearson correlation coefficient between the ground truth and the imputed matrix.
     """
 
-    individual_truths = []
-    individual_imputations = []
-    tuples_with_nan = np.isnan(obfuscated_matrix).any(axis=1)
+    nan_locations = np.isnan(obfuscated_matrix)
+    ground_truth_values = ground_truth_matrix[nan_locations]
+    imputed_values = imputed_matrix[nan_locations]
 
-    incomplete_tuples_rows = np.array(np.where(tuples_with_nan == True))
-    for row in (incomplete_tuples_rows[0]):
-        nan_positions = np.where(np.isnan(obfuscated_matrix[row]) == True)
-        for column in nan_positions[0]:
-            ground_truth_value = ground_truth_matrix[row][column]
-            imputed_value = imputed_matrix[row][column]
-            individual_truths.append(ground_truth_value)
-            individual_imputations.append(imputed_value)
-
-    correlation, _ = pearsonr(individual_truths, individual_imputations)
+    correlation, _ = pearsonr(ground_truth_values, imputed_values)
     return correlation
 
 
