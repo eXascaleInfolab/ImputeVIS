@@ -394,6 +394,44 @@ def count_nans(list_of_arrays: List[np.ndarray]):
     """
     return sum(np.isnan(arr).sum() for arr in list_of_arrays)
 
+
+def impute_with_algorithm(alg_code: str, matrix: np.ndarray):
+    """
+    Imputes the input matrix with a specified algorithm.
+
+    Parameters
+    ----------
+    alg_code : str
+        The algorithm and its parameters.
+        The first parameter is the name, the second the number of neighbors and the third whether to use adaptive or not.
+    matrix : np.ndarray
+        The input matrix to be imputed.
+
+    Returns
+    -------
+    np.ndarray
+        The imputed matrix.
+    """
+    global rmse
+    # Imputation
+    alg_code = alg_code.split()
+
+    if len(alg_code) > 1:
+        match = re.match(r"(\d+)([a-zA-Z]+)", alg_code[1], re.I)
+        if match:
+            neighbors, adaptive_flag = match.groups()
+            matrix_imputed = iim_recovery(matrix, adaptive_flag=adaptive_flag.startswith("a"),
+                                          learning_neighbors=int(neighbors))
+        else:
+            matrix_imputed = iim_recovery(matrix, adaptive_flag=False, learning_neighbors=int(alg_code[1]))
+
+    # verification to check for NaN. If found, assign absurdly high value to them.
+    nan_mask = np.isnan(matrix_imputed)
+    matrix_imputed[nan_mask] = np.sqrt(np.finfo('d').max / 100000.0)
+
+    return matrix_imputed
+
+
 def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_80.txt",
          filename_output: str = "../Results/2_BAFU_tiny_with_NaN.txt", runtime: int = 0):
     """Executes the imputation algorithm given an input matrix.
@@ -412,7 +450,7 @@ def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_
 
     Returns
     -------
-    matrix_imputed
+    list
         The imputed matrix.
     """
     # read input matrix
@@ -421,33 +459,14 @@ def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_
     # For dataset delimited by ',' and having a header
     # matrix = np.loadtxt(filename_input, delimiter=',', skiprows=1)
 
-    global rmse
-
     # beginning of imputation process - start time measurement
     start_time = time.time()
-
-    # Imputation
-    alg_code = alg_code.split()
-
-    if len(alg_code) > 1:
-        match = re.match(r"(\d+)([a-zA-Z]+)", alg_code[1], re.I)
-        if match:
-            neighbors, adaptive_flag = match.groups()
-            matrix_imputed = iim_recovery(matrix, adaptive_flag=adaptive_flag.startswith("a"),
-                                          learning_neighbors=int(neighbors))
-        else:
-            matrix_imputed = iim_recovery(matrix, adaptive_flag=False, learning_neighbors=int(alg_code[1]))
-
+    matrix_imputed = impute_with_algorithm(alg_code, matrix)
     # imputation is complete - stop time measurement
     end_time = time.time()
 
     # calculate the time elapsed in [!] microseconds
     exec_time = (end_time - start_time) * 1000 * 1000
-
-    # verification to check for NaN. If found, assign absurdly high value to them.
-    nan_mask = np.isnan(matrix_imputed)
-    matrix_imputed[nan_mask] = np.sqrt(np.finfo('d').max / 100000.0)
-
     print("Time", alg_code, ":", exec_time)
 
     # Use binary flag to indicate runtime results or algorithm output
@@ -459,7 +478,6 @@ def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_
         # Tuple_Index (row), Attribute_Index (column), Imputed_Value
         np.savetxt(filename_output, matrix_imputed, fmt='%f', delimiter=' ')
 
-    # print("will return", rmse, matrix_imputed.tolist())
     return matrix_imputed.tolist()
 
 
