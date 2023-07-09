@@ -35,3 +35,11 @@ SEARCH_SPACES = {
     'stmvl': [Integer(2, 99, name='window_size'), Real(1e-6, 0.999999, "log-uniform", name='gamma'),
               Integer(1, 9, name='alpha')],
 }
+
+# Define the search space for each algorithm separately for PSO
+SEARCH_SPACES_PSO = {
+    'cdrec': [(1, 10), (1e-6, 1), (100, 1000)],
+    'iim': [(1, 100)],
+    'mrnn': [(1, 100), (1e-6, 1e-2), (1, 1000), (0.1, 1.0), (1, 100)],
+    'stmvl': [(1, 100), (1e-6, 1e-2), (1, 100)]
+}
