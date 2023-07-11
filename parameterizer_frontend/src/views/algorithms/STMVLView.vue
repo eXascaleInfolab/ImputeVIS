@@ -11,19 +11,7 @@
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <data-select v-model="dataSelect" />
-        <div class="mb-3">
-          <label for="missingRate" class="form-label">Missing Rates</label>
-          <select id="missingRate" v-model="missingRate" class="form-control">
-            <option value="0">0%</option>
-            <option value="1">1%</option>
-            <option value="5">5%</option>
-            <option value="10">10%</option>
-            <option value="20">20%</option>
-            <option value="40">40%</option>
-            <option value="60">60%</option>
-            <option value="80">80%</option>
-          </select>
-        </div>
+        <missing-rate v-model="missingRate" />
         <!--Window Size-->
         <div class="mb-3">
           <label for="windowSize" class="form-label">Window Size: {{ windowSize }}</label>
@@ -51,6 +39,7 @@
 <script lang="ts">
 import {ref, watch} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
+import MissingRate from '../components/MissingRate.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
@@ -63,8 +52,9 @@ HC_exportData(Highcharts)
 
 export default {
   components: {
+    DataSelect,
     highcharts: Chart,
-    DataSelect
+    MissingRate
   },
   setup() {
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
