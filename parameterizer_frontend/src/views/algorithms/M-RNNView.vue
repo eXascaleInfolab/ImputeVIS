@@ -10,23 +10,7 @@
     </div>
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
-        <div class="mb-3">
-          <label for="dataSelect" class="form-label">Data Used for Imputation:</label>
-          <select id="dataSelect" v-model="dataSelect" class="form-control">
-            <option value="BAFU">BAFU</option>
-            <option value="BAFU_small">BAFU 1/2 Size</option>
-            <option value="BAFU_tiny">BAFU 1/4 Size</option>
-            <option value="cl2fullLarge">Chlorine</option>
-            <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>
-            <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>
-            <option value="climate">Climate</option>
-            <option value="climate_half">Climate 1/2 Size</option>
-            <option value="climate_quarter">Climate 1/4 Size</option>
-            <option value="meteo_total">Meteo</option>
-            <option value="meteo_total_half">Meteo 1/2 Size</option>
-            <option value="meteo_total_quarter">Meteo 1/4 Size</option>
-          </select>
-        </div>
+        <data-select v-model="dataSelect" />
         <div class="mb-3">
           <label for="missingRate" class="form-label">Missing Rates</label>
           <select id="missingRate" v-model="missingRate" class="form-control">
@@ -77,6 +61,7 @@
 
 <script lang="ts">
 import {ref, watch} from 'vue';
+import DataSelect from '../components/DataSelect.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
@@ -89,7 +74,8 @@ HC_exportData(Highcharts)
 
 export default {
   components: {
-    highcharts: Chart
+    highcharts: Chart,
+    DataSelect
   },
   setup() {
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
