@@ -39,6 +39,17 @@
               <RouterLink class="dropdown-item" to="/datasets/meteo">Meteo TODO</RouterLink>
             </div>
           </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Algorithm Optimization
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization">
+              <RouterLink class="dropdown-item" to="/optimization/cdrec">CDRec (WIP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/iim">IIM (WIP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/m-rnn">M-RNN (WIP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/stmvl">STMVL (WIP)</RouterLink>
+            </div>
+          </li>
           <!-- Add your additional links here -->
           <li class="nav-item">
             <RouterLink class="nav-link" to="/about">About</RouterLink>

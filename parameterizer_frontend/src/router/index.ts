@@ -76,6 +76,26 @@ const router = createRouter({
             name: 'meteo',
             // route level code-splitting
             component: () => import('../views/datasets/MeteoView.vue')
+        },
+        {
+            path: '/optimization/cdrec',
+            name: 'optimization cdrec',
+            component: () => import('../views/optimization/CDRecView.vue')
+        },
+                {
+            path: '/optimization/iim',
+            name: 'optimization iim',
+            component: () => import('../views/optimization/IIMView.vue')
+        },
+        {
+            path: '/optimization/mrnn',
+            name: 'optimization mrnn',
+            component: () => import('../views/optimization/MRNNView.vue')
+        },
+        {
+            path: '/optimization/stmvl',
+            name: 'optimization stmvl',
+            component: () => import('../views/optimization/STMVLView.vue')
         }
     ]
 })

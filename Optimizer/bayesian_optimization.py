@@ -1,21 +1,21 @@
 import numpy as np
+import skopt
 from skopt import Optimizer
 
 from skopt.utils import use_named_args
-from typing import Dict, List
+from typing import List, Optional, Tuple, Union, Any
 
 from Optimizer.algorithm_parameters import SEARCH_SPACES
+import Optimizer.evaluate_params
 
 # Define the search space for each algorithm separately
 search_spaces = SEARCH_SPACES
 
 
-# Import the 'evaluate_params' function from the 'successive_halving' module
-from successive_halving import evaluate_params
-
-
 def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray,
-                          selected_metrics: List[str], algorithm: str) -> Dict[str, float]:
+                          selected_metrics: List[str], algorithm: str,
+                          n_calls: int = 50, n_random_starts: Optional[int] = None,
+                          acq_func: str = 'gp_hedge') -> Tuple[dict, Union[Union[int, float, complex], Any]]:
     """
     Conduct the Bayesian optimization hyperparameter optimization.
 
@@ -30,10 +30,16 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
     algorithm : str
         The algorithm to use.
         Valid values: 'cdrec', 'mrnn', 'stmvl', 'iim'
+    n_calls: int
+        Number of calls to the objective function.
+    n_random_starts: Optional[int]
+        Number of initial calls to the objective function, from random points.
+    acq_func: str
+        Function to minimize over the Gaussian prior (one of 'LCB', 'EI', 'PI', 'gp_hedge').
 
     Returns
     -------
-    dict
+    Tuple[dict, Union[Union[int, float, complex], Any]]
         The best parameters and their corresponding scores.
     """
 
@@ -43,12 +49,13 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
     # Define the objective function (to minimize)
     @use_named_args(space)
     def objective(**params):
-        errors = evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, tuple(params.values()), selected_metrics)
+        errors = Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, tuple(params.values()),
+                                 selected_metrics)
         return np.mean([errors[metric] for metric in selected_metrics])
 
     # Conduct Bayesian optimization
-    optimizer = Optimizer(space)
-    for i in range(50):
+    optimizer = skopt.Optimizer(dimensions=space, n_random_starts=n_random_starts, acq_func=acq_func)
+    for i in range(n_calls):
         suggested_params = optimizer.ask()
         score = objective(suggested_params)
         optimizer.tell(suggested_params, score)

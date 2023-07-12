@@ -2,10 +2,9 @@ import pyswarms as ps
 from typing import Dict, List, Tuple
 import numpy as np
 from skopt.space import Integer
-from Optimizer.algorithm_parameters import SEARCH_SPACES_PSO
 
-# Import the 'evaluate_params' function from the 'successive_halving' module
-from successive_halving import evaluate_params
+import Optimizer.evaluate_params
+from Optimizer.algorithm_parameters import SEARCH_SPACES_PSO
 
 
 def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray,
@@ -64,7 +63,7 @@ def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndar
             elif algorithm == 'stmvl':
                 particle_params = [int(particle_params[0]), particle_params[1], int(particle_params[2])]
 
-            errors = evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, tuple(particle_params),
+            errors = Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, tuple(particle_params),
                                      selected_metrics)
 
             # Assume that lower is better for all metrics, calculate the mean error for this particle
