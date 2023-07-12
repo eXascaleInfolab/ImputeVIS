@@ -1,5 +1,5 @@
 <template>
-  <h1 class="mb-4 text-center">CDRec Optimization WIP</h1>
+  <h1 class="mb-4 text-center">STMVL Detail WIP</h1>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <h2 v-if="loadingResults">Determining resulting imputation...</h2>
@@ -16,42 +16,32 @@
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <h2 class="text-center" v-if="loadingParameters">Determining optimal parameters...</h2>
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
-            class="sidebar col-lg-7 align-items-center text-center">
-        <h2>Optimal Parameters</h2>
-        <data-select v-model="dataSelect"/>
-        <!--        <missing-rate v-model="missingRate" />-->
-        <div class="mb-3">
-          <!-- TODO: Add mouseover for truncation rank -->
-          <label for="truncationRank" class="form-label">Truncation Rank: {{ truncationRank }}</label>
-          <input id="truncationRank" v-model.number="truncationRank" type="range" min="0" max="10" step="1"
-                 class="form-control">
-        </div>
+      class="sidebar col-lg-7 align-items-center text-center">
+      <h2>Optimal Parameters</h2>
+      <data-select v-model="dataSelect"/>
+      <!--        <missing-rate v-model="missingRate" />-->
+      <!--Window Size-->
+      <div class="mb-3">
+        <label for="windowSize" class="form-label">Window Size: {{ windowSize }}</label>
+        <input id="windowSize" v-model.number="windowSize" type="range" min="2" max="100" step="1" class="form-control">
+      </div>
 
-        <!-- Sequence Length -->
-        <div class="mb-3">
-          <label for="epsilon" class="form-label">Threshold for Difference: {{ epsilon }}</label>
-          <select id="epsilon" v-model="epsilon" class="form-control">
-            <option value="E-9">E-9</option>
-            <option value="E-8">E-8</option>
-            <option value="E-7">E-7</option>
-            <option value="E-6">E-6</option>
-            <option value="E-5">E-5</option>
-            <option value="E-4">E-4</option>
-            <option value="E-3">E-3</option>
-          </select>
-        </div>
+      <!--Smoothing Parameter Gamma-->
+      <div class="mb-3">
+        <label for="gamma" class="form-label">Smoothing Parameter Gamma: {{ gamma }}</label>
+        <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.05" class="form-control">
+      </div>
 
-        <!-- Number of Iterations -->
-        <div class="mb-3">
-          <label for="iterations" class="form-label">Number of Iterations: {{ iterations }}</label>
-          <input id="iterations" v-model.number="iterations" type="range" min="100" max="2000" step="100"
-                 class="form-control">
-        </div>
+      <!-- Power for Spatial Weight (Alpha) -->
+      <div class="mb-3">
+        <label for="alpha" class="form-label">Power for Spatial Weight (alpha): {{ alpha }}</label>
+        <input id="alpha" v-model.number="alpha" type="range" min="1" max="20" step="1" class="form-control">
+      </div>
 
-        <button type="submit" class="btn btn-primary mr-3">Impute</button>
-        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Determined
-          Parameters
-        </button>
+      <button type="submit" class="btn btn-primary mr-3">Impute</button>
+      <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Determined
+        Parameters
+      </button>
 
       </form>
       <highcharts :options="chartOptionsOriginal"></highcharts>
@@ -85,8 +75,8 @@ HC_exportData(Highcharts)
 
 export default {
   components: {
-    highcharts: Chart,
     DataSelect,
+    highcharts: Chart,
     MissingRate,
     OptimizationSelect
   },
@@ -94,14 +84,14 @@ export default {
     const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
     const missingRate = ref('1'); // Default missing rate is 1%
-    const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
-    const epsilon = ref('E-7'); // Default epsilon is E-7
-    const iterations = ref(500); // Default number of iterations is 1000
+    const windowSize = ref('2'); // Default window size is 2
+    const gamma = ref('0.5') // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
+    const alpha = ref('2') // Default power for spatial weight (alpha) is 2, must be larger than 0.0
+    const imputedData = ref(false); // Whether imputation has been carried out
     const rmse = ref(null);
     const mae = ref(null);
     const mi = ref(null);
     const corr = ref(null);
-    const imputedData = ref(false); // Whether imputation has been carried out
     let optimalResponse: axios.AxiosResponse<any>;
     let optimalParametersDetermined = ref(false);
     let loadingParameters = ref(false);
@@ -111,28 +101,24 @@ export default {
       optimizationParameters.value = newParams; // Update the optimization parameters
     };
 
-
     const fetchData = async () => {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
-            {
-              data_set: dataSet
-            },
-            {
-              headers: {
-                'Content-Type': 'application/text',
-              }
+          {
+            data_set: dataSet
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
             }
+          }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-
         response.data.matrix.forEach((data: number[], index: number) => {
-          // Replace NaN with 0
-          const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+          chartOptionsOriginal.value.series[index] = createSeries(index, data);
         });
-      } catch (error) {
+      } catch(error) {
         console.error(error);
       }
     }
@@ -142,10 +128,11 @@ export default {
         let dataSet = `${dataSelect.value}_obfuscated_10`;
         loadingParameters.value = true;
         console.log(dataSet);
-        const response = await axios.post('http://localhost:8000/api/optimization/cdrec/',
+        const response = await axios.post('http://localhost:8000/api/optimization/stmvl/',
             {
               ...optimizationParameters.value, // Spread the optimization parameters into the post body
               data_set: dataSet,
+              algorithm: 'stmvl'
             },
             {
               headers: {
@@ -155,9 +142,9 @@ export default {
         );
         console.log(response.data);
         optimalResponse = response;
-        truncationRank.value = response.data.best_params.rank;
-        epsilon.value = response.data.best_params.eps;
-        iterations.value = response.data.best_params.iters;
+        gamma.value = response.data.gamma;
+        alpha.value = response.data.alpha;
+        windowSize.value = response.data.window_size;
         optimalParametersDetermined.value = true;
         loadingParameters.value = false;
         console.log(optimalParametersDetermined);
@@ -169,18 +156,18 @@ export default {
       }
     }
 
+
     const submitFormCustom = async () => {
       try {
         loadingResults.value = true;
         let dataSet = `${dataSelect.value}_obfuscated_10`;
         console.log(dataSet);
-        const response = await axios.post('http://localhost:8000/api/cdrec/',
+        const response = await axios.post('http://localhost:8000/api/stmvl/',
             {
               data_set: dataSet,
-              truncation_rank: truncationRank.value,
-              //TODO Epsilon is not working
-              epsilon: "E-2",
-              iterations: iterations.value,
+              window_size: windowSize.value,
+              gamma: gamma.value,
+              alpha: alpha.value,
             },
             {
               headers: {
@@ -196,6 +183,8 @@ export default {
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           chartOptionsImputed.value.series[index] = createSeries(index, data);
         });
+        //TODO Remove hacky workaround to set parameters
+        resetToOptimalParameters();
         imputedData.value = true;
       } catch (error) {
         console.error(error);
@@ -299,17 +288,18 @@ export default {
     }
 
     // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, {immediate: true});
+    watch(dataSelect, handleDataSelectChange, { immediate: true });
     // TODO Missingness display
     // watch(missingRate, fetchData, { immediate: true });
 
     const resetToOptimalParameters = () => {
       if (optimalResponse) {
-        truncationRank.value = optimalResponse.data.best_params.rank;
-        epsilon.value = optimalResponse.data.best_params.eps;
-        iterations.value = optimalResponse.data.best_params.iters;
+        alpha.value = optimalResponse.data.best_params.alpha;
+        gamma.value = optimalResponse.data.best_params.gamma;
+        windowSize.value = optimalResponse.data.best_params.window_size;
       }
     }
+
     return {
       submitForm,
       rmse,
@@ -319,11 +309,10 @@ export default {
       chartOptionsOriginal,
       chartOptionsImputed,
       dataSelect,
-      truncationRank,
-      epsilon,
-      iterations,
+      windowSize,
+      gamma,
+      alpha,
       missingRate,
-      optimizationParameters,
       handleParametersChanged,
       optimalParametersDetermined,
       loadingParameters,
@@ -337,6 +326,6 @@ export default {
 
 <style scoped>
 .sidebar {
-  margin-left: 35px; /* Change this value to increase or decrease the margin */
+  margin-left: 35px;  /* Change this value to increase or decrease the margin */
 }
 </style>
