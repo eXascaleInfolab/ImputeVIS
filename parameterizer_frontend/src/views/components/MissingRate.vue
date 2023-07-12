@@ -2,7 +2,6 @@
   <div class="mb-3">
     <label for="missingRate" class="form-label">Missing Rate:</label>
     <select id="missingRate" v-model="missingRate" class="form-control">
-      <option value="0">0%</option>
       <option value="1">1%</option>
       <option value="5">5%</option>
       <option value="10">10%</option>
@@ -22,7 +21,7 @@ export default defineComponent({
   props: {
     modelValue: {
       type: String,
-      default: '0'
+      default: '10'
     }
   },
   computed: {
