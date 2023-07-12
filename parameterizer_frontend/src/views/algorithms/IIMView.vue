@@ -32,7 +32,7 @@
             <option value="a">Adaptive (High Processing Cost)</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Impute</button>
       </form>
     </div>
   </div>

@@ -39,7 +39,7 @@
           <input id="iterations" v-model.number="iterations" type="range" min="100" max="2000" step="100" class="form-control">
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Impute</button>
       </form>
     </div>
   </div>
