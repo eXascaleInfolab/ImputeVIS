@@ -4,12 +4,12 @@ import numpy as np
 from skopt.space import Integer
 
 import Optimizer.evaluate_params
-from Optimizer.algorithm_parameters import SEARCH_SPACES_PSO
+from Optimizer.algorithm_parameters import SEARCH_SPACES_PSO, PARAM_NAMES
 
 
 def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray,
                      selected_metrics: List[str], algorithm: str,
-                     pso_params: Dict[str, float]) -> Tuple[str, float]:
+                     pso_params: Dict[str, float]) -> tuple:
     """
     Conduct the Particle Swarm Optimization (PSO) hyperparameter optimization.
 
@@ -81,14 +81,22 @@ def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndar
     iterations = pso_params.get('iterations', 10)
     cost, pos = optimizer.optimize(objective, iters=iterations)
 
-    # Optimal parameters
+    param_names = PARAM_NAMES
+
+    # Ensure that the algorithm is valid
+    if algorithm not in param_names:
+        raise ValueError(f"Invalid algorithm: {algorithm}")
+
+    # Map parameters to their correct names
     if algorithm in ['cdrec', 'iim']:
         optimal_params = list(map(int, pos))
     elif algorithm == 'mrnn':
         optimal_params = [int(pos[0]), pos[1], int(pos[2]), pos[3], int(pos[4])]
     elif algorithm == 'stmvl':
         optimal_params = [int(pos[0]), pos[1], int(pos[2])]
-    optimal_params_dict = {f"param_{i + 1}": value for i, value in enumerate(optimal_params)}
+
+    # Create a dictionary with named parameters
+    optimal_params_dict = {param_name: value for param_name, value in zip(param_names[algorithm], optimal_params)}
 
     return optimal_params_dict, cost
 

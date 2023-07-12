@@ -43,3 +43,11 @@ SEARCH_SPACES_PSO = {
     'mrnn': [(1, 100), (1e-6, 1e-2), (1, 1000), (0.1, 1.0), (1, 100)],
     'stmvl': [(1, 100), (1e-6, 1e-2), (1, 100)]
 }
+
+# Define the parameter names for each algorithm
+PARAM_NAMES = {
+    'cdrec': ['rank', 'eps', 'iters'],
+    'iim': ['learning_neighbours'],
+    'mrnn': ['hidden_dim', 'learning_rate', 'iterations', 'keep_prob', 'seq_len'],
+    'stmvl': ['window_size', 'gamma', 'alpha']
+}

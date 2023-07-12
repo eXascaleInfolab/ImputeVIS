@@ -23,7 +23,7 @@
 <!--            <option v-for="number in Array.from({ length: 100 }, (_, i) => i + 1)" :key="number">{{ number }}</option>-->
 <!--        </select>-->
         <label for="nRandomStarts" class="form-label">Number of Random Starts: {{ nRandomStarts }}</label>
-          <input id="nRandomStarts" v-model.number="nRandomStarts" type="range" min="0" max="50" step="1" class="form-control">
+          <input id="nRandomStarts" v-model.number="nRandomStarts" type="range" min="1" max="50" step="1" class="form-control">
       </div>
       <div class="mb-3">
         <label for="acqFunc" class="form-label">Acquisition Function:</label>
@@ -91,11 +91,11 @@ export default defineComponent({
   name: 'OptimizationSelect',
   setup(props, { emit }) {
     const selectedOptimization = ref('bayesianOptimization');
-    const selectedMetrics = ref([]);
+    const selectedMetrics = ref(['rmse']);
 
     // Bayesian Optimization parameters
-    const nCalls = ref(50);
-    const nRandomStarts = ref(0);
+    const nCalls = ref(10);
+    const nRandomStarts = ref(1);
     const acqFunc = ref('gp_hedge');
 
     // PSO parameters
@@ -132,7 +132,7 @@ export default defineComponent({
     // Emit the custom event whenever the parameters change
     watch(optimizationParams, (newValue) => {
       emit('parametersChanged', newValue);
-    });
+    }, { immediate: true });
 
     return {
       selectedOptimization,

@@ -64,6 +64,9 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
         The configuration with the lowest average selected error measures.
     """
 
+    # Define the parameter names for each algorithm
+    param_names = alg_params.PARAM_NAMES
+
     # prepare configurations for each algorithm separately
     if algorithm == 'cdrec':
         configs = [(np.random.choice(alg_params.CDREC_RANK_RANGE),
@@ -96,8 +99,17 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
     if not configs:
         raise ValueError("No configurations left after successive halving.")
 
-    return min(configs, key=lambda config: select_and_average_errors(
-        Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config, selected_metrics), selected_metrics))
+    best_config = min(configs, key=lambda config: select_and_average_errors(
+        Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config,
+                                                  selected_metrics), selected_metrics))
+    best_score = select_and_average_errors(
+        Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, best_config,
+                                                  selected_metrics), selected_metrics)
+
+    # Convert the configuration tuple to a dictionary
+    best_config_dict = {name: value for name, value in zip(param_names[algorithm], best_config)}
+
+    return best_config_dict, best_score
 
 
 if __name__ == '__main__':
