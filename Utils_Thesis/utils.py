@@ -1,11 +1,13 @@
 import numpy as np
+import glob
 import os
 import random
 import fnmatch
 from typing import Optional
 
 
-def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=False):
+def obfuscate_data(filename_input: str, percentage: int, output_dir: str, rows_to_skip_percentage=5,
+                   allow_full_nan_line=False):
     """
     This function obfuscates a given percentage of data in a given file by replacing it with NaN.
 
@@ -15,6 +17,10 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
         The path to the input file, relative to the current directory.
     percentage : int
         The percentage of data to replace with NaN.
+    output_dir: str
+        The directory where the obfuscated data will be saved.
+    rows_to_skip_percentage: int, optional
+        The percentage of rows to skip from the beginning. Defaults to 5.
     allow_full_nan_line : bool, optional
         Whether to allow lines that are entirely NaN.
         Defaults to False.
@@ -24,9 +30,18 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
     filename_output : str
         The path to the obfuscated output file, relative to the current directory.
     """
+    skiprows = 0
+    with open(filename_input, 'r') as file:
+        first_line = file.readline().strip()  # read the first line of the file
+        try:
+            # try to convert to a float (or any numeric type)
+            np.array(first_line.split(), dtype=float)
+        except ValueError:
+            # if it fails, we know it's a header line and we should skip it
+            skiprows = 1
 
     # Load the data from the input file, adjust delimiter and skiprows as needed.
-    data = np.loadtxt(filename_input, delimiter=' ', skiprows=0)
+    data = np.loadtxt(filename_input, delimiter=' ', skiprows=skiprows)
 
     # Keep a copy of the original data for restoring values.
     original_data = data.copy()
@@ -40,9 +55,16 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
     # Get the shape of the data array for indexing.
     shape = data.shape
 
+    # Calculate rows to skip based on the given percentage.
+    rows_to_skip = max(int(shape[0] * rows_to_skip_percentage / 100), rows_to_skip_percentage * 10)
+
     # Generate random indices for the elements to be replaced.
     random.seed(6)
-    indices = random.sample(range(total_elements), num_nan)
+    try:
+        indices = random.sample(range(rows_to_skip * shape[1], total_elements), num_nan)
+    except ValueError:
+        print(f'Not enough elements for obfuscation in file {filename_input} after skipping rows. File skipped.')
+        return None  # Return None to indicate that the file was skipped.
 
     # Convert the 1D indices to 2D indices for multi-dimensional data.
     indices = np.unravel_index(indices, shape)
@@ -63,8 +85,9 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
                 data[row, col] = original_data[row, col]
 
     # Construct the output filename.
-    output_dir = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'obfuscated')
-    filename_output = os.path.join(output_dir, os.path.splitext(os.path.basename(filename_input))[0] + f'_obfuscated_{percentage}.txt')
+    # output_dir = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'obfuscated')
+    filename_output = os.path.join(output_dir, os.path.splitext(os.path.basename(filename_input))[
+        0] + f'_obfuscated_{percentage}.txt')
 
     # Create the output directory if it does not exist.
     os.makedirs(output_dir, exist_ok=True)
@@ -75,13 +98,56 @@ def obfuscate_data(filename_input: str, percentage: int, allow_full_nan_line=Fal
     return filename_output
 
 
-def automate_obfuscate():
+def automate_obfuscate(input_directory: str, output_dir: str):
     # Use the function with the matching file(s) and obfuscate 1%, 5%, 10%, 20%, 40% and 80% of its data with NaN.
-    for percentage in [1, 5, 10, 20, 40, 60, 80]:
-        for proportion in ["_half", "_quarter", ""]:
-            # obfuscate_data(os.path.join(D:/Git/msc_thesis_timeseries/Datasets/bafu/raw_matrices/BAFU_{proportion}.txt'), percentage)
-            obfuscate_data(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices', f'BAFU{proportion}.txt'),
-                           percentage, allow_full_nan_line=True)
+    for dataset_name in ['bafu', 'chlorine', 'climate', 'electricity', 'meteo']:
+        input_dir = os.path.join(input_directory, dataset_name, 'raw_matrices')
+        dataset_output_dir = os.path.join(output_dir, dataset_name,
+                                          'obfuscated')  # Create a new output directory variable for this dataset
+        for filename in get_files(input_dir):
+            for percentage in [1, 5, 10, 20, 40, 60, 80]:
+                filename_output = obfuscate_data(filename, percentage, dataset_output_dir, allow_full_nan_line=True)
+                if filename_output is None:  # If the file was skipped, continue with the next file.
+                    continue
+
+    # Special case for 'drift'
+    drift_dir = os.path.join(input_directory, 'drift', 'drift10', 'raw_matrices')
+    drift_output_dir = os.path.join(output_dir, 'drift', 'drift10',
+                                    'obfuscated')  # Create a new output directory variable for the 'drift' dataset
+    for filename in get_files(drift_dir):
+        for percentage in [1, 5, 10, 20, 40, 60, 80]:
+            filename_output = obfuscate_data(filename, percentage, drift_output_dir, allow_full_nan_line=True)
+            if filename_output is None:  # If the file was skipped, continue with the next file.
+                continue
+
+
+def process_directory(input_directory: str, output_dir: str):
+    # Iterate over the .txt and .csv files in the given directory and call the obfuscate_data function for each one.
+    for filename in glob.glob(os.path.join(input_directory, '*')):
+        if filename.endswith('.txt') or filename.endswith('.csv'):
+            automate_obfuscate(input_directory, output_dir)
+
+
+def get_files(directory: str, file_extensions=[".txt", ".csv"]) -> list:
+    """
+    This function returns a list of file paths from a given directory.
+
+    Parameters:
+    -----------
+    directory : str
+        The path to the directory from which to get the files.
+    file_extensions : list, optional
+        List of file extensions to be considered. Defaults to ".txt" and ".csv".
+
+    Returns:
+    --------
+    files : list
+        A list of file paths.
+    """
+    files = []
+    for extension in file_extensions:
+        files.extend(glob.glob(os.path.join(directory, f"*{extension}")))
+    return files
 
 
 def split_file_lines(input_folder: str):
@@ -134,7 +200,18 @@ def split_file_lines(input_folder: str):
 
 if __name__ == '__main__':
     # split_file_lines(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices'))
-    automate_obfuscate()
+    # Define the output directory
+    # output_dir = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'obfuscated')
+    # Define the input directory
+    # input_directory = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices')
+    # automate_obfuscate(input_directory, output_dir)
+    # Define the root directories
+    root_input_directory = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets')
+    root_output_directory = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets')
+
+    # Run the automation
+    automate_obfuscate(root_input_directory, root_output_directory)
+
 
 def find_obfuscated_file(target_dir: str, start_string: str) -> Optional[str]:
     """
@@ -162,12 +239,10 @@ def find_obfuscated_file(target_dir: str, start_string: str) -> Optional[str]:
     """
     for dirpath, dirs, files in os.walk(target_dir):
         if 'obfuscated' in dirpath:
-            for filename in fnmatch.filter(files, start_string+'*.txt'):
+            for filename in fnmatch.filter(files, start_string + '*.txt'):
                 return os.path.abspath(os.path.join(dirpath, filename))
 
     return None
-
-
 
 
 def find_non_obfuscated_file(target_dir: str, start_string: str) -> Optional[str]:
@@ -196,9 +271,8 @@ def find_non_obfuscated_file(target_dir: str, start_string: str) -> Optional[str
     """
     for dirpath, dirs, files in os.walk(target_dir):
         if 'obfuscated' not in dirpath:
-            for filename in fnmatch.filter(files, start_string+'*'):
+            for filename in fnmatch.filter(files, start_string + '*'):
                 if 'NaN' not in filename:
                     return os.path.abspath(os.path.join(dirpath, filename))
 
     return None
-
