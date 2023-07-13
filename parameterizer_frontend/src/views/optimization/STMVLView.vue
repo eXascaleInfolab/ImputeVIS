@@ -1,5 +1,5 @@
 <template>
-  <h1 class="mb-4 text-center">STMVL Detail WIP</h1>
+  <h1 class="mb-4 text-center">ST-MVL Detail WIP</h1>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <h2 v-if="loadingResults">Determining resulting imputation...</h2>

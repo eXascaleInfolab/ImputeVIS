@@ -12,6 +12,7 @@ CDREC_ITERS_RANGE = [i * 100 for i in range(1, 11)]  # replace with actual range
 # IIM parameters
 IIM_LEARNING_NEIGHBOR_RANGE = [i for i in range(100)]  # Test up to 100 learning neighbors
 # IIM_ADAPTIVE_RANGE = [True, False]  # Test with and without adaptive learning
+# IIM_METRIC_RANGE = ['euclidean', 'cosine']  # Test with euclidean and cosine distance, could be more
 
 # MRNN parameters
 MRNN_LEARNING_RATE_CHANGE = np.logspace(-6, 0, num=20)  # log scale for learning rate

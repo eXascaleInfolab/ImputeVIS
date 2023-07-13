@@ -1,39 +1,68 @@
 <template>
-  <h1 class="mb-4 text-center">IIM Detail</h1>
+  <h1 class="mb-4 text-center">IIM Optimization WIP</h1>
   <div class="d-flex mb-auto">
-    <div class="col-lg-8 ps-4">
-<!--      <p class="lead">-->
-<!--        BAFU dataset provided by the BundesAmt Für Umwelt (the Swiss Federal Office for the Environment).-->
-<!--        <br>-->
-<!--      This dataset contains water discharge time series of 12 different Swiss rivers recorded every 30 min during-->
-<!--      2010 – 2015 resulting in 80k records per time series.-->
-<!--      </p>-->
-      <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
-      <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
-      <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
-      <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
+    <div class="col-lg-8">
+      <h2 v-if="loadingResults">Determining resulting imputation...</h2>
+      <div class="row">
+        <div class="col-sm-4">
+          <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
+          <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
+        </div>
+        <div class="col-sm-4">
+          <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
+          <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
+        </div>
+      </div>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
+      <h2 class="text-center" v-if="loadingParameters">Determining optimal parameters...</h2>
+      <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
+            class="sidebar col-lg-7 align-items-center text-center">
+        <h2>Optimal Parameters</h2>
+        <data-select v-model="dataSelect"/>
+        <!--        <missing-rate v-model="missingRate" />-->
+        <div class="mb-3">
+          <!-- TODO: Add mouseover for truncation rank -->
+          <label for="truncationRank" class="form-label">Truncation Rank: {{ truncationRank }}</label>
+          <input id="truncationRank" v-model.number="truncationRank" type="range" min="0" max="10" step="1"
+                 class="form-control">
+        </div>
+
+        <!-- Sequence Length -->
+        <div class="mb-3">
+          <label for="epsilon" class="form-label">Threshold for Difference: {{ epsilon }}</label>
+          <select id="epsilon" v-model="epsilon" class="form-control">
+            <option value="E-9">E-9</option>
+            <option value="E-8">E-8</option>
+            <option value="E-7">E-7</option>
+            <option value="E-6">E-6</option>
+            <option value="E-5">E-5</option>
+            <option value="E-4">E-4</option>
+            <option value="E-3">E-3</option>
+          </select>
+        </div>
+
+        <!-- Number of Iterations -->
+        <div class="mb-3">
+          <label for="iterations" class="form-label">Number of Iterations: {{ iterations }}</label>
+          <input id="iterations" v-model.number="iterations" type="range" min="100" max="2000" step="100"
+                 class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary mr-3">Impute</button>
+        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Determined
+          Parameters
+        </button>
+
+      </form>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
-        <data-select v-model="dataSelect" />
-        <missing-rate v-model="missingRate" />
+        <optimization-select v-model="optimizationSelect" @parametersChanged="handleParametersChanged"/>
+        <data-select v-model="dataSelect"/>
+        <!--        <missing-rate v-model="missingRate" />-->
 
-        <div class="mb-3">
-          <label for="numberSelect" class="form-label">Select Learning Neighbors:</label>
-          <select id="numberSelect" v-model="numberSelect" class="form-control">
-            <option v-for="number in Array.from({ length: 100 }, (_, i) => i + 1)" :key="number">{{ number }}</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="typeSelect" class="form-label">Learning Type:</label>
-          <select id="typeSelect" v-model="typeSelect" class="form-control">
-            <option value="">Normal</option>
-            <option value="a">Adaptive (High Processing Cost)</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Impute</button>
+        <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
       </form>
     </div>
   </div>
@@ -43,6 +72,7 @@
 import {ref, watch} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
 import MissingRate from '../components/MissingRate.vue';
+import OptimizationSelect from '../components/OptimizationSelect.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
@@ -57,9 +87,11 @@ export default {
   components: {
     DataSelect,
     highcharts: Chart,
-    MissingRate
+    MissingRate,
+    OptimizationSelect
   },
   setup() {
+    const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
     const dataSelect = ref('BAFU_tiny') // Default data is BAFU
     const missingRate = ref('1'); // Default missing rate is 1%
     const numberSelect = ref(1); // Default selected learning neighbors is 1
@@ -69,8 +101,12 @@ export default {
     const mae = ref(null);
     const mi = ref(null);
     const corr = ref(null);
+    let optimalResponse: axios.AxiosResponse<any>;
+    let optimalParametersDetermined = ref(false);
+    let loadingParameters = ref(false);
+    let loadingResults = ref(false);
 
-    //TODO Improve tooltip
+
 
     const fetchData = async () => {
       try {
