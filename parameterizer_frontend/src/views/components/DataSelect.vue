@@ -4,8 +4,8 @@
     <label for="dataSelect" class="form-label">Data:</label>
     <select id="dataSelect" v-model="selectedData" class="form-control">
       <!--            <option value="BAFU">BAFU</option>-->
-      <option value="BAFU_small">BAFU 1/2 Size</option>
-      <option value="BAFU_tiny">BAFU 1/4 Size</option>
+      <option value="BAFU_half">BAFU 1/2 Size</option>
+      <option value="BAFU_quarter">BAFU 1/4 Size</option>
       <!--            <option value="cl2fullLarge">Chlorine</option>-->
       <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>
       <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>
@@ -27,7 +27,7 @@ export default defineComponent({
   props: {
     modelValue: {
       type: String,
-      default: 'BAFU_tiny'
+      default: 'BAFU_quarter'
     }
   },
   computed: {

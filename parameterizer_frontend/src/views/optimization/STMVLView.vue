@@ -83,7 +83,7 @@ export default {
   },
   setup() {
     const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
-    const dataSelect = ref('BAFU_tiny') // Default data is BAFU
+    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
     const missingRate = ref('1'); // Default missing rate is 1%
     const windowSize = ref('2'); // Default window size is 2
     const gamma = ref('0.5') // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0

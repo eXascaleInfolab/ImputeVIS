@@ -78,7 +78,7 @@
       <select id="metricsSelect" v-model="selectedMetrics" class="form-control" multiple>
         <option value="rmse">Root Mean Square Error (RMSE)</option>
         <option value="mse">Mean Square Error (MSE)</option>
-        <option value="mi">Mutual Information (MI)</option>
+        <option value="mi">Normalized Mutual Information (MI)</option>
         <option value="corr">Correlation (CORR)</option>
       </select>
     </div>
