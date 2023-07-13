@@ -106,35 +106,68 @@ export default {
     let loadingParameters = ref(false);
     let loadingResults = ref(false);
 
-
+    const handleParametersChanged = (newParams: any) => {
+      optimizationParameters.value = newParams; // Update the optimization parameters
+    };
 
     const fetchData = async () => {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
-          {
-            data_set: dataSet
-
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
+            {
+              data_set: dataSet
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
             }
-          }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         response.data.matrix.forEach((data: number[], index: number) => {
           chartOptionsOriginal.value.series[index] = createSeries(index, data);
         });
-      } catch(error) {
+      } catch (error) {
         console.error(error);
       }
     }
 
     const submitForm = async () => {
-      let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
       try {
+        let dataSet = `${dataSelect.value}_obfuscated_10`;
+        loadingParameters.value = true;
+        console.log(dataSet);
+        const response = await axios.post('http://localhost:8000/api/optimization/iim/',
+            {
+              ...optimizationParameters.value, // Spread the optimization parameters into the post body
+              data_set: dataSet,
+              algorithm: 'iim'
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            }
+        );
+        console.log(response.data);
+        optimalResponse = response;
+        numberSelect.value = response.data.best_params.learning_neighbours;
+        chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+        optimalParametersDetermined.value = true;
+        loadingParameters.value = false;
+        await submitFormCustom();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        loadingParameters.value = false;
+      }
+    }
+
+    const submitFormCustom = async () => {
+      try {
+        loadingResults.value = true;
         const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
+        let dataSet = `${dataSelect.value}_obfuscated_10`;
         const response = await axios.post('http://localhost:8000/api/iim/',
             {
               alg_code: formattedAlgCode,
@@ -157,6 +190,8 @@ export default {
         imputedData.value = true;
       } catch (error) {
         console.error(error);
+      } finally {
+        loadingResults.value = false;
       }
     }
 
@@ -255,9 +290,15 @@ export default {
     }
 
     // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, { immediate: true });
+    watch(dataSelect, handleDataSelectChange, {immediate: true});
     // TODO Missingness display
     // watch(missingRate, fetchData, { immediate: true });
+
+    const resetToOptimalParameters = () => {
+      if (optimalResponse) {
+        numberSelect.value = optimalResponse.data.best_params.learning_neighbours;
+      }
+    }
 
     return {
       submitForm,
@@ -271,6 +312,11 @@ export default {
       typeSelect,
       dataSelect,
       missingRate,
+      handleParametersChanged,
+      optimalParametersDetermined,
+      loadingParameters,
+      resetToOptimalParameters,
+      loadingResults,
       imputedData
     }
   }
@@ -279,7 +325,7 @@ export default {
 
 <style scoped>
 .sidebar {
-  margin-left: 35px;  /* Change this value to increase or decrease the margin */
+  margin-left: 35px; /* Change this value to increase or decrease the margin */
 }
 </style>
 

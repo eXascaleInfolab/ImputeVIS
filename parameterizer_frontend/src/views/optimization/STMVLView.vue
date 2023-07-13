@@ -16,32 +16,33 @@
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <h2 class="text-center" v-if="loadingParameters">Determining optimal parameters...</h2>
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
-      class="sidebar col-lg-7 align-items-center text-center">
-      <h2>Optimal Parameters</h2>
-      <data-select v-model="dataSelect"/>
-      <!--        <missing-rate v-model="missingRate" />-->
-      <!--Window Size-->
-      <div class="mb-3">
-        <label for="windowSize" class="form-label">Window Size: {{ windowSize }}</label>
-        <input id="windowSize" v-model.number="windowSize" type="range" min="2" max="100" step="1" class="form-control">
-      </div>
+            class="sidebar col-lg-7 align-items-center text-center">
+        <h2>Optimal Parameters</h2>
+        <data-select v-model="dataSelect"/>
+        <!--        <missing-rate v-model="missingRate" />-->
+        <!--Window Size-->
+        <div class="mb-3">
+          <label for="windowSize" class="form-label">Window Size: {{ windowSize }}</label>
+          <input id="windowSize" v-model.number="windowSize" type="range" min="2" max="100" step="1"
+                 class="form-control">
+        </div>
 
-      <!--Smoothing Parameter Gamma-->
-      <div class="mb-3">
-        <label for="gamma" class="form-label">Smoothing Parameter Gamma: {{ gamma }}</label>
-        <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.05" class="form-control">
-      </div>
+        <!--Smoothing Parameter Gamma-->
+        <div class="mb-3">
+          <label for="gamma" class="form-label">Smoothing Parameter Gamma: {{ gamma }}</label>
+          <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.05" class="form-control">
+        </div>
 
-      <!-- Power for Spatial Weight (Alpha) -->
-      <div class="mb-3">
-        <label for="alpha" class="form-label">Power for Spatial Weight (alpha): {{ alpha }}</label>
-        <input id="alpha" v-model.number="alpha" type="range" min="1" max="20" step="1" class="form-control">
-      </div>
+        <!-- Power for Spatial Weight (Alpha) -->
+        <div class="mb-3">
+          <label for="alpha" class="form-label">Power for Spatial Weight (alpha): {{ alpha }}</label>
+          <input id="alpha" v-model.number="alpha" type="range" min="1" max="20" step="1" class="form-control">
+        </div>
 
-      <button type="submit" class="btn btn-primary mr-3">Impute</button>
-      <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Determined
-        Parameters
-      </button>
+        <button type="submit" class="btn btn-primary mr-3">Impute</button>
+        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Determined
+          Parameters
+        </button>
 
       </form>
       <highcharts :options="chartOptionsOriginal"></highcharts>
@@ -105,20 +106,20 @@ export default {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
-          {
-            data_set: dataSet
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
+            {
+              data_set: dataSet
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
             }
-          }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         response.data.matrix.forEach((data: number[], index: number) => {
           chartOptionsOriginal.value.series[index] = createSeries(index, data);
         });
-      } catch(error) {
+      } catch (error) {
         console.error(error);
       }
     }
@@ -142,12 +143,11 @@ export default {
         );
         console.log(response.data);
         optimalResponse = response;
-        gamma.value = response.data.gamma;
-        alpha.value = response.data.alpha;
-        windowSize.value = response.data.window_size;
+        gamma.value = response.data.best_params.gamma;
+        alpha.value = response.data.best_params.alpha;
+        windowSize.value = response.data.best_params.window_size;
         optimalParametersDetermined.value = true;
         loadingParameters.value = false;
-        console.log(optimalParametersDetermined);
         await submitFormCustom();
       } catch (error) {
         console.error(error);
@@ -161,7 +161,6 @@ export default {
       try {
         loadingResults.value = true;
         let dataSet = `${dataSelect.value}_obfuscated_10`;
-        console.log(dataSet);
         const response = await axios.post('http://localhost:8000/api/stmvl/',
             {
               data_set: dataSet,
@@ -183,8 +182,6 @@ export default {
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           chartOptionsImputed.value.series[index] = createSeries(index, data);
         });
-        //TODO Remove hacky workaround to set parameters
-        resetToOptimalParameters();
         imputedData.value = true;
       } catch (error) {
         console.error(error);
@@ -288,7 +285,7 @@ export default {
     }
 
     // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, { immediate: true });
+    watch(dataSelect, handleDataSelectChange, {immediate: true});
     // TODO Missingness display
     // watch(missingRate, fetchData, { immediate: true });
 
@@ -326,6 +323,6 @@ export default {
 
 <style scoped>
 .sidebar {
-  margin-left: 35px;  /* Change this value to increase or decrease the margin */
+  margin-left: 35px; /* Change this value to increase or decrease the margin */
 }
 </style>

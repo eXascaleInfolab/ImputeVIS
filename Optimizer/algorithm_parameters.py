@@ -29,7 +29,7 @@ STMVL_ALPHA_RANGE = [i for i in range(1, 10)]  # smoothing parameter alpha
 # Define the search space for each algorithm separately
 SEARCH_SPACES = {
     'cdrec': [Integer(0, 9, name='rank'), Real(1e-6, 1, "log-uniform", name='eps'), Integer(100, 1000, name='iters')],
-    'iim': [Integer(0, 99, name='learning_neighbours')],
+    'iim': [Integer(1, 100, name='learning_neighbours')],
     'mrnn': [Integer(0, 9, name='hidden_dim'), Real(1e-6, 1, "log-uniform", name='learning_rate'),
              Integer(0, 95, name='iterations'), Real(1e-6, 1, "log-uniform", name='keep_prob'),
              Integer(0, 99, name='seq_len')],

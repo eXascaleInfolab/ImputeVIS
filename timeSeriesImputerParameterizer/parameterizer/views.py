@@ -151,7 +151,7 @@ def iim(request):
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
 
         # Call the main function with parameters from the request
-        alg_code = data.get('alg_code', 'default_alg_code')
+        alg_code = data.get('alg_code', 'iim 2')
 
         if clean_file_path is not None and obfuscated_file_path is not None:
             imputed_matrix = iim_alg.main(alg_code, obfuscated_file_path)
@@ -169,6 +169,23 @@ def iim(request):
             print('No matching datasets found for path: ', data_set)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def iim_optimization(request):
+    if request.method == 'POST':
+        data, data_set = load_from_request(request)
+        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+
+        if clean_file_path is not None and obfuscated_file_path is not None:
+            raw_matrix = np.loadtxt(clean_file_path, delimiter=" ", )
+            obf_matrix = np.loadtxt(obfuscated_file_path, delimiter=" ", )
+            best_params, best_score = optimization(data, data_set, obf_matrix, raw_matrix)
+            if best_params is not None and best_score is not None:
+                best_params = {k: int(v) if isinstance(v, np.int64) else v for k, v in best_params.items()}
+                return JsonResponse({'best_params': best_params, 'best_score': float(best_score)}, status=200)
+            else:
+                return JsonResponse({'message': 'Invalid request'}, status=400)
 
 
 @csrf_exempt
