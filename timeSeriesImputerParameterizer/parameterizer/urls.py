@@ -11,6 +11,6 @@ urlpatterns = [
     path('stmvl/', views.stmvl, name='stmvl'),
     path('optimization/cdrec/', views.cdrec_optimization, name='cdrec_optimization'),
     path('optimization/iim/', views.iim_optimization, name='iim_optimization'),
-    # path('optimization/mrnn/', views.mrnn_optimization, name='mrnn_optimization'),
+    path('optimization/mrnn/', views.mrnn_optimization, name='mrnn_optimization'),
     path('optimization/stmvl/', views.stmvl_optimization, name='stmvl_optimization'),
 ]

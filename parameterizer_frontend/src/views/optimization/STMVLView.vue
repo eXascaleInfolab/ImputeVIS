@@ -1,5 +1,5 @@
 <template>
-  <h1 class="mb-4 text-center">ST-MVL Detail WIP</h1>
+  <h1 class="mb-4 text-center">CDRec Optimization WIP</h1>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <h2 v-if="loadingResults">Determining resulting imputation...</h2>
@@ -19,7 +19,7 @@
             class="sidebar col-lg-7 align-items-center text-center">
         <h2>Optimal Parameters</h2>
         <data-select v-model="dataSelect"/>
-        <!--        <missing-rate v-model="missingRate" />-->
+
         <!--Window Size-->
         <div class="mb-3">
           <label for="windowSize" class="form-label">Window Size: {{ windowSize }}</label>
@@ -36,7 +36,7 @@
         <!-- Power for Spatial Weight (Alpha) -->
         <div class="mb-3">
           <label for="alpha" class="form-label">Power for Spatial Weight (alpha): {{ alpha }}</label>
-          <input id="alpha" v-model.number="alpha" type="range" min="1" max="20" step="1" class="form-control">
+          <input id="alpha" v-model.number="alpha" type="range" min="0.5" max="20" step="0.5" class="form-control">
         </div>
 
         <button type="submit" class="btn btn-primary mr-3">Impute</button>
@@ -299,6 +299,7 @@ export default {
 
     return {
       submitForm,
+      submitFormCustom,
       rmse,
       mae,
       mi,

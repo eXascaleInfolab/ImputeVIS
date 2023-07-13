@@ -30,7 +30,7 @@ def determine_rmse(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, 
 
     individual_rmse = (ground_truth_values - imputed_values) ** 2
     rmse = np.sqrt(np.mean(individual_rmse))
-    return rmse
+    return float(rmse)
 
 
 def determine_mae(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, obfuscated_matrix: np.ndarray):
@@ -58,7 +58,7 @@ def determine_mae(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, o
 
     individual_errors = np.abs(ground_truth_values - imputed_values)
     mae = np.mean(individual_errors)
-    return mae
+    return float(mae)
 
 
 def determine_mutual_info(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, nan_matrix: np.ndarray):
@@ -100,7 +100,7 @@ def determine_mutual_info(ground_truth_matrix: np.ndarray, imputed_matrix: np.nd
     mi = mutual_info_regression(imputed_matrix[nan_locations].reshape(-1, 1), target_vector, random_state=42)
 
     print("Mutual information:", mi)
-    return mi[0]
+    return float(mi[0])
 
 
 def determine_correlation(ground_truth_matrix: np.ndarray, imputed_matrix: np.ndarray, obfuscated_matrix: np.ndarray):
@@ -127,7 +127,7 @@ def determine_correlation(ground_truth_matrix: np.ndarray, imputed_matrix: np.nd
     imputed_values = imputed_matrix[nan_locations]
 
     correlation, _ = pearsonr(ground_truth_values, imputed_values)
-    return correlation
+    return float(correlation)
 
 
 

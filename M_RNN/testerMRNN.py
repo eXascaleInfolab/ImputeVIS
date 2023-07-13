@@ -84,7 +84,8 @@ def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iteratio
     else:
         np.savetxt(matrix_out, x, fmt='%f', delimiter=' ')
 
-    return np.asarray(x).tolist()
+    return np.asarray(x)
+
 
 def mrnn_recov_with_data(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob=1.0, seq_length=7,
                matrix_out="../Results/M-RNN/BAFU_temp.txt", recursive=False):

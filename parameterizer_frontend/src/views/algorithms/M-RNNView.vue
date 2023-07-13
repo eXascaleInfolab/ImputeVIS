@@ -20,10 +20,10 @@
         </div>
 
         <!-- Sequence Length -->
-        <div class="mb-3">
-          <label for="seq_len" class="form-label">Sequence Length: {{ seqLen }}</label>
-          <input id="seq_len" v-model.number="seqLen" type="range" min="1" max="100" step="1" class="form-control">
-        </div>
+<!--        <div class="mb-3">-->
+<!--          <label for="seq_len" class="form-label">Sequence Length: {{ seqLen }}</label>-->
+<!--          <input id="seq_len" v-model.number="seqLen" type="range" min="1" max="100" step="1" class="form-control">-->
+<!--        </div>-->
 
         <!-- Hidden Dimension Size -->
         <div class="mb-3">
@@ -109,7 +109,6 @@ export default {
     const submitForm = async () => {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-        console.log(dataSet);
         const response = await axios.post('http://localhost:8000/api/mrnn/',
             {
               data_set: dataSet,

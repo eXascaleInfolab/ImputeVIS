@@ -49,8 +49,8 @@
         </div>
 
         <button type="submit" class="btn btn-primary mr-3">Impute</button>
-        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Determined
-          Parameters
+        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">
+          Reset to Determined Parameters
         </button>
 
       </form>
@@ -302,6 +302,7 @@ export default {
 
     return {
       submitForm,
+      submitFormCustom,
       rmse,
       mae,
       mi,

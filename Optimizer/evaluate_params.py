@@ -44,13 +44,16 @@ def evaluate_params(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarr
         alg_code = "iim " + re.sub(r'[\W_]', '', str(learning_neighbours))
         recovered_matrix = iim_alg.impute_with_algorithm(alg_code, obfuscated_matrix_copy)
     elif algorithm == 'mrnn':
-        hidden_dim, learning_rate, iterations, keep_prob, seq_len = config
+        hidden_dim, learning_rate, iterations, keep_prob = config
+        # hidden_dim, learning_rate, iterations, keep_prob, seq_len = config
         recovered_matrix = M_RNN.testerMRNN.mrnn_recov_with_data(obfuscated_matrix_copy, runtime=0,
                                                                  hidden_dim=hidden_dim,
                                                                  learning_rate=learning_rate,
                                                                  iterations=iterations,
                                                                  keep_prob=keep_prob,
-                                                                 seq_length=seq_len)
+                                                                 # seq_length=seq_len
+                                                                 )
+        recovered_matrix = np.array(recovered_matrix)
     elif algorithm == 'stmvl':
         window_size, gamma, alpha = config
         recovered_matrix = Wrapper.algo_collection.native_stmvl_param(

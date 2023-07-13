@@ -141,11 +141,11 @@ export default {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_10`;
         loadingParameters.value = true;
-        console.log(dataSet);
         const response = await axios.post('http://localhost:8000/api/optimization/cdrec/',
             {
               ...optimizationParameters.value, // Spread the optimization parameters into the post body
               data_set: dataSet,
+              algorithm: 'cdrec'
             },
             {
               headers: {
@@ -153,14 +153,12 @@ export default {
               }
             }
         );
-        console.log(response.data);
         optimalResponse = response;
         truncationRank.value = response.data.best_params.rank;
         epsilon.value = response.data.best_params.eps;
         iterations.value = response.data.best_params.iters;
         optimalParametersDetermined.value = true;
         loadingParameters.value = false;
-        console.log(optimalParametersDetermined);
         await submitFormCustom();
       } catch (error) {
         console.error(error);
@@ -310,6 +308,7 @@ export default {
         iterations.value = optimalResponse.data.best_params.iters;
       }
     }
+
     return {
       submitForm,
       rmse,

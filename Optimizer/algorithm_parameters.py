@@ -17,7 +17,7 @@ IIM_LEARNING_NEIGHBOR_RANGE = [i for i in range(100)]  # Test up to 100 learning
 # MRNN parameters
 MRNN_LEARNING_RATE_CHANGE = np.logspace(-6, 0, num=20)  # log scale for learning rate
 MRNN_HIDDEN_DIM_RANGE = [i for i in range(10)]  # hidden dimension
-MRNN_SEQ_LEN_RANGE = [i for i in range(100)]  # sequence length
+# MRNN_SEQ_LEN_RANGE = [i for i in range(100)]  # sequence length
 MRNN_NUM_ITER_RANGE = [i for i in range(0, 100, 5)]  # number of epochs
 MRNN_KEEP_PROB_RANGE = np.logspace(-6, 0, num=10)  # dropout keep probability
 
@@ -32,7 +32,8 @@ SEARCH_SPACES = {
     'iim': [Integer(1, 100, name='learning_neighbours')],
     'mrnn': [Integer(0, 9, name='hidden_dim'), Real(1e-6, 1, "log-uniform", name='learning_rate'),
              Integer(0, 95, name='iterations'), Real(1e-6, 1, "log-uniform", name='keep_prob'),
-             Integer(0, 99, name='seq_len')],
+             # Integer(0, 99, name='seq_len')
+             ],
     'stmvl': [Integer(2, 99, name='window_size'), Real(1e-6, 0.999999, "log-uniform", name='gamma'),
               Integer(1, 9, name='alpha')],
 }
@@ -41,7 +42,9 @@ SEARCH_SPACES = {
 SEARCH_SPACES_PSO = {
     'cdrec': [(1, 10), (1e-6, 1), (100, 1000)],
     'iim': [(1, 100)],
-    'mrnn': [(1, 100), (1e-6, 1e-2), (1, 1000), (0.1, 1.0), (1, 100)],
+    'mrnn': [(1, 100), (1e-6, 1e-2), (1, 1000), (0.1, 1.0),
+             # (1, 100)
+             ],
     'stmvl': [(1, 100), (1e-6, 1e-2), (1, 100)]
 }
 
@@ -49,6 +52,8 @@ SEARCH_SPACES_PSO = {
 PARAM_NAMES = {
     'cdrec': ['rank', 'eps', 'iters'],
     'iim': ['learning_neighbours'],
-    'mrnn': ['hidden_dim', 'learning_rate', 'iterations', 'keep_prob', 'seq_len'],
+    'mrnn': ['hidden_dim', 'learning_rate', 'iterations', 'keep_prob',
+             # 'seq_len'
+             ],
     'stmvl': ['window_size', 'gamma', 'alpha']
 }

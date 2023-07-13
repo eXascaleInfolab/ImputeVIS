@@ -46,7 +46,7 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization">
               <RouterLink class="dropdown-item" to="/optimization/cdrec">CDRec (WIP)</RouterLink>
               <RouterLink class="dropdown-item" to="/optimization/iim">IIM (WIP)</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/m-rnn">M-RNN (WIP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/mrnn">M-RNN (WIP)</RouterLink>
               <RouterLink class="dropdown-item" to="/optimization/stmvl">STMVL (WIP)</RouterLink>
             </div>
           </li>

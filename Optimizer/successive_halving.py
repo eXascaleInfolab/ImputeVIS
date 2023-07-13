@@ -80,7 +80,8 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
                     np.random.choice(alg_params.MRNN_LEARNING_RATE_CHANGE),
                     np.random.choice(alg_params.MRNN_NUM_ITER_RANGE),
                     np.random.choice(alg_params.MRNN_KEEP_PROB_RANGE),
-                    np.random.choice(alg_params.MRNN_SEQ_LEN_RANGE)) for _ in range(num_configs)]
+                    # np.random.choice(alg_params.MRNN_SEQ_LEN_RANGE)
+                    ) for _ in range(num_configs)]
     elif algorithm == 'stmvl':
         configs = [(np.random.choice(alg_params.STMVL_WINDOW_SIZE_RANGE),
                     np.random.choice(alg_params.STMVL_GAMMA_RANGE),

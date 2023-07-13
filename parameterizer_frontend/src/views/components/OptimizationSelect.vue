@@ -21,7 +21,14 @@
       </div>
       <div class="mb-3">
         <label for="acqFunc" class="form-label">Acquisition Function:</label>
-        <input id="acqFunc" v-model="acqFunc" class="form-control" type="text">
+        <select id="acqFunc" v-model="acqFunc" class="form-control">
+          <option value="gp_hedge">gp_hedge</option>
+          <option value="EI">EI</option>
+          <option value="LCB">LCB</option>
+          <option value="PI">PI</option>
+          <option value="EIps">EIps</option>
+          <option value="PIps">PIps</option>
+        </select>
       </div>
     </div>
 
