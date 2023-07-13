@@ -75,8 +75,8 @@ def evaluate_params(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarr
         error_measures['mae'] = statistics.determine_mae(ground_truth_matrix, recovered_matrix,
                                                          obfuscated_matrix)
     if 'mi' in selected_metrics:
-        error_measures['mi'] = 1 - statistics.determine_mutual_info(ground_truth_matrix, recovered_matrix,
-                                                                    obfuscated_matrix)
+        error_measures['mi'] = 1 - statistics.normalized_mutual_info(ground_truth_matrix, recovered_matrix,
+                                                                           obfuscated_matrix)
     if 'corr' in selected_metrics:
         error_measures['corr'] = 1 - statistics.determine_correlation(ground_truth_matrix, recovered_matrix,
                                                                       obfuscated_matrix)

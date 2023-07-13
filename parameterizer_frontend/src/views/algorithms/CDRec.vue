@@ -69,7 +69,7 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('BAFU_tiny') // Default data is BAFU
+    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
     const missingRate = ref('1'); // Default missing rate is 1%
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
     const epsilon = ref('E-7'); // Default epsilon is E-7

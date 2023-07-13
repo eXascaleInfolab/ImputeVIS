@@ -60,7 +60,7 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('BAFU_tiny') // Default data is BAFU
+    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
     const missingRate = ref('1'); // Default missing rate is 1%
     const numberSelect = ref(1); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string

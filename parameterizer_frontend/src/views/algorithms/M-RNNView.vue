@@ -69,7 +69,7 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('BAFU_tiny') // Default data is BAFU
+    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
     const missingRate = ref('1'); // Default missing rate is 1%
     const learningRate = ref(0.01); // Default learning rate is 0.01
     const hiddenDim = ref(10); // Default hidden dimension size is 10
