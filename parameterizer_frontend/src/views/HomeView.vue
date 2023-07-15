@@ -1,27 +1,60 @@
 <template>
   <main>
-    <!--    <TheWelcome />-->
     <h2>Here you will be able to compare algorithms to each other, using recommended parameters.</h2>
-
-    <h3>TODO: Add algorithms </h3>
 
     <h3>TODO: Add table of datasets </h3>
 
-    <h3>TODO: Metrics should be displayed when comparing?</h3>
-
-    <h3>TODO: Add graphs </h3>
-
 
   </main>
-  <h1 class="mb-4 text-center">CDRec Detail WIP</h1>
+  <h1 class="mb-4 text-center">Compare Algorithms</h1>
+  <h2 v-if="loadingResults">Determining resulting imputation...</h2>
   <div class="d-flex mb-auto">
-    <div class="col-lg-8">
-      <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
-      <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
-      <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
-      <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
+    <div class="col-lg-10">
+      <div class="d-flex justify-content-between">
+        <div class="form-check px-5 mx-5">
+          <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames"
+                 @change="handleCheckboxChange">
+          <label class="form-check-label" for="CDRec">
+            CDRec
+          </label>
+        </div>
+
+        <div class="form-check px-5 mx-5">
+          <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames"
+                 @change="handleCheckboxChange">
+          <label class="form-check-label" for="IIM">
+            IIM
+          </label>
+        </div>
+
+        <div class="form-check px-5 mx-5">
+          <input class="form-check-input" type="checkbox" value="MRNN" id="MRNN" v-model="checkedNames"
+                 @change="handleCheckboxChange">
+          <label class="form-check-label" for="MRNN">
+            MRNN
+          </label>
+        </div>
+
+        <div class="form-check px-5 mx-5">
+          <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames"
+                 @change="handleCheckboxChange">
+          <label class="form-check-label" for="ST-MVL">
+            ST-MVL
+          </label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
+          <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
+        </div>
+        <div class="col-sm-4">
+          <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
+          <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
+        </div>
+      </div>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
-      <highcharts v-if="imputedData" :options="chartOptionsImputedIIM"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
     <div class="col-lg-4">
@@ -36,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import {ref, watch} from 'vue';
+import {ref, watch, reactive} from 'vue';
 import DataSelect from './components/DataSelect.vue';
 import MissingRate from './components/MissingRate.vue';
 import OptimizationSelect from './components/OptimizationSelect.vue';
@@ -58,6 +91,8 @@ export default {
   },
   setup() {
     const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const fetchedData = reactive({});
+    let loadingResults = ref(false);
     //CDRec Parameters
     const missingRate = ref('1'); // Default missing rate is 1%
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
@@ -80,6 +115,8 @@ export default {
     const gamma = ref('0.5') // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
     const alpha = ref('2') // Default power for spatial weight (alpha) is 2, must be larger than 0.0
 
+
+    const checkedNames = ref([]);
     const imputedData = ref(false); // Whether imputation has been carried out
     const rmse = ref(null);
     const mae = ref(null);
@@ -114,98 +151,7 @@ export default {
     }
 
     const submitForm = async () => {
-      try {
-        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-        console.log(dataSet);
-        const response = await axios.post('http://localhost:8000/api/cdrec/',
-            {
-              data_set: dataSet,
-              truncation_rank: truncationRank.value,
-              epsilon: epsilon.value,
-              iterations: iterations.value,
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            }
-        );
-        rmse.value = response.data.rmse.toFixed(3);
-        mae.value = response.data.mae.toFixed(3);
-        mi.value = response.data.mi.toFixed(3);
-        corr.value = response.data.corr.toFixed(3);
-        chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
-        response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          chartOptionsImputed.value.series[index] = createSeries(index, data);
-        });
-        try {
-          const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
-          const responseIIM = await axios.post('http://localhost:8000/api/iim/',
-              {
-                alg_code: formattedAlgCode,
-                data_set: dataSet
-              },
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                }
-              }
-          );
-          responseIIM.data.matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series[index] = createSeries(index, data);
-          });
-        } catch (error) {
-          console.error(error);
-        }
-        try {
-          const responseMRNN = await axios.post('http://localhost:8000/api/mrnn/',
-              {
-                data_set: dataSet,
-                hidden_dim: hiddenDim.value,
-                learning_rate: learningRate.value,
-                iterations: iterations.value,
-                keep_prob: keepProb.value,
-                seq_len: seqLen.value
-              },
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                }
-              }
-          );
-          responseMRNN.data.matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series[index] = createSeries(index, data);
-          });
-        } catch (error) {
-          console.error(error);
-        }
-
-        try {
-          const responseSTMVL = await axios.post('http://localhost:8000/api/stmvl/',
-              {
-                data_set: dataSet,
-                window_size: windowSize.value,
-                gamma: gamma.value,
-                alpha: alpha.value,
-              },
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                }
-              }
-          );
-          // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
-          responseSTMVL.data.matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series[index] = createSeries(index, data);
-          });
-        } catch (error) {
-          console.error(error);
-        }
-
-        imputedData.value = true;
-      } catch (error) {
-        console.error(error);
-      }
+      // TODO Reset probably
     }
 
     const createSeries = (index: number, data: number[]) => ({
@@ -230,6 +176,7 @@ export default {
         type: 'datetime'
       },
       chart: {
+        height: 900,
         type: 'line',
         zoomType: 'x',
         panning: true,
@@ -248,11 +195,7 @@ export default {
         inputEnabled: false,
         // inputDateFormat: '%y',
         // inputEditDateFormat: '%y',
-        buttons: [{
-          type: 'hour',
-          count: 1,
-          text: 'H'
-        },
+        buttons: [
           {
             type: 'day',
             count: 1,
@@ -295,6 +238,102 @@ export default {
       // },
     });
 
+    const handleCheckboxChange = async () => {
+      // Clear the existing series
+      // chartOptionsImputed.value.series = [];
+      loadingResults.value = true;
+      chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length)
+
+      for (let checkedName of checkedNames.value) {
+        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+        if (checkedName.toLowerCase() === 'cdrec') {
+          if (!fetchedData[checkedName]) {
+            const response = await axios.post('http://localhost:8000/api/cdrec/',
+                {
+                  data_set: dataSet,
+                  truncation_rank: truncationRank.value,
+                  epsilon: epsilon.value,
+                  iterations: iterations.value,
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                  }
+                }
+            );
+            fetchedData[checkedName] = response.data;
+          }
+          fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
+            //The push should theoretically ensure that we are just adding
+            chartOptionsImputed.value.series.push(createSeries(index, data));
+          });
+        } else if (checkedName.toLowerCase() == 'iim') {
+          if (!fetchedData[checkedName]) {
+            const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
+            const response = await axios.post('http://localhost:8000/api/iim/',
+                {
+                  data_set: dataSet,
+                  alg_code: formattedAlgCode,
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                  }
+                }
+            );
+            fetchedData[checkedName] = response.data;
+          }
+          fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
+            chartOptionsImputed.value.series.push(createSeries(index, data));
+          });
+        } else if (checkedName.toLowerCase() === 'mrnn') {
+          if (!fetchedData[checkedName]) {
+            const response = await axios.post('http://localhost:8000/api/mrnn/',
+                {
+                  data_set: dataSet,
+                  hidden_dim: hiddenDim.value,
+                  learning_rate: learningRate.value,
+                  iterations: iterations.value,
+                  keep_prob: keepProb.value,
+                  seq_len: seqLen.value
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                  }
+                }
+            );
+            fetchedData[checkedName] = response.data;
+          }
+          fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
+            chartOptionsImputed.value.series.push(createSeries(index, data));
+          });
+        } else if (checkedName.toLowerCase() === 'st-mvl') {
+          if (!fetchedData[checkedName]) {
+            const response = await axios.post('http://localhost:8000/api/stmvl/',
+                {
+                  data_set: dataSet,
+                  window_size: windowSize.value,
+                  gamma: gamma.value,
+                  alpha: alpha.value,
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                  }
+                }
+            );
+            fetchedData[checkedName] = response.data;
+          }
+          fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
+            chartOptionsImputed.value.series.push(createSeries(index, data));
+          });
+        }
+        loadingResults.value = false;
+        imputedData.value = true;
+      }
+    };
+
     const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
     const chartOptionsImputed = ref(generateChartOptions('Imputed Data', 'Data'));
 
@@ -320,7 +359,10 @@ export default {
       epsilon,
       iterations,
       missingRate,
-      imputedData
+      imputedData,
+      checkedNames,
+      handleCheckboxChange,
+      loadingResults
     }
   }
 }
