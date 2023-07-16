@@ -20,10 +20,10 @@
               Algorithms
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <RouterLink class="dropdown-item" to="/algorithms/cdrec">CDRec (WIP)</RouterLink>
-              <RouterLink class="dropdown-item" to="/algorithms/iim">IIM (WIP)</RouterLink>
-              <RouterLink class="dropdown-item" to="/algorithms/m-rnn">M-RNN (WIP)</RouterLink>
-              <RouterLink class="dropdown-item" to="/algorithms/stmvl">STMVL (WIP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/algorithms/cdrec">CDRec</RouterLink>
+              <RouterLink class="dropdown-item" to="/algorithms/iim">IIM</RouterLink>
+              <RouterLink class="dropdown-item" to="/algorithms/m-rnn">M-RNN</RouterLink>
+              <RouterLink class="dropdown-item" to="/algorithms/stmvl">ST-MVL</RouterLink>
             </div>
           </li>
           <li class="nav-item dropdown">
@@ -44,10 +44,10 @@
               Algorithm Optimization
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization">
-              <RouterLink class="dropdown-item" to="/optimization/cdrec">CDRec (WIP)</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/iim">IIM (WIP)</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/mrnn">M-RNN (WIP)</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/stmvl">STMVL (WIP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/cdrec">CDRec</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/iim">IIM</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/mrnn">M-RNN</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/stmvl">ST-MVL</RouterLink>
             </div>
           </li>
           <!-- Add your additional links here -->

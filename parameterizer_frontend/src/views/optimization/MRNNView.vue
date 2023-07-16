@@ -1,10 +1,10 @@
 <template>
-  <h1 class="mb-4 text-center">M-RNN Optimization WIP</h1>
+  <h1 class="mb-4 text-center">M-RNN Optimization</h1>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <h2 v-if="loadingResults">Determining resulting imputation...</h2>
       <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-4 ms-3">
           <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
           <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
         </div>
@@ -12,6 +12,7 @@
           <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
           <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
         </div>
+      </div>
       </div>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <h2 class="text-center" v-if="loadingParameters">Determining optimal parameters...</h2>
@@ -82,10 +83,13 @@ import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
+import HighchartsBoost from 'highcharts/modules/boost'
+import {createSeries, generateChartOptions} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
 HC_exporting(Highcharts)
 HC_exportData(Highcharts)
+HighchartsBoost(Highcharts)
 
 export default {
   components: {
@@ -206,93 +210,6 @@ export default {
         loadingResults.value = false;
       }
     }
-
-    const createSeries = (index: number, data: number[]) => ({
-      name: `Imputed Data: Series ${index + 1}`,
-      data,
-      pointStart: Date.UTC(2010, 1, 1),
-      pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-      tooltip: {
-        valueDecimals: 2
-      }
-    });
-
-    const generateChartOptions = (title, seriesName) => ({
-      credits: {
-        enabled: false
-      },
-      title: {
-        text: title
-      },
-      xAxis: {
-        type: 'datetime'
-      },
-      chart: {
-        type: 'line',
-        zoomType: 'x',
-        panning: true,
-        panKey: 'shift'
-      },
-      rangeSelector: {
-        x: 0,
-        // floating: true,
-        style: {
-          color: 'black',
-          fontWeight: 'bold',
-          position: 'relative',
-          "font-family": "Arial"
-        },
-        enabled: true,
-        inputEnabled: false,
-        // inputDateFormat: '%y',
-        // inputEditDateFormat: '%y',
-        buttons: [{
-          type: 'hour',
-          count: 1,
-          text: 'H'
-        },
-          {
-            type: 'day',
-            count: 1,
-            text: 'D'
-          },
-
-          {
-            type: 'month',
-            count: 1,
-            text: 'M'
-          },
-          {
-            type: 'year',
-            count: 1,
-            text: 'Y'
-          },
-
-          {
-            type: 'all',
-            text: 'All',
-            align: 'right',
-            x: 1000,
-            y: 100,
-          }],
-      },
-      series: [{
-        name: seriesName,
-        data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
-        pointStart: Date.UTC(2010, 1, 1),
-        pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-        tooltip: {
-          valueDecimals: 2
-        }
-      }],
-      // plotOptions: {
-      //   series: {
-      //     pointStart: Date.UTC(2010, 0, 1),
-      //     pointInterval: 100000 * 1000 // one day
-      //   }
-      // },
-    });
-
     const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
     const chartOptionsImputed = ref(generateChartOptions('Imputed Data', 'Data'));
 

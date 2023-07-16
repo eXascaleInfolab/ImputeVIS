@@ -107,6 +107,7 @@ import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from "highcharts/modules/boost";
+import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
 HC_exporting(Highcharts)
@@ -193,92 +194,6 @@ export default {
       }
     }
 
-
-    const createSeries = (index: number, data: number[], seriesName: string) => ({
-      name: `${seriesName} ${index + 1}`,
-      data,
-      pointStart: Date.UTC(2010, 1, 1),
-      pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-      // visible: true,
-      tooltip: {
-        valueDecimals: 2
-      }
-    });
-
-    const generateChartOptions = (title, seriesName) => ({
-      credits: {
-        enabled: false
-      },
-      title: {
-        text: title
-      },
-      legend: {
-        title: {
-          text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
-          style: {
-            fontStyle: 'italic'
-          }
-        }
-      },
-      xAxis: {
-        type: 'datetime'
-      },
-      chart: {
-        height: 900,
-        type: 'line',
-        zoomType: 'x',
-        panning: true,
-        panKey: 'shift'
-      },
-      rangeSelector: {
-        x: 0,
-        // floating: true,
-        style: {
-          color: 'black',
-          fontWeight: 'bold',
-          position: 'relative',
-          "font-family": "Arial"
-        },
-        enabled: true,
-        inputEnabled: false,
-        // inputDateFormat: '%y',
-        // inputEditDateFormat: '%y',
-        buttons: [
-          {
-            type: 'day',
-            count: 1,
-            text: 'D'
-          },
-
-          {
-            type: 'month',
-            count: 1,
-            text: 'M'
-          },
-          {
-            type: 'year',
-            count: 1,
-            text: 'Y'
-          },
-
-          {
-            type: 'all',
-            text: 'All',
-            align: 'right',
-            x: 1000,
-            y: 100,
-          }],
-      },
-      series: [{
-        name: seriesName,
-        data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
-        pointStart: Date.UTC(2010, 1, 1),
-        pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-        tooltip: {
-          valueDecimals: 2
-        }
-      }],
-    });
 
     function clearErrorMetrics() {
       rmseCDRec.value = null;
@@ -425,7 +340,7 @@ export default {
     };
 
     const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
-    const chartOptionsImputed = ref(generateChartOptions('Imputed Data', 'Data'));
+    const chartOptionsImputed = ref(generateChartOptionsLarge('Imputed Data', 'Data'));
 
 
     function clearFetchedData() {
