@@ -2,16 +2,7 @@
   <h1 class="mb-4 text-center">IIM Detail</h1>
   <div class="d-flex mb-auto">
     <div class="col-lg-8 ps-4">
-      <div class="row">
-        <div class="col-sm-4 ms-3">
-          <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
-          <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
-        </div>
-        <div class="col-sm-4">
-          <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
-          <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
-        </div>
-      </div>
+      <metrics-display :metrics="metrics"></metrics-display>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
@@ -40,8 +31,9 @@
 </template>
 
 <script lang="ts">
-import {ref, watch} from 'vue';
+import {ref, watch, computed} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
+import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
@@ -60,6 +52,7 @@ export default {
   components: {
     DataSelect,
     highcharts: Chart,
+    MetricsDisplay,
     MissingRate
   },
   setup() {
@@ -72,6 +65,8 @@ export default {
     const mae = ref(null);
     const mi = ref(null);
     const corr = ref(null);
+
+    const metrics = computed(() => ({ rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value }));
 
     //TODO Improve tooltip
 
@@ -142,10 +137,7 @@ export default {
 
     return {
       submitForm,
-      rmse,
-      mae,
-      mi,
-      corr,
+      metrics,
       chartOptionsOriginal,
       chartOptionsImputed,
       numberSelect,

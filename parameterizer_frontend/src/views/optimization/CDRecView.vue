@@ -3,16 +3,7 @@
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <h2 v-if="loadingResults">Determining resulting imputation...</h2>
-      <div class="row">
-        <div class="col-sm-4 ms-3">
-          <h2 v-if="rmse !== null && rmse !== ''"> RMSE: {{ rmse }}</h2>
-          <h2 v-if="mae !== null && mae !== ''"> MAE: {{ mae }}</h2>
-        </div>
-        <div class="col-sm-4">
-          <h2 v-if="mi !== null && mi !== ''"> MI: {{ mi }}</h2>
-          <h2 v-if="corr !== null && corr !== ''"> CORR: {{ corr }}</h2>
-        </div>
-      </div>
+      <metrics-display :metrics="metrics"></metrics-display>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <h2 class="text-center" v-if="loadingParameters">Determining optimal parameters...</h2>
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
@@ -69,8 +60,9 @@
 </template>
 
 <script lang="ts">
-import {ref, watch} from 'vue';
+import {ref, watch, computed} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
+import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
 import OptimizationSelect from '../components/OptimizationSelect.vue';
 import axios from 'axios';
@@ -90,6 +82,7 @@ export default {
   components: {
     highcharts: Chart,
     DataSelect,
+    MetricsDisplay,
     MissingRate,
     OptimizationSelect
   },
@@ -104,6 +97,7 @@ export default {
     const mae = ref(null);
     const mi = ref(null);
     const corr = ref(null);
+    const metrics = computed(() => ({ rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value }));
     const imputedData = ref(false); // Whether imputation has been carried out
     let optimalResponse: axios.AxiosResponse<any>;
     let optimalParametersDetermined = ref(false);
@@ -232,10 +226,7 @@ export default {
 
     return {
       submitForm,
-      rmse,
-      mae,
-      mi,
-      corr,
+      metrics,
       chartOptionsOriginal,
       chartOptionsImputed,
       dataSelect,
