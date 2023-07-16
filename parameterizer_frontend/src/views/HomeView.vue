@@ -122,7 +122,7 @@ export default {
     const dataSelect = ref('BAFU_quarter') // Default data is BAFU
     const fetchedData = reactive({});
     let loadingResults = ref(false);
-    
+
     //CDRec Parameters
     const missingRate = ref('1'); // Default missing rate is 1%
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
@@ -306,112 +306,121 @@ export default {
       // Clear the existing series
       // chartOptionsImputed.value.series = [];
       loadingResults.value = true;
+      imputedData.value = false;
       chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length)
       clearErrorMetrics();
 
-      for (let checkedName of checkedNames.value) {
-        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-        if (checkedName.toLowerCase() === 'cdrec') {
-          if (!fetchedData[checkedName]) {
-            const response = await axios.post('http://localhost:8000/api/cdrec/',
-                {
-                  data_set: dataSet,
-                  truncation_rank: truncationRank.value,
-                  epsilon: epsilon.value,
-                  iterations: iterations.value,
-                },
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+      try {
+        for (let checkedName of checkedNames.value) {
+          let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+          if (checkedName.toLowerCase() === 'cdrec') {
+            if (!fetchedData[checkedName]) {
+              const response = await axios.post('http://localhost:8000/api/cdrec/',
+                  {
+                    data_set: dataSet,
+                    truncation_rank: truncationRank.value,
+                    epsilon: epsilon.value,
+                    iterations: iterations.value,
+                  },
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    }
                   }
-                }
-            );
-            fetchedData[checkedName] = response.data;
-          }
-          rmseCDRec.value = fetchedData[checkedName].rmse.toFixed(3);
-          maeCDRec.value = fetchedData[checkedName].mae.toFixed(3);
-          miCDRec.value = fetchedData[checkedName].mi.toFixed(3);
-          corrCDRec.value = fetchedData[checkedName].corr.toFixed(3);
-          fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-            //The push should theoretically ensure that we are just adding
-            chartOptionsImputed.value.series.push(createSeries(index, data, 'CDRec: Series'));
-          });
-        } else if (checkedName.toLowerCase() == 'iim') {
-          if (!fetchedData[checkedName]) {
-            const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
-            const response = await axios.post('http://localhost:8000/api/iim/',
-                {
-                  data_set: dataSet,
-                  alg_code: formattedAlgCode,
-                },
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+              );
+              fetchedData[checkedName] = response.data;
+            }
+            rmseCDRec.value = fetchedData[checkedName].rmse.toFixed(3);
+            maeCDRec.value = fetchedData[checkedName].mae.toFixed(3);
+            miCDRec.value = fetchedData[checkedName].mi.toFixed(3);
+            corrCDRec.value = fetchedData[checkedName].corr.toFixed(3);
+            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
+              //The push should theoretically ensure that we are just adding
+              chartOptionsImputed.value.series.push(createSeries(index, data, 'CDRec: Series'));
+            });
+            imputedData.value = true;
+          } else if (checkedName.toLowerCase() == 'iim') {
+            if (!fetchedData[checkedName]) {
+              const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
+              const response = await axios.post('http://localhost:8000/api/iim/',
+                  {
+                    data_set: dataSet,
+                    alg_code: formattedAlgCode,
+                  },
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    }
                   }
-                }
-            );
-            fetchedData[checkedName] = response.data;
-          }
-          rmseIIM.value = fetchedData[checkedName].rmse.toFixed(3);
-          maeIIM.value = fetchedData[checkedName].mae.toFixed(3);
-          miIIM.value = fetchedData[checkedName].mi.toFixed(3);
-          corrIIM.value = fetchedData[checkedName].corr.toFixed(3);
-          fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series.push(createSeries(index, data, 'IIM: Series'));
-          });
-        } else if (checkedName.toLowerCase() === 'mrnn') {
-          if (!fetchedData[checkedName]) {
-            const response = await axios.post('http://localhost:8000/api/mrnn/',
-                {
-                  data_set: dataSet,
-                  hidden_dim: hiddenDim.value,
-                  learning_rate: learningRate.value,
-                  iterations: iterationsMRNN.value,
-                  keep_prob: keepProb.value,
-                  seq_len: seqLen.value
-                },
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+              );
+              fetchedData[checkedName] = response.data;
+            }
+            rmseIIM.value = fetchedData[checkedName].rmse.toFixed(3);
+            maeIIM.value = fetchedData[checkedName].mae.toFixed(3);
+            miIIM.value = fetchedData[checkedName].mi.toFixed(3);
+            corrIIM.value = fetchedData[checkedName].corr.toFixed(3);
+            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
+              chartOptionsImputed.value.series.push(createSeries(index, data, 'IIM: Series'));
+            });
+            imputedData.value = true;
+          } else if (checkedName.toLowerCase() === 'mrnn') {
+            if (!fetchedData[checkedName]) {
+              const response = await axios.post('http://localhost:8000/api/mrnn/',
+                  {
+                    data_set: dataSet,
+                    hidden_dim: hiddenDim.value,
+                    learning_rate: learningRate.value,
+                    iterations: iterationsMRNN.value,
+                    keep_prob: keepProb.value,
+                    seq_len: seqLen.value
+                  },
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    }
                   }
-                }
-            );
-            fetchedData[checkedName] = response.data;
-          }
-          rmseMRNN.value = fetchedData[checkedName].rmse.toFixed(3);
-          maeMRNN.value = fetchedData[checkedName].mae.toFixed(3);
-          miMRNN.value = fetchedData[checkedName].mi.toFixed(3);
-          corrMRNN.value = fetchedData[checkedName].corr.toFixed(3);
-          fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series.push(createSeries(index, data, 'MRNN: Series'));
-          });
-        } else if (checkedName.toLowerCase() === 'st-mvl') {
-          if (!fetchedData[checkedName]) {
-            const response = await axios.post('http://localhost:8000/api/stmvl/',
-                {
-                  data_set: dataSet,
-                  window_size: windowSize.value,
-                  gamma: gamma.value,
-                  alpha: alpha.value,
-                },
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+              );
+              fetchedData[checkedName] = response.data;
+            }
+            rmseMRNN.value = fetchedData[checkedName].rmse.toFixed(3);
+            maeMRNN.value = fetchedData[checkedName].mae.toFixed(3);
+            miMRNN.value = fetchedData[checkedName].mi.toFixed(3);
+            corrMRNN.value = fetchedData[checkedName].corr.toFixed(3);
+            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
+              chartOptionsImputed.value.series.push(createSeries(index, data, 'MRNN: Series'));
+            });
+            imputedData.value = true;
+          } else if (checkedName.toLowerCase() === 'st-mvl') {
+            if (!fetchedData[checkedName]) {
+              const response = await axios.post('http://localhost:8000/api/stmvl/',
+                  {
+                    data_set: dataSet,
+                    window_size: windowSize.value,
+                    gamma: gamma.value,
+                    alpha: alpha.value,
+                  },
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    }
                   }
-                }
-            );
-            fetchedData[checkedName] = response.data;
+              );
+              fetchedData[checkedName] = response.data;
+            }
+            rmseSTMVL.value = fetchedData[checkedName].rmse.toFixed(3);
+            maeSTMVL.value = fetchedData[checkedName].mae.toFixed(3);
+            miSTMVL.value = fetchedData[checkedName].mi.toFixed(3);
+            corrSTMVL.value = fetchedData[checkedName].corr.toFixed(3);
+            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
+              chartOptionsImputed.value.series.push(createSeries(index, data, 'ST-MVL: Series'));
+            });
+            imputedData.value = true;
           }
-          rmseSTMVL.value = fetchedData[checkedName].rmse.toFixed(3);
-          maeSTMVL.value = fetchedData[checkedName].mae.toFixed(3);
-          miSTMVL.value = fetchedData[checkedName].mi.toFixed(3);
-          corrSTMVL.value = fetchedData[checkedName].corr.toFixed(3);
-          fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series.push(createSeries(index, data, 'ST-MVL: Series'));
-          });
         }
+      } catch (error) {
+        console.log(error);
+      } finally {
         loadingResults.value = false;
-        imputedData.value = true;
       }
     };
 
@@ -426,6 +435,7 @@ export default {
     }
 
     const submitForm = async () => {
+      imputedData.value = false;
       clearFetchedData();
       await handleCheckboxChange();
     }
@@ -433,6 +443,7 @@ export default {
 
     // Define a new function that calls fetchData
     const handleDataSelectChange = () => {
+      imputedData.value = false;
       clearFetchedData();
       fetchData();
     }
