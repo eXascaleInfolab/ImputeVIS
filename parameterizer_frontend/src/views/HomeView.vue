@@ -167,6 +167,14 @@ export default {
       title: {
         text: title
       },
+      legend: {
+        title: {
+          text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
+          style: {
+            fontStyle: 'italic'
+          }
+        }
+      },
       xAxis: {
         type: 'datetime'
       },
@@ -333,40 +341,40 @@ export default {
       }
     }
 
-      const submitForm = async () => {
-        clearFetchedData();
-        await handleCheckboxChange();
-      }
+    const submitForm = async () => {
+      clearFetchedData();
+      await handleCheckboxChange();
+    }
 
 
-      // Define a new function that calls fetchData
-      const handleDataSelectChange = () => {
-        clearFetchedData();
-        fetchData();
-      }
-      // Watch for changes and call fetchData when it changes
-      watch(dataSelect, handleDataSelectChange, {immediate: true});
-      // TODO Missingness display
-      // watch(missingRate, handleDataSelectChange, { immediate: true });
+    // Define a new function that calls fetchData
+    const handleDataSelectChange = () => {
+      clearFetchedData();
+      fetchData();
+    }
+    // Watch for changes and call fetchData when it changes
+    watch(dataSelect, handleDataSelectChange, {immediate: true});
+    // TODO Missingness display
+    // watch(missingRate, handleDataSelectChange, { immediate: true });
 
-      return {
-        submitForm,
-        rmse,
-        mae,
-        mi,
-        corr,
-        chartOptionsOriginal,
-        chartOptionsImputed,
-        dataSelect,
-        truncationRank,
-        epsilon,
-        iterations,
-        missingRate,
-        imputedData,
-        checkedNames,
-        handleCheckboxChange,
-        loadingResults
-      }
+    return {
+      submitForm,
+      rmse,
+      mae,
+      mi,
+      corr,
+      chartOptionsOriginal,
+      chartOptionsImputed,
+      dataSelect,
+      truncationRank,
+      epsilon,
+      iterations,
+      missingRate,
+      imputedData,
+      checkedNames,
+      handleCheckboxChange,
+      loadingResults
     }
   }
+}
 </script>
