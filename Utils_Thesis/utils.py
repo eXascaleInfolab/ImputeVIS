@@ -112,11 +112,10 @@ def automate_obfuscate(input_directory: str, output_dir: str):
 
     # Special case for 'drift'
     drift_dir = os.path.join(input_directory, 'drift', 'drift10', 'raw_matrices')
-    drift_output_dir = os.path.join(output_dir, 'drift', 'drift10',
-                                    'obfuscated')  # Create a new output directory variable for the 'drift' dataset
+
     for filename in get_files(drift_dir):
         for percentage in [1, 5, 10, 20, 40, 60, 80]:
-            filename_output = obfuscate_data(filename, percentage, drift_output_dir, allow_full_nan_line=True)
+            filename_output = obfuscate_data(filename, percentage, dataset_output_dir, allow_full_nan_line=True)
             if filename_output is None:  # If the file was skipped, continue with the next file.
                 continue
 
@@ -185,9 +184,12 @@ def split_file_lines(input_folder: str):
         with open(filepath, 'r') as file:
             lines = file.readlines()
 
-        # Split the lines into halves and quarters
+        # Split the lines into halves, quarters, fiths, sixths, and eights
         half_lines = lines[:len(lines) // 2]
         quarter_lines = lines[:len(lines) // 4]
+        # fifth_lines = lines[:len(lines) // 5]
+        # sixth_lines = lines[:len(lines) // 6]
+        # eighth_lines = lines[:len(lines) // 8]
 
         # Save the halves and quarters to new files
         base, ext = os.path.splitext(filename)
@@ -197,6 +199,15 @@ def split_file_lines(input_folder: str):
         with open(os.path.join(input_folder, f'{base}_quarter{ext}'), 'w') as file:
             file.writelines(quarter_lines)
 
+        # with open(os.path.join(input_folder, f'{base}_fifth{ext}'), 'w') as file:
+        #     file.writelines(fifth_lines)
+        #
+        # with open(os.path.join(input_folder, f'{base}_sixth{ext}'), 'w') as file:
+        #     file.writelines(sixth_lines)
+        #
+        # with open(os.path.join(input_folder, f'{base}_eighth{ext}'), 'w') as file:
+        #     file.writelines(eighth_lines)
+
 
 if __name__ == '__main__':
     # split_file_lines(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices'))
@@ -205,6 +216,8 @@ if __name__ == '__main__':
     # Define the input directory
     # input_directory = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices')
     # automate_obfuscate(input_directory, output_dir)
+    # split_file_lines(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices'))
+
     # Define the root directories
     root_input_directory = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets')
     root_output_directory = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets')

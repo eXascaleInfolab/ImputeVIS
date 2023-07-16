@@ -13,8 +13,8 @@
       <option value="climate_half">Climate 1/2 Size</option>
       <option value="climate_quarter">Climate 1/4 Size</option>
       <!--      <option value="drift">Drift</option>-->
-      <option value="drift_half">Drift 1/2 Size</option>
-      <option value="drift_quarter">Drift 1/4 Size</option>
+      <option value="batch10_half">Drift 1/2 Size</option>
+      <option value="batch10_quarter">Drift 1/4 Size</option>
       <!--            <option value="meteo_total">Meteo</option>-->
       <option value="meteo_total_half">Meteo 1/2 Size</option>
       <option value="meteo_total_quarter">Meteo 1/4 Size</option>
