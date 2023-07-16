@@ -1,46 +1,52 @@
 <template>
   <main>
-    <h2>Here you will be able to compare algorithms to each other, using recommended parameters.</h2>
-
-    <h3>TODO: Add table of datasets </h3>
-
-
   </main>
   <h1 class="mb-4 text-center">Compare Algorithms</h1>
   <h2 v-if="loadingResults">Determining resulting imputation...</h2>
   <div class="d-flex mb-auto">
-    <div class="col-lg-10">
-      <div class="d-flex justify-content-between">
-        <div class="form-check px-5 mx-5">
-          <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames"
-                 @change="handleCheckboxChange">
-          <label class="form-check-label" for="CDRec">
-            CDRec
-          </label>
+    <div class="col-lg-12">
+      <div class="row ms-5">
+        <div class="col-lg-2">
+          <form @submit.prevent="submitForm">
+            <data-select v-model="dataSelect"/>
+            <missing-rate v-model="missingRate"/>
+            <button type="submit" class="btn btn-primary">Refresh</button>
+          </form>
         </div>
+        <div class="col-lg-2 mt-5">
+          <div class="row">
+            <div class="col form-check px-5 mx-5">
+              <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames"
+                     @change="handleCheckboxChange">
+              <label class="form-check-label" for="CDRec">
+                CDRec
+              </label>
+            </div>
 
-        <div class="form-check px-5 mx-5">
-          <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames"
-                 @change="handleCheckboxChange">
-          <label class="form-check-label" for="IIM">
-            IIM
-          </label>
-        </div>
+            <div class="col form-check px-5 mx-5">
+              <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames"
+                     @change="handleCheckboxChange">
+              <label class="form-check-label" for="IIM">
+                IIM
+              </label>
+            </div>
 
-        <div class="form-check px-5 mx-5">
-          <input class="form-check-input" type="checkbox" value="MRNN" id="MRNN" v-model="checkedNames"
-                 @change="handleCheckboxChange">
-          <label class="form-check-label" for="MRNN">
-            MRNN
-          </label>
-        </div>
+            <div class="col form-check px-5 mx-5">
+              <input class="form-check-input" type="checkbox" value="MRNN" id="MRNN" v-model="checkedNames"
+                     @change="handleCheckboxChange">
+              <label class="form-check-label" for="MRNN">
+                MRNN
+              </label>
+            </div>
 
-        <div class="form-check px-5 mx-5">
-          <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames"
-                 @change="handleCheckboxChange">
-          <label class="form-check-label" for="ST-MVL">
-            ST-MVL
-          </label>
+            <div class="col form-check px-5 mx-5">
+              <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames"
+                     @change="handleCheckboxChange">
+              <label class="form-check-label" for="ST-MVL">
+                ST-MVL
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -57,19 +63,11 @@
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
-    <div class="col-lg-4">
-      <form @submit.prevent="submitForm" class="sidebar col-lg-5">
-        <data-select v-model="dataSelect"/>
-        <missing-rate v-model="missingRate"/>
-        <!-- Learning Rate -->
-        <button type="submit" class="btn btn-primary">Impute</button>
-      </form>
-    </div>
   </div>
 </template>
 
 <script lang="ts">
-import {ref, watch, reactive} from 'vue';
+import {ref, watch, reactive, UnwrapNestedRefs} from 'vue';
 import DataSelect from './components/DataSelect.vue';
 import MissingRate from './components/MissingRate.vue';
 import OptimizationSelect from './components/OptimizationSelect.vue';
@@ -88,8 +86,7 @@ export default {
     highcharts: Chart,
     DataSelect,
     MissingRate
-  },
-  setup() {
+  }, setup() {
     const dataSelect = ref('BAFU_quarter') // Default data is BAFU
     const fetchedData = reactive({});
     let loadingResults = ref(false);
@@ -139,23 +136,21 @@ export default {
             }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
+        // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
 
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+          chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, 'Original Data: Series');
         });
       } catch (error) {
         console.error(error);
       }
     }
 
-    const submitForm = async () => {
-      // TODO Reset probably
-    }
 
-    const createSeries = (index: number, data: number[]) => ({
-      name: `Imputed Data: Series ${index + 1}`,
+    const createSeries = (index: number, data: number[], seriesName: string) => ({
+      name: `${seriesName} ${index + 1}`,
       data,
       pointStart: Date.UTC(2010, 1, 1),
       pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
@@ -230,12 +225,6 @@ export default {
           valueDecimals: 2
         }
       }],
-      // plotOptions: {
-      //   series: {
-      //     pointStart: Date.UTC(2010, 0, 1),
-      //     pointInterval: 100000 * 1000 // one day
-      //   }
-      // },
     });
 
     const handleCheckboxChange = async () => {
@@ -265,7 +254,7 @@ export default {
           }
           fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
             //The push should theoretically ensure that we are just adding
-            chartOptionsImputed.value.series.push(createSeries(index, data));
+            chartOptionsImputed.value.series.push(createSeries(index, data, 'CDRec: Series'));
           });
         } else if (checkedName.toLowerCase() == 'iim') {
           if (!fetchedData[checkedName]) {
@@ -284,7 +273,7 @@ export default {
             fetchedData[checkedName] = response.data;
           }
           fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series.push(createSeries(index, data));
+            chartOptionsImputed.value.series.push(createSeries(index, data, 'IIM: Series'));
           });
         } else if (checkedName.toLowerCase() === 'mrnn') {
           if (!fetchedData[checkedName]) {
@@ -306,7 +295,7 @@ export default {
             fetchedData[checkedName] = response.data;
           }
           fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series.push(createSeries(index, data));
+            chartOptionsImputed.value.series.push(createSeries(index, data, 'MRNN: Series'));
           });
         } else if (checkedName.toLowerCase() === 'st-mvl') {
           if (!fetchedData[checkedName]) {
@@ -326,7 +315,7 @@ export default {
             fetchedData[checkedName] = response.data;
           }
           fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series.push(createSeries(index, data));
+            chartOptionsImputed.value.series.push(createSeries(index, data, 'ST-MVL: Series'));
           });
         }
         loadingResults.value = false;
@@ -337,39 +326,47 @@ export default {
     const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
     const chartOptionsImputed = ref(generateChartOptions('Imputed Data', 'Data'));
 
-    // Define a new function that calls fetchData
-    const handleDataSelectChange = () => {
-      fetchData();
-    }
-    // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, {immediate: true});
-    // TODO Missingness display
-    // watch(missingRate, fetchData, { immediate: true });
 
-    return {
-      submitForm,
-      rmse,
-      mae,
-      mi,
-      corr,
-      chartOptionsOriginal,
-      chartOptionsImputed,
-      dataSelect,
-      truncationRank,
-      epsilon,
-      iterations,
-      missingRate,
-      imputedData,
-      checkedNames,
-      handleCheckboxChange,
-      loadingResults
+    function clearFetchedData() {
+      for (let key in fetchedData) {
+        delete fetchedData[key];
+      }
+    }
+
+      const submitForm = async () => {
+        clearFetchedData();
+        await handleCheckboxChange();
+      }
+
+
+      // Define a new function that calls fetchData
+      const handleDataSelectChange = () => {
+        clearFetchedData();
+        fetchData();
+      }
+      // Watch for changes and call fetchData when it changes
+      watch(dataSelect, handleDataSelectChange, {immediate: true});
+      // TODO Missingness display
+      // watch(missingRate, handleDataSelectChange, { immediate: true });
+
+      return {
+        submitForm,
+        rmse,
+        mae,
+        mi,
+        corr,
+        chartOptionsOriginal,
+        chartOptionsImputed,
+        dataSelect,
+        truncationRank,
+        epsilon,
+        iterations,
+        missingRate,
+        imputedData,
+        checkedNames,
+        handleCheckboxChange,
+        loadingResults
+      }
     }
   }
-}
 </script>
-
-<style scoped>
-.sidebar {
-  margin-left: 35px; /* Change this value to increase or decrease the margin */
-}
-</style>
