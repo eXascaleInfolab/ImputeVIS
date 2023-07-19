@@ -31,6 +31,7 @@
               Datasets
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-data">
+              <RouterLink class="dropdown-item" to="/datasets/categorizer">Categorizer WIP</RouterLink>
               <RouterLink class="dropdown-item" to="/datasets/bafu">BAFU TODO</RouterLink>
               <RouterLink class="dropdown-item" to="/datasets/chlorine">Chlorine TODO</RouterLink>
               <RouterLink class="dropdown-item" to="/datasets/climate">Climate TODO</RouterLink>

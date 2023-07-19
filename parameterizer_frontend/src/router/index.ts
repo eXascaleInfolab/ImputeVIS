@@ -41,6 +41,12 @@ const router = createRouter({
             component: () => import('../views/algorithms/STMVLView.vue')
         },
         {
+            path: '/datasets/categorizer',
+            name: 'categorizer',
+            // route level code-splitting
+            component: () => import('../views/datasets/CategorizerView.vue')
+        },
+        {
             path: '/datasets/bafu',
             name: 'bafu',
             // route level code-splitting

@@ -21,6 +21,8 @@ import IIM.iim as iim_alg
 import M_RNN.testerMRNN
 import M_RNN.Data_Loader
 
+import Dataset_Categorizer.catch as catch
+
 
 # TODO Can be removed later on
 # def index(request):
@@ -310,6 +312,17 @@ def fetch_data(request):
                                 status=200)
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
+
+@csrf_exempt
+def categorize_data(request):
+    if request.method == 'POST':
+        data, data_set = load_from_request(request)
+        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+        if clean_file_path is not None:
+            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
+            extracted_features = catch.extract_features(ground_truth_matrix)
+            return JsonResponse(extracted_features, status=200)
+    return JsonResponse({'message': 'Invalid request'}, status=400)
 
 def load_from_request(request: WSGIRequest) -> Tuple[Dict[str, Any], str]:
     """
