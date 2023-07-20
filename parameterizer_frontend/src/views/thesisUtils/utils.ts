@@ -22,7 +22,8 @@ export const generateChartOptions = (title, seriesName) => ({
           style: {
             fontStyle: 'italic'
           }
-        }
+        },
+        verticalAlign: "top"
       },
       xAxis: {
         type: 'datetime'
@@ -106,7 +107,8 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
       style: {
         fontStyle: 'italic'
       }
-    }
+    },
+    verticalAlign: "top"
   },
   xAxis: {
     type: 'datetime'

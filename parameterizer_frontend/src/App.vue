@@ -4,10 +4,10 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <a class="navbar-brand" href="#">
         <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="30" height="30">
-        <span class="ml-2">Parameterizer</span>
+        <span class="ml-2">ImputeVIS</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -16,7 +16,8 @@
             <RouterLink class="nav-link" to="/">Compare</RouterLink>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
               Algorithms
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -27,7 +28,24 @@
             </div>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-data" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button"
+               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Algorithm Optimization
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization">
+              <RouterLink class="dropdown-item" to="/optimization/cdrec">CDRec</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/iim">IIM</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/mrnn">M-RNN</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/stmvl">ST-MVL</RouterLink>
+            </div>
+          </li>
+          <!-- Add your additional links here -->
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/datasets/categorizer">Dataset Categorizer WIP</RouterLink>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-data" role="button"
+               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Datasets
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-data">
@@ -40,18 +58,6 @@
               <RouterLink class="dropdown-item" to="/datasets/meteo">Meteo TODO</RouterLink>
             </div>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Algorithm Optimization
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization">
-              <RouterLink class="dropdown-item" to="/optimization/cdrec">CDRec</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/iim">IIM</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/mrnn">M-RNN</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/stmvl">ST-MVL</RouterLink>
-            </div>
-          </li>
-          <!-- Add your additional links here -->
           <li class="nav-item">
             <RouterLink class="nav-link" to="/about">About</RouterLink>
           </li>
@@ -61,14 +67,14 @@
   </header>
 
   <div class="content pt-5 mt-2 flex-grow-1">
-    <RouterView />
+    <RouterView/>
   </div>
-  <Footer />
+  <Footer/>
 </template>
 
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import {RouterLink, RouterView} from 'vue-router'
 import Footer from './components/Footer.vue';
 
 </script>
