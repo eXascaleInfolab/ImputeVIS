@@ -1,5 +1,5 @@
 version: '3'
-
+# TODO This does not work yet
 services:
   backend:
     build: ./timeSeriesImputerParameterizer
@@ -16,5 +16,9 @@ services:
     command: /start_frontend.sh
     volumes:
       - ./parameterizer_frontend:/app
+      - /parameterizer_frontend/app/node_modules
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
     ports:
       - "8080:8080"
