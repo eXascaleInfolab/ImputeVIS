@@ -6,92 +6,102 @@
   <div class="d-flex mb-auto">
     <div class="col-lg-12">
       <div class="row ms-5">
-        <div class="col-lg-2">
-          <form @submit.prevent="submitForm">
-            <data-select v-model="dataSelect"/>
-            <missing-rate v-model="missingRate"/>
-            <button type="submit" class="btn btn-primary">Refresh</button>
-          </form>
+        <div class="col-lg-9">
+          <highcharts v-if="imputedData" class="mb-5 pb-5" :options="chartOptionsImputed"></highcharts>
+          <highcharts :options="chartOptionsOriginal"></highcharts>
         </div>
-        <div class="col-lg-2 mt-5">
+        <div class="col-lg-3">
           <div class="row">
-            <div class="col form-check px-5 mx-5">
-              <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames"
-                     @change="handleCheckboxChange">
-              <label class="form-check-label" for="CDRec">
-                CDRec
-              </label>
+            <div class="col-lg-6">
+              <form @submit.prevent="submitForm">
+                <data-select v-model="dataSelect"/>
+                <missing-rate v-model="missingRate"/>
+                <div class="d-flex justify-content-center mt-2">
+                  <button type="submit" class="btn btn-primary align-center">Refresh</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-8 mt-4">
+            <h4>Select algorithm(s)</h4>
+            <div class="row">
+              <div class="col form-check ">
+                <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames"
+                       @change="handleCheckboxChange">
+                <label class="form-check-label" for="CDRec">
+                  CDRec
+                </label>
+              </div>
+              <div class="col form-check ">
+                <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames"
+                       @change="handleCheckboxChange">
+                <label class="form-check-label" for="IIM">
+                  IIM
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col form-check ">
+                <input class="form-check-input" type="checkbox" value="MRNN" id="MRNN" v-model="checkedNames"
+                       @change="handleCheckboxChange">
+                <label class="form-check-label" for="MRNN">
+                  MRNN
+                </label>
+              </div>
+              <div class="col form-check ">
+                <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames"
+                       @change="handleCheckboxChange">
+                <label class="form-check-label" for="ST-MVL">
+                  ST-MVL
+                </label>
+              </div>
             </div>
 
-            <div class="col form-check px-5 mx-5">
-              <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames"
-                     @change="handleCheckboxChange">
-              <label class="form-check-label" for="IIM">
-                IIM
-              </label>
-            </div>
-
-            <div class="col form-check px-5 mx-5">
-              <input class="form-check-input" type="checkbox" value="MRNN" id="MRNN" v-model="checkedNames"
-                     @change="handleCheckboxChange">
-              <label class="form-check-label" for="MRNN">
-                MRNN
-              </label>
-            </div>
-
-            <div class="col form-check px-5 mx-5">
-              <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames"
-                     @change="handleCheckboxChange">
-              <label class="form-check-label" for="ST-MVL">
-                ST-MVL
-              </label>
+          </div>
+          <div class="col-lg-8 mt-5">
+            <div class="row">
+              <div class="col-xs">
+                <h6 v-if="rmseCDRec !== null && rmseCDRec !== ''"> CDRec RMSE: {{ rmseCDRec }}</h6>
+                <h6 v-if="maeCDRec !== null && maeCDRec !== ''"> CDRec MAE: {{ maeCDRec }}</h6>
+                <h6 v-if="miCDRec !== null && miCDRec !== ''"> CDRec MI: {{ miCDRec }}</h6>
+                <h6 v-if="corrCDRec !== null && corrCDRec !== ''"> CDRec CORR: {{ corrCDRec }}</h6>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-lg-2 mt-5">
-          <div class="row">
-            <div class="col-xs">
-              <h6 v-if="rmseCDRec !== null && rmseCDRec !== ''"> CDRec RMSE: {{ rmseCDRec }}</h6>
-              <h6 v-if="maeCDRec !== null && maeCDRec !== ''"> CDRec MAE: {{ maeCDRec }}</h6>
-              <h6 v-if="miCDRec !== null && miCDRec !== ''"> CDRec MI: {{ miCDRec }}</h6>
-              <h6 v-if="corrCDRec !== null && corrCDRec !== ''"> CDRec CORR: {{ corrCDRec }}</h6>
+          <div class="col-lg-8 mt-5">
+            <div class="row">
+              <div class="col-xs">
+                <h6 v-if="rmseIIM !== null && rmseIIM !== ''"> IIM RMSE: {{ rmseIIM }}</h6>
+                <h6 v-if="maeIIM !== null && maeIIM !== ''"> IIM MAE: {{ maeIIM }}</h6>
+                <h6 v-if="miIIM !== null && miIIM !== ''"> IIM MI: {{ miIIM }}</h6>
+                <h6 v-if="corrIIM !== null && corrIIM !== ''"> IIM CORR: {{ corrIIM }}</h6>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-lg-2 mt-5">
-          <div class="row">
-            <div class="col-xs">
-              <h6 v-if="rmseIIM !== null && rmseIIM !== ''"> IIM RMSE: {{ rmseIIM }}</h6>
-              <h6 v-if="maeIIM !== null && maeIIM !== ''"> IIM MAE: {{ maeIIM }}</h6>
-              <h6 v-if="miIIM !== null && miIIM !== ''"> IIM MI: {{ miIIM }}</h6>
-              <h6 v-if="corrIIM !== null && corrIIM !== ''"> IIM CORR: {{ corrIIM }}</h6>
+          <div class="col-lg-8 mt-5">
+            <div class="row">
+              <div class="col-xs">
+                <h6 v-if="rmseMRNN !== null && rmseMRNN !== ''"> M-RNN RMSE: {{ rmseMRNN }}</h6>
+                <h6 v-if="maeMRNN !== null && maeMRNN !== ''"> M-RNN MAE: {{ maeMRNN }}</h6>
+                <h6 v-if="miMRNN !== null && miMRNN !== ''"> M-RNN MI: {{ miMRNN }}</h6>
+                <h6 v-if="corrMRNN !== null && corrMRNN !== ''"> M-RNN CORR: {{ corrMRNN }}</h6>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-lg-2 mt-5">
-          <div class="row">
-            <div class="col-xs">
-              <h6 v-if="rmseMRNN !== null && rmseMRNN !== ''"> M-RNN RMSE: {{ rmseMRNN }}</h6>
-              <h6 v-if="maeMRNN !== null && maeMRNN !== ''"> M-RNN MAE: {{ maeMRNN }}</h6>
-              <h6 v-if="miMRNN !== null && miMRNN !== ''"> M-RNN MI: {{ miMRNN }}</h6>
-              <h6 v-if="corrMRNN !== null && corrMRNN !== ''"> M-RNN CORR: {{ corrMRNN }}</h6>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-2 mt-5">
-          <div class="row">
-            <div class="col-xs">
-              <h6 v-if="rmseSTMVL !== null && rmseSTMVL !== ''"> ST-MVL RMSE: {{ rmseSTMVL }}</h6>
-              <h6 v-if="maeSTMVL !== null && maeSTMVL !== ''"> ST-MVL MAE: {{ maeSTMVL }}</h6>
-              <h6 v-if="miSTMVL !== null && miSTMVL !== ''"> ST-MVL MI: {{ miSTMVL }}</h6>
-              <h6 v-if="corrSTMVL !== null && corrSTMVL !== ''"> ST-MVL CORR: {{ corrSTMVL }}</h6>
+          <div class="col-lg-8 mt-5">
+            <div class="row">
+              <div class="col-xs">
+                <h6 v-if="rmseSTMVL !== null && rmseSTMVL !== ''"> ST-MVL RMSE: {{ rmseSTMVL }}</h6>
+                <h6 v-if="maeSTMVL !== null && maeSTMVL !== ''"> ST-MVL MAE: {{ maeSTMVL }}</h6>
+                <h6 v-if="miSTMVL !== null && miSTMVL !== ''"> ST-MVL MI: {{ miSTMVL }}</h6>
+                <h6 v-if="corrSTMVL !== null && corrSTMVL !== ''"> ST-MVL CORR: {{ corrSTMVL }}</h6>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
-      <highcharts :options="chartOptionsOriginal"></highcharts>
+
     </div>
   </div>
 </template>
@@ -183,7 +193,7 @@ export default {
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
-
+        clearErrorMetrics();
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
@@ -339,7 +349,7 @@ export default {
       }
     };
 
-    const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
+    const chartOptionsOriginal = ref(generateChartOptionsLarge('Original Data', 'Data'));
     const chartOptionsImputed = ref(generateChartOptionsLarge('Imputed Data', 'Data'));
 
 
@@ -399,3 +409,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.sidebar {
+  margin-left: 35px; /* Change this value to increase or decrease the margin */
+}
+</style>
+
