@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  backend:
+    build: ./timeSeriesImputerParameterizer
+    command: /start_backend.sh
+    volumes:
+      - ./timeSeriesImputerParameterizer:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=timeSeriesImputerParameterizer.settings
+
+  frontend:
+    build: ./parameterizer_frontend
+    command: /start_frontend.sh
+    volumes:
+      - ./parameterizer_frontend:/app
+    ports:
+      - "8080:8080"
