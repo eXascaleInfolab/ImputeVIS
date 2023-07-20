@@ -10,8 +10,6 @@ import Optimizer.evaluate_params
 sys.path.insert(0, os.path.abspath(".."))  # Add parent directory to path for imports to work
 
 
-
-
 def select_and_average_errors(errors_dict: Dict[str, float], selected_metrics: List[str]) -> float:
     """
     Select and average specified errors.

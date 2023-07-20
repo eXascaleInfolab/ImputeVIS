@@ -320,9 +320,10 @@ def categorize_data(request):
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
         if clean_file_path is not None:
             ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
-            extracted_features = catch.extract_features(ground_truth_matrix)
+            extracted_features = catch.extract_features(ground_truth_matrix, True)
             return JsonResponse(extracted_features, status=200)
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
 
 def load_from_request(request: WSGIRequest) -> Tuple[Dict[str, Any], str]:
     """
