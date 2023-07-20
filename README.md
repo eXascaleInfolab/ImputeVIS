@@ -11,17 +11,18 @@ The thesis on the general topic of Timeseries and focuses on:
 - Possible characterizing datasets
 - Possibly suggesting optimal parameters and best algorithms.
 
-## Stack
-- Vue.js with Vite and Typescript for the front-end.
-- Django 4 for the back-end.
 
 ## Prerequisites
-- Node.js and npm (npm is distributed with Node.js - which means that when you download Node.js, you automatically get npm installed on your computer)
-- Python (version 3.8 or later) and pip
-- Vue CLI
-- Django 4
+- Ubuntu 20 or Ubuntu 22 (including Ubuntu derivatives, e.g., Xubuntu) or the same distribution under WSL2
+- Clone this repository.
+- `install_linux.sh` and `start_servers.sh` should suffice (untested).
 
-## Installation
+Alternatively dependencies if doing it manually: 
+- Node.js and npm (npm is distributed with Node.js) for the frontend dependencies in `package.json`.
+- Python (version 3.8 or later) and pip.
+- Django 4 (installed via pip with requirements.txt).
+
+## Manual Installation
 ### Frontend
 Navigate to the frontend directory.
 ```bash
@@ -66,7 +67,7 @@ Navigate to directory, e.g.:
 cd d/Git/msc_thesis_timeseries/timeSeriesImputerParameterizer/parameterizer/
 ```
 
-Furthermore, the following dependency is needed:
+Furthermore, the following dependency is needed for WSL for the server:
 ```bash
 sudo apt-get install libopenblas-dev
 ```
