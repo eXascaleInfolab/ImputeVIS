@@ -2,10 +2,18 @@ version: '3'
 # TODO This does not work yet
 services:
   backend:
-    build: ./timeSeriesImputerParameterizer
+    build: ./
     command: /start_backend.sh
     volumes:
       - ./timeSeriesImputerParameterizer:/app
+      - ./Dataset_Categorizer:/app/Dataset_Categorizer
+      - ./Datasets:/app/Datasets
+      - ./IIM:/app/IIM
+      - ./M_RNN:/app/M_RNN
+      - ./MRNN:/app/MRNN
+      - ./Optimizer:/app/Optimizer
+      - ./Utils_Thesis:/app/Utils_Thesis
+      - ./Wrapper:/app/Wrapper
     ports:
       - "8000:8000"
     environment:

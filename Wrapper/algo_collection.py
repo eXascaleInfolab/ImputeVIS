@@ -17,32 +17,24 @@ __NATIVE_CENTROID_LIBRARY_PATH = "libAlgoCollection.so"; # will pick up from any
 __NATIVE_CENTROID_LIBRARY_PATH_ALT = "/Home/Dev/Wrapper/src/libAlgoCollection.so"; # manual
 __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL = "/mnt/d/Git/msc_thesis_timeseries/Wrapper/src/libAlgoCollection.so"; # manual
 __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL_LAPTOP = "/mnt/c/Git/msc_thesis_timeseries/Wrapper/src/libAlgoCollection.so"; # manual
+__NATIVE_CENTROID_LIBRARY_PATH_DOCKER = "/app/Wrapper/libAlgoCollection.so"; # manual
 
-__ctype_libcd_native = None;
+paths = [
+    __NATIVE_CENTROID_LIBRARY_PATH_DEBUG,
+    __NATIVE_CENTROID_LIBRARY_PATH,
+    __NATIVE_CENTROID_LIBRARY_PATH_ALT,
+    __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL,
+    __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL_LAPTOP,
+    __NATIVE_CENTROID_LIBRARY_PATH_DOCKER
+]
 
-if __os_path_import.isfile(__NATIVE_CENTROID_LIBRARY_PATH_DEBUG):
-    __ctype_libcd_native = __native_c_types_import.cdll.LoadLibrary(
-        __NATIVE_CENTROID_LIBRARY_PATH_DEBUG);
-
-elif __os_path_import.isfile(__NATIVE_CENTROID_LIBRARY_PATH):
-    __ctype_libcd_native = __native_c_types_import.cdll.LoadLibrary(
-        __NATIVE_CENTROID_LIBRARY_PATH);
-
-elif __os_path_import.isfile(__NATIVE_CENTROID_LIBRARY_PATH_ALT):
-    __ctype_libcd_native = __native_c_types_import.cdll.LoadLibrary(
-        __NATIVE_CENTROID_LIBRARY_PATH_ALT);
-
-elif __os_path_import.isfile(__NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL):
-    __ctype_libcd_native = __native_c_types_import.cdll.LoadLibrary(
-        __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL);
-
-elif __os_path_import.isfile(__NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL_LAPTOP):
-    __ctype_libcd_native = __native_c_types_import.cdll.LoadLibrary(
-        __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL_LAPTOP);
-
+for path in paths:
+    if __os_path_import.isfile(path):
+        __ctype_libcd_native = __native_c_types_import.cdll.LoadLibrary(path)
+        break
 else:
-    print("Cannot load the shared library - file not found");
-    raise Exception('Failed to load the shared library.');
+    print("Cannot load the shared library - file not found")
+    raise Exception('Failed to load the shared library.')
 
 #endif
 
@@ -53,7 +45,7 @@ else:
 def __marshal_as_native_row(__py_matrix):
     __py_input_flat = __numpy_import.ndarray.flatten(__py_matrix);
     __ctype_marshal = __numpy_import.ctypeslib.as_ctypes(__py_input_flat);
-    
+
     return __ctype_marshal;
 
 #end function
@@ -61,21 +53,21 @@ def __marshal_as_native_row(__py_matrix):
 def __marshal_as_native_column(__py_matrix):
     __py_input_flat = __numpy_import.ndarray.flatten(__py_matrix.T);
     __ctype_marshal = __numpy_import.ctypeslib.as_ctypes(__py_input_flat);
-    
+
     return __ctype_marshal;
 
 #end function
 
 def __marshal_as_numpy_row(__ctype_container, __py_sizen, __py_sizem):
     __numpy_marshal = __numpy_import.array(__ctype_container).reshape(__py_sizen, __py_sizem);
-    
+
     return __numpy_marshal;
 
 #end function
 
 def __marshal_as_numpy_column(__ctype_container, __py_sizen, __py_sizem):
     __numpy_marshal = __numpy_import.array(__ctype_container).reshape(__py_sizem, __py_sizen).T;
-    
+
     return __numpy_marshal;
 
 #end function
@@ -189,7 +181,7 @@ def native_cdrec_param(__py_matrix, __py_rank, __py_eps, __py_iters):
 
     __ctype_sizen = __native_c_types_import.c_ulonglong(__py_sizen);
     __ctype_sizem = __native_c_types_import.c_ulonglong(__py_sizem);
-    
+
     __ctype_rank = __native_c_types_import.c_ulonglong(__py_rank);
     __ctype_eps = __native_c_types_import.c_double(__py_eps);
     __ctype_iters = __native_c_types_import.c_ulonglong(__py_iters);
@@ -265,7 +257,7 @@ def native_stmvl_param(__py_matrix, __py_window, __py_gamma, __py_alpha):
 
     __ctype_sizen = __native_c_types_import.c_ulonglong(__py_sizen);
     __ctype_sizem = __native_c_types_import.c_ulonglong(__py_sizem);
-    
+
     __ctype_window = __native_c_types_import.c_ulonglong(__py_window);
     __ctype_gamma = __native_c_types_import.c_double(__py_gamma);
     __ctype_alpha = __native_c_types_import.c_double(__py_alpha);
