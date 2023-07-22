@@ -1,5 +1,5 @@
 version: '3'
-# TODO This does not work yet
+
 services:
   backend:
     build: ./
@@ -7,11 +7,12 @@ services:
     volumes:
       - ./timeSeriesImputerParameterizer:/app
       - ./Dataset_Categorizer:/app/Dataset_Categorizer
-      - ./Datasets:/app/Datasets
+      - ./Datasets:/Datasets
       - ./IIM:/app/IIM
       - ./M_RNN:/app/M_RNN
       - ./MRNN:/app/MRNN
       - ./Optimizer:/app/Optimizer
+      - ./Results:/Results
       - ./Utils_Thesis:/app/Utils_Thesis
       - ./Wrapper:/app/Wrapper
     ports:
@@ -27,6 +28,5 @@ services:
       - /parameterizer_frontend/app/node_modules
       - .:/usr/src/app
       - /usr/src/app/node_modules
-
     ports:
-      - "8080:8080"
+      - "5173:5173"

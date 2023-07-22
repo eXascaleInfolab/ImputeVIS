@@ -433,7 +433,7 @@ def impute_with_algorithm(alg_code: str, matrix: np.ndarray):
 
 
 def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_80.txt",
-         filename_output: str = "../Results/2_BAFU_tiny_with_NaN.txt", runtime: int = 0):
+         filename_output: str = "../Results/2_BAFU_tiny_with_NaN.txt", runtime: int = -1):
     """Executes the imputation algorithm given an input matrix.
 
     Parameters
@@ -470,6 +470,8 @@ def main(alg_code: str, filename_input: str = "../Datasets/bafu/obfuscated/BAFU_
     print("Time", alg_code, ":", exec_time)
 
     # Use binary flag to indicate runtime results or algorithm output
+    if runtime < 0:
+        return matrix_imputed.tolist()
     if runtime > 0:
         # if we need runtime, we only save one value with the time in microseconds
         np.savetxt(filename_output, np.array([exec_time]))

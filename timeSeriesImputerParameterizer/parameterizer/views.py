@@ -211,7 +211,7 @@ def mrnn(request):
             obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
             # Call the main function with parameters from the request
             imputed_matrix = M_RNN.testerMRNN.mrnn_recov(obfuscated_file_path,
-                                                         runtime=0,
+                                                         runtime=-1,
                                                          hidden_dim=hidden_dim,
                                                          learning_rate=learning_rate,
                                                          iterations=iterations,

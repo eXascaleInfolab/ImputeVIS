@@ -6,7 +6,7 @@ from M_RNN import MRNN
 from M_RNN import Data_Loader
 
 
-def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob=1.0, seq_length=7,
+def mrnn_recov(matrix_in, runtime=-1, hidden_dim=10, learning_rate=0.01, iterations=1000, keep_prob=1.0, seq_length=7,
                matrix_out="../Results/M-RNN/BAFU_temp.txt", recursive=False):
 
     _, trainZ, trainM, trainT, testX, testZ, testM, testT, dmin, dmax, train_size, x = Data_Loader.Data_Loader_Incomplete(
@@ -79,6 +79,8 @@ def mrnn_recov(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01, iteratio
 
     print("Time (M-RNN):", (timev * 1000 * 1000))
 
+    if runtime < 0:
+        return np.asarray(x)
     if runtime > 0:
         np.savetxt(matrix_out, np.array([timev * 1000 * 1000]), fmt='%f', delimiter=' ')  # to microsec
     else:
