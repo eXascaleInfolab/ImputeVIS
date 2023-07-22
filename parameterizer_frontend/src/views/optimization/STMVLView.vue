@@ -9,7 +9,7 @@
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-7 align-items-center text-center">
         <h2>Optimal Parameters</h2>
-        <data-select v-model="dataSelect"/>
+        <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
 
         <!--Window Size-->
         <div class="mb-3">
@@ -20,8 +20,8 @@
 
         <!--Smoothing Parameter Gamma-->
         <div class="mb-3">
-          <label for="gamma" class="form-label">Smoothing Parameter Gamma: {{ gamma }}</label>
-          <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.05" class="form-control">
+          <label for="gamma" class="form-label">Smoothing Parameter Gamma: {{ parseFloat(gamma).toFixed(5) }}</label>
+          <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.0005" class="form-control">
         </div>
 
         <!-- Power for Spatial Weight (Alpha) -->
@@ -41,7 +41,7 @@
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <optimization-select v-model="optimizationSelect" @parametersChanged="handleParametersChanged"/>
-        <data-select v-model="dataSelect"/>
+        <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
 
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
@@ -80,6 +80,7 @@ export default {
   setup() {
     const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
     const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const windowSize = ref('2'); // Default window size is 2
     const gamma = ref('0.5') // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
@@ -114,7 +115,14 @@ export default {
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         response.data.matrix.forEach((data: number[], index: number) => {
-          chartOptionsOriginal.value.series[index] = createSeries(index, data);
+          // Replace NaN with 0
+          const cleanData = data.map(value => isNaN(value) ? 0 : value);
+
+          if (currentSeriesNames.value.length > 0 ) {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
+          } else {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+          }
         });
       } catch (error) {
         console.error(error);
@@ -177,7 +185,11 @@ export default {
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          chartOptionsImputed.value.series[index] = createSeries(index, data);
+          if (currentSeriesNames.value.length > 0 ) {
+            chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames.value[index]);
+          } else {
+            chartOptionsImputed.value.series[index] = createSeries(index, data);
+          }
         });
         imputedData.value = true;
       } catch (error) {
@@ -195,6 +207,10 @@ export default {
     const handleDataSelectChange = () => {
       fetchData();
     }
+
+    const updateSeriesNames = (newSeriesNames) => {
+      currentSeriesNames.value = newSeriesNames;
+    };
 
     // Watch for changes and call fetchData when it changes
     watch(dataSelect, handleDataSelectChange, {immediate: true});
@@ -216,6 +232,8 @@ export default {
       chartOptionsOriginal,
       chartOptionsImputed,
       dataSelect,
+      currentSeriesNames,
+      updateSeriesNames,
       windowSize,
       gamma,
       alpha,

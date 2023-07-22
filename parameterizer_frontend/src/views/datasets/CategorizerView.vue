@@ -29,7 +29,7 @@
     </div>
     <div class="col-lg-4">
       <div class="sidebar col-lg-5">
-        <data-select v-model="dataSelect"/>
+        <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <button type="submit" class="btn btn-primary mt-5" @click="fetchDataFeatures">Get Features</button>
       </div>
     </div>
@@ -62,6 +62,8 @@ export default {
     MissingRate
   }, setup() {
     const dataSelect = ref('BAFU_quarter');
+    // TODO Handle series name for each algorithm
+    const currentSeriesNames = ref([]); // Names of series currently displayed
     const features = ref<Record<string, number>>({});
     const loading = ref(false)
     const error = ref("");
@@ -87,7 +89,11 @@ export default {
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+          if (currentSeriesNames.value.length > 0 ) {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
+          } else {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+          }
         });
       } catch (error) {
         console.error(error);
@@ -127,10 +133,17 @@ export default {
     const handleDataSelectChange = () => {
       fetchData();
     }
-    watch(dataSelect, fetchData, {immediate: true});
+
+    const updateSeriesNames = (newSeriesNames) => {
+      currentSeriesNames.value = newSeriesNames;
+    };
+
+    watch(dataSelect, handleDataSelectChange, {immediate: true});
 
     return {
       dataSelect,
+      currentSeriesNames,
+      updateSeriesNames,
       features,
       loading,
       error,

@@ -43,21 +43,21 @@
           <li class="nav-item">
             <RouterLink class="nav-link" to="/datasets/categorizer">Dataset Categorizer WIP</RouterLink>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-data" role="button"
-               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Datasets
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown-data">
-              <RouterLink class="dropdown-item" to="/datasets/categorizer">Categorizer WIP</RouterLink>
-              <RouterLink class="dropdown-item" to="/datasets/bafu">BAFU TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="/datasets/chlorine">Chlorine TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="/datasets/climate">Climate TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="/datasets/drift">Drift TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="/datasets/electricity">Electricity TODO</RouterLink>
-              <RouterLink class="dropdown-item" to="/datasets/meteo">Meteo TODO</RouterLink>
-            </div>
-          </li>
+<!--          <li class="nav-item dropdown">-->
+<!--            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-data" role="button"-->
+<!--               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--              Datasets-->
+<!--            </a>-->
+<!--            <div class="dropdown-menu" aria-labelledby="navbarDropdown-data">-->
+<!--              <RouterLink class="dropdown-item" to="/datasets/categorizer">Categorizer WIP</RouterLink>-->
+<!--              <RouterLink class="dropdown-item" to="/datasets/bafu">BAFU TODO</RouterLink>-->
+<!--              <RouterLink class="dropdown-item" to="/datasets/chlorine">Chlorine TODO</RouterLink>-->
+<!--              <RouterLink class="dropdown-item" to="/datasets/climate">Climate TODO</RouterLink>-->
+<!--              <RouterLink class="dropdown-item" to="/datasets/drift">Drift TODO</RouterLink>-->
+<!--              <RouterLink class="dropdown-item" to="/datasets/electricity">Electricity TODO</RouterLink>-->
+<!--              <RouterLink class="dropdown-item" to="/datasets/meteo">Meteo TODO</RouterLink>-->
+<!--            </div>-->
+<!--          </li>-->
           <li class="nav-item">
             <RouterLink class="nav-link" to="/about">About</RouterLink>
           </li>

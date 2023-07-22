@@ -14,7 +14,7 @@
           <div class="row">
             <div class="col-lg-6">
               <form @submit.prevent="submitForm">
-                <data-select v-model="dataSelect"/>
+                <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
                 <missing-rate v-model="missingRate"/>
                 <div class="d-flex justify-content-center mt-2">
                   <button type="submit" class="btn btn-primary align-center">Refresh</button>
@@ -131,6 +131,7 @@ export default {
     MissingRate
   }, setup() {
     const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const currentSeriesNames = ref([]); // Names of series currently displayed
     const fetchedData = reactive({});
     let loadingResults = ref(false);
 
@@ -197,7 +198,12 @@ export default {
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, 'Original Data: Series');
+
+          if (currentSeriesNames.value.length > 0 ) {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
+          } else {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+          }
         });
       } catch (error) {
         console.error(error);

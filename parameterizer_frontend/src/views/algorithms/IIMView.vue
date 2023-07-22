@@ -8,7 +8,7 @@
     </div>
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
-        <data-select v-model="dataSelect" />
+        <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <missing-rate v-model="missingRate" />
 
         <div class="mb-3">
@@ -57,6 +57,7 @@ export default {
   },
   setup() {
     const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const numberSelect = ref(1); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
@@ -86,7 +87,13 @@ export default {
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         response.data.matrix.forEach((data: number[], index: number) => {
-          chartOptionsOriginal.value.series[index] = createSeries(index, data);
+          // Replace NaN with 0
+          const cleanData = data.map(value => isNaN(value) ? 0 : value);
+          if (currentSeriesNames.value.length > 0 ) {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
+          } else {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+          }
         });
       } catch(error) {
         console.error(error);
@@ -114,7 +121,11 @@ export default {
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          chartOptionsImputed.value.series[index] = createSeries(index, data);
+          if (currentSeriesNames.value.length > 0) {
+            chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames.value[index]);
+          } else {
+            chartOptionsImputed.value.series[index] = createSeries(index, data);
+          }
         });
         imputedData.value = true;
       } catch (error) {
@@ -130,6 +141,10 @@ export default {
       fetchData();
     }
 
+    const updateSeriesNames = (newSeriesNames) => {
+      currentSeriesNames.value = newSeriesNames;
+    };
+
     // Watch for changes and call fetchData when it changes
     watch(dataSelect, handleDataSelectChange, { immediate: true });
     // TODO Missingness display
@@ -140,6 +155,8 @@ export default {
       metrics,
       chartOptionsOriginal,
       chartOptionsImputed,
+      currentSeriesNames,
+      updateSeriesNames,
       numberSelect,
       typeSelect,
       dataSelect,
