@@ -20,6 +20,6 @@ target_vector = ground_truth_matrix[nan_locations].flatten()
 # Calculate mutual information between imputed_matrix and target_vector
 mi = mutual_info_regression(imputed_matrix[nan_locations].reshape(-1, 1), target_vector, random_state=42)
 
-print("Mutual information:", mi)
+# print("Mutual information:", mi)
 
 # nan_file_path <- "Datasets/bafu/raw_matrices/BAFU_tiny_with_NaN.txt" # Replace with the path to your file

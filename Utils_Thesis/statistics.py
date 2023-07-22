@@ -100,7 +100,7 @@ def determine_mutual_info(ground_truth_matrix: np.ndarray, imputed_matrix: np.nd
     # Calculate mutual information between imputed_matrix and target_vector
     mi = mutual_info_regression(imputed_matrix[nan_locations].reshape(-1, 1), target_vector, random_state=42)
 
-    print("Mutual information:", mi)
+    # print("Mutual information:", mi)
     return float(mi[0])
 
 

@@ -14,6 +14,15 @@ The thesis on the general topic of Timeseries and focuses on:
 - Possible characterizing datasets
 - Possibly suggesting optimal parameters and best algorithms.
 
+## Quick Start
+Install docker and docker-compose. Then run the following command:
+
+```bash
+docker-compose up
+```
+This uses the docker-compose.yml file to build the frontend and backend and run them in containers. 
+The frontend is available at http://localhost:5173 and the backend at http://localhost:8000.
+
 ## Prerequisites
 
 - Ubuntu 20 or Ubuntu 22 (including Ubuntu derivatives, e.g., Xubuntu) or the same distribution under WSL2
