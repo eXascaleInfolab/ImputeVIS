@@ -51,8 +51,9 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
     # Define the objective function (to minimize)
     @use_named_args(space)
     def objective(**params):
-        errors = Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, tuple(params.values()),
-                                 selected_metrics)
+        errors = Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm,
+                                                           tuple(params.values()),
+                                                           selected_metrics)
         return np.mean([errors[metric] for metric in selected_metrics])
 
     # Conduct Bayesian optimization
@@ -69,7 +70,7 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
     return optimal_params_dict, np.min(optimizer.yi)
 
 
-def json_serializable(item: Any) -> Union[int, float, list, dict, tuple]:
+def json_serializable(item: Any) -> Union[int, float, list, dict, tuple, str]:
     """
     Convert objects, especially numpy objects, to native Python objects for JSON serialization.
 
@@ -80,7 +81,7 @@ def json_serializable(item: Any) -> Union[int, float, list, dict, tuple]:
 
     Returns
     -------
-    Union[int, float, list, dict, tuple]
+    Union[int, float, list, dict, tuple, str]
         The item converted to a Python native format suitable for JSON serialization.
 
     Raises
@@ -91,7 +92,7 @@ def json_serializable(item: Any) -> Union[int, float, list, dict, tuple]:
 
     if isinstance(item, (np.integer, np.int64)):  # Added np.int64 for clarity
         return int(item)
-    elif isinstance(item, np.floating):
+    elif isinstance(item, (np.floating, float)):
         return float(item)
     elif isinstance(item, np.ndarray):
         return item.tolist()
@@ -101,8 +102,11 @@ def json_serializable(item: Any) -> Union[int, float, list, dict, tuple]:
         return [json_serializable(i) for i in item]
     elif isinstance(item, dict):
         return {k: json_serializable(v) for k, v in item.items()}
+    elif isinstance(item, (str, int)):  # Allow native Python str and int types
+        return item
     else:
         raise TypeError(f"Type {type(item)} not serializable")
+
 
 if __name__ == '__main__':
     # algo = "cdrec"  # choose an algorithm to optimize
@@ -119,7 +123,7 @@ if __name__ == '__main__':
     # print(f"Best parameters for {algo}: {best_params}")
     # print(f"Best score: {best_score}")
 
-    algos = ['cdrec', 'stmvl']
+    algos = ['cdrec']
     # todo handle drift, meteo separately
     datasets = ['bafu', 'chlorine', 'climate']
     dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
