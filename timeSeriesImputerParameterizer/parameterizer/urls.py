@@ -6,6 +6,7 @@ urlpatterns = [
     # path("", views.index, name="index"),
     path('categorizeData/', views.categorize_data, name='categorizer'),
     path('fetchData/', views.fetch_data, name='fetchData'),
+    path('fetchParameters/', views.fetch_params, name='fetchParameters'),
     path('cdrec/', views.cdrec, name='cdrec'),
     path('iim/', views.iim, name='iim'),
     path('mrnn/', views.mrnn, name='mrnn'),

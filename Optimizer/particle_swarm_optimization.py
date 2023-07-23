@@ -109,7 +109,7 @@ if __name__ == '__main__':
     # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=" ", )
     # obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", delimiter=" ", )
     #
-    # # Define your PSO parameters
+    # # Define PSO parameters
     # pso_parameters = {
     #     'c1': 0.5,  # cognitive parameter
     #     'c2': 0.5,  # social parameter
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     #     obf_matrix,
     #     ['rmse'],  # choose one or more metrics to optimize
     #     algo,
-    #     pso_parameters  # pass your PSO parameters
+    #     pso_parameters  # pass PSO parameters
     # )
     #
     # print(f"Best parameters for {algo}: {best_params}")
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
     metrics = ['rmse', 'mse', 'corr', 'mi']
 
-    # Define your PSO parameters
+    # Define  PSO parameters
     pso_parameters = {
         'c1': 0.5,  # cognitive parameter
         'c2': 0.5,  # social parameter
@@ -158,7 +158,7 @@ if __name__ == '__main__':
                 obf_matrix,
                 metrics,
                 algo,
-                pso_parameters  # pass your PSO parameters
+                pso_parameters  # pass  PSO parameters
             )
             elapsed_time = time.time() - start_time
 

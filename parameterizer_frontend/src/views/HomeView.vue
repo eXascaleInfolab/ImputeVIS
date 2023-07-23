@@ -58,6 +58,17 @@
             </div>
 
           </div>
+          <!-- Parameter Options -->
+          <div class="col-lg-8 mt-4">
+            <h4>Select parameter option</h4>
+            <select class="form-control" name="paramOption" v-model="selectedParamOption">
+              <option value="recommended">Recommended</option>
+              <option value="default">Author Default</option>
+              <option value="bayesian_optimization">Bayesian Optimization</option>
+              <option value="pso_optimization">Particle Swarm Optimization</option>
+              <option value="succesive_halving">Successive Halving</option>
+            </select>
+          </div>
           <div class="col-lg-8 mt-5">
             <div class="row">
               <div class="col-xs">
@@ -134,6 +145,8 @@ export default {
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const fetchedData = reactive({});
     let loadingResults = ref(false);
+    const selectedParamOption = ref('Recommended'); // Default option
+
 
     //CDRec Parameters
     const missingRate = ref('1'); // Default missing rate is 1%
@@ -184,7 +197,6 @@ export default {
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
               data_set: dataSet
-
             },
             {
               headers: {
@@ -199,12 +211,64 @@ export default {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
 
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
           }
         });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    const fetchParameters = async () => {
+      try {
+        let dataSet = `${dataSelect.value}_obfuscated_0`;
+        const response = await axios.post('http://localhost:8000/api/fetchParameters/',
+            {
+              data_set: dataSet,
+              param_options: selectedParamOption.value
+            },
+            {
+              headers: {
+                'Content-Type': 'application/text',
+              }
+            }
+        );
+        // const paramsForAlgorithm = response.data[dataSelect.value][selectedParamOption.value];
+        // Get parameters for the selected algorithm and dataset.
+        const selectedAlgorithm = dataSelect.value;
+        const dataAbbreviation = getCategory(dataSelect.value);
+        // TODO Permanent variable to not refetch if not required
+        const parameters = response.data.params;
+        console.log(parameters['cdrec'][dataAbbreviation]);
+        // const paramsForDataset = response.data.params[selectedAlgorithm][dataSet]
+        //     ? response.data.params[selectedAlgorithm][dataSet].best_params
+        //     : null;
+        // if (paramsForDataset) {
+        // CDRec Parameters
+        truncationRank.value = parameters['cdrec'][dataAbbreviation].best_params.rank || truncationRank.value;
+        epsilon.value = parameters['cdrec'][dataAbbreviation].best_params.eps || epsilon.value;
+        iterations.value = parameters['cdrec'][dataAbbreviation].best_params.iters || iterations.value;
+
+        // IIM Parameters
+        // numberSelect.value = parameters['iim'][dataAbbreviation].best_params.learning_neighbours || numberSelect.value;
+        // typeSelect.value = parameters['iim'][dataAbbreviation].best_params.type_select || typeSelect.value;
+
+        // M-RNN Parameters
+        learningRate.value = parameters['mrnn'][dataAbbreviation].best_params.learning_rate || learningRate.value;
+        hiddenDim.value = parameters['mrnn'][dataAbbreviation].best_params.hidden_dim || hiddenDim.value;
+        iterationsMRNN.value = parameters['mrnn'][dataAbbreviation].best_params.iterations || iterationsMRNN.value;
+        keepProb.value = parameters['mrnn'][dataAbbreviation].best_params.keep_prob || keepProb.value;
+        // seqLen.value = parameters['iim'][dataAbbreviation].best_params.seq_len || seqLen.value;
+
+        // ST-MVL Parameters
+        windowSize.value = parameters['stmvl'][dataAbbreviation].best_params.window_size || windowSize.value;
+        gamma.value = parameters['stmvl'][dataAbbreviation].best_params.gamma || gamma.value;
+        alpha.value = parameters['stmvl'][dataAbbreviation].best_params.alpha || alpha.value;
+
+        // }
       } catch (error) {
         console.error(error);
       }
@@ -365,6 +429,23 @@ export default {
       }
     }
 
+    function getCategory(dataSelectValue: string): string {
+      if (dataSelectValue.startsWith('BAFU')) {
+        return 'bafu';
+      } else if (dataSelectValue.startsWith('cl2fullLarge')) {
+        return 'chlorine';
+      } else if (dataSelectValue.startsWith('climate')) {
+        return 'climate';
+      } else if (dataSelectValue.startsWith('batch10')) {
+        return 'drift';
+      } else if (dataSelectValue.startsWith('meteo')) {
+        return 'meteo';
+      } else {
+        // If no match is found, return a default value (bafu) or throw an error
+        return 'bafu';
+      }
+    }
+
     const submitForm = async () => {
       imputedData.value = false;
       clearFetchedData();
@@ -375,11 +456,19 @@ export default {
     // Define a new function that calls fetchData
     const handleDataSelectChange = () => {
       imputedData.value = false;
+      // TODO Function to get the parameters for selected algorithm
       clearFetchedData();
       fetchData();
     }
+
+    const handleParamSelectChange = () => {
+      console.log("entered handleParamSelectChange")
+      fetchParameters();
+    }
     // Watch for changes and call fetchData when it changes
     watch(dataSelect, handleDataSelectChange, {immediate: true});
+    // Watch for changes and call fetchData when it changes
+    watch(selectedParamOption, handleParamSelectChange, {immediate: true});
     // TODO Missingness display
     // watch(missingRate, handleDataSelectChange, { immediate: true });
 
@@ -410,6 +499,8 @@ export default {
       imputedData,
       checkedNames,
       handleCheckboxChange,
+      handleParamSelectChange,
+      selectedParamOption,
       loadingResults
     }
   }

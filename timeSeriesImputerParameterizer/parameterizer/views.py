@@ -9,9 +9,7 @@ import os
 import sys
 import numpy as np
 
-
 import Wrapper.algo_collection
-
 
 sys.path.insert(0, os.path.abspath(".."))
 from Utils_Thesis import utils, statistics
@@ -59,6 +57,7 @@ def cdrec(request):
             print('No matching datasets found for path: ', data_set)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
 
 @csrf_exempt
 def cdrec_optimization(request):
@@ -297,6 +296,7 @@ def stmvl_optimization(request):
             else:
                 return JsonResponse({'message': 'Invalid request'}, status=400)
 
+
 @csrf_exempt
 def fetch_data(request):
     if request.method == 'POST':
@@ -310,6 +310,53 @@ def fetch_data(request):
             ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
             return JsonResponse({'matrix': np.transpose(ground_truth_matrix).tolist()},
                                 status=200)
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def fetch_params(request):
+    if request.method == 'POST':
+        data, data_set = load_from_request(request)
+        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+        # Extract 'param_options' from the request
+        optimization_method = data.get("param_options")
+        if not optimization_method:
+            return JsonResponse({'message': 'param_options not provided'}, status=400)
+        # TODO Compare with get_file_paths
+        optimizer_dir = '../Optimizer'
+        file_pattern = f"optimization_results_{{algo_code}}_{optimization_method}.json"
+
+        # Find all files matching the pattern
+        all_files = os.listdir(optimizer_dir)
+        matching_files = [f for f in all_files if
+                          f.startswith("optimization_results_") and f.endswith(f"_{optimization_method}.json")]
+
+        if not matching_files:
+            return JsonResponse({'message': 'No matching files found'}, status=400)
+
+        results = {}
+
+        for file in matching_files:
+            algo_code = file.split('_')[2]
+            with open(os.path.join(optimizer_dir, file), 'r') as json_file:
+                file_content = json_file.read()
+
+                # Check if the file is empty
+                if not file_content.strip():
+                    print(f"File {file} is empty.")
+                    continue
+
+                # Print the content for debugging
+                print(f"Content of {file}:")
+                print(file_content)
+
+                try:
+                    results[algo_code] = json.loads(file_content)
+                except json.JSONDecodeError as e:
+                    print(f"Error decoding JSON in file {file}: {e}")
+
+        return JsonResponse({'params': results}, status=200)
+
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
 

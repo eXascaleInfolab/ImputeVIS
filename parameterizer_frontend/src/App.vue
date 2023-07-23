@@ -39,7 +39,7 @@
               <RouterLink class="dropdown-item" to="/optimization/stmvl">ST-MVL</RouterLink>
             </div>
           </li>
-          <!-- Add your additional links here -->
+          <!-- Add additional links here -->
           <li class="nav-item">
             <RouterLink class="nav-link" to="/datasets/categorizer">Dataset Categorizer WIP</RouterLink>
           </li>
@@ -81,6 +81,6 @@ import Footer from './components/Footer.vue';
 
 <style scoped>
 .content {
-  padding-top: 70px; /* Adjust this value depending on the height of your navbar */
+  padding-top: 70px; /* Adjust this value depending on navbar height */
 }
 </style>
