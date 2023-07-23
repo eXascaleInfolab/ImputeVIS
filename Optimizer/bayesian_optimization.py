@@ -1,4 +1,6 @@
 import numpy as np
+import time
+import json
 import skopt
 from skopt import Optimizer
 
@@ -14,7 +16,7 @@ search_spaces = SEARCH_SPACES
 
 def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray,
                           selected_metrics: List[str], algorithm: str,
-                          n_calls: int = 50, n_random_starts: Optional[int] = None,
+                          n_calls: int = 100, n_random_starts: Optional[int] = 50,
                           acq_func: str = 'gp_hedge') -> Tuple[dict, Union[Union[int, float, complex], Any]]:
     """
     Conduct the Bayesian optimization hyperparameter optimization.
@@ -54,7 +56,7 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
         return np.mean([errors[metric] for metric in selected_metrics])
 
     # Conduct Bayesian optimization
-    optimizer = skopt.Optimizer(dimensions=space, n_random_starts=n_random_starts, acq_func=acq_func)
+    optimizer = skopt.Optimizer(dimensions=space, n_initial_points=n_random_starts, acq_func=acq_func)
     for i in range(n_calls):
         suggested_params = optimizer.ask()
         score = objective(suggested_params)
@@ -67,17 +69,99 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
     return optimal_params_dict, np.min(optimizer.yi)
 
 
+def json_serializable(item: Any) -> Union[int, float, list, dict, tuple]:
+    """
+    Convert objects, especially numpy objects, to native Python objects for JSON serialization.
+
+    Parameters
+    ----------
+    item : Any
+        The item or object to be converted to a JSON serializable format.
+
+    Returns
+    -------
+    Union[int, float, list, dict, tuple]
+        The item converted to a Python native format suitable for JSON serialization.
+
+    Raises
+    ------
+    TypeError
+        If the item is of a type that is not serializable.
+    """
+
+    if isinstance(item, (np.integer, np.int64)):  # Added np.int64 for clarity
+        return int(item)
+    elif isinstance(item, np.floating):
+        return float(item)
+    elif isinstance(item, np.ndarray):
+        return item.tolist()
+    elif isinstance(item, tuple):
+        return tuple(json_serializable(i) for i in item)
+    elif isinstance(item, list):
+        return [json_serializable(i) for i in item]
+    elif isinstance(item, dict):
+        return {k: json_serializable(v) for k, v in item.items()}
+    else:
+        raise TypeError(f"Type {type(item)} not serializable")
+
 if __name__ == '__main__':
-    algo = "cdrec"  # choose an algorithm to optimize
-    raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=" ", )
-    obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", delimiter=" ", )
+    # algo = "cdrec"  # choose an algorithm to optimize
+    # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=" ", )
+    # obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", delimiter=" ", )
+    #
+    # best_params, best_score = bayesian_optimization(
+    #     raw_matrix,
+    #     obf_matrix,
+    #     ['rmse'],  # choose one or more metrics to optimize
+    #     algo
+    # )
+    #
+    # print(f"Best parameters for {algo}: {best_params}")
+    # print(f"Best score: {best_score}")
 
-    best_params, best_score = bayesian_optimization(
-        raw_matrix,
-        obf_matrix,
-        ['rmse'],  # choose one or more metrics to optimize
-        algo
-    )
+    algos = ['cdrec', 'stmvl']
+    # todo handle drift, meteo separately
+    datasets = ['bafu', 'chlorine', 'climate']
+    dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
+    metrics = ['rmse', 'mse', 'corr', 'mi']
 
-    print(f"Best parameters for {algo}: {best_params}")
-    print(f"Best score: {best_score}")
+    results = {}
+    for algo in algos:
+        for dataset, data_file in zip(datasets, dataset_files):
+            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_quarter.txt"
+            obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_quarter_obfuscated_20.txt"
+
+            raw_matrix = np.loadtxt(raw_file_path, delimiter=" ", )
+            obf_matrix = np.loadtxt(obf_file_path, delimiter=" ", )
+
+            start_time = time.time()
+            optimization_result = bayesian_optimization(
+                raw_matrix,
+                obf_matrix,
+                metrics,
+                algo
+            )
+            elapsed_time = time.time() - start_time
+
+            # Convert optimization result to be JSON serializable
+            optimization_result = json_serializable(optimization_result)
+
+            # Assuming optimization_result is a tuple with (best_params, best_score)
+            best_params, best_score = optimization_result
+
+            results[dataset] = {
+                'best_params': best_params,
+                'best_score': best_score,
+                'dataset': dataset,
+                'time': elapsed_time
+            }
+
+        # Save results in a JSON file
+        with open(f'optimization_results_{algo}_bayesian_optimization.json', 'w') as outfile:
+            json.dump(results, outfile)
+
+        # Print the results for the current algorithm
+        for dataset in datasets:
+            print(f"Algorithm: {algo}, Dataset: {dataset}")
+            print(f"Best parameters: {results[dataset]['best_params']}")
+            print(f"Best score: {results[dataset]['best_score']}\n")
