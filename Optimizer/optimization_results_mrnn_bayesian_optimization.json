@@ -1,0 +1,35 @@
+{
+  "bafu": {
+    "best_params": {
+      "hidden_dim": 8,
+      "learning_rate": 0.8461506519794432,
+      "iterations": 32,
+      "keep_prob": 1e-06
+    },
+    "best_score": 0.2666968474303655,
+    "dataset": "bafu",
+    "time": 2598.07874751091
+  },
+  "chlorine": {
+    "best_params": {
+      "hidden_dim": 5,
+      "learning_rate": 0.08462230052811194,
+      "iterations": 24,
+      "keep_prob": 0.9460125389641623
+    },
+    "best_score": 0.4530338112084572,
+    "dataset": "chlorine",
+    "time": 8597.221065044403
+  },
+  "climate": {
+    "best_params": {
+      "hidden_dim": 4,
+      "learning_rate": 0.0016491432656482448,
+      "iterations": 66,
+      "keep_prob": 0.32426775304096417
+    },
+    "best_score": 2656.297606639347,
+    "dataset": "climate",
+    "time": 1230.0289855003357
+  }
+}
