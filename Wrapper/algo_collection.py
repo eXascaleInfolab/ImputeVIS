@@ -17,6 +17,8 @@ __NATIVE_CENTROID_LIBRARY_PATH = "libAlgoCollection.so"; # will pick up from any
 __NATIVE_CENTROID_LIBRARY_PATH_ALT = "/Home/Dev/Wrapper/src/libAlgoCollection.so"; # manual
 __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL = "/mnt/d/Git/msc_thesis_timeseries/Wrapper/src/libAlgoCollection.so"; # manual
 __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL_LAPTOP = "/mnt/c/Git/msc_thesis_timeseries/Wrapper/src/libAlgoCollection.so"; # manual
+__NATIVE_CENTROID_LIBRARY_PATH_Linux = "../Wrapper/src/libAlgoCollection.so"; # manual
+__NATIVE_CENTROID_LIBRARY_PATH_Linux_2 = "../../Wrapper/src/libAlgoCollection.so"; # manual
 __NATIVE_CENTROID_LIBRARY_PATH_DOCKER = "/app/Wrapper/libAlgoCollection.so"; # manual
 
 paths = [
@@ -25,6 +27,8 @@ paths = [
     __NATIVE_CENTROID_LIBRARY_PATH_ALT,
     __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL,
     __NATIVE_CENTROID_LIBRARY_PATH_ALT_WSL_LAPTOP,
+    __NATIVE_CENTROID_LIBRARY_PATH_Linux,
+    __NATIVE_CENTROID_LIBRARY_PATH_Linux_2,
     __NATIVE_CENTROID_LIBRARY_PATH_DOCKER
 ]
 
