@@ -1,5 +1,7 @@
 import numpy as np
 from typing import Dict, List
+import time
+import json
 import Optimizer.algorithm_parameters as alg_params
 
 import sys
@@ -33,7 +35,7 @@ def select_and_average_errors(errors_dict: Dict[str, float], selected_metrics: L
 
 def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray,
                        selected_metrics: List[str], algorithm: str,
-                       num_configs: int = 10, num_iterations: int = 5,
+                       num_configs: int = 100, num_iterations: int = 50,
                        reduction_factor: int = 2) -> tuple:
     """
     Conduct the successive halving hyperparameter optimization.
@@ -112,13 +114,45 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
 
 
 if __name__ == '__main__':
-    algo = "cdrec"
-    raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=" ", )
-    obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", delimiter=" ", )
+    # algo = "cdrec"
+    # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_quarter.txt", delimiter=" ", )
+    # obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_quarter_obfuscated_20.txt", delimiter=" ", )
+    #
+    # print(successive_halving(
+    #     raw_matrix,
+    #     obf_matrix,
+    #     ['rmse', 'mse', 'corr', 'mi'],
+    #     algo
+    # ))
+    algos = ['cdrec', 'stmvl']
+    datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
+    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
+    metrics = ['rmse', 'mse', 'corr', 'mi']
 
-    print(successive_halving(
-        raw_matrix,
-        obf_matrix,
-        ['rmse'],
-        algo
-    ))
+    results = {}
+    for algo in algos:
+        for dataset, data_file in zip(datasets, dataset_files):
+            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_quarter.txt"
+            obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_quarter_obfuscated_20.txt"
+
+            raw_matrix = np.loadtxt(raw_file_path, delimiter=" ", )
+            obf_matrix = np.loadtxt(obf_file_path, delimiter=" ", )
+
+            start_time = time.time()
+            optimization_result = successive_halving(
+                raw_matrix,
+                obf_matrix,
+                metrics,
+                algo
+            )
+            elapsed_time = time.time() - start_time
+
+            results[dataset] = {
+                'result': optimization_result,
+                'dataset': dataset,
+                'time': elapsed_time
+            }
+
+        # Save results in a JSON file
+        with open(f'optimization_results_{algo}_succesive_halving.json', 'w') as outfile:
+            json.dump(results, outfile)
