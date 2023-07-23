@@ -95,20 +95,20 @@ export default defineComponent({
     const selectedMetrics = ref(['rmse']);
 
     // Bayesian Optimization parameters
-    const nCalls = ref(10);
-    const nRandomStarts = ref(1);
+    const nCalls = ref(3);
+    const nRandomStarts = ref(2);
     const acqFunc = ref('gp_hedge');
 
     // PSO parameters
     const c1 = ref(0.5);
-    const c2 = ref(0.3);
-    const w = ref(0.9);
-    const nParticles = ref(20);
-    const iterations = ref(10);
+    const c2 = ref(0.5);
+    const w = ref(0.8);
+    const nParticles = ref(10);
+    const iterations = ref(3);
 
     // Successive Halving parameters
-    const numConfigs = ref(10);
-    const numIterations = ref(5);
+    const numConfigs = ref(5);
+    const numIterations = ref(3);
     const reductionFactor = ref(2);
 
     // Combine all parameters into one object

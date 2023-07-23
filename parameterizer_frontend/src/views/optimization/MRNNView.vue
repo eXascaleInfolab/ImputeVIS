@@ -10,7 +10,7 @@
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-7 align-items-center text-center">
         <h2>Optimal Parameters</h2>
-        <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+        <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
 
         <!-- Learning Rate -->
         <div class="mb-3">
@@ -55,7 +55,7 @@
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <optimization-select v-model="optimizationSelect" @parametersChanged="handleParametersChanged"/>
-        <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+        <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
 
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import {ref, watch, computed} from 'vue';
-import DataSelect from '../components/DataSelect.vue';
+import DataSelectOptimization from '../components/DataSelectOptimization.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
 import OptimizationSelect from '../components/OptimizationSelect.vue';
@@ -85,7 +85,7 @@ HighchartsBoost(Highcharts)
 
 export default {
   components: {
-    DataSelect,
+    DataSelectOptimization,
     highcharts: Chart,
     MetricsDisplay,
     MissingRate,
@@ -93,7 +93,7 @@ export default {
   },
   setup() {
     const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
-    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const dataSelect = ref('BAFU_eighth') // Default data is BAFU
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const learningRate = ref(0.01); // Default learning rate is 0.01
