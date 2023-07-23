@@ -10,20 +10,81 @@
       </div>
 
       <div v-else class="mt-3">
-        <table v-if="loadedResults" class="table">
-          <thead>
-          <tr>
-            <th>Feature Name</th>
-            <th>Value</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(value, key) in features" :key="key">
-            <td>{{ key }}</td>
-            <td>{{ value }}</td>
-          </tr>
-          </tbody>
-        </table>
+        <!-- Geometry Table -->
+        <div class="mb-4">
+          <h4>Geometry</h4>
+          <table v-if="loadedResults && categoryExists('Geometry')" class="table">
+            <thead>
+            <tr>
+              <th>Feature Name</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(value, key) in categorizedFeatures['Geometry']" :key="key">
+              <td>{{ key }}</td>
+              <td>{{ value.toFixed(4) }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Correlation Table -->
+        <div class="mb-4">
+          <h4>Correlation</h4>
+          <table v-if="loadedResults && categoryExists('Correlation')" class="table">
+            <thead>
+            <tr>
+              <th>Feature Name</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(value, key) in categorizedFeatures['Correlation']" :key="key">
+              <td>{{ key }}</td>
+              <td>{{ value.toFixed(4) }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Transformation Table -->
+        <div class="mb-4">
+          <h4>Transformation</h4>
+          <table v-if="loadedResults && categoryExists('Transformation')" class="table">
+            <thead>
+            <tr>
+              <th>Feature Name</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(value, key) in categorizedFeatures['Transformation']" :key="key">
+              <td>{{ key }}</td>
+              <td>{{ value.toFixed(4) }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Trend Table -->
+        <div class="mb-4">
+          <h4>Trend</h4>
+          <table v-if="loadedResults && categoryExists('Trend')" class="table">
+            <thead>
+            <tr>
+              <th>Feature Name</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(value, key) in categorizedFeatures['Trend']" :key="key">
+              <td>{{ key }}</td>
+              <td>{{ value.toFixed(4) }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
@@ -69,6 +130,56 @@ export default {
     const error = ref("");
     const loadedResults = ref(false);
     const chartOptionsOriginal = ref(generateChartOptions('Data', 'Data'));
+    const categorizedFeatures = ref({});
+
+    // Define the features for each category
+    const CATEGORIES = {
+      'Geometry': [
+        'SB_BinaryStats_mean_longstretch1',
+        'SB_BinaryStats_diff_longstretch0',
+        'SB_TransitionMatrix_3ac_sumdiagcov',
+        'MD_hrv_classic_pnn40',
+        'DN_HistogramMode_5',
+        'DN_HistogramMode_10',
+        'DN_OutlierInclude_p_001_mdrmd',
+        'DN_OutlierInclude_n_001_mdrmd',
+        'CO_Embed2_Dist_tau_d_expfit_meandiff',
+        'SC_FluctAnal_2_dfa_50_1_2_logi_prop_r1',
+        'SC_FluctAnal_2_rsrangefit_50_1_logi_prop_r1'
+      ],
+      'Correlation': [
+        'CO_f1ecac',
+        'CO_FirstMin_ac',
+        'CO_trev_1_num',
+        'CO_HistogramAMI_even_2_5',
+        'IN_AutoMutualInfoStats_40_gaussian_fmmi',
+        'FC_LocalSimple_mean1_tauresrat'
+      ],
+      'Transformation': [
+        'SP_Summaries_welch_rect_area_5_1',
+        'SP_Summaries_welch_rect_centroid'
+      ],
+      'Trend': [
+        'PD_PeriodicityWang_th0_01',
+        'FC_LocalSimple_mean3_stderr',
+        'SB_MotifThree_quantile_hh'
+      ]
+    };
+    type FeatureMap = { [key: string]: any };
+
+    function categorizeFeatures(features: FeatureMap): { [category: string]: FeatureMap } {
+      const tempCategorizedFeatures: { [category: string]: FeatureMap } = {};
+
+      for (const category in CATEGORIES) {
+        tempCategorizedFeatures[category] = {};
+        for (const featureKey of CATEGORIES[category]) {
+          if (features[featureKey] !== undefined) {
+            tempCategorizedFeatures[category][featureKey] = features[featureKey];
+          }
+        }
+      }
+      return tempCategorizedFeatures;
+    }
 
     const fetchData = async () => {
       try {
@@ -89,7 +200,7 @@ export default {
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
@@ -98,6 +209,10 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    }
+
+    function categoryExists(category: string): boolean {
+      return categorizedFeatures.value[category] && Object.keys(categorizedFeatures.value[category]).length > 0;
     }
 
     const fetchDataFeatures = async () => {
@@ -119,6 +234,7 @@ export default {
         );
         features.value = response.data;
         // features.value = await response.json();
+        categorizedFeatures.value = categorizeFeatures(response.data);
         loadedResults.value = true;
 
       } catch (error) {
@@ -149,7 +265,9 @@ export default {
       error,
       loadedResults,
       fetchDataFeatures,
-      chartOptionsOriginal
+      chartOptionsOriginal,
+      categorizedFeatures,
+      categoryExists
     }
   }
 }
