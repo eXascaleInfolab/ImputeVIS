@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Dict, List
+from typing import Dict, List, Any, Union
 import time
 import json
 import Optimizer.algorithm_parameters as alg_params
@@ -91,7 +91,8 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
 
     for i in range(num_iterations):
         scores = [select_and_average_errors(
-            Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config, selected_metrics),
+            Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config,
+                                                      selected_metrics),
             selected_metrics) for
             config in configs]
         top_configs_idx = np.argsort(scores)[:max(1, len(configs) // reduction_factor)]
@@ -113,6 +114,35 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
     return best_config_dict, best_score
 
 
+def json_serializable(item: Any) -> Union[int, float, list]:
+    """
+    Convert numpy objects to native Python objects for JSON serialization.
+
+    Parameters
+    ----------
+    item : Any
+        The numpy item or object to be converted to a JSON serializable format.
+
+    Returns
+    -------
+    Union[int, float, list]
+        The item converted to a Python native format suitable for JSON serialization.
+
+    Raises
+    ------
+    TypeError
+        If the item is of a type that is not serializable.
+    """
+    if isinstance(item, np.integer):
+        return int(item)
+    elif isinstance(item, np.floating):
+        return float(item)
+    elif isinstance(item, np.ndarray):
+        return item.tolist()
+    else:
+        raise TypeError(f"Type {type(item)} not serializable")
+
+
 if __name__ == '__main__':
     # algo = "cdrec"
     # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_quarter.txt", delimiter=" ", )
@@ -125,8 +155,9 @@ if __name__ == '__main__':
     #     algo
     # ))
     algos = ['cdrec', 'stmvl']
-    datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
-    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
+    # todo handle drift, meteo separately
+    datasets = ['bafu', 'chlorine', 'climate']
+    dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
     metrics = ['rmse', 'mse', 'corr', 'mi']
 
     results = {}
@@ -147,6 +178,9 @@ if __name__ == '__main__':
             )
             elapsed_time = time.time() - start_time
 
+            # Convert optimization result to be JSON serializable
+            optimization_result = json_serializable(optimization_result)
+
             results[dataset] = {
                 'result': optimization_result,
                 'dataset': dataset,
@@ -156,3 +190,5 @@ if __name__ == '__main__':
         # Save results in a JSON file
         with open(f'optimization_results_{algo}_succesive_halving.json', 'w') as outfile:
             json.dump(results, outfile)
+
+    print(results)
