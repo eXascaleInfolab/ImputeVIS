@@ -114,18 +114,18 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
     return best_config_dict, best_score
 
 
-def json_serializable(item: Any) -> Union[int, float, list]:
+def json_serializable(item: Any) -> Union[int, float, list, dict, tuple]:
     """
-    Convert numpy objects to native Python objects for JSON serialization.
+    Convert objects, especially numpy objects, to native Python objects for JSON serialization.
 
     Parameters
     ----------
     item : Any
-        The numpy item or object to be converted to a JSON serializable format.
+        The item or object to be converted to a JSON serializable format.
 
     Returns
     -------
-    Union[int, float, list]
+    Union[int, float, list, dict, tuple]
         The item converted to a Python native format suitable for JSON serialization.
 
     Raises
@@ -133,12 +133,19 @@ def json_serializable(item: Any) -> Union[int, float, list]:
     TypeError
         If the item is of a type that is not serializable.
     """
-    if isinstance(item, np.integer):
+
+    if isinstance(item, (np.integer, np.int64)):  # Added np.int64 for clarity
         return int(item)
     elif isinstance(item, np.floating):
         return float(item)
     elif isinstance(item, np.ndarray):
         return item.tolist()
+    elif isinstance(item, tuple):
+        return tuple(json_serializable(i) for i in item)
+    elif isinstance(item, list):
+        return [json_serializable(i) for i in item]
+    elif isinstance(item, dict):
+        return {k: json_serializable(v) for k, v in item.items()}
     else:
         raise TypeError(f"Type {type(item)} not serializable")
 
