@@ -2,8 +2,10 @@ import pyswarms as ps
 from typing import Dict, List, Tuple
 import numpy as np
 from skopt.space import Integer
-
+import time
+import json
 import Optimizer.evaluate_params
+from Optimizer import util
 from Optimizer.algorithm_parameters import SEARCH_SPACES_PSO, PARAM_NAMES
 
 
@@ -63,8 +65,9 @@ def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndar
             elif algorithm == 'stmvl':
                 particle_params = [int(particle_params[0]), particle_params[1], int(particle_params[2])]
 
-            errors = Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, tuple(particle_params),
-                                     selected_metrics)
+            errors = Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm,
+                                                               tuple(particle_params),
+                                                               selected_metrics)
 
             # Assume that lower is better for all metrics, calculate the mean error for this particle
             errors_for_all_particles[i] = np.mean([errors[metric] for metric in selected_metrics])
@@ -102,26 +105,82 @@ def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndar
 
 
 if __name__ == '__main__':
-    algo = "iim"  # choose an algorithm to optimize
-    raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=" ", )
-    obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", delimiter=" ", )
+    # algo = "cdrec"  # choose an algorithm to optimize
+    # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=" ", )
+    # obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", delimiter=" ", )
+    #
+    # # Define your PSO parameters
+    # pso_parameters = {
+    #     'c1': 0.5,  # cognitive parameter
+    #     'c2': 0.5,  # social parameter
+    #     'w': 0.8,  # inertia weight
+    #     'n_particles': 50,  # number of particles
+    #     'iterations': 100  # number of iterations
+    # }
+    #
+    # best_params, best_score = pso_optimization(
+    #     raw_matrix,
+    #     obf_matrix,
+    #     ['rmse'],  # choose one or more metrics to optimize
+    #     algo,
+    #     pso_parameters  # pass your PSO parameters
+    # )
+    #
+    # print(f"Best parameters for {algo}: {best_params}")
+    # print(f"Best score: {best_score}")
+    algos = ['stmvl']
+    # todo handle drift, meteo separately
+    datasets = ['bafu', 'chlorine', 'climate']
+    dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
+    metrics = ['rmse', 'mse', 'corr', 'mi']
 
     # Define your PSO parameters
     pso_parameters = {
         'c1': 0.5,  # cognitive parameter
-        'c2': 0.3,  # social parameter
-        'w': 0.9,  # inertia weight
-        'n_particles': 20,  # number of particles
-        'iterations': 10  # number of iterations
+        'c2': 0.5,  # social parameter
+        'w': 0.8,  # inertia weight
+        'n_particles': 50,  # number of particles
+        'iterations': 100  # number of iterations
     }
 
-    best_params, best_score = pso_optimization(
-        raw_matrix,
-        obf_matrix,
-        ['rmse'],  # choose one or more metrics to optimize
-        algo,
-        pso_parameters  # pass your PSO parameters
-    )
+    results = {}
+    for algo in algos:
+        for dataset, data_file in zip(datasets, dataset_files):
+            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_quarter.txt"
+            obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_quarter_obfuscated_20.txt"
 
-    print(f"Best parameters for {algo}: {best_params}")
-    print(f"Best score: {best_score}")
+            raw_matrix = np.loadtxt(raw_file_path, delimiter=" ", )
+            obf_matrix = np.loadtxt(obf_file_path, delimiter=" ", )
+
+            start_time = time.time()
+            optimization_result = pso_optimization(
+                raw_matrix,
+                obf_matrix,
+                metrics,
+                algo,
+                pso_parameters  # pass your PSO parameters
+            )
+            elapsed_time = time.time() - start_time
+
+            # Convert optimization result to be JSON serializable
+            optimization_result = util.json_serializable(optimization_result)
+
+            # Assuming optimization_result is a tuple with (best_params, best_score)
+            best_params, best_score = optimization_result
+
+            results[dataset] = {
+                'best_params': best_params,
+                'best_score': best_score,
+                'dataset': dataset,
+                'time': elapsed_time
+            }
+
+        # Save results in a JSON file
+        with open(f'optimization_results_{algo}_pso_optimization.json', 'w') as outfile:
+            json.dump(results, outfile)
+
+        # Print the results for the current algorithm
+        for dataset in datasets:
+            print(f"Algorithm: {algo}, Dataset: {dataset}")
+            print(f"Best parameters: {results[dataset]['best_params']}")
+            print(f"Best score: {results[dataset]['best_score']}\n")

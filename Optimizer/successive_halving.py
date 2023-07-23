@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Dict, List, Any, Union
+from typing import Dict, List
 import time
 import json
 import Optimizer.algorithm_parameters as alg_params
@@ -8,6 +8,7 @@ import sys
 import os
 
 import Optimizer.evaluate_params
+from Optimizer import util
 
 sys.path.insert(0, os.path.abspath(".."))  # Add parent directory to path for imports to work
 
@@ -114,42 +115,6 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
     return best_config_dict, best_score
 
 
-def json_serializable(item: Any) -> Union[int, float, list, dict, tuple]:
-    """
-    Convert objects, especially numpy objects, to native Python objects for JSON serialization.
-
-    Parameters
-    ----------
-    item : Any
-        The item or object to be converted to a JSON serializable format.
-
-    Returns
-    -------
-    Union[int, float, list, dict, tuple]
-        The item converted to a Python native format suitable for JSON serialization.
-
-    Raises
-    ------
-    TypeError
-        If the item is of a type that is not serializable.
-    """
-
-    if isinstance(item, (np.integer, np.int64)):  # Added np.int64 for clarity
-        return int(item)
-    elif isinstance(item, np.floating):
-        return float(item)
-    elif isinstance(item, np.ndarray):
-        return item.tolist()
-    elif isinstance(item, tuple):
-        return tuple(json_serializable(i) for i in item)
-    elif isinstance(item, list):
-        return [json_serializable(i) for i in item]
-    elif isinstance(item, dict):
-        return {k: json_serializable(v) for k, v in item.items()}
-    else:
-        raise TypeError(f"Type {type(item)} not serializable")
-
-
 if __name__ == '__main__':
     # algo = "cdrec"
     # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_quarter.txt", delimiter=" ", )
@@ -186,7 +151,7 @@ if __name__ == '__main__':
             elapsed_time = time.time() - start_time
 
             # Convert optimization result to be JSON serializable
-            optimization_result = json_serializable(optimization_result)
+            optimization_result = util.json_serializable(optimization_result)
 
             results[dataset] = {
                 'result': optimization_result,

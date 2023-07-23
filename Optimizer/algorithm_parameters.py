@@ -42,10 +42,10 @@ SEARCH_SPACES = {
 SEARCH_SPACES_PSO = {
     'cdrec': [(1, 10), (1e-6, 1), (100, 1000)],
     'iim': [(1, 100)],
-    'mrnn': [(1, 100), (1e-6, 1e-2), (1, 1000), (0.1, 1.0),
+    'mrnn': [(1, 100), (1e-6, 1e-2), (1, 100), (0.1, 1.0),
              # (1, 100)
              ],
-    'stmvl': [(1, 100), (1e-6, 1e-2), (1, 100)]
+    'stmvl': [(2, 100), (1e-6, 1e-2), (1, 100)]
 }
 
 # Define the parameter names for each algorithm

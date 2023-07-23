@@ -7,6 +7,7 @@ from skopt import Optimizer
 from skopt.utils import use_named_args
 from typing import List, Optional, Tuple, Union, Any
 
+from Optimizer import util
 from Optimizer.algorithm_parameters import SEARCH_SPACES
 import Optimizer.evaluate_params
 
@@ -70,43 +71,6 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
     return optimal_params_dict, np.min(optimizer.yi)
 
 
-def json_serializable(item: Any) -> Union[int, float, list, dict, tuple, str]:
-    """
-    Convert objects, especially numpy objects, to native Python objects for JSON serialization.
-
-    Parameters
-    ----------
-    item : Any
-        The item or object to be converted to a JSON serializable format.
-
-    Returns
-    -------
-    Union[int, float, list, dict, tuple, str]
-        The item converted to a Python native format suitable for JSON serialization.
-
-    Raises
-    ------
-    TypeError
-        If the item is of a type that is not serializable.
-    """
-
-    if isinstance(item, (np.integer, np.int64)):  # Added np.int64 for clarity
-        return int(item)
-    elif isinstance(item, (np.floating, float)):
-        return float(item)
-    elif isinstance(item, np.ndarray):
-        return item.tolist()
-    elif isinstance(item, tuple):
-        return tuple(json_serializable(i) for i in item)
-    elif isinstance(item, list):
-        return [json_serializable(i) for i in item]
-    elif isinstance(item, dict):
-        return {k: json_serializable(v) for k, v in item.items()}
-    elif isinstance(item, (str, int)):  # Allow native Python str and int types
-        return item
-    else:
-        raise TypeError(f"Type {type(item)} not serializable")
-
 
 if __name__ == '__main__':
     # algo = "cdrec"  # choose an algorithm to optimize
@@ -123,7 +87,7 @@ if __name__ == '__main__':
     # print(f"Best parameters for {algo}: {best_params}")
     # print(f"Best score: {best_score}")
 
-    algos = ['cdrec']
+    algos = ['stmvl']
     # todo handle drift, meteo separately
     datasets = ['bafu', 'chlorine', 'climate']
     dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
@@ -148,7 +112,7 @@ if __name__ == '__main__':
             elapsed_time = time.time() - start_time
 
             # Convert optimization result to be JSON serializable
-            optimization_result = json_serializable(optimization_result)
+            optimization_result = util.json_serializable(optimization_result)
 
             # Assuming optimization_result is a tuple with (best_params, best_score)
             best_params, best_score = optimization_result
