@@ -33,9 +33,17 @@ cd ..
 echo "Setting up backend environment..."
 cd timeSeriesImputerParameterizer
 
-# Create virtual environment and activate
-python3 -m venv env
-source env/bin/activate
+# Extract the Python 3 minor version number
+PYTHON3_MINOR_VERSION=$(python3 --version | awk '{print $2}' | cut -d'.' -f2)
+
+# Install the appropriate venv module
+sudo apt install -y python3.${PYTHON3_MINOR_VERSION}-venv
+
+# Create virtual environment (if not already created)
+if [ ! -d "env" ]; then
+    python3 -m venv env
+    source env/bin/activate
+fi
 
 # Install Django and other dependencies
 pip install -r requirements.txt

@@ -15,13 +15,17 @@ The thesis on the general topic of Timeseries and focuses on:
 - Possibly suggesting optimal parameters and best algorithms.
 
 ## Quick Start
-Install docker and docker-compose. Then run the following command:
+Install docker and docker-compose. Then run the following commands:
 
 ```bash
+# Build images
+docker-compose build  
+# Start images
 docker-compose up
 ```
-This uses the docker-compose.yml file to build the frontend and backend and run them in containers. 
-The frontend is available at http://localhost:5173 and the backend at http://localhost:8000.
+This uses the docker-compose.yml file to build the frontend and backend and run them in containers.   
+The frontend is available at http://localhost:5173 (or http://172.19.0.3:5173/), 
+with the backend accessible under http://localhost:8000 (api calls only).
 
 ## Prerequisites
 

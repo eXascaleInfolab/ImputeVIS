@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Starting backend server..."
-apt get update
+apt update
 apt install -y libopenblas-dev
 cd /app
 source env/bin/activate
