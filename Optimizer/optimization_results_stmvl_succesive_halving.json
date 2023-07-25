@@ -1,37 +1,37 @@
 {
   "bafu": {
-    "result": [
+    "best_params": [
       {
         "window_size": 54,
         "gamma": 6.309573444801929e-05,
         "alpha": 1
-      },
-      0.16650896219443315
+      }
     ],
+    "best_score": 0.16650896219443315,
     "dataset": "bafu",
     "time": 685.8888249397278
   },
   "chlorine": {
-    "result": [
+    "best_params": [
       {
         "window_size": 51,
         "gamma": 1e-06,
         "alpha": 8
-      },
-      0.12911528626977445
+      }
     ],
+    "best_score": 0.12911528626977445,
     "dataset": "chlorine",
     "time": 3620.72625541687
   },
   "climate": {
-    "result": [
+    "best_params": [
       {
         "window_size": 30,
         "gamma": 6.309573444801929e-05,
         "alpha": 2
-      },
-      1701.491206905994
+      }
     ],
+    "best_score": 1701.491206905994,
     "dataset": "climate",
     "time": 30.815353393554688
   }
