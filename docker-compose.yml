@@ -11,7 +11,7 @@ services:
       - ./IIM:/app/IIM
       - ./M_RNN:/app/M_RNN
       - ./MRNN:/app/MRNN
-      - ./Optimizer:/app/Optimizer
+      - ./Optimizer:/Optimizer
       - ./Results:/Results
       - ./Utils_Thesis:/app/Utils_Thesis
       - ./Wrapper:/app/Wrapper
