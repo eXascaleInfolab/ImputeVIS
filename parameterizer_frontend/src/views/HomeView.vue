@@ -145,7 +145,7 @@ export default {
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const fetchedData = reactive({});
     let loadingResults = ref(false);
-    const selectedParamOption = ref('Recommended'); // Default option
+    const selectedParamOption = ref('recommended'); // Default option
 
 
     //CDRec Parameters

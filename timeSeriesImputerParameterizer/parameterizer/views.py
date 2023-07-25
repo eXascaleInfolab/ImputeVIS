@@ -318,42 +318,59 @@ def fetch_params(request):
     if request.method == 'POST':
         data, data_set = load_from_request(request)
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
-        # Extract 'param_options' from the request
         optimization_method = data.get("param_options")
+
         if not optimization_method:
             return JsonResponse({'message': 'param_options not provided'}, status=400)
-        # TODO Compare with get_file_paths
+
         optimizer_dir = '../Optimizer'
-        file_pattern = f"optimization_results_{{algo_code}}_{optimization_method}.json"
 
-        # Find all files matching the pattern
-        all_files = os.listdir(optimizer_dir)
-        matching_files = [f for f in all_files if
-                          f.startswith("optimization_results_") and f.endswith(f"_{optimization_method}.json")]
+        # If "recommended" is selected, check all optimization methods, otherwise stick with the provided one
+        optimization_methods = [f.split('_')[-1].split('.json')[0] for f in os.listdir(optimizer_dir) if
+                                f.startswith("optimization_results_") and f.endswith(
+                                    ".json")] if optimization_method == "recommended" else [optimization_method]
 
-        if not matching_files:
-            return JsonResponse({'message': 'No matching files found'}, status=400)
-
+        best_scores = {}  # this will keep track of the best score for each algo
         results = {}
 
-        for file in matching_files:
-            algo_code = file.split('_')[2]
-            with open(os.path.join(optimizer_dir, file), 'r') as json_file:
-                file_content = json_file.read()
+        for method in optimization_methods:
+            # file_pattern = f"optimization_results_{{algo_code}}_{method}.json"
+            all_files = os.listdir(optimizer_dir)
+            if optimization_method != "recommended":
+                matching_files = [f for f in all_files if
+                                  f.startswith("optimization_results_")
+                                  and f.endswith(f".json")
+                                  ]
+            else:
+                matching_files = [f for f in all_files if
+                                  f.startswith("optimization_results_")
+                                  and f.endswith(f"_{method}.json")
+                                  ]
 
-                # Check if the file is empty
-                if not file_content.strip():
-                    print(f"File {file} is empty.")
-                    continue
+            for file in matching_files:
+                algo_code = file.split('_')[2]
+                with open(os.path.join(optimizer_dir, file), 'r') as json_file:
+                    file_content = json_file.read()
 
-                # Print the content for debugging
-                print(f"Content of {file}:")
-                print(file_content)
+                    # Check if the file is empty
+                    if not file_content.strip():
+                        print(f"File {file} is empty.")
+                        continue
 
-                try:
-                    results[algo_code] = json.loads(file_content)
-                except json.JSONDecodeError as e:
-                    print(f"Error decoding JSON in file {file}: {e}")
+                    print(f"Content of {file}:")
+                    print(file_content)
+
+                    try:
+                        data = json.loads(file_content)
+                        # TODO Check with dataset passed correctly from frontend
+                        if algo_code not in best_scores or data[data_set]['best_score'] < best_scores[algo_code][
+                            'best_score']:
+                            best_scores[algo_code] = data[data_set]
+                            results[algo_code] = data
+
+                    except json.JSONDecodeError as e:
+                        print(f"Error decoding JSON in file {file}: {e}")
+                        print(f"Error position: {e.pos}")
 
         return JsonResponse({'params': results}, status=200)
 
