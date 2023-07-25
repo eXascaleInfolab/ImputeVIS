@@ -11,9 +11,9 @@
 
       <div v-else class="mt-3">
         <!-- Geometry Table -->
-        <div class="mb-4">
+        <div v-if="loadedResults && categoryExists('Geometry')" class="mb-4">
           <h4>Geometry</h4>
-          <table v-if="loadedResults && categoryExists('Geometry')" class="table">
+          <table class="table">
             <thead>
             <tr>
               <th>Feature Name</th>
@@ -30,9 +30,9 @@
         </div>
 
         <!-- Correlation Table -->
-        <div class="mb-4">
+        <div v-if="loadedResults && categoryExists('Correlation')" class="mb-4">
           <h4>Correlation</h4>
-          <table v-if="loadedResults && categoryExists('Correlation')" class="table">
+          <table class="table">
             <thead>
             <tr>
               <th>Feature Name</th>
@@ -49,9 +49,9 @@
         </div>
 
         <!-- Transformation Table -->
-        <div class="mb-4">
+        <div v-if="loadedResults && categoryExists('Transformation')" class="mb-4">
           <h4>Transformation</h4>
-          <table v-if="loadedResults && categoryExists('Transformation')" class="table">
+          <table class="table">
             <thead>
             <tr>
               <th>Feature Name</th>
@@ -68,9 +68,9 @@
         </div>
 
         <!-- Trend Table -->
-        <div class="mb-4">
+        <div v-if="loadedResults && categoryExists('Trend')" class="mb-4">
           <h4>Trend</h4>
-          <table v-if="loadedResults && categoryExists('Trend')" class="table">
+          <table class="table">
             <thead>
             <tr>
               <th>Feature Name</th>
