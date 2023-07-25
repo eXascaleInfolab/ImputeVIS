@@ -313,11 +313,46 @@ def fetch_data(request):
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
 
+def handle_data_set(data_set: str) -> str:
+    """
+    Determines the abbreviation based on the provided data set string.
+
+    Parameters
+    ----------
+    data_set : str
+        The string identifier for the data series.
+
+    Returns
+    -------
+    str
+        The abbreviation corresponding to the data_set value.
+    """
+
+    if data_set.lower().startswith("bafu"):
+        return "bafu"
+    elif data_set.lower().startswith("climate"):
+        return "climate"
+    elif data_set.lower().startswith("batch10"):
+        return "drift"
+    elif data_set.lower().startswith("meteo"):
+        return "meteo"
+    else:
+        return ""
+
+
+# Then, in your `fetch_params` function, you can use:
+# data_abbreviation = handle_data_set(data_set)
+
+
 @csrf_exempt
 def fetch_params(request):
     if request.method == 'POST':
         data, data_set = load_from_request(request)
-        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+        data_abbreviation = handle_data_set(data_set)
+
+        if not data_abbreviation:
+            return JsonResponse({'message': 'Invalid request'}, status=400)
+
         optimization_method = data.get("param_options")
 
         if not optimization_method:
@@ -357,15 +392,14 @@ def fetch_params(request):
                         print(f"File {file} is empty.")
                         continue
 
-                    print(f"Content of {file}:")
-                    print(file_content)
+                    # print(f"Content of {file}:")
+                    # print(file_content)
 
                     try:
                         data = json.loads(file_content)
-                        # TODO Check with dataset passed correctly from frontend
-                        if algo_code not in best_scores or data[data_set]['best_score'] < best_scores[algo_code][
-                            'best_score']:
-                            best_scores[algo_code] = data[data_set]
+                        # TODO Fix key error for best_score
+                        if algo_code not in best_scores or data[data_abbreviation]['best_score'] < best_scores[algo_code]['best_score']:
+                            best_scores[algo_code] = data[data_abbreviation]
                             results[algo_code] = data
 
                     except json.JSONDecodeError as e:
