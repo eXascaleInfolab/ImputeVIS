@@ -70,7 +70,13 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
 
     # prepare configurations for each algorithm separately
     if algorithm == 'cdrec':
-        configs = [(np.random.choice(alg_params.CDREC_RANK_RANGE),
+        max_rank = obfuscated_matrix.shape[1] - 1
+        temp_rank_range = [i for i in alg_params.CDREC_RANK_RANGE if i < max_rank]
+
+        if not temp_rank_range:
+            raise ValueError("No suitable rank found within CDREC_RANK_RANGE for the given matrix shape!")
+
+        configs = [(np.random.choice(temp_rank_range),
                     np.random.choice(alg_params.CDREC_EPS_RANGE),
                     np.random.choice(alg_params.CDREC_ITERS_RANGE)) for _ in range(num_configs)]
     elif algorithm == 'iim':

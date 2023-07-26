@@ -36,7 +36,13 @@ def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndar
     """
 
     # Define the search space
-    search_space = SEARCH_SPACES_PSO
+    search_space = SEARCH_SPACES_PSO.copy()  # make a copy to avoid modifying the original
+
+    # Adjust the bounds for 'cdrec' based on obfuscated_matrix
+    if algorithm == 'cdrec':
+        max_rank = obfuscated_matrix.shape[1] - 1
+        # Update the upper bound for the first parameter of 'cdrec'
+        search_space['cdrec'][0] = (search_space['cdrec'][0][0], min(search_space['cdrec'][0][1], max_rank))
 
     # Select the correct search space based on the algorithm
     bounds = search_space[algorithm]
@@ -82,7 +88,8 @@ def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndar
 
     # Perform optimization
     iterations = pso_params.get('iterations', 10)
-    cost, pos = optimizer.optimize(objective, iters=iterations)
+    n_processes = pso_params.get('n_processes', None)
+    cost, pos = optimizer.optimize(objective, iters=iterations, n_processes=n_processes)
 
     param_names = PARAM_NAMES
 
@@ -140,6 +147,7 @@ if __name__ == '__main__':
         'c2': 0.5,  # social parameter
         'w': 0.8,  # inertia weight
         'n_particles': 50,  # number of particles
+        'n_processes': 10,  # number of processes to use for parallelization (set to None to disable parallelization)
         'iterations': 100  # number of iterations
     }
 

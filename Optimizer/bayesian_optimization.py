@@ -3,6 +3,7 @@ import time
 import json
 import skopt
 from skopt import Optimizer
+from skopt.space import Integer, Real
 
 from skopt.utils import use_named_args
 from typing import List, Optional, Tuple, Union, Any
@@ -45,6 +46,12 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
     Tuple[dict, Union[Union[int, float, complex], Any]]
         The best parameters and their corresponding scores.
     """
+
+    # Adjust the search space for 'cdrec' based on obfuscated_matrix
+    if algorithm == 'cdrec':
+        max_rank = obfuscated_matrix.shape[1] - 1
+        SEARCH_SPACES['cdrec'][0] = Integer(0, min(9, max_rank), name='rank')  # Update the rank range
+
 
     # Define the search space
     space = search_spaces[algorithm]
