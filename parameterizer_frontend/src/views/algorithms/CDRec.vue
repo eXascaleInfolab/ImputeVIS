@@ -71,7 +71,7 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const dataSelect = ref('BAFU_eighth') // Default data is BAFU
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically

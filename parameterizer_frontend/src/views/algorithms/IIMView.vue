@@ -1,5 +1,11 @@
 <template>
   <h1 class="mb-4 text-center">IIM Detail</h1>
+  <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
+    <div class="alert alert-info d-flex align-items-center">
+      <div class="spinner-border text-primary me-3" role="status"></div>
+      Determining resulting imputation...
+    </div>
+  </div>
   <div class="d-flex mb-auto">
     <div class="col-lg-8 ps-4">
       <metrics-display :metrics="metrics"></metrics-display>
@@ -9,7 +15,7 @@
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-        <missing-rate v-model="missingRate" />
+        <missing-rate v-model="missingRate"/>
 
         <div class="mb-3">
           <label for="numberSelect" class="form-label">Select Learning Neighbors:</label>
@@ -56,7 +62,7 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const dataSelect = ref('BAFU_eighth') // Default data is BAFU
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const numberSelect = ref(1); // Default selected learning neighbors is 1
@@ -66,8 +72,9 @@ export default {
     const mae = ref(null);
     const mi = ref(null);
     const corr = ref(null);
+    let loadingResults = ref(false);
 
-    const metrics = computed(() => ({ rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value }));
+    const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
     //TODO Improve tooltip
 
@@ -75,33 +82,34 @@ export default {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
-          {
-            data_set: dataSet
+            {
+              data_set: dataSet
 
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
             }
-          }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
           }
         });
-      } catch(error) {
+      } catch (error) {
         console.error(error);
       }
     }
 
     const submitForm = async () => {
       let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+        loadingResults.value = true;
       try {
         const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
         const response = await axios.post('http://localhost:8000/api/iim/',
@@ -130,6 +138,8 @@ export default {
         imputedData.value = true;
       } catch (error) {
         console.error(error);
+      } finally {
+        loadingResults.value = false;
       }
     }
 
@@ -146,7 +156,7 @@ export default {
     };
 
     // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, { immediate: true });
+    watch(dataSelect, handleDataSelectChange, {immediate: true});
     // TODO Missingness display
     // watch(missingRate, fetchData, { immediate: true });
 
@@ -161,6 +171,7 @@ export default {
       typeSelect,
       dataSelect,
       missingRate,
+      loadingResults,
       imputedData
     }
   }
@@ -169,7 +180,7 @@ export default {
 
 <style scoped>
 .sidebar {
-  margin-left: 35px;  /* Change this value to increase or decrease the margin */
+  margin-left: 35px; /* Change this value to increase or decrease the margin */
 }
 </style>
 

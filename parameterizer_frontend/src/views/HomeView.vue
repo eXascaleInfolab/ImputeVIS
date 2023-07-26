@@ -2,7 +2,14 @@
   <main>
   </main>
   <h1 class="mb-4 text-center">Compare Algorithms</h1>
-  <h2 v-if="loadingResults">Determining resulting imputation...</h2>
+
+  <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
+    <div class="alert alert-info d-flex align-items-center">
+      <div class="spinner-border text-primary me-3" role="status"></div>
+      Determining resulting imputation...
+    </div>
+  </div>
+
   <div class="d-flex mb-auto">
     <div class="col-lg-12">
       <div class="row ms-5">

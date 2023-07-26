@@ -1,5 +1,11 @@
 <template>
   <h1 class="mb-4 text-center">M-RNN Detail</h1>
+  <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
+    <div class="alert alert-info d-flex align-items-center">
+      <div class="spinner-border text-primary me-3" role="status"></div>
+      Determining resulting imputation...
+    </div>
+  </div>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <metrics-display :metrics="metrics"></metrics-display>
@@ -9,18 +15,19 @@
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-        <missing-rate v-model="missingRate" />
+        <missing-rate v-model="missingRate"/>
         <!-- Learning Rate -->
         <div class="mb-3">
           <label for="learningRate" class="form-label">Learning Rate: {{ learningRate }}</label>
-          <input id="learningRate" v-model.number="learningRate" type="range" min="0.001" max="0.1" step="0.005" class="form-control">
+          <input id="learningRate" v-model.number="learningRate" type="range" min="0.001" max="0.1" step="0.005"
+                 class="form-control">
         </div>
 
         <!-- Sequence Length -->
-<!--        <div class="mb-3">-->
-<!--          <label for="seq_len" class="form-label">Sequence Length: {{ seqLen }}</label>-->
-<!--          <input id="seq_len" v-model.number="seqLen" type="range" min="1" max="100" step="1" class="form-control">-->
-<!--        </div>-->
+        <!--        <div class="mb-3">-->
+        <!--          <label for="seq_len" class="form-label">Sequence Length: {{ seqLen }}</label>-->
+        <!--          <input id="seq_len" v-model.number="seqLen" type="range" min="1" max="100" step="1" class="form-control">-->
+        <!--        </div>-->
 
         <!-- Hidden Dimension Size -->
         <div class="mb-3">
@@ -31,7 +38,8 @@
         <!-- Number of Iterations -->
         <div class="mb-3">
           <label for="iterations" class="form-label">Number of Iterations: {{ iterations }}</label>
-          <input id="iterations" v-model.number="iterations" type="range" min="100" max="2000" step="100" class="form-control">
+          <input id="iterations" v-model.number="iterations" type="range" min="10" max="2000" step="10"
+                 class="form-control">
         </div>
 
         <!-- Keep Rate -->
@@ -71,54 +79,56 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const dataSelect = ref('BAFU_eighth') // Default data is BAFU
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const learningRate = ref(0.01); // Default learning rate is 0.01
-    const hiddenDim = ref(10); // Default hidden dimension size is 10
-    const iterations = ref(500); // Default number of iterations is 1000
-    const keepProb = ref(0.5); // Default keep probability is 0.5
+    const hiddenDim = ref(5); // Default hidden dimension size is 5
+    const iterations = ref(10); // Default number of iterations is 10
+    const keepProb = ref(1.0); // Default keep probability is 0.5
     const seqLen = ref(7); // Default sequence length is 7
     const imputedData = ref(false); // Whether imputation has been carried out
     const rmse = ref(null);
     const mae = ref(null);
     const mi = ref(null);
     const corr = ref(null);
+    let loadingResults = ref(false);
 
-    const metrics = computed(() => ({ rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value }));
+    const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
 
     const fetchData = async () => {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
-          {
-            data_set: dataSet
+            {
+              data_set: dataSet
 
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
             }
-          }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
           }
         });
-      } catch(error) {
+      } catch (error) {
         console.error(error);
       }
     }
 
     const submitForm = async () => {
       try {
+        loadingResults.value = true;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/mrnn/',
             {
@@ -141,7 +151,7 @@ export default {
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames.value[index]);
           } else {
             chartOptionsImputed.value.series[index] = createSeries(index, data);
@@ -150,6 +160,8 @@ export default {
         imputedData.value = true;
       } catch (error) {
         console.error(error);
+      } finally {
+        loadingResults.value = false;
       }
     }
 
@@ -165,7 +177,7 @@ export default {
       currentSeriesNames.value = newSeriesNames;
     };
     // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, { immediate: true });
+    watch(dataSelect, handleDataSelectChange, {immediate: true});
     // TODO Missingness display
     // watch(missingRate, fetchData, { immediate: true });
 
@@ -183,6 +195,7 @@ export default {
       keepProb,
       missingRate,
       seqLen,
+      loadingResults,
       imputedData
     }
   }
@@ -191,6 +204,6 @@ export default {
 
 <style scoped>
 .sidebar {
-  margin-left: 35px;  /* Change this value to increase or decrease the margin */
+  margin-left: 35px; /* Change this value to increase or decrease the margin */
 }
 </style>

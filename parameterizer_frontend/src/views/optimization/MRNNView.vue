@@ -2,11 +2,21 @@
   <h1 class="mb-4 text-center">M-RNN Optimization</h1>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
-      <h2 v-if="loadingResults">Determining resulting imputation...</h2>
+      <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
+        <div class="alert alert-info d-flex align-items-center">
+          <div class="spinner-border text-primary me-3" role="status"></div>
+          Determining resulting imputation...
+        </div>
+      </div>
       <metrics-display :metrics="metrics"></metrics-display>
 
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
-      <h2 class="text-center" v-if="loadingParameters">Determining optimal parameters...</h2>
+      <div v-if="loadingParameters" class="d-flex justify-content-center mt-3">
+        <div class="alert alert-info d-flex align-items-center">
+          <div class="spinner-border text-primary me-3" role="status"></div>
+          Determining optimal parameters...
+        </div>
+      </div>
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-7 align-items-center text-center">
         <h2>Optimal Parameters</h2>
@@ -135,7 +145,7 @@ export default {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
 
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
@@ -203,7 +213,7 @@ export default {
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames.value[index]);
           } else {
             chartOptionsImputed.value.series[index] = createSeries(index, data);

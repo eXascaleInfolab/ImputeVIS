@@ -60,7 +60,7 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('BAFU_quarter') // Default data is BAFU
+    const dataSelect = ref('BAFU_eighth') // Default data is BAFU
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const windowSize = ref('2'); // Default window size is 2

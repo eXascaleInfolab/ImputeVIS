@@ -1,8 +1,11 @@
 <template>
   <div class="d-flex mb-auto container mt-5">
     <div class="col-lg-8">
-      <div v-if="loading" class="mt-3">
-        Loading...
+      <div v-if="loading" class="d-flex justify-content-center mt-3">
+        <div class="alert alert-info d-flex align-items-center">
+          <div class="spinner-border text-primary me-3" role="status"></div>
+          Loading, please wait...
+        </div>
       </div>
 
       <div v-else-if="error" class="mt-3 alert alert-danger">
@@ -122,7 +125,7 @@ export default {
     MetricsDisplay,
     MissingRate
   }, setup() {
-    const dataSelect = ref('BAFU_quarter');
+    const dataSelect = ref('BAFU_eighth');
     // TODO Handle series name for each algorithm
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const features = ref<Record<string, number>>({});
