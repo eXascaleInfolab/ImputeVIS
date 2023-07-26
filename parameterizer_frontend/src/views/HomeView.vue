@@ -128,7 +128,6 @@
 import {ref, watch, reactive, UnwrapNestedRefs} from 'vue';
 import DataSelect from './components/DataSelect.vue';
 import MissingRate from './components/MissingRate.vue';
-import OptimizationSelect from './components/OptimizationSelect.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
@@ -149,7 +148,7 @@ export default {
     DataSelect,
     MissingRate
   }, setup() {
-    const dataSelect = ref('BAFU_eighth') // Default data is BAFU
+    const dataSelect = ref('climate_eighth') // Default data is BAFU
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const fetchedData = reactive({});
     let loadingResults = ref(false);
@@ -157,7 +156,7 @@ export default {
 
 
     //CDRec Parameters
-    const missingRate = ref('5'); // Default missing rate is 5%
+    const missingRate = ref('1'); // Default missing rate is 5%
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
     const epsilon = ref('E-7'); // Default epsilon is E-7
     const iterations = ref(500); // Default number of iterations is 1000
@@ -363,7 +362,11 @@ export default {
             metricsCDRec.value = true;
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               //The push should theoretically ensure that we are just adding
-              chartOptionsImputed.value.series.push(createSeries(index, data, 'CDRec: Series'));
+              if (currentSeriesNames.value.length > 0 && currentSeriesNames.value[index]) {
+                chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec:" + currentSeriesNames.value[index]));
+              } else {
+                chartOptionsImputed.value.series.push(createSeries(index, data));
+              }
             });
             imputedData.value = true;
           } else if (checkedName.toLowerCase() == 'iim') {
@@ -388,7 +391,12 @@ export default {
             corrIIM.value = fetchedData[checkedName].corr.toFixed(3);
             metricsIIM.value = true;
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              chartOptionsImputed.value.series.push(createSeries(index, data, 'IIM: Series'));
+              //The push should theoretically ensure that we are just adding
+              if (currentSeriesNames.value.length > 0 && currentSeriesNames.value[index]) {
+                chartOptionsImputed.value.series.push(createSeries(index, data, "IIM:" + currentSeriesNames.value[index]));
+              } else {
+                chartOptionsImputed.value.series.push(createSeries(index, data));
+              }
             });
             imputedData.value = true;
           } else if (checkedName.toLowerCase() === 'mrnn') {
@@ -416,7 +424,12 @@ export default {
             corrMRNN.value = fetchedData[checkedName].corr.toFixed(3);
             metricsMRNN.value = true;
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              chartOptionsImputed.value.series.push(createSeries(index, data, 'MRNN: Series'));
+              //The push should theoretically ensure that we are just adding
+              if (currentSeriesNames.value.length > 0 && currentSeriesNames.value[index]) {
+                chartOptionsImputed.value.series.push(createSeries(index, data, "MRNN:" + currentSeriesNames.value[index]));
+              } else {
+                chartOptionsImputed.value.series.push(createSeries(index, data));
+              }
             });
             imputedData.value = true;
           } else if (checkedName.toLowerCase() === 'st-mvl') {
@@ -442,7 +455,12 @@ export default {
             corrSTMVL.value = fetchedData[checkedName].corr.toFixed(3);
             metricsSTMVL.value = true;
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              chartOptionsImputed.value.series.push(createSeries(index, data, 'ST-MVL: Series'));
+              //The push should theoretically ensure that we are just adding
+              if (currentSeriesNames.value.length > 0 && currentSeriesNames.value[index]) {
+                chartOptionsImputed.value.series.push(createSeries(index, data, "ST-MVL:" + currentSeriesNames.value[index]));
+              } else {
+                chartOptionsImputed.value.series.push(createSeries(index, data));
+              }
             });
             imputedData.value = true;
           }
@@ -496,6 +514,10 @@ export default {
       await fetchData();
     }
 
+    const updateSeriesNames = (newSeriesNames) => {
+      currentSeriesNames.value = newSeriesNames;
+    };
+
     const handleParamSelectChange = async () => {
       await fetchParameters();
       // Trigger new imputation if required
@@ -535,6 +557,7 @@ export default {
       chartOptionsOriginal,
       chartOptionsImputed,
       dataSelect,
+      updateSeriesNames,
       missingRate,
       imputedData,
       checkedNames,

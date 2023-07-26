@@ -1,5 +1,5 @@
 export const createSeries = (index: number, data: number[], seriesName: string = 'Series') => ({
-    name: `${seriesName} ${index + 1}`,
+    name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
     data,
     pointStart: Date.UTC(2010, 1, 1),
     pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
