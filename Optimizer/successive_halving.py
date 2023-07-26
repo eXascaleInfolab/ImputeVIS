@@ -104,6 +104,8 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
             config in configs]
         top_configs_idx = np.argsort(scores)[:max(1, len(configs) // reduction_factor)]
         configs = [configs[i] for i in top_configs_idx]
+        if len(configs) <= 1:
+            break  # Exit the loop if only 1 configuration remains
 
     if not configs:
         raise ValueError("No configurations left after successive halving.")
