@@ -154,7 +154,8 @@ if __name__ == '__main__':
             optimization_result = util.json_serializable(optimization_result)
 
             results[dataset] = {
-                'result': optimization_result,
+                'best_params': optimization_result[0],
+                'best_score': optimization_result[1],
                 'dataset': dataset,
                 'time': elapsed_time
             }
