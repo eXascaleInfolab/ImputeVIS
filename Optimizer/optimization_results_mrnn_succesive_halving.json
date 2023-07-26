@@ -37,5 +37,16 @@
     "best_score": 3896.6501245530967,
     "dataset": "climate",
     "time": 1687.5678911209106
+  },
+  "drift/drift10": {
+    "best_params": {
+      "hidden_dim": 8,
+      "learning_rate": 0.0006951927961775605,
+      "iterations": 30,
+      "keep_prob": 0.01
+    },
+    "best_score": 695501.5513941156,
+    "dataset": "drift/drift10",
+    "time": 15922.084019184113
   }
 }

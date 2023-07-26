@@ -34,5 +34,15 @@
     "best_score": 1214.022433705954,
     "dataset": "climate",
     "time": 57.90744733810425
+  },
+  "drift/drift10": {
+    "best_params": {
+      "rank": 5,
+      "eps": 1e-06,
+      "iters": 1000
+    },
+    "best_score": 18649.35052010641,
+    "dataset": "drift/drift10",
+    "time": 452.24591994285583
   }
 }
