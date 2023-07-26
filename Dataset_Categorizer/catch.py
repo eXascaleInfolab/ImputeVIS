@@ -41,7 +41,7 @@ def extract_features(data: ArrayLike, do_catch24: bool = True) -> dict:
     print("Extracted features for data with shape ", data.shape)
     for feature_name, feature_value in zip(feature_names, feature_values):
         results[feature_name] = feature_value
-        print('%s : %1.6f' % (feature_name, feature_value))
+        # print('%s : %1.6f' % (feature_name, feature_value))
 
     return results
 
