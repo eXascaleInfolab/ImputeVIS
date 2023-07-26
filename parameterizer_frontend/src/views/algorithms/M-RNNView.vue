@@ -79,7 +79,7 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('BAFU_eighth') // Default data is BAFU
+    const dataSelect = ref('climate_eighth') // Default data
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const learningRate = ref(0.01); // Default learning rate is 0.01

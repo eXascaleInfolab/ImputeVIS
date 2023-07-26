@@ -41,7 +41,7 @@
           </li>
           <!-- Add additional links here -->
           <li class="nav-item">
-            <RouterLink class="nav-link" to="/datasets/categorizer">Dataset Categorizer WIP</RouterLink>
+            <RouterLink class="nav-link" to="/datasets/categorizer">Dataset Categorizer</RouterLink>
           </li>
 <!--          <li class="nav-item dropdown">-->
 <!--            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-data" role="button"-->

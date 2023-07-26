@@ -83,7 +83,7 @@ export default defineComponent({
   props: {
     modelValue: {
       type: String,
-      default: 'BAFU_eighth'
+      default: 'climate_eighth'
     }
   },
   computed: {

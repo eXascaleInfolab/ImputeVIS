@@ -125,7 +125,7 @@ export default {
     MetricsDisplay,
     MissingRate
   }, setup() {
-    const dataSelect = ref('BAFU_eighth');
+    const dataSelect = ref('climate_eighth');
     // TODO Handle series name for each algorithm
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const features = ref<Record<string, number>>({});
