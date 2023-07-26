@@ -15,7 +15,15 @@
 <script lang="ts">
 import {ref, watch, computed, defineComponent} from 'vue';
 
-
+const bafu_series_names = [
+    'Appenzell',
+    'Halden',
+    'Jonschwil',
+    'Liestal',
+    'Moutier',
+    'Rheinhalle',
+    'Wiler'
+]
 
 const climate_series_names = [
   'CLD',
@@ -84,6 +92,9 @@ export default defineComponent({
     const emitSeriesNamesBasedOnSelection = () => {
       let seriesNames: string[] = [];
       switch (true) {
+        case selectedData.value.toString().toLowerCase().startsWith("bafu"):
+          seriesNames = bafu_series_names;
+          break;
         case selectedData.value.toString().startsWith("climate"):
           seriesNames = climate_series_names;
           break;
@@ -105,7 +116,7 @@ export default defineComponent({
 
     // Watch for selectedData changes and emit series names
     watch(selectedData, emitSeriesNamesBasedOnSelection);
-
+    emitSeriesNamesBasedOnSelection();
   }
 });
 </script>
