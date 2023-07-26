@@ -48,5 +48,16 @@
     "best_score": 695501.5513941156,
     "dataset": "drift/drift10",
     "time": 15922.084019184113
+  },
+  "meteo": {
+    "best_params": {
+      "hidden_dim": 0,
+      "learning_rate": 0.00615848211066026,
+      "iterations": 45,
+      "keep_prob": 0.21544346900318823
+    },
+    "best_score": 9.183351980416035,
+    "dataset": "meteo",
+    "time": 3261.5260248184204
   }
 }
