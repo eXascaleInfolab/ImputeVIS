@@ -67,7 +67,9 @@ def pso_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndar
                 particle_params = map(int, particle_params)
             elif algorithm == 'mrnn':
                 particle_params = [int(particle_params[0]), particle_params[1], int(particle_params[2]),
-                                   particle_params[3], int(particle_params[4])]
+                                   particle_params[3]
+                    # , int(particle_params[4]) # would correspond to sequence length
+                                   ]
             elif algorithm == 'stmvl':
                 particle_params = [int(particle_params[0]), particle_params[1], int(particle_params[2])]
 
@@ -135,10 +137,10 @@ if __name__ == '__main__':
     #
     # print(f"Best parameters for {algo}: {best_params}")
     # print(f"Best score: {best_score}")
-    algos = ['stmvl']
+    algos = ['mrnn', 'stmvl']
     # todo handle drift, meteo separately
-    datasets = ['bafu', 'chlorine', 'climate']
-    dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
+    datasets = ['meteo']
+    dataset_files = ['meteo_total']
     metrics = ['rmse', 'mse', 'corr', 'mi']
 
     # Define  PSO parameters
@@ -147,7 +149,7 @@ if __name__ == '__main__':
         'c2': 0.5,  # social parameter
         'w': 0.8,  # inertia weight
         'n_particles': 50,  # number of particles
-        'n_processes': 10,  # number of processes to use for parallelization (set to None to disable parallelization)
+        'n_processes': None,  # number of processes to use for parallelization (set to None to disable parallelization)
         'iterations': 100  # number of iterations
     }
 
