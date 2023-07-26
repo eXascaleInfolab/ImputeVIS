@@ -37,12 +37,22 @@
   },
   "drift/drift10": {
     "best_params": {
-      "rank": 5,
-      "eps": 1e-06,
+      "rank": 2,
+      "eps": 1.0,
       "iters": 1000
     },
-    "best_score": 18649.35052010641,
-    "dataset": "drift/drift10",
-    "time": 452.24591994285583
+    "best_score": 1.1374641886290509,
+    "dataset": "meteo",
+    "time": 124.06573271751404
+  },
+  "meteo": {
+    "best_params": {
+      "rank": 2,
+      "eps": 1.0,
+      "iters": 1000
+    },
+    "best_score": 1.1374641886290509,
+    "dataset": "meteo",
+    "time": 124.06573271751404
   }
 }

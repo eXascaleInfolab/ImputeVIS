@@ -41,8 +41,18 @@
       "gamma": 1e-06,
       "alpha": 1
     },
-    "best_score": 163392.76999575488,
-    "dataset": "drift/drift10",
-    "time": 2316.821946620941
+    "best_score": 1.4341480434443854,
+    "dataset": "meteo",
+    "time": 343.515184879303
+  },
+  "meteo": {
+    "best_params": {
+      "window_size": 99,
+      "gamma": 6.309573444801929e-05,
+      "alpha": 9
+    },
+    "best_score": 1.4341480434443854,
+    "dataset": "meteo",
+    "time": 343.515184879303
   }
 }
