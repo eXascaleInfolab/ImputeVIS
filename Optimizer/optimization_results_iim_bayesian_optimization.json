@@ -1,0 +1,26 @@
+{
+  "bafu": {
+    "best_params": {
+      "learning_neighbours": 86
+    },
+    "best_score": 0.30080842023270726,
+    "dataset": "bafu",
+    "time": 166336.29957222939
+  },
+  "chlorine": {
+    "best_params": {
+      "learning_neighbours": 1
+    },
+    "best_score": 0.36789028047833083,
+    "dataset": "chlorine",
+    "time": 94177.68211126328
+  },
+  "climate": {
+    "best_params": {
+      "learning_neighbours": 100
+    },
+    "best_score": 3535.0208805676725,
+    "dataset": "climate",
+    "time": 10872.404967069626
+  }
+}
