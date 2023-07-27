@@ -94,17 +94,17 @@ if __name__ == '__main__':
     # print(f"Best parameters for {algo}: {best_params}")
     # print(f"Best score: {best_score}")
 
-    algos = ['stmvl']
-    # todo handle drift, meteo separately
-    datasets = ['bafu', 'chlorine', 'climate']
-    dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
-    metrics = ['rmse', 'mse', 'corr', 'mi']
+    algos = ['cdrec', 'stmvl']
+    # todo handle drift separately
+    datasets = ['bafu', 'chlorine', 'climate', 'meteo']
+    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'meteo_total']
+    metrics = ['mi', 'corr']
 
     results = {}
     for algo in algos:
         for dataset, data_file in zip(datasets, dataset_files):
-            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_quarter.txt"
-            obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_quarter_obfuscated_20.txt"
+            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
+            obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_10.txt"
 
             raw_matrix = np.loadtxt(raw_file_path, delimiter=" ", )
             obf_matrix = np.loadtxt(obf_file_path, delimiter=" ", )
@@ -132,7 +132,7 @@ if __name__ == '__main__':
             }
 
         # Save results in a JSON file
-        with open(f'optimization_results_{algo}_bayesian_optimization.json', 'w') as outfile:
+        with open(f'optimization_results_{algo}_bayesian_optimization_{metrics[0] + "_" + metrics[1]}.json', 'w') as outfile:
             json.dump(results, outfile)
 
         # Print the results for the current algorithm

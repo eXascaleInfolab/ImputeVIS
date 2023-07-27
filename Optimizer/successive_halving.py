@@ -36,7 +36,7 @@ def select_and_average_errors(errors_dict: Dict[str, float], selected_metrics: L
 
 def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray,
                        selected_metrics: List[str], algorithm: str,
-                       num_configs: int = 100, num_iterations: int = 50,
+                       num_configs: int = 50, num_iterations: int = 2,
                        reduction_factor: int = 2) -> tuple:
     """
     Conduct the successive halving hyperparameter optimization.
@@ -110,9 +110,15 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
     if not configs:
         raise ValueError("No configurations left after successive halving.")
 
-    best_config = min(configs, key=lambda config: select_and_average_errors(
-        Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config,
-                                                  selected_metrics), selected_metrics))
+    if (algorithm == 'iim'):
+        best_config = min(configs, key=lambda single_config: select_and_average_errors(
+            Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, [single_config],
+                                                      selected_metrics), selected_metrics))
+    else:
+        best_config = min(configs, key=lambda config: select_and_average_errors(
+            Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm,
+                                                      config, selected_metrics), selected_metrics))
+
     best_score = select_and_average_errors(
         Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, best_config,
                                                   selected_metrics), selected_metrics)
@@ -135,16 +141,16 @@ if __name__ == '__main__':
     #     algo
     # ))
     algos = ['cdrec', 'stmvl']
-    # todo handle drift, meteo separately
-    datasets = ['bafu', 'chlorine', 'climate']
-    dataset_files = ['BAFU', 'cl2fullLarge', 'climate']
-    metrics = ['rmse', 'mse', 'corr', 'mi']
+    # todo handle drift separately
+    datasets = ['bafu', 'chlorine', 'climate', 'meteo']
+    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'meteo_total']
+    metrics = ['mi', 'corr']
 
     results = {}
     for algo in algos:
         for dataset, data_file in zip(datasets, dataset_files):
-            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_quarter.txt"
-            obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_quarter_obfuscated_20.txt"
+            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
+            obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_10.txt"
 
             raw_matrix = np.loadtxt(raw_file_path, delimiter=" ", )
             obf_matrix = np.loadtxt(obf_file_path, delimiter=" ", )
@@ -169,7 +175,8 @@ if __name__ == '__main__':
             }
 
         # Save results in a JSON file
-        with open(f'optimization_results_{algo}_succesive_halving.json', 'w') as outfile:
+        with open(f'optimization_results_{algo}_succesive_halving_{metrics[0] + "_" + metrics[1]}.json',
+                  'w') as outfile:
             json.dump(results, outfile)
 
     print(results)
