@@ -32,6 +32,17 @@
     "dataset": "climate",
     "time": 644.0030028820038
   },
+  "drift": {
+    "best_params": {
+      "hidden_dim": 9,
+      "learning_rate": 0.11288378916846883,
+      "iterations": 5,
+      "keep_prob": 0.00046415888336127773
+    },
+    "best_score": 3717.5124662897038,
+    "dataset": "drift",
+    "time": 3800.6457555294037
+  },
   "meteo": {
     "best_params": {
       "hidden_dim": 7,
