@@ -38,5 +38,15 @@
     "best_score": 1.93589839432901,
     "dataset": "meteo",
     "time": 38.13289451599121
+  },
+  "drift": {
+    "best_params": {
+      "rank": 4,
+      "eps": 0,
+      "iters": 304
+    },
+    "best_score": 317.5185152882667,
+    "dataset": "drift",
+    "time": 1240.4131512641907
   }
 }
