@@ -150,9 +150,9 @@ if __name__ == '__main__':
         'c1': 0.5,  # cognitive parameter
         'c2': 0.5,  # social parameter
         'w': 0.8,  # inertia weight
-        'n_particles': 50,  # number of particles
+        'n_particles': 33,  # number of particles
         'n_processes': None,  # number of processes to use for parallelization (set to None to disable parallelization)
-        'iterations': 100  # number of iterations
+        'iterations': 75  # number of iterations
     }
 
     results = {}
