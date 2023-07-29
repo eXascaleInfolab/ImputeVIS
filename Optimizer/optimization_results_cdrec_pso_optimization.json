@@ -28,5 +28,15 @@
     "best_score": 1214.022433705954,
     "dataset": "climate",
     "time": 196.5099618434906
+  },
+  "meteo": {
+    "best_params": {
+      "rank": 2,
+      "eps": 0,
+      "iters": 666
+    },
+    "best_score": 1.1374641886290509,
+    "dataset": "meteo",
+    "time": 375.1292588710785
   }
 }
