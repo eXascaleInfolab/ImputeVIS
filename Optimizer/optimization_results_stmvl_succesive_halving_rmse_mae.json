@@ -1,0 +1,12 @@
+{
+  "drift": {
+    "best_params": {
+      "window_size": 14,
+      "gamma": 1e-06,
+      "alpha": 1
+    },
+    "best_score": 1900.8697967129883,
+    "dataset": "drift",
+    "time": 377.35116171836853
+  }
+}
