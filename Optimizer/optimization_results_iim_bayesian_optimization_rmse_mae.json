@@ -1,1 +1,18 @@
-{"meteo": {"best_params": {"learning_neighbours": 100}, "best_score": 17.328377440032817, "dataset": "meteo", "time": 17643.2587890625}}
+{
+  "drift": {
+    "best_params": {
+      "learning_neighbours": 2
+    },
+    "best_score": 2523.539290212081,
+    "dataset": "drift",
+    "time": 2265.2983589172363
+  },
+  "meteo": {
+    "best_params": {
+      "learning_neighbours": 100
+    },
+    "best_score": 17.328377440032817,
+    "dataset": "meteo",
+    "time": 17643.2587890625
+  }
+}
