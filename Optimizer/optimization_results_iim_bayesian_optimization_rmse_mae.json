@@ -1,4 +1,12 @@
 {
+  "bafu": {
+    "best_params": {
+      "learning_neighbours": 100
+    },
+    "best_score": 0.3635720101011161,
+    "dataset": "bafu",
+    "time": 19815.964156150818
+  },
   "drift": {
     "best_params": {
       "learning_neighbours": 2
