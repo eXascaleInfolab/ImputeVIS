@@ -66,7 +66,7 @@
 
           </div>
           <!-- Parameter Options -->
-          <div class="col-lg-8 mt-4">
+          <div class="col-lg-6 mt-4">
             <h4>Select parameter option</h4>
             <select class="form-control" name="paramOption" v-model="selectedParamOption">
               <option value="recommended">Recommended</option>
