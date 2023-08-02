@@ -21,29 +21,9 @@
         <h2>Optimal Parameters</h2>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
-        <div class="mb-3">
-          <!-- TODO: Add mouseover for truncation rank -->
-          <label for="truncationRank" class="form-label">Truncation Rank: {{ truncationRank }}</label>
-          <input id="truncationRank" v-model.number="truncationRank" type="range" min="0" max="10" step="1"
-                 class="form-control">
-        </div>
-
-        <!-- Sequence Length -->
-        <div class="mb-3">
-          <label for="epsilon" class="form-label">Threshold for Difference: {{ epsilon }}</label>
-          <select id="epsilon" v-model="epsilon" class="form-control">
-            <option value="E-9">E-9</option>
-            <option value="E-8">E-8</option>
-            <option value="E-7">E-7</option>
-            <option value="E-6">E-6</option>
-            <option value="E-5">E-5</option>
-            <option value="E-4">E-4</option>
-            <option value="E-3">E-3</option>
-          </select>
-        </div>
 
         <!-- Number of Iterations -->
-        <div class="mb-3">
+        <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
           <label for="iterations" class="form-label">Number of Iterations: {{ iterations }}</label>
           <input id="iterations" v-model.number="iterations" type="range" min="100" max="2000" step="100"
                  class="form-control">

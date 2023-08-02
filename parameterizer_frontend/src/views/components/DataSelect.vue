@@ -1,7 +1,8 @@
 <template>
 
-  <div class="mb-3">
+   <div class="mb-3" data-toggle="tooltip" data-placement="top" title="For faster results, consider selecting the 1/8 size dataset">
     <label for="dataSelect" class="form-label">Data:</label>
+     <span class="glyphicon glyphicon-info-sign info-icon" data-toggle="tooltip" data-placement="right" title="For faster results, consider selecting the 1/8 size dataset"></span>
     <select id="dataSelect" v-model="selectedData" class="form-control">
       <!--            <option value="BAFU">BAFU</option>-->
       <option value="BAFU_half">BAFU 1/2 Size</option>

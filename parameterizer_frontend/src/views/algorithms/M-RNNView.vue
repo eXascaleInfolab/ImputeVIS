@@ -36,7 +36,7 @@
         </div>
 
         <!-- Number of Iterations -->
-        <div class="mb-3">
+        <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
           <label for="iterations" class="form-label">Number of Iterations: {{ iterations }}</label>
           <input id="iterations" v-model.number="iterations" type="range" min="10" max="2000" step="10"
                  class="form-control">

@@ -46,11 +46,11 @@
         <label for="w" class="form-label">Inertia Weight: {{w}}</label>
         <input id="w" v-model.number="w" type="range" min="0.1" max="1" step="0.1" class="form-control">
       </div>
-      <div class="mb-3">
+      <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
         <label for="nParticles" class="form-label">Number of Particles: {{nParticles}}</label>
         <input id="nParticles" v-model.number="nParticles" type="range" min="1" max="100" step="1" class="form-control">
       </div>
-      <div class="mb-3">
+      <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
         <label for="iterations" class="form-label">Number of Iterations: {{iterations}}</label>
         <input id="iterations" v-model.number="iterations" type="range" min="1" max="100" step="1" class="form-control">
       </div>
@@ -62,7 +62,7 @@
         <label for="numConfigs" class="form-label">Number of Configurations: {{numConfigs}}</label>
         <input id="numConfigs" v-model.number="numConfigs" type="range" min="1" max="100" step="1" class="form-control">
       </div>
-      <div class="mb-3">
+      <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
         <label for="numIterations" class="form-label">Number of Iterations: {{numIterations}}</label>
         <input id="numIterations" v-model.number="numIterations" type="range" min="1" max="100" step="1" class="form-control">
       </div>
