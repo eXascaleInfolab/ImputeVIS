@@ -5,27 +5,27 @@
      <span class="glyphicon glyphicon-info-sign info-icon" data-toggle="tooltip" data-placement="right" title="For faster results, consider selecting the 1/8 size dataset"></span>
     <select id="dataSelect" v-model="selectedData" class="form-control">
       <!--            <option value="BAFU">BAFU</option>-->
-      <option value="BAFU_half">BAFU 1/2 Size</option>
+<!--      <option value="BAFU_half">BAFU 1/2 Size</option>-->
       <option value="BAFU_quarter">BAFU 1/4 Size</option>
       <!--      <option value="BAFU_sixth">BAFU 1/6 Size</option>-->
       <option value="BAFU_eighth">BAFU 1/8 Size</option>
       <!--            <option value="cl2fullLarge">Chlorine</option>-->
-      <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>
+<!--      <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>-->
       <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>
       <!--      <option value="cl2fullLarge_sixth">Chlorine 1/6 Size</option>-->
       <option value="cl2fullLarge_eighth">Chlorine 1/8 Size</option>
       <!--            <option value="climate">Climate</option>-->
-      <option value="climate_half">Climate 1/2 Size</option>
+<!--      <option value="climate_half">Climate 1/2 Size</option>-->
       <option value="climate_quarter">Climate 1/4 Size</option>
       <!--      <option value="climate_sixth">Climate 1/6 Size</option>-->
       <option value="climate_eighth">Climate 1/8 Size</option>
       <!--      <option value="drift">Drift</option>-->
-      <option value="batch10_half">Drift 1/2 Size</option>
+<!--      <option value="batch10_half">Drift 1/2 Size</option>-->
       <option value="batch10_quarter">Drift 1/4 Size</option>
       <!--      <option value="batch10_sixth">Drift 1/6 Size</option>-->
       <option value="batch10_eighth">Drift 1/8 Size</option>
       <!--            <option value="meteo_total">Meteo</option>-->
-      <option value="meteo_total_half">Meteo 1/2 Size</option>
+<!--      <option value="meteo_total_half">Meteo 1/2 Size</option>-->
       <option value="meteo_total_quarter">Meteo 1/4 Size</option>
       <!--      <option value="meteo_total_sixth">Meteo 1/6 Size</option>-->
       <option value="meteo_total_eighth">Meteo 1/8 Size</option>
@@ -38,13 +38,18 @@ import {ref, watch, computed, defineComponent} from 'vue';
 
 
 const bafu_series_names = [
-    'Appenzell',
-    'Halden',
-    'Jonschwil',
-    'Liestal',
-    'Moutier',
-    'Rheinhalle',
-    'Wiler'
+  'Thur-Andelfingen',
+  'Emme-Emmenmatt',
+  'Sitter-Appenzell',
+  'Murg-Wängi',
+  'Emme-Wiler',
+  'Thur-Halden',
+  'Thur-Jonschwil',
+  'Murg-Frauenfeld',
+  'Emme-Eggowoö',
+  'Rietholzbach-Mosnang',
+  'Sitter-St. Gallen',
+  'Ilfis-Langnau'
 ]
 
 const climate_series_names = [
