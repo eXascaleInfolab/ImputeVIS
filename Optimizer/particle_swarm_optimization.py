@@ -141,9 +141,9 @@ if __name__ == '__main__':
     # print(f"Best score: {best_score}")
     algos = ['cdrec', 'stmvl']
     # todo handle drift separately
-    datasets = ['bafu', 'chlorine', 'climate', 'meteo']
-    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'meteo_total']
-    metrics = ['mi', 'corr']
+    datasets = ['drift']
+    dataset_files = ['batch10']
+    metrics = ['rmse', 'mae']
 
     # Define  PSO parameters
     pso_parameters = {
@@ -158,7 +158,7 @@ if __name__ == '__main__':
     results = {}
     for algo in algos:
         for dataset, data_file in zip(datasets, dataset_files):
-            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
+            raw_file_path = f"../Datasets/{dataset}/drift10/raw_matrices/{data_file}_eighth.txt"
             obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_10.txt"
 
             raw_matrix = np.loadtxt(raw_file_path, delimiter=" ", )
