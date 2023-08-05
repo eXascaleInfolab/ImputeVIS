@@ -3,9 +3,16 @@ export const createSeries = (index: number, data: number[], seriesName: string =
     data,
     pointStart: Date.UTC(2010, 1, 1),
     pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-    // visible: true,
+    // This will return false if index is even, and true if it's odd
+    // If larger than 10, it will return true every 10th index
+    visible: index < 10 ? index % 2 !==1 : index % 10 === 0,
     tooltip: {
         valueDecimals: 2
+    },
+    plotOptions: {
+        series: {
+            showInNavigator: index < 10 ? index % 2 !== 0 : index % 10 === 0,
+        }
     }
 });
 
@@ -15,6 +22,9 @@ export const generateChartOptions = (title, seriesName) => ({
     },
     title: {
         text: title
+    },
+    navigator: {
+        enabled: true
     },
     legend: {
         title: {
@@ -51,12 +61,14 @@ export const generateChartOptions = (title, seriesName) => ({
         '#7B68EE'   // MediumSlateBlue
     ],
     chart: {
+        height: 700,
         type: 'line',
         zoomType: 'x',
         panning: true,
         panKey: 'shift'
     },
     rangeSelector: {
+        selected: 1,
         x: 0,
         // floating: true,
         style: {
@@ -71,20 +83,30 @@ export const generateChartOptions = (title, seriesName) => ({
         // inputEditDateFormat: '%y',
         buttons: [
             {
+                type: 'hour',
+                count: 12,
+                text: '12H'
+            },
+            {
                 type: 'day',
-                count: 1,
-                text: 'D'
+                count: 3,
+                text: '3D'
             },
 
+            {
+                type: 'day',
+                count: 5,
+                text: '5D'
+            },
+            {
+                type: 'week',
+                count: 1,
+                text: 'W'
+            },
             {
                 type: 'month',
                 count: 1,
                 text: 'M'
-            },
-            {
-                type: 'year',
-                count: 1,
-                text: 'Y'
             },
 
             {
@@ -119,6 +141,9 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
     title: {
         text: title
     },
+    navigator: {
+        enabled: true
+    },
     legend: {
         title: {
             text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
@@ -132,7 +157,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         type: 'datetime'
     },
     chart: {
-        height: 900,
+        height: 850,
         type: 'line',
         zoomType: 'x',
         panning: true,
@@ -161,6 +186,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         '#7B68EE'   // MediumSlateBlue
     ],
     rangeSelector: {
+        selected: 1,
         x: 0,
         // floating: true,
         style: {
@@ -175,29 +201,44 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         // inputEditDateFormat: '%y',
         buttons: [
             {
+                type: 'hour',
+                count: 12,
+                text: '12H'
+            },
+            {
                 type: 'day',
-                count: 1,
-                text: 'D'
+                count: 3,
+                text: '3D'
             },
 
+            {
+                type: 'day',
+                count: 5,
+                text: '5D'
+            },
+            {
+                type: 'week',
+                count: 1,
+                text: 'W'
+            },
             {
                 type: 'month',
                 count: 1,
                 text: 'M'
-            },
-            {
-                type: 'year',
-                count: 1,
-                text: 'Y'
             },
 
             {
                 type: 'all',
                 text: 'All',
                 align: 'right',
-                x: 1000,
+                x: 900,
                 y: 100,
             }],
+    },
+    plotOptions: {
+        series: {
+            showInNavigator: true
+        }
     },
     series: [{
         name: seriesName,

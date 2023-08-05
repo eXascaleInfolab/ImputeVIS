@@ -303,9 +303,19 @@ def fetch_data(request):
         data, data_set = load_from_request(request)
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
         if obfuscated_file_path is not None:
-            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
-            return JsonResponse({'matrix': np.transpose(obfuscated_matrix).tolist()},
-                                status=200)
+            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ')
+
+            # Transpose the matrix and convert to a list
+            transposed_list = np.transpose(obfuscated_matrix).tolist()
+
+            # Replace NaN values with None in the list
+            for i in range(len(transposed_list)):
+                for j in range(len(transposed_list[i])):
+                    if np.isnan(transposed_list[i][j]):
+                        transposed_list[i][j] = None
+
+            return JsonResponse({'matrix': transposed_list}, status=200)
+
         if clean_file_path is not None:
             ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
             return JsonResponse({'matrix': np.transpose(ground_truth_matrix).tolist()},

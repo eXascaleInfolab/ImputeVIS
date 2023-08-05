@@ -111,7 +111,7 @@ import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from 'highcharts/modules/boost'
-import {createSeries, generateChartOptions} from "@/views/thesisUtils/utils";
+import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
 HC_exporting(Highcharts)
@@ -186,7 +186,7 @@ export default {
 
     const fetchData = async () => {
       try {
-        let dataSet = `${dataSelect.value}_obfuscated_0`;
+        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
               data_set: dataSet
@@ -223,7 +223,7 @@ export default {
       error.value = "";
       loadedResults.value = false;
       try {
-        let dataSet = `${dataSelect.value}_obfuscated_0`;
+        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/categorizeData/',
             {
               data_set: dataSet

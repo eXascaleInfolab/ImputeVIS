@@ -1,5 +1,5 @@
 <template>
-  <h1 class="mb-4 text-center">CDRec Optimization</h1>
+  <h3 class="mb-4 text-center">CDRec Optimization</h3>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
@@ -73,7 +73,7 @@ import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from 'highcharts/modules/boost'
-import {createSeries, generateChartOptions} from "@/views/thesisUtils/utils";
+import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
 HC_exporting(Highcharts)
@@ -113,7 +113,7 @@ export default {
 
     const fetchData = async () => {
       try {
-        let dataSet = `${dataSelect.value}_obfuscated_0`;
+        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
               data_set: dataSet
@@ -212,7 +212,7 @@ export default {
 
 
     const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
-    const chartOptionsImputed = ref(generateChartOptions('Imputed Data', 'Data'));
+    const chartOptionsImputed = ref(generateChartOptionsLarge('Imputed Data', 'Data'));
 
     // Define a new function that calls fetchData
     const handleDataSelectChange = () => {
@@ -225,8 +225,8 @@ export default {
 
     // Watch for changes and call fetchData when it changes
     watch(dataSelect, handleDataSelectChange, {immediate: true});
-    // TODO Missingness display
-    // watch(missingRate, fetchData, { immediate: true });
+    // Watch for changes to missingRate and call fetchData when it changes
+    watch(missingRate, handleDataSelectChange, { immediate: true });
 
     const resetToOptimalParameters = () => {
       if (optimalResponse) {

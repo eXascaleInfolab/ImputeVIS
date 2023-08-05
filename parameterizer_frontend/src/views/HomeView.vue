@@ -1,7 +1,7 @@
 <template>
   <main>
   </main>
-  <h1 class="mb-4 text-center">Compare Algorithms</h1>
+  <h3 class="mb-4 text-center">Compare Algorithms</h3>
 
   <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
     <div class="alert alert-info d-flex align-items-center">
@@ -204,7 +204,7 @@ export default {
 
     const fetchData = async () => {
       try {
-        let dataSet = `${dataSelect.value}_obfuscated_0`;
+        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
               data_set: dataSet
@@ -236,7 +236,7 @@ export default {
     const fetchParameters = async () => {
       if (selectedParamOption.value !== 'Default') {
         try {
-          let dataSet = `${dataSelect.value}_obfuscated_0`;
+          let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
           const response = await axios.post('http://localhost:8000/api/fetchParameters/',
               {
                 data_set: dataSet,
@@ -527,8 +527,8 @@ export default {
     watch(dataSelect, handleDataSelectChange, {immediate: true});
     // Watch for changes and call fetchData when it changes
     watch(selectedParamOption, handleParamSelectChange, {immediate: true});
-    // TODO Missingness display
-    // watch(missingRate, handleDataSelectChange, { immediate: true });
+    // Watch for changes to missingRate and call fetchData when it changes
+    watch(missingRate, handleDataSelectChange, { immediate: true });
 
     return {
       submitForm,
