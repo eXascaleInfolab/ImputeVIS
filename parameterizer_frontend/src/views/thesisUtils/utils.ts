@@ -1,6 +1,7 @@
 export const createSeries = (index: number, data: number[], seriesName: string = 'Series') => ({
     name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
     data,
+    lineWidth: 1.25,
     pointStart: Date.UTC(2010, 1, 1),
     pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
     // This will return false if index is even, and true if it's odd
@@ -15,6 +16,59 @@ export const createSeries = (index: number, data: number[], seriesName: string =
         }
     }
 });
+
+// Utility function to segment your data based on the presence of null in the referenceData array
+const createSegments = (data: number[], referenceData: number[]) => {
+  const segments = [];
+  let currentSegment = [];
+  let currentWidth = referenceData[0] === null ? 2.5 : 1;  // Adjust widths as necessary
+
+  for (let i = 0; i < data.length; i++) {
+    if (referenceData[i] === null && currentWidth === 1) {
+      if (currentSegment.length) {
+        segments.push({data: currentSegment, lineWidth: 1.25});
+        currentSegment = [];
+      }
+      currentWidth = 2.5;
+    } else if (referenceData[i] !== null && currentWidth === 2.5) {
+      if (currentSegment.length) {
+        segments.push({data: currentSegment, lineWidth: 2.5});
+        currentSegment = [];
+      }
+      currentWidth = 1.25;
+    }
+    currentSegment.push(data[i]);
+  }
+  if (currentSegment.length) {
+    segments.push({data: currentSegment, lineWidth: currentWidth});
+  }
+
+  return segments;
+};
+
+export const createSegmentedSeries = (index: number, data: number[], referenceData: number[], seriesName: string = 'Series') => {
+    console.log(data)
+    console.log(referenceData)
+    const segments = createSegments(data, referenceData);
+    console.log("Segments:", segments);
+
+    return segments.map(segment => ({
+        name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
+        data: segment.data,
+        lineWidth: segment.lineWidth,
+        pointStart: Date.UTC(2010, 1, 1),
+        pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+        visible: index < 10 ? index % 2 !== 1 : index % 10 === 0,
+        tooltip: {
+            valueDecimals: 2
+        },
+        plotOptions: {
+            series: {
+                showInNavigator: index < 10 ? index % 2 !== 0 : index % 10 === 0,
+            }
+        }
+    }));
+};
 
 export const generateChartOptions = (title, seriesName) => ({
     credits: {
@@ -157,7 +211,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         type: 'datetime'
     },
     chart: {
-        height: 850,
+        height: 810,
         type: 'line',
         zoomType: 'x',
         panning: true,

@@ -8,7 +8,6 @@
           Determining resulting imputation...
         </div>
       </div>
-      <metrics-display :metrics="metrics"></metrics-display>
 
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <div v-if="loadingParameters" class="d-flex justify-content-center mt-3">
@@ -19,7 +18,7 @@
       </div>
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-7 align-items-center text-center">
-        <h2>Optimal Parameters</h2>
+        <h5>Optimal Parameters</h5>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
 
         <!-- Learning Rate -->
@@ -69,6 +68,9 @@
         <!--        <missing-rate v-model="missingRate" />-->
 
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
+        <div class="mt-3">
+          <metrics-display :metrics="metrics"></metrics-display>
+        </div>
       </form>
     </div>
   </div>

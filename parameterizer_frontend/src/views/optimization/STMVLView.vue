@@ -1,5 +1,5 @@
 <template>
-  <h3 class="mb-4 text-center">CDRec Optimization</h3>
+  <h3 class="mb-4 text-center">ST-MVL Optimization</h3>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
       <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
@@ -8,7 +8,6 @@
           Determining resulting imputation...
         </div>
       </div>
-      <metrics-display :metrics="metrics"></metrics-display>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <div v-if="loadingParameters" class="d-flex justify-content-center mt-3">
         <div class="alert alert-info d-flex align-items-center">
@@ -18,7 +17,7 @@
       </div>
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-7 align-items-center text-center">
-        <h2>Optimal Parameters</h2>
+        <h5>Optimal Parameters</h2>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
 
         <!--Window Size-->
@@ -56,6 +55,9 @@
         <!--        <missing-rate v-model="missingRate" />-->
 
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
+        <div class="mt-3">
+          <metrics-display :metrics="metrics"></metrics-display>
+        </div>
       </form>
     </div>
   </div>

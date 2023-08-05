@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-sm-4 ms-5" v-for="(value, key) in metrics" :key="key">
+    <div class="col-xs" v-for="(value, key) in metrics" :key="key">
       <h6 v-if="value !== null && value !== ''"> {{ key.toUpperCase() }}: {{ value }}</h6>
     </div>
   </div>

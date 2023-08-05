@@ -1,8 +1,7 @@
 <template>
-  <h3 class="mb-4 text-center">STMVL Detail</h3>
+  <h3 class="mb-4 text-center">ST-MVL Detail</h3>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
-      <metrics-display :metrics="metrics"></metrics-display>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
@@ -29,6 +28,9 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Impute</button>
+        <div class="mt-3">
+          <metrics-display :metrics="metrics"></metrics-display>
+        </div>
       </form>
     </div>
   </div>

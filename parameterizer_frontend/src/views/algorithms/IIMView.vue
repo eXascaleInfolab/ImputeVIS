@@ -8,7 +8,6 @@
   </div>
   <div class="d-flex mb-auto">
     <div class="col-lg-8 ps-4">
-      <metrics-display :metrics="metrics"></metrics-display>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
@@ -31,6 +30,9 @@
           </select>
         </div>
         <button type="submit" class="btn btn-primary">Impute</button>
+        <div class="mt-3">
+          <metrics-display :metrics="metrics"></metrics-display>
+        </div>
       </form>
     </div>
   </div>

@@ -66,7 +66,7 @@
     </nav>
   </header>
 
-  <div class="content pt-5 mt-2 flex-grow-1">
+  <div class="content pt-5 mt-3 flex-grow-1">
     <RouterView/>
   </div>
   <Footer/>
@@ -80,7 +80,4 @@ import Footer from './components/Footer.vue';
 </script>
 
 <style scoped>
-.content {
-  padding-top: 70px; /* Adjust this value depending on navbar height */
-}
 </style>

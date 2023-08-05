@@ -2,7 +2,6 @@
   <h3 class="mb-4 text-center">CDRec Detail</h3>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
-      <metrics-display :metrics="metrics"></metrics-display>
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
@@ -40,6 +39,9 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Impute</button>
+        <div class="mt-3">
+          <metrics-display :metrics="metrics"></metrics-display>
+        </div>
       </form>
     </div>
   </div>
@@ -56,7 +58,7 @@ import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from 'highcharts/modules/boost'
-import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
+import {createSeries, createSegmentedSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
 HC_exporting(Highcharts)
@@ -83,6 +85,7 @@ export default {
     const mi = ref(null);
     const corr = ref(null);
 
+    let obfuscatedMatrix = [];
     const metrics = computed(() => ({ rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value }));
 
     const fetchData = async () => {
@@ -101,6 +104,7 @@ export default {
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
 
+        obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
@@ -140,9 +144,9 @@ export default {
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
 
           if (currentSeriesNames.value.length > 0 ) {
-            chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames.value[index]);
+            chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index], currentSeriesNames.value[index]);
           } else {
-            chartOptionsImputed.value.series[index] = createSeries(index, data);
+            chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index]);
           }
         });
         imputedData.value = true;

@@ -186,7 +186,7 @@ export default {
 
     const fetchData = async () => {
       try {
-        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+        let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
               data_set: dataSet
