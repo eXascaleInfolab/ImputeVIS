@@ -90,7 +90,7 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
     const segments = createSegments(data, referenceData);
     const mainSeriesId = `${seriesName}_${index}_main`;
     const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
-    const darkenedColor = darkenColor(mainSeriesColor, 0.6);
+    const darkenedColor = darkenColor(mainSeriesColor, 0.5);
 
     const isVisible = index < 10 ? index % 2 !== 1 : index % 10 === 0;
     const isShownInNavigator = index < 10 ? index % 2 !== 0 : index % 10 === 0;

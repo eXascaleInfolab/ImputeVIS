@@ -1,8 +1,14 @@
 <template>
   <h3 class="mb-4 text-center">CDRec Detail</h3>
+  <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
+    <div class="alert alert-info d-flex align-items-center">
+      <div class="spinner-border text-primary me-3" role="status"></div>
+      Determining resulting imputation...
+    </div>
+  </div>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
-      <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
+      <highcharts class="mb-5" v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
     <div class="col-lg-4">
@@ -48,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import {ref, watch, computed} from 'vue';
+import {ref, watch, computed, nextTick} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
@@ -58,7 +64,12 @@ import Highcharts from 'highcharts'
 import HC_exporting from 'highcharts/modules/exporting'
 import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from 'highcharts/modules/boost'
-import {createSeries, createSegmentedSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
+import {
+  createSeries,
+  createSegmentedSeries,
+  generateChartOptions,
+  generateChartOptionsLarge
+} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
 HC_exporting(Highcharts)
@@ -86,10 +97,12 @@ export default {
     const corr = ref(null);
 
     let obfuscatedMatrix = [];
-    const metrics = computed(() => ({ rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value }));
+    let loadingResults = ref(false);
+    const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
     const fetchData = async () => {
       try {
+        imputedData.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
@@ -108,7 +121,7 @@ export default {
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
@@ -121,43 +134,73 @@ export default {
 
     const submitForm = async () => {
       try {
+        loadingResults.value = true;
+        imputedData.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-        console.log(dataSet);
-        const response = await axios.post('http://localhost:8000/api/cdrec/',
-            {
-              data_set: dataSet,
-              truncation_rank: truncationRank.value,
-              epsilon: epsilon.value,
-              iterations: iterations.value,
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            }
-        );
+        const response = await axios.post('http://localhost:8000/api/cdrec/', {
+          data_set: dataSet,
+          truncation_rank: truncationRank.value,
+          epsilon: epsilon.value,
+          iterations: iterations.value,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
         rmse.value = response.data.rmse.toFixed(3);
         mae.value = response.data.mae.toFixed(3);
         mi.value = response.data.mi.toFixed(3);
         corr.value = response.data.corr.toFixed(3);
-        chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
-        // chartOptionsImputed.value.series = [];
+
+        // Create a new array for the new series data
+        const newSeriesData = [];
+        // Deeply clear the old series
+        deepClear(chartOptionsImputed.value.series);
+
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             const segmentedSeries = createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames.value[index]);
-            chartOptionsImputed.value.series.push(...segmentedSeries);
+            newSeriesData.push(...segmentedSeries);
           } else {
-            chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value);
+            newSeriesData.push(createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value));
           }
         });
+
+        // Deep clone the chart options and update the series
+        const newChartOptions = JSON.parse(JSON.stringify(chartOptionsImputed.value));
+        newChartOptions.series = newSeriesData;
+        chartOptionsImputed.value = newChartOptions;
+        // after updating reactive property...
+        // await nextTick();
+        // console.log("updated");
         imputedData.value = true;
       } catch (error) {
         console.error(error);
+      } finally {
+        loadingResults.value = false;
       }
     }
 
     const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
     const chartOptionsImputed = ref(generateChartOptionsLarge('Imputed Data', 'Data'));
+
+    function deepClear(obj: any): void {
+    if (Array.isArray(obj)) {
+        for (let i = 0; i < obj.length; i++) {
+            deepClear(obj[i]);
+            obj[i] = null;
+        }
+        obj.length = 0;
+    } else if (typeof obj === 'object' && obj !== null) {
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                deepClear(obj[key]);
+                obj[key] = null;
+            }
+        }
+    }
+}
 
     // Define a new function that calls fetchData
     const handleDataSelectChange = () => {
@@ -170,7 +213,7 @@ export default {
     // Watch for changes and call fetchData when it changes
     watch(dataSelect, handleDataSelectChange, {immediate: true});
     // Watch for changes to missingRate and call fetchData when it changes
-    watch(missingRate, handleDataSelectChange, { immediate: true });
+    watch(missingRate, handleDataSelectChange, {immediate: true});
 
     return {
       submitForm,
@@ -184,7 +227,8 @@ export default {
       epsilon,
       iterations,
       missingRate,
-      imputedData
+      imputedData,
+      loadingResults
     }
   }
 }
