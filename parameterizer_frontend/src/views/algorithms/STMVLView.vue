@@ -8,7 +8,7 @@
   </div>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
-      <highcharts ref="chartRef" :options="chartOptionsImputed" id="uniqueChartID"></highcharts>
+      <highcharts  v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
     <div class="col-lg-4">
@@ -70,8 +70,7 @@ export default {
     MissingRate
   },
   setup() {
-    const chartRef = ref(null);
-    const dataSelect = ref('meteo_eighth') // Default data
+    const dataSelect = ref('climate_eighth') // Default data
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const windowSize = ref('2'); // Default window size is 2
