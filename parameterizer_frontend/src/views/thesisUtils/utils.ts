@@ -19,26 +19,29 @@ export const createSeries = (index: number, data: number[], seriesName: string =
 
 const createSegments = (data: number[], referenceData: number[]) => {
     const segments = [];
-    let currentWidth = referenceData[0] === null ? 2.5 : 1.25;
+    const DASHED_WIDTH = 2.5;
+    const lineWidth = referenceData[0] === null ? DASHED_WIDTH : 1.25;
 
     for (let i = 0; i < data.length; i++) {
-        // Start of a new segment
-        if ((referenceData[i] === null && currentWidth === 1.25) || (referenceData[i] !== null && currentWidth === 2.5)) {
-            const segmentData = Array(data.length).fill(null);
+        if (referenceData[i] === null) {
             let j = i;
+            const segmentData = new Array(data.length).fill(null);
 
-            while (j < data.length && ((currentWidth === 2.5 && referenceData[j] === null) || (currentWidth === 1.25 && referenceData[j] !== null))) {
+            if (i > 0 && referenceData[i - 1] !== null) segmentData[i - 1] = data[i - 1];
+
+            while (j < data.length && referenceData[j] === null) {
                 segmentData[j] = data[j];
                 j++;
             }
 
+            if (j < data.length && referenceData[j] !== null) segmentData[j] = data[j];
+
             segments.push({
                 data: segmentData,
-                lineWidth: currentWidth
+                lineWidth: lineWidth,
             });
 
-            // Set the next width
-            currentWidth = currentWidth === 1.25 ? 2.5 : 1.25;
+            i = j - 1;  // Jump to the end of the segment
         }
     }
 
@@ -46,50 +49,83 @@ const createSegments = (data: number[], referenceData: number[]) => {
 };
 
 
+
+
+// Utility function to segment your data based on the presence of null in the referenceData array
+// const createSegments = (data: number[], referenceData: number[]) => {
+//     const segments = [];
+//     let currentWidth = referenceData[0] === null ? 2.5 : 1.25;
+//     let currentDashStyle = referenceData[0] === null ? 'ShortDash' : 'Solid';
+//
+//     for (let i = 0; i < data.length; i++) {
+//         // Start of a new segment
+//         if ((referenceData[i] === null && currentWidth === 1.25) || (referenceData[i] !== null && currentWidth === 2.5)) {
+//             const segmentData = Array(data.length).fill(null);
+//             let j = i;
+//
+//             while (j < data.length && ((currentWidth === 2.5 && referenceData[j] === null) || (currentWidth === 1.25 && referenceData[j] !== null))) {
+//                 segmentData[j] = data[j];
+//                 j++;
+//             }
+//             i = j - 1;  // Update the loop counter to skip over the current segment
+//
+//             segments.push({
+//                 data: segmentData,
+//                 color: 'black',
+//                 lineWidth: currentWidth,
+//                 dashStyle: 'ShortDash'
+//             });
+//
+//             // Set the next width
+//             currentWidth = currentWidth === 1.25 ? 2.5 : 1.25;
+//             currentDashStyle = currentDashStyle === 'Solid' ? 'ShortDash' : 'Solid';
+//         }
+//     }
+//
+//     return segments;
+// };
+
+
 export const createSegmentedSeries = (index: number, data: number[], referenceData: number[], chartOptions, seriesName: string = 'Series') => {
     const segments = createSegments(data, referenceData);
-
     const mainSeriesId = `${seriesName}_${index}_main`;
-
-    // Set a color for the main series (you can choose a different approach to select a color)
     const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
+    const darkenedColor = darkenColor(mainSeriesColor, 0.6);
 
-    const mainSeries = {
-        id: mainSeriesId,
-        name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
-        data: data,
-        color: mainSeriesColor,  // Add this line
-        lineWidth: 1.25,
+    const isVisible = index < 10 ? index % 2 !== 1 : index % 10 === 0;
+    const isShownInNavigator = index < 10 ? index % 2 !== 0 : index % 10 === 0;
+    const seriesNameGenerated = seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName;
+
+    const commonProperties = {
         pointStart: Date.UTC(2010, 1, 1),
         pointInterval: 1000 * 60 * 30,
-        visible: index < 10 ? index % 2 !== 1 : index % 10 === 0,
+        visible: isVisible,
         tooltip: {
             valueDecimals: 2
         },
         plotOptions: {
             series: {
-                showInNavigator: index < 10 ? index % 2 !== 0 : index % 10 === 0,
+                showInNavigator: isShownInNavigator
             }
         }
     };
 
+    const mainSeries = {
+        id: mainSeriesId,
+        name: seriesNameGenerated,
+        data: data,
+        color: mainSeriesColor,
+        lineWidth: 1.25,
+        ...commonProperties
+    };
+
     const linkedSeries = segments.map(segment => ({
         linkedTo: mainSeriesId,
-        color: mainSeriesColor,  // Add this line
-        name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
+        color: darkenedColor,
+        name: seriesNameGenerated,
         data: segment.data,
         lineWidth: segment.lineWidth,
-        pointStart: Date.UTC(2010, 1, 1),
-        pointInterval: 1000 * 60 * 30,
-        visible: index < 10 ? index % 2 !== 1 : index % 10 === 0,
-        tooltip: {
-            valueDecimals: 2
-        },
-        plotOptions: {
-            series: {
-                showInNavigator: index < 10 ? index % 2 !== 0 : index % 10 === 0,
-            }
-        }
+        ...commonProperties
     }));
 
     return [mainSeries, ...linkedSeries];
@@ -331,3 +367,32 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         }
     }],
 });
+
+
+function hexToRgb(hex: string): [number, number, number] {
+    // Remove the hash at the start if it's there
+    hex = hex.replace(/^#/, '');
+
+    // Parse r, g, b values
+    let bigint = parseInt(hex, 16);
+    let r = (bigint >> 16) & 255;
+    let g = (bigint >> 8) & 255;
+    let b = bigint & 255;
+
+    return [r, g, b];
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+    return '#' + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase();
+}
+
+function lightenColor(color: string, percent: number): string {
+    const [r, g, b] = hexToRgb(color);
+    const t = percent < 0 ? 0 : 255;
+    const p = percent < 0 ? percent * -1 : percent;
+    return rgbToHex(Math.round((t - r) * p) + r, Math.round((t - g) * p) + g, Math.round((t - b) * p) + b);
+}
+
+function darkenColor(color: string, percent: number): string {
+    return lightenColor(color, -1 * percent);
+}

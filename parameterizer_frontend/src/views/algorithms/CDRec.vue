@@ -141,13 +141,11 @@ export default {
         mi.value = response.data.mi.toFixed(3);
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+        // chartOptionsImputed.value.series = [];
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           if (currentSeriesNames.value.length > 0 ) {
-            // chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index], currentSeriesNames.value[index]);
             const segmentedSeries = createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames.value[index]);
-            // console.log("Segmented Series for index:", index, segmentedSeries);
             chartOptionsImputed.value.series.push(...segmentedSeries);
-
           } else {
             chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value);
           }
