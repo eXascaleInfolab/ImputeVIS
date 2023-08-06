@@ -97,6 +97,7 @@ export default {
     const corr = ref(null);
     let loadingResults = ref(false);
 
+    let obfuscatedMatrix = [];
     const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
 
@@ -116,6 +117,8 @@ export default {
             }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
+
+        obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);

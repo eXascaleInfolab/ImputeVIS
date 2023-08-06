@@ -77,12 +77,14 @@ export default {
     const corr = ref(null);
     let loadingResults = ref(false);
 
+    let obfuscatedMatrix = [];
     const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
     //TODO Improve tooltip
 
     const fetchData = async () => {
       try {
+        imputedData.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
@@ -96,6 +98,8 @@ export default {
             }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
+
+        obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);

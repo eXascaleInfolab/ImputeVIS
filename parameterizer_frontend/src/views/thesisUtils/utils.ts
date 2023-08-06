@@ -30,14 +30,13 @@ const createSegments = (data: number[], referenceData: number[]) => {
             let j = i;
             const segmentData = new Array(data.length).fill(null);
 
+            // Only pad with the preceding value from the 'data' array
             if (i > 0 && referenceData[i - 1] !== null) segmentData[i - 1] = data[i - 1];
 
             while (j < data.length && referenceData[j] === null) {
                 segmentData[j] = data[j];
                 j++;
             }
-
-            if (j < data.length && referenceData[j] !== null) segmentData[j] = data[j];
 
             segments.push({
                 data: segmentData,
@@ -140,6 +139,11 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
 export const generateChartOptions = (title, seriesName) => ({
     credits: {
         enabled: false
+    },
+    boost: {
+        seriesThreshold: 1,
+        useGPUTranslations: true,
+        usePreAllocated: true
     },
     title: {
         text: title
@@ -259,6 +263,11 @@ export const generateChartOptions = (title, seriesName) => ({
 export const generateChartOptionsLarge = (title, seriesName) => ({
     credits: {
         enabled: false
+    },
+    boost: {
+        seriesThreshold: 1,
+        useGPUTranslations: true,
+        usePreAllocated: true
     },
     title: {
         text: title

@@ -97,8 +97,8 @@ export default {
     const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
     const fetchData = async () => {
+      imputedData.value = false;
       try {
-        imputedData.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
