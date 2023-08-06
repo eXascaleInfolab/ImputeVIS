@@ -63,14 +63,15 @@ import MissingRate from '../components/MissingRate.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
-import HC_exporting from 'highcharts/modules/exporting'
-import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from 'highcharts/modules/boost'
-import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
+import {
+  createSegmentedSeries,
+  createSeries,
+  generateChartOptions,
+  generateChartOptionsLarge
+} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
-HC_exporting(Highcharts)
-HC_exportData(Highcharts)
 HighchartsBoost(Highcharts)
 
 export default {
@@ -101,6 +102,7 @@ export default {
 
     const fetchData = async () => {
       try {
+        imputedData.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {

@@ -54,15 +54,13 @@
 </template>
 
 <script lang="ts">
-import {ref, watch, computed, nextTick} from 'vue';
+import {ref, watch, computed} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
-import HC_exporting from 'highcharts/modules/exporting'
-import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from 'highcharts/modules/boost'
 import {
   createSeries,
@@ -72,8 +70,6 @@ import {
 } from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
-HC_exporting(Highcharts)
-HC_exportData(Highcharts)
 HighchartsBoost(Highcharts)
 
 export default {
@@ -155,8 +151,6 @@ export default {
 
         // Create a new array for the new series data
         const newSeriesData = [];
-        // Deeply clear the old series
-        deepClear(chartOptionsImputed.value.series);
 
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           if (currentSeriesNames.value.length > 0) {
@@ -166,14 +160,8 @@ export default {
             newSeriesData.push(createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value));
           }
         });
-
-        // Deep clone the chart options and update the series
-        const newChartOptions = JSON.parse(JSON.stringify(chartOptionsImputed.value));
-        newChartOptions.series = newSeriesData;
-        chartOptionsImputed.value = newChartOptions;
-        // after updating reactive property...
-        // await nextTick();
-        // console.log("updated");
+        // Directly modify the existing object without deep cloning
+        chartOptionsImputed.value.series = newSeriesData;
         imputedData.value = true;
       } catch (error) {
         console.error(error);
@@ -184,23 +172,6 @@ export default {
 
     const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
     const chartOptionsImputed = ref(generateChartOptionsLarge('Imputed Data', 'Data'));
-
-    function deepClear(obj: any): void {
-    if (Array.isArray(obj)) {
-        for (let i = 0; i < obj.length; i++) {
-            deepClear(obj[i]);
-            obj[i] = null;
-        }
-        obj.length = 0;
-    } else if (typeof obj === 'object' && obj !== null) {
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                deepClear(obj[key]);
-                obj[key] = null;
-            }
-        }
-    }
-}
 
     // Define a new function that calls fetchData
     const handleDataSelectChange = () => {

@@ -2,6 +2,9 @@ export const createSeries = (index: number, data: number[], seriesName: string =
     name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
     data,
     lineWidth: 1.25,
+    marker: {
+        enabled: false
+    },
     pointStart: Date.UTC(2010, 1, 1),
     pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
     // This will return false if index is even, and true if it's odd
@@ -90,13 +93,16 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
     const segments = createSegments(data, referenceData);
     const mainSeriesId = `${seriesName}_${index}_main`;
     const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
-    const darkenedColor = darkenColor(mainSeriesColor, 0.5);
+    const darkenedColor = darkenColor(mainSeriesColor, 0.55);
 
     const isVisible = index < 10 ? index % 2 !== 1 : index % 10 === 0;
     const isShownInNavigator = index < 10 ? index % 2 !== 0 : index % 10 === 0;
     const seriesNameGenerated = seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName;
 
     const commonProperties = {
+        marker: {
+            enabled: false
+        },
         pointStart: Date.UTC(2010, 1, 1),
         pointInterval: 1000 * 60 * 30,
         visible: isVisible,

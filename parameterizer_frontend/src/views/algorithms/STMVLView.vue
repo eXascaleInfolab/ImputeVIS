@@ -1,18 +1,25 @@
 <template>
   <h3 class="mb-4 text-center">ST-MVL Detail</h3>
+  <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
+    <div class="alert alert-info d-flex align-items-center">
+      <div class="spinner-border text-primary me-3" role="status"></div>
+      Determining resulting imputation...
+    </div>
+  </div>
   <div class="d-flex mb-auto">
     <div class="col-lg-8">
-      <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
+      <highcharts ref="chartRef" :options="chartOptionsImputed" id="uniqueChartID"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-        <missing-rate v-model="missingRate" />
+        <missing-rate v-model="missingRate"/>
         <!--Window Size-->
         <div class="mb-3">
           <label for="windowSize" class="form-label">Window Size: {{ windowSize }}</label>
-          <input id="windowSize" v-model.number="windowSize" type="range" min="2" max="100" step="1" class="form-control">
+          <input id="windowSize" v-model.number="windowSize" type="range" min="2" max="100" step="1"
+                 class="form-control">
         </div>
 
         <!--Smoothing Parameter Gamma-->
@@ -44,14 +51,15 @@ import MissingRate from '../components/MissingRate.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
-import HC_exporting from 'highcharts/modules/exporting'
-import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from 'highcharts/modules/boost'
-import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
+import {
+  createSegmentedSeries,
+  createSeries,
+  generateChartOptions,
+  generateChartOptionsLarge
+} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
-HC_exporting(Highcharts)
-HC_exportData(Highcharts)
 HighchartsBoost(Highcharts)
 
 export default {
@@ -62,7 +70,8 @@ export default {
     MissingRate
   },
   setup() {
-    const dataSelect = ref('climate_eighth') // Default data
+    const chartRef = ref(null);
+    const dataSelect = ref('meteo_eighth') // Default data
     const currentSeriesNames = ref([]); // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const windowSize = ref('2'); // Default window size is 2
@@ -74,33 +83,38 @@ export default {
     const mi = ref(null);
     const corr = ref(null);
 
-    const metrics = computed(() => ({ rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value }));
+    let obfuscatedMatrix = [];
+    let loadingResults = ref(false);
+    const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
     const fetchData = async () => {
       try {
+        imputedData.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
-          {
-            data_set: dataSet
+            {
+              data_set: dataSet
 
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
             }
-          }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
+
+        obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          if (currentSeriesNames.value.length > 0 ) {
+          if (currentSeriesNames.value.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
           }
         });
-      } catch(error) {
+      } catch (error) {
         console.error(error);
       }
     }
@@ -108,7 +122,7 @@ export default {
     const submitForm = async () => {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-        console.log(dataSet);
+        loadingResults.value = true;
         const response = await axios.post('http://localhost:8000/api/stmvl/',
             {
               data_set: dataSet,
@@ -137,6 +151,8 @@ export default {
         imputedData.value = true;
       } catch (error) {
         console.error(error);
+      } finally {
+        loadingResults.value = false;
       }
     }
     const chartOptionsOriginal = ref(generateChartOptions('Original Data', 'Data'));
@@ -168,7 +184,8 @@ export default {
       gamma,
       alpha,
       missingRate,
-      imputedData
+      imputedData,
+      loadingResults
     }
   }
 }
