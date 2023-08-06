@@ -142,11 +142,14 @@ export default {
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-
           if (currentSeriesNames.value.length > 0 ) {
-            chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index], currentSeriesNames.value[index]);
+            // chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index], currentSeriesNames.value[index]);
+            const segmentedSeries = createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames.value[index]);
+            // console.log("Segmented Series for index:", index, segmentedSeries);
+            chartOptionsImputed.value.series.push(...segmentedSeries);
+
           } else {
-            chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index]);
+            chartOptionsImputed.value.series[index] = createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value);
           }
         });
         imputedData.value = true;

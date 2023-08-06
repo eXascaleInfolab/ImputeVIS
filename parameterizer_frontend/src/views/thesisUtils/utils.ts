@@ -17,47 +17,70 @@ export const createSeries = (index: number, data: number[], seriesName: string =
     }
 });
 
-// Utility function to segment your data based on the presence of null in the referenceData array
 const createSegments = (data: number[], referenceData: number[]) => {
-  const segments = [];
-  let currentSegment = [];
-  let currentWidth = referenceData[0] === null ? 2.5 : 1;  // Adjust widths as necessary
+    const segments = [];
+    let currentWidth = referenceData[0] === null ? 2.5 : 1.25;
 
-  for (let i = 0; i < data.length; i++) {
-    if (referenceData[i] === null && currentWidth === 1) {
-      if (currentSegment.length) {
-        segments.push({data: currentSegment, lineWidth: 1.25});
-        currentSegment = [];
-      }
-      currentWidth = 2.5;
-    } else if (referenceData[i] !== null && currentWidth === 2.5) {
-      if (currentSegment.length) {
-        segments.push({data: currentSegment, lineWidth: 2.5});
-        currentSegment = [];
-      }
-      currentWidth = 1.25;
+    for (let i = 0; i < data.length; i++) {
+        // Start of a new segment
+        if ((referenceData[i] === null && currentWidth === 1.25) || (referenceData[i] !== null && currentWidth === 2.5)) {
+            const segmentData = Array(data.length).fill(null);
+            let j = i;
+
+            while (j < data.length && ((currentWidth === 2.5 && referenceData[j] === null) || (currentWidth === 1.25 && referenceData[j] !== null))) {
+                segmentData[j] = data[j];
+                j++;
+            }
+
+            segments.push({
+                data: segmentData,
+                lineWidth: currentWidth
+            });
+
+            // Set the next width
+            currentWidth = currentWidth === 1.25 ? 2.5 : 1.25;
+        }
     }
-    currentSegment.push(data[i]);
-  }
-  if (currentSegment.length) {
-    segments.push({data: currentSegment, lineWidth: currentWidth});
-  }
 
-  return segments;
+    return segments;
 };
 
-export const createSegmentedSeries = (index: number, data: number[], referenceData: number[], seriesName: string = 'Series') => {
-    console.log(data)
-    console.log(referenceData)
-    const segments = createSegments(data, referenceData);
-    console.log("Segments:", segments);
 
-    return segments.map(segment => ({
+export const createSegmentedSeries = (index: number, data: number[], referenceData: number[], chartOptions, seriesName: string = 'Series') => {
+    const segments = createSegments(data, referenceData);
+
+    const mainSeriesId = `${seriesName}_${index}_main`;
+
+    // Set a color for the main series (you can choose a different approach to select a color)
+    const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
+
+    const mainSeries = {
+        id: mainSeriesId,
+        name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
+        data: data,
+        color: mainSeriesColor,  // Add this line
+        lineWidth: 1.25,
+        pointStart: Date.UTC(2010, 1, 1),
+        pointInterval: 1000 * 60 * 30,
+        visible: index < 10 ? index % 2 !== 1 : index % 10 === 0,
+        tooltip: {
+            valueDecimals: 2
+        },
+        plotOptions: {
+            series: {
+                showInNavigator: index < 10 ? index % 2 !== 0 : index % 10 === 0,
+            }
+        }
+    };
+
+    const linkedSeries = segments.map(segment => ({
+        linkedTo: mainSeriesId,
+        color: mainSeriesColor,  // Add this line
         name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
         data: segment.data,
         lineWidth: segment.lineWidth,
         pointStart: Date.UTC(2010, 1, 1),
-        pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+        pointInterval: 1000 * 60 * 30,
         visible: index < 10 ? index % 2 !== 1 : index % 10 === 0,
         tooltip: {
             valueDecimals: 2
@@ -68,6 +91,8 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
             }
         }
     }));
+
+    return [mainSeries, ...linkedSeries];
 };
 
 export const generateChartOptions = (title, seriesName) => ({
@@ -81,6 +106,7 @@ export const generateChartOptions = (title, seriesName) => ({
         enabled: true
     },
     legend: {
+        showCheckbox: true,
         title: {
             text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
             style: {
@@ -199,6 +225,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         enabled: true
     },
     legend: {
+        showCheckbox: true,
         title: {
             text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
             style: {
