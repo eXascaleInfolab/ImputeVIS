@@ -1,7 +1,7 @@
 export const createSeries = (index: number, data: number[], seriesName: string = 'Series') => ({
     name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
     data,
-    lineWidth: 1.25,
+    // lineWidth: 1.25,
     marker: {
         enabled: false
     },
@@ -22,8 +22,8 @@ export const createSeries = (index: number, data: number[], seriesName: string =
 
 const createSegments = (data: number[], referenceData: number[]) => {
     const segments = [];
-    const DASHED_WIDTH = 2.5;
-    const lineWidth = referenceData[0] === null ? DASHED_WIDTH : 1.25;
+    // const DASHED_WIDTH = 2.5;
+    // const lineWidth = referenceData[0] === null ? DASHED_WIDTH : 1.25;
 
     for (let i = 0; i < data.length; i++) {
         if (referenceData[i] === null) {
@@ -40,7 +40,7 @@ const createSegments = (data: number[], referenceData: number[]) => {
 
             segments.push({
                 data: segmentData,
-                lineWidth: lineWidth,
+                // lineWidth: lineWidth,
             });
 
             i = j - 1;  // Jump to the end of the segment
@@ -120,7 +120,7 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         name: seriesNameGenerated,
         data: data,
         color: mainSeriesColor,
-        lineWidth: 1.25,
+        // lineWidth: 1.25,
         ...commonProperties
     };
 
@@ -129,7 +129,7 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         color: darkenedColor,
         name: seriesNameGenerated,
         data: segment.data,
-        lineWidth: segment.lineWidth,
+        // lineWidth: segment.lineWidth,
         ...commonProperties
     }));
 
@@ -142,8 +142,8 @@ export const generateChartOptions = (title, seriesName) => ({
     },
     boost: {
         seriesThreshold: 1,
-        useGPUTranslations: true,
-        usePreAllocated: true
+        useGPUTranslations: false,
+        usePreAllocated: false
     },
     title: {
         text: title
@@ -273,7 +273,9 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         text: title
     },
     navigator: {
-        enabled: true
+        enabled: true,
+        adaptToUpdateData: false,
+        stickToMax: true
     },
     legend: {
         showCheckbox: true,
