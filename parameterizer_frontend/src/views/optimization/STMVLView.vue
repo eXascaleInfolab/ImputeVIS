@@ -17,7 +17,7 @@
       </div>
       <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-7 align-items-center text-center">
-        <h5>Optimal Parameters</h2>
+        <h5>Optimal Parameters</h5>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
 
         <!--Window Size-->
@@ -72,14 +72,10 @@ import OptimizationSelect from '../components/OptimizationSelect.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
-import HC_exporting from 'highcharts/modules/exporting'
-import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from 'highcharts/modules/boost'
 import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
-HC_exporting(Highcharts)
-HC_exportData(Highcharts)
 HighchartsBoost(Highcharts)
 
 export default {

@@ -49,10 +49,10 @@
             </div>
             <div class="row">
               <div class="col form-check ">
-                <input class="form-check-input" type="checkbox" value="MRNN" id="MRNN" v-model="checkedNames"
+                <input class="form-check-input" type="checkbox" value="M-RNN" id="MRNN" v-model="checkedNames"
                        @change="handleCheckboxChange">
                 <label class="form-check-label" for="MRNN">
-                  MRNN
+                  M-RNN
                 </label>
               </div>
               <div class="col form-check ">
@@ -131,15 +131,11 @@ import MissingRate from './components/MissingRate.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
-import HC_exporting from 'highcharts/modules/exporting'
-import HC_exportData from 'highcharts/modules/export-data'
 import HighchartsBoost from "highcharts/modules/boost";
 import {IIM_DEFAULTS, CDREC_DEFAULTS, MRNN_DEFAULTS, STMVL_DEFAULTS} from './thesisUtils/defaultParameters';
 import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
-HC_exporting(Highcharts)
-HC_exportData(Highcharts)
 HighchartsBoost(Highcharts)
 
 export default {
