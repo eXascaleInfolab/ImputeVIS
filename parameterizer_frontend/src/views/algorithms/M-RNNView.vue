@@ -83,7 +83,7 @@ export default {
   },
   setup() {
     const dataSelect = ref('climate_eighth') // Default data
-    const currentSeriesNames = ref([]); // Names of series currently displayed
+    let currentSeriesNames = []; // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const learningRate = ref(0.01); // Default learning rate is 0.01
     const hiddenDim = ref(5); // Default hidden dimension size is 5
@@ -122,8 +122,8 @@ export default {
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          if (currentSeriesNames.value.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
+          if (currentSeriesNames.length > 0) {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
           }
@@ -158,8 +158,8 @@ export default {
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.value.length > 0) {
-            chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames.value[index]);
+          if (currentSeriesNames.length > 0) {
+            chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames[index]);
           } else {
             chartOptionsImputed.value.series[index] = createSeries(index, data);
           }
@@ -181,7 +181,7 @@ export default {
     }
 
     const updateSeriesNames = (newSeriesNames) => {
-      currentSeriesNames.value = newSeriesNames;
+      currentSeriesNames = newSeriesNames;
     };
     // Watch for changes and call fetchData when it changes
     watch(dataSelect, handleDataSelectChange, {immediate: true});
@@ -193,7 +193,6 @@ export default {
       metrics,
       chartOptionsOriginal,
       chartOptionsImputed,
-      currentSeriesNames,
       updateSeriesNames,
       dataSelect,
       learningRate,

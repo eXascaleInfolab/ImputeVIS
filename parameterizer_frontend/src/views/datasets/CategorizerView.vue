@@ -122,8 +122,7 @@ export default {
     MissingRate
   }, setup() {
     const dataSelect = ref('climate_eighth');
-    // TODO Handle series name for each algorithm
-    const currentSeriesNames = ref([]); // Names of series currently displayed
+    let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
     const loading = ref(false)
     const error = ref("");
@@ -199,8 +198,8 @@ export default {
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          if (currentSeriesNames.value.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
+          if (currentSeriesNames.length > 0) {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
           }
@@ -250,14 +249,13 @@ export default {
     }
 
     const updateSeriesNames = (newSeriesNames) => {
-      currentSeriesNames.value = newSeriesNames;
+      currentSeriesNames = newSeriesNames;
     };
 
     watch(dataSelect, handleDataSelectChange, {immediate: true});
 
     return {
       dataSelect,
-      currentSeriesNames,
       updateSeriesNames,
       features,
       loading,

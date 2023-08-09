@@ -125,7 +125,7 @@
 </template>
 
 <script lang="ts">
-import {ref, watch, reactive, UnwrapNestedRefs} from 'vue';
+import {ref, watch, reactive} from 'vue';
 import DataSelect from './components/DataSelect.vue';
 import MissingRate from './components/MissingRate.vue';
 import axios from 'axios';
@@ -145,7 +145,7 @@ export default {
     MissingRate
   }, setup() {
     const dataSelect = ref('climate_eighth') // Default data is BAFU
-    const currentSeriesNames = ref([]); // Names of series currently displayed
+    let currentSeriesNames = []; // Names of series currently displayed
     const fetchedData = reactive({});
     let loadingResults = ref(false);
     const selectedParamOption = ref('recommended'); // Default option
@@ -153,9 +153,9 @@ export default {
 
     //CDRec Parameters
     const missingRate = ref('1'); // Default missing rate is 5%
-    const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
-    const epsilon = ref('E-7'); // Default epsilon is E-7
-    const iterations = ref(500); // Default number of iterations is 1000
+    let truncationRank = '1' // Default truncation rank is 1, 0 means detect truncation automatically
+    let epsilon = 'E-7'; // Default epsilon is E-7
+    let iterations = (500); // Default number of iterations is 1000
     const rmseCDRec = ref(null);
     const maeCDRec = ref(null);
     const miCDRec = ref(null);
@@ -163,8 +163,8 @@ export default {
     const metricsCDRec = ref(false);
 
     //IIM Parameters
-    const numberSelect = ref(1); // Default selected learning neighbors is 1
-    const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
+    let numberSelect = 1; // Default selected learning neighbors is 1
+    let typeSelect = ''; // Default selected type is "Normal", denoted by an empty string
     const rmseIIM = ref(null);
     const maeIIM = ref(null);
     const miIIM = ref(null);
@@ -172,11 +172,11 @@ export default {
     const metricsIIM = ref(false);
 
     // M-RNN Parameters
-    const learningRate = ref(0.01); // Default learning rate is 0.01
-    const hiddenDim = ref(10); // Default hidden dimension size is 10
-    const iterationsMRNN = ref(500); // Default number of iterations is 1000
-    const keepProb = ref(0.5); // Default keep probability is 0.5
-    const seqLen = ref(7); // Default sequence length is 7
+    let learningRate = 0.01; // Default learning rate is 0.01
+    let hiddenDim = 10; // Default hidden dimension size is 10
+    let iterationsMRNN = 500; // Default number of iterations is 1000
+    let keepProb = 0.5; // Default keep probability is 0.5
+    let seqLen = 7; // Default sequence length is 7
     const rmseMRNN = ref(null);
     const maeMRNN = ref(null);
     const miMRNN = ref(null);
@@ -184,9 +184,9 @@ export default {
     const metricsMRNN = ref(false);
 
     // ST-MVL Parameters
-    const windowSize = ref('2'); // Default window size is 2
-    const gamma = ref('0.5') // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
-    const alpha = ref('2') // Default power for spatial weight (alpha) is 2, must be larger than 0.0
+    let windowSize = '2'; // Default window size is 2
+    let gamma = '0.5' // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
+    let alpha = '2' // Default power for spatial weight (alpha) is 2, must be larger than 0.0
     const rmseSTMVL = ref(null);
     const maeSTMVL = ref(null);
     const miSTMVL = ref(null);
@@ -218,11 +218,12 @@ export default {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
 
-          if (currentSeriesNames.value.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
+          if (currentSeriesNames.length > 0) {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
           }
+          checkedNames.value = [];
         });
       } catch (error) {
         console.error(error);
@@ -252,25 +253,25 @@ export default {
           const parameters = response.data.params;
 
           // CDRec Parameters
-          truncationRank.value = parameters['cdrec'][dataAbbreviation].best_params.rank || truncationRank.value;
-          epsilon.value = parameters['cdrec'][dataAbbreviation].best_params.eps || epsilon.value;
-          iterations.value = parameters['cdrec'][dataAbbreviation].best_params.iters || iterations.value;
+          truncationRank = parameters['cdrec'][dataAbbreviation].best_params.rank || truncationRank;
+          epsilon = parameters['cdrec'][dataAbbreviation].best_params.eps || epsilon;
+          iterations = parameters['cdrec'][dataAbbreviation].best_params.iters || iterations;
 
           // IIM Parameters
           // numberSelect.value = parameters['iim'][dataAbbreviation].best_params.learning_neighbours || numberSelect.value;
           // typeSelect.value = parameters['iim'][dataAbbreviation].best_params.type_select || typeSelect.value;
 
           // M-RNN Parameters
-          learningRate.value = parameters['mrnn'][dataAbbreviation].best_params.learning_rate || learningRate.value;
-          hiddenDim.value = parameters['mrnn'][dataAbbreviation].best_params.hidden_dim || hiddenDim.value;
-          iterationsMRNN.value = parameters['mrnn'][dataAbbreviation].best_params.iterations || iterationsMRNN.value;
-          keepProb.value = parameters['mrnn'][dataAbbreviation].best_params.keep_prob || keepProb.value;
-          // seqLen.value = parameters['iim'][dataAbbreviation].best_params.seq_len || seqLen.value;
+          learningRate = parameters['mrnn'][dataAbbreviation].best_params.learning_rate || learningRate;
+          hiddenDim = parameters['mrnn'][dataAbbreviation].best_params.hidden_dim || hiddenDim;
+          iterationsMRNN = parameters['mrnn'][dataAbbreviation].best_params.iterations || iterationsMRNN.lue;
+          keepProb = parameters['mrnn'][dataAbbreviation].best_params.keep_prob || keepProb;
+          // seqLen.value = parameters['iim'][dataAbbreviation].best_params.seq_len || seqLen;
 
           // ST-MVL Parameters
-          windowSize.value = parameters['stmvl'][dataAbbreviation].best_params.window_size || windowSize.value;
-          gamma.value = parameters['stmvl'][dataAbbreviation].best_params.gamma || gamma.value;
-          alpha.value = parameters['stmvl'][dataAbbreviation].best_params.alpha || alpha.value;
+          windowSize = parameters['stmvl'][dataAbbreviation].best_params.window_size || windowSize;
+          gamma = parameters['stmvl'][dataAbbreviation].best_params.gamma || gamma;
+          alpha = parameters['stmvl'][dataAbbreviation].best_params.alpha || alpha;
 
           // }
         } catch (error) {
@@ -278,25 +279,25 @@ export default {
         }
       } else {
         // Set parameters to default (author's choice)
-        truncationRank.value = String(10);
-        epsilon.value = String(CDREC_DEFAULTS.epsilon);
-        iterations.value = CDREC_DEFAULTS.iterations;
+        truncationRank = String(10);
+        epsilon = String(CDREC_DEFAULTS.epsilon);
+        iterations = CDREC_DEFAULTS.iterations;
 
         // IIM Parameters
-        numberSelect.value = IIM_DEFAULTS.learningNeighbors;
+        numberSelect = IIM_DEFAULTS.learningNeighbors;
         // typeSelect.value = 'mean';
 
         // M-RNN Parameters
-        learningRate.value = MRNN_DEFAULTS.learningRate;
-        hiddenDim.value = MRNN_DEFAULTS.hiddenDim;
-        iterationsMRNN.value = MRNN_DEFAULTS.iterations;
-        keepProb.value = MRNN_DEFAULTS.keepProb;
+        learningRate = MRNN_DEFAULTS.learningRate;
+        hiddenDim = MRNN_DEFAULTS.hiddenDim;
+        iterationsMRNN = MRNN_DEFAULTS.iterations;
+        keepProb = MRNN_DEFAULTS.keepProb;
         // seqLen.value = 7;
 
         // ST-MVL Parameters
-        windowSize.value = String(STMVL_DEFAULTS.windowSize);
-        gamma.value = String(STMVL_DEFAULTS.gamma);
-        alpha.value = String(STMVL_DEFAULTS.alpha);
+        windowSize = String(STMVL_DEFAULTS.windowSize);
+        gamma = String(STMVL_DEFAULTS.gamma);
+        alpha = String(STMVL_DEFAULTS.alpha);
       }
     }
 
@@ -339,9 +340,9 @@ export default {
               const response = await axios.post('http://localhost:8000/api/cdrec/',
                   {
                     data_set: dataSet,
-                    truncation_rank: truncationRank.value,
-                    epsilon: epsilon.value,
-                    iterations: iterations.value,
+                    truncation_rank: truncationRank,
+                    epsilon: epsilon,
+                    iterations: iterations,
                   },
                   {
                     headers: {
@@ -358,8 +359,8 @@ export default {
             metricsCDRec.value = true;
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               //The push should theoretically ensure that we are just adding
-              if (currentSeriesNames.value.length > 0 && currentSeriesNames.value[index]) {
-                chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec:" + currentSeriesNames.value[index]));
+              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
+                chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec:" + currentSeriesNames[index]));
               } else {
                 chartOptionsImputed.value.series.push(createSeries(index, data));
               }
@@ -367,7 +368,7 @@ export default {
             imputedData.value = true;
           } else if (checkedName.toLowerCase() == 'iim') {
             if (!fetchedData[checkedName]) {
-              const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
+              const formattedAlgCode = `iim ${numberSelect}${typeSelect}`;
               const response = await axios.post('http://localhost:8000/api/iim/',
                   {
                     data_set: dataSet,
@@ -388,23 +389,23 @@ export default {
             metricsIIM.value = true;
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               //The push should theoretically ensure that we are just adding
-              if (currentSeriesNames.value.length > 0 && currentSeriesNames.value[index]) {
-                chartOptionsImputed.value.series.push(createSeries(index, data, "IIM:" + currentSeriesNames.value[index]));
+              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
+                chartOptionsImputed.value.series.push(createSeries(index, data, "IIM:" + currentSeriesNames[index]));
               } else {
                 chartOptionsImputed.value.series.push(createSeries(index, data));
               }
             });
             imputedData.value = true;
-          } else if (checkedName.toLowerCase() === 'mrnn') {
+          } else if (checkedName.toLowerCase() === 'm-rnn') {
             if (!fetchedData[checkedName]) {
               const response = await axios.post('http://localhost:8000/api/mrnn/',
                   {
                     data_set: dataSet,
-                    hidden_dim: hiddenDim.value,
-                    learning_rate: learningRate.value,
-                    iterations: iterationsMRNN.value,
-                    keep_prob: keepProb.value,
-                    seq_len: seqLen.value
+                    hidden_dim: hiddenDim,
+                    learning_rate: learningRate,
+                    iterations: iterationsMRNN,
+                    keep_prob: keepProb,
+                    seq_len: seqLen
                   },
                   {
                     headers: {
@@ -421,8 +422,8 @@ export default {
             metricsMRNN.value = true;
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               //The push should theoretically ensure that we are just adding
-              if (currentSeriesNames.value.length > 0 && currentSeriesNames.value[index]) {
-                chartOptionsImputed.value.series.push(createSeries(index, data, "MRNN:" + currentSeriesNames.value[index]));
+              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
+                chartOptionsImputed.value.series.push(createSeries(index, data, "MRNN:" + currentSeriesNames[index]));
               } else {
                 chartOptionsImputed.value.series.push(createSeries(index, data));
               }
@@ -433,9 +434,9 @@ export default {
               const response = await axios.post('http://localhost:8000/api/stmvl/',
                   {
                     data_set: dataSet,
-                    window_size: windowSize.value,
-                    gamma: gamma.value,
-                    alpha: alpha.value,
+                    window_size: windowSize,
+                    gamma: gamma,
+                    alpha: alpha,
                   },
                   {
                     headers: {
@@ -452,8 +453,8 @@ export default {
             metricsSTMVL.value = true;
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               //The push should theoretically ensure that we are just adding
-              if (currentSeriesNames.value.length > 0 && currentSeriesNames.value[index]) {
-                chartOptionsImputed.value.series.push(createSeries(index, data, "ST-MVL:" + currentSeriesNames.value[index]));
+              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
+                chartOptionsImputed.value.series.push(createSeries(index, data, "ST-MVL:" + currentSeriesNames[index]));
               } else {
                 chartOptionsImputed.value.series.push(createSeries(index, data));
               }
@@ -504,27 +505,34 @@ export default {
 
     // Define a new function that calls fetchData
     const handleDataSelectChange = async () => {
-      imputedData.value = false;
-      // TODO Function to get the parameters for selected algorithm
-      clearFetchedData();
-      await fetchData();
+      try {
+        imputedData.value = false;
+        // TODO Function to get the parameters for selected algorithm
+        clearFetchedData();
+        await fetchData();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
 
     const updateSeriesNames = (newSeriesNames) => {
-      currentSeriesNames.value = newSeriesNames;
+      currentSeriesNames = newSeriesNames;
     };
 
     const handleParamSelectChange = async () => {
-      await fetchParameters();
-      // Trigger new imputation if required
-      await submitForm();
+      try {
+        await fetchParameters();
+        await submitForm();
+      } catch (error) {
+        console.error("Error handling parameter selection:", error);
+      }
     }
     // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, {immediate: true});
+    watch([dataSelect, missingRate], handleDataSelectChange, { immediate: true });
     // Watch for changes and call fetchData when it changes
     watch(selectedParamOption, handleParamSelectChange, {immediate: true});
-    // Watch for changes to missingRate and call fetchData when it changes
-    watch(missingRate, handleDataSelectChange, { immediate: true });
+
+
 
     return {
       submitForm,

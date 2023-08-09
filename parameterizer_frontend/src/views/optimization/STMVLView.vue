@@ -89,7 +89,7 @@ export default {
   setup() {
     const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
     const dataSelect = ref('climate_eighth') // Default data
-    const currentSeriesNames = ref([]); // Names of series currently displayed
+    let currentSeriesNames = []; // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const windowSize = ref('2'); // Default window size is 2
     const gamma = ref('0.5') // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
@@ -127,8 +127,8 @@ export default {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
 
-          if (currentSeriesNames.value.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames.value[index]);
+          if (currentSeriesNames.length > 0) {
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames[index]);
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
           }
@@ -194,8 +194,8 @@ export default {
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.value.length > 0) {
-            chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames.value[index]);
+          if (currentSeriesNames.length > 0) {
+            chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames[index]);
           } else {
             chartOptionsImputed.value.series[index] = createSeries(index, data);
           }
@@ -218,7 +218,7 @@ export default {
     }
 
     const updateSeriesNames = (newSeriesNames) => {
-      currentSeriesNames.value = newSeriesNames;
+      currentSeriesNames = newSeriesNames;
     };
 
     // Watch for changes and call fetchData when it changes
@@ -241,7 +241,6 @@ export default {
       chartOptionsOriginal,
       chartOptionsImputed,
       dataSelect,
-      currentSeriesNames,
       updateSeriesNames,
       windowSize,
       gamma,

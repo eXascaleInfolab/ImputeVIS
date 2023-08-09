@@ -1,24 +1,36 @@
-export const createSeries = (index: number, data: number[], seriesName: string = 'Series') => ({
-    name: seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName,
-    data,
-    // lineWidth: 1.25,
-    marker: {
-        enabled: false
-    },
-    pointStart: Date.UTC(2010, 1, 1),
-    pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
-    // This will return false if index is even, and true if it's odd
-    // If larger than 10, it will return true every 10th index
-    visible: index < 10 ? index % 2 !==1 : index % 10 === 0,
-    tooltip: {
-        valueDecimals: 2
-    },
-    plotOptions: {
-        series: {
-            showInNavigator: index < 10 ? index % 2 !== 0 : index % 10 === 0,
+// Constants for clarity
+const BASE_YEAR = 2010;
+const BASE_MONTH = 1;
+const BASE_DAY = 1;
+const THIRTY_MINUTES = 1000 * 60 * 30;
+const VISIBILITY_THRESHOLD = 10;
+
+export const createSeries = (index: number, data: number[], seriesName: string = 'Series') => {
+    // Helper function to determine visibility and showInNavigator values
+    const shouldShow = (idx: number): boolean => {
+        return idx < VISIBILITY_THRESHOLD ? idx % 2 === 0 : idx % 10 === 0;
+    };
+
+    return {
+        name: `${seriesName} ${seriesName === 'Series' ? index + 1 : ''}`.trim(),
+        data,
+        marker: {
+            enabled: false
+        },
+        pointStart: Date.UTC(BASE_YEAR, BASE_MONTH, BASE_DAY),
+        pointInterval: THIRTY_MINUTES,
+        visible: shouldShow(index),
+        tooltip: {
+            valueDecimals: 2
+        },
+        plotOptions: {
+            series: {
+                showInNavigator: shouldShow(index),
+            }
         }
-    }
-});
+    };
+};
+
 
 const createSegments = (data: number[], referenceData: number[]) => {
     const segments = [];
