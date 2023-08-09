@@ -125,7 +125,7 @@
 </template>
 
 <script lang="ts">
-import {ref, watch, reactive} from 'vue';
+import {ref, watch, reactive, shallowReactive} from 'vue';
 import DataSelect from './components/DataSelect.vue';
 import MissingRate from './components/MissingRate.vue';
 import axios from 'axios';
@@ -214,17 +214,19 @@ export default {
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         clearErrorMetrics();
-        response.data.matrix.forEach((data: number[], index: number) => {
-          // Replace NaN with 0
-          const cleanData = data.map(value => isNaN(value) ? 0 : value);
+        // Create a shallow reactive copy
+        const seriesCopy = shallowReactive([...chartOptionsOriginal.value.series]);
 
+        response.data.matrix.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames[index]);
+            seriesCopy[index] = createSeries(index, data, currentSeriesNames[index]);
           } else {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+            seriesCopy[index] = createSeries(index, data);
           }
-          checkedNames.value = [];
         });
+        checkedNames.value = [];
+        // Assign the shallow copy back to chartOptionsOriginal
+        chartOptionsOriginal.value.series = seriesCopy;
       } catch (error) {
         console.error(error);
       }
