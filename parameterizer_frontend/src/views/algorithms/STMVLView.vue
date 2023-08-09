@@ -103,7 +103,7 @@ export default {
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
 
-        obfuscatedMatrix = response.data.matrix;
+        // obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);

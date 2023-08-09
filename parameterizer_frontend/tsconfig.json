@@ -10,5 +10,17 @@
     {
       "path": "./tsconfig.vitest.json"
     }
-  ]
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "test",
+    "tests",
+    "testsuite",
+    "docs",
+    "doc",
+    "tmp",
+    "temp"]
 }
