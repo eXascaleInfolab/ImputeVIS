@@ -1,0 +1,57 @@
+{
+  "bafu": {
+    "best_params": {
+      "hidden_dim": 2,
+      "learning_rate": 0.026366508987303555,
+      "iterations": 90,
+      "keep_prob": 2.1544346900318823e-05
+    },
+    "best_score": 0.3752925054182964,
+    "dataset": "bafu",
+    "time": 2138.4347376823425
+  },
+  "chlorine": {
+    "best_params": {
+      "hidden_dim": 5,
+      "learning_rate": 0.002976351441631316,
+      "iterations": 35,
+      "keep_prob": 0.21544346900318823
+    },
+    "best_score": 0.2456186991105992,
+    "dataset": "chlorine",
+    "time": 12551.24131822586
+  },
+  "climate": {
+    "best_params": {
+      "hidden_dim": 7,
+      "learning_rate": 0.05455594781168514,
+      "iterations": 15,
+      "keep_prob": 1.0
+    },
+    "best_score": 190.6722505281646,
+    "dataset": "climate",
+    "time": 1472.2399671077728
+  },
+  "drift": {
+    "best_params": {
+      "hidden_dim": 7,
+      "learning_rate": 1.0,
+      "iterations": 70,
+      "keep_prob": 0.0001
+    },
+    "best_score": 6349.82241964393,
+    "dataset": "drift",
+    "time": 8329.530212402344
+  },
+  "meteo": {
+    "best_params": {
+      "hidden_dim": 6,
+      "learning_rate": 2.06913808111479e-06,
+      "iterations": 85,
+      "keep_prob": 0.21544346900318823
+    },
+    "best_score": 7.9134508098139325,
+    "dataset": "meteo",
+    "time": 1513.5998630523682
+  }
+}
