@@ -100,7 +100,7 @@ def obfuscate_data(filename_input: str, percentage: int, output_dir: str, rows_t
 
 def automate_obfuscate(input_directory: str, output_dir: str):
     # Use the function with the matching file(s) and obfuscate 1%, 5%, 10%, 20%, 40% and 80% of its data with NaN.
-    for dataset_name in ['bafu']:
+    for dataset_name in ['bafu', 'chlorine', 'climate', 'electricity', 'meteo']:
         input_dir = os.path.join(input_directory, dataset_name, 'raw_matrices')
         dataset_output_dir = os.path.join(output_dir, dataset_name,
                                           'obfuscated')  # Create a new output directory variable for this dataset
@@ -111,14 +111,14 @@ def automate_obfuscate(input_directory: str, output_dir: str):
                     continue
 
     # Special case for 'drift'
-    # drift_dir = os.path.join(input_directory, 'drift', 'drift10', 'raw_matrices')
-    # drift_output_dir = os.path.join(output_dir, 'drift', 'drift10', 'obfuscated')
-    #
-    # for filename in get_files(drift_dir):
-    #     for percentage in [1, 5, 10, 20, 40, 60, 80]:
-    #         filename_output = obfuscate_data(filename, percentage, drift_output_dir, allow_full_nan_line=True)
-    #         if filename_output is None:  # If the file was skipped, continue with the next file.
-    #             continue
+    drift_dir = os.path.join(input_directory, 'drift', 'drift10', 'raw_matrices')
+    drift_output_dir = os.path.join(output_dir, 'drift', 'drift10', 'obfuscated')
+
+    for filename in get_files(drift_dir):
+        for percentage in [1, 5, 10, 20, 40, 60, 80]:
+            filename_output = obfuscate_data(filename, percentage, drift_output_dir, allow_full_nan_line=True)
+            if filename_output is None:  # If the file was skipped, continue with the next file.
+                continue
 
 
 def process_directory(input_directory: str, output_dir: str):
@@ -198,8 +198,10 @@ def split_file_lines(input_folder: str):
         # fifth_lines = lines[:len(lines) // 5]
         # sixth_lines = lines[:len(lines) // 6]
         # eighth_lines = lines[:len(lines) // 8]
-        sixteenth_lines = lines[:len(lines) // 16]
-        thirthysecond_lines = lines[:len(lines) // 32]
+        # sixteenth_lines = lines[:len(lines) // 16]
+        # thirthysecond_lines = lines[:len(lines) // 32]
+        sixtyfourth_lines = lines[:len(lines) // 64]
+        onetwentyeigth_lines = lines[:len(lines) // 128]
 
         # Save the proportions to new files
         base, ext = os.path.splitext(filename)
@@ -218,11 +220,17 @@ def split_file_lines(input_folder: str):
         # with open(os.path.join(input_folder, f'{base}_eighth{ext}'), 'w') as file:
         #     file.writelines(eighth_lines)
 
-        with open(os.path.join(input_folder, f'{base}_sixteenth{ext}'), 'w') as file:
-            file.writelines(sixteenth_lines)
+        # with open(os.path.join(input_folder, f'{base}_sixteenth{ext}'), 'w') as file:
+        #     file.writelines(sixteenth_lines)
+        #
+        # with open(os.path.join(input_folder, f'{base}_thirthysecond{ext}'), 'w') as file:
+        #     file.writelines(thirthysecond_lines)
 
-        with open(os.path.join(input_folder, f'{base}_thirthysecond{ext}'), 'w') as file:
-            file.writelines(thirthysecond_lines)
+        with open(os.path.join(input_folder, f'{base}_sixtyfourth{ext}'), 'w') as file:
+            file.writelines(sixtyfourth_lines)
+
+        with open(os.path.join(input_folder, f'{base}_onetwentyeigth{ext}'), 'w') as file:
+            file.writelines(onetwentyeigth_lines)
 
 
 def find_obfuscated_file(target_dir: str, start_string: str) -> Optional[str]:
@@ -291,12 +299,12 @@ def find_non_obfuscated_file(target_dir: str, start_string: str) -> Optional[str
 
 
 def process_all_datasets_to_split(input_directory):
-    for dataset_name in ['bafu']:
+    for dataset_name in ['bafu', 'chlorine', 'climate', 'electricity', 'meteo']:
         input_dir = os.path.join(input_directory, dataset_name, 'raw_matrices')
         split_file_lines(input_dir)
     # Special case for 'drift'
-    # drift_dir = os.path.join(input_directory, 'drift', 'drift10', 'raw_matrices')
-    # split_file_lines(drift_dir)
+    drift_dir = os.path.join(input_directory, 'drift', 'drift10', 'raw_matrices')
+    split_file_lines(drift_dir)
 
 import numpy as np
 
@@ -317,7 +325,6 @@ def load_and_trim_matrix(file_path: str, max_columns: int = 10) -> np.ndarray:
     np.ndarray
         The loaded (and possibly trimmed) matrix.
     """
-
     matrix = np.loadtxt(file_path, delimiter=' ')
     if matrix.shape[1] > max_columns:
         matrix = matrix[:, :max_columns]
@@ -338,5 +345,5 @@ if __name__ == '__main__':
     root_output_directory = os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets')
 
     # Run the automation
-    #process_all_datasets_to_split(root_input_directory)
-    automate_obfuscate(root_input_directory, root_output_directory)
+    process_all_datasets_to_split(root_input_directory)
+    # automate_obfuscate(root_input_directory, root_output_directory)

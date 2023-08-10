@@ -3,11 +3,11 @@
   <div class="mb-3">
     <label for="dataSelect" class="form-label">Data:</label>
     <select id="dataSelect" v-model="selectedData" class="form-control">
-      <option value="BAFU_eighth">BAFU 1/8 Size</option>
-      <option value="cl2fullLarge_eighth">Chlorine 1/8 Size</option>
-      <option value="climate_eighth">Climate 1/8 Size</option>
-      <option value="batch10_eighth">Drift 1/8 Size</option>
-      <option value="meteo_total_eighth">Meteo 1/8 Size</option>
+      <option value="BAFU_onetwentyeigth">BAFU</option>
+      <option value="cl2fullLarge_eighth">Chlorine</option>
+      <option value="climate_eighth">Climate</option>
+      <option value="batch10_eighth">Drift</option>
+      <option value="meteo_total_eighth">Meteo</option>
     </select>
   </div>
 </template>
