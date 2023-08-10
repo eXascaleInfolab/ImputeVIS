@@ -99,7 +99,7 @@ export default {
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
 
-        // obfuscatedMatrix = response.data.matrix;
+        obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
@@ -135,13 +135,27 @@ export default {
         mi.value = response.data.mi.toFixed(3);
         corr.value = response.data.corr.toFixed(3);
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+        // Create a new array for the new series data
+        const newSeriesData = [];
+
+        const displayImputation = missingRate.value != '40' && missingRate.value != '60' && missingRate.value != '80'
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.length > 0) {
-            chartOptionsImputed.value.series[index] = createSeries(index, data, currentSeriesNames[index]);
+          if (currentSeriesNames.length > 0  && missingRate) {
+            if (displayImputation) {
+              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames[index]));
+            } else {
+              newSeriesData.push(createSeries(index, data, currentSeriesNames[index]));
+            }
           } else {
-            chartOptionsImputed.value.series[index] = createSeries(index, data);
+            if (displayImputation) {
+              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value));
+            } else {
+              newSeriesData.push(createSeries(index, data))
+            }
           }
         });
+        // Directly modify the existing object without deep cloning
+        chartOptionsImputed.value.series = newSeriesData;
         imputedData.value = true;
       } catch (error) {
         console.error(error);

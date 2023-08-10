@@ -14,6 +14,7 @@ export const createSeries = (index: number, data: number[], seriesName: string =
     return {
         name: `${seriesName} ${seriesName === 'Series' ? index + 1 : ''}`.trim(),
         data,
+        animation: false,
         marker: {
             enabled: false
         },
@@ -116,6 +117,7 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         },
         pointStart: Date.UTC(2010, 1, 1),
         pointInterval: 1000 * 60 * 30,
+        animation: false,
         visible: isVisible,
         tooltip: {
             valueDecimals: 2
@@ -258,6 +260,7 @@ export const generateChartOptions = (title, seriesName) => ({
     series: [{
         name: seriesName,
         data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
+        animation: false,
         pointStart: Date.UTC(2010, 1, 1),
         pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
         tooltip: {
@@ -389,6 +392,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
     series: [{
         name: seriesName,
         data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
+        animation: false,
         pointStart: Date.UTC(2010, 1, 1),
         pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
         tooltip: {

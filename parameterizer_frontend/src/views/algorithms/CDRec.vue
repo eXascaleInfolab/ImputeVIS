@@ -81,11 +81,11 @@ export default {
   },
   setup() {
     const dataSelect = ref('climate_eighth') // Default data
-    let currentSeriesNames = ref([]); // Names of series currently displayed
+    let currentSeriesNames = []; // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
     const epsilon = ref('E-7'); // Default epsilon is E-7
-    const iterations = ref(200); // Default number of iterations is 200
+    const iterations = ref(100); // Default number of iterations is 200
     const imputedData = ref(false); // Whether imputation has been carried out
     const rmse = ref(null);
     const mae = ref(null);
@@ -148,16 +148,25 @@ export default {
         mae.value = response.data.mae.toFixed(3);
         mi.value = response.data.mi.toFixed(3);
         corr.value = response.data.corr.toFixed(3);
+        chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
 
         // Create a new array for the new series data
         const newSeriesData = [];
 
+        const displayImputation = missingRate.value != '40' && missingRate.value != '60' && missingRate.value != '80'
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.length > 0) {
-            const segmentedSeries = createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames[index]);
-            newSeriesData.push(...segmentedSeries);
+          if (currentSeriesNames.length > 0  && missingRate) {
+            if (displayImputation) {
+              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames[index]));
+            } else {
+              newSeriesData.push(createSeries(index, data, currentSeriesNames[index]));
+            }
           } else {
-            newSeriesData.push(createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value));
+            if (displayImputation) {
+              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value));
+            } else {
+              newSeriesData.push(createSeries(index, data))
+            }
           }
         });
         // Directly modify the existing object without deep cloning

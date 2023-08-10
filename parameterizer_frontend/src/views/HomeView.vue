@@ -135,7 +135,12 @@ import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import HighchartsBoost from "highcharts/modules/boost";
 import {IIM_DEFAULTS, CDREC_DEFAULTS, MRNN_DEFAULTS, STMVL_DEFAULTS} from './thesisUtils/defaultParameters';
-import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
+import {
+  createSegmentedSeries,
+  createSeries,
+  generateChartOptions,
+  generateChartOptionsLarge
+} from "@/views/thesisUtils/utils";
 
 // Initialize exporting modules
 HighchartsBoost(Highcharts)
@@ -197,7 +202,7 @@ export default {
     const corrSTMVL = ref(null);
     const metricsSTMVL = ref(false);
 
-
+    let obfuscatedMatrix = [];
     const checkedNames = ref([]);
     const imputedData = ref(false); // Whether imputation has been carried out
 
@@ -223,6 +228,7 @@ export default {
         // Create a shallow reactive copy
         const seriesCopy = shallowReactive([...chartOptionsOriginal.value.series]);
 
+        obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0) {
             seriesCopy[index] = createSeries(index, data, currentSeriesNames[index]);
@@ -274,7 +280,7 @@ export default {
           // M-RNN Parameters
           learningRate = parameters['mrnn'][dataAbbreviation].best_params.learning_rate || learningRate;
           hiddenDim = parameters['mrnn'][dataAbbreviation].best_params.hidden_dim || hiddenDim;
-          iterationsMRNN = parameters['mrnn'][dataAbbreviation].best_params.iterations || iterationsMRNN.lue;
+          iterationsMRNN = parameters['mrnn'][dataAbbreviation].best_params.iterations || iterationsMRNN;
           keepProb = parameters['mrnn'][dataAbbreviation].best_params.keep_prob || keepProb;
           // seqLen.value = parameters['iim'][dataAbbreviation].best_params.seq_len || seqLen;
 
@@ -344,6 +350,8 @@ export default {
 
       try {
         for (let checkedName of checkedNames.value) {
+          // const displayImputation = missingRate.value != '40' && missingRate.value != '60' && missingRate.value != '80'
+          const displayImputation = false
           let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
           if (checkedName.toLowerCase() === 'cdrec') {
             if (!fetchedData[checkedName]) {
@@ -367,14 +375,27 @@ export default {
             miCDRec.value = fetchedData[checkedName].mi.toFixed(3);
             corrCDRec.value = fetchedData[checkedName].corr.toFixed(3);
             metricsCDRec.value = true;
+
+            // Create a new array for the new series data
+            const newSeriesData = [];
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               //The push should theoretically ensure that we are just adding
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec:" + currentSeriesNames[index]));
+                if (displayImputation) {
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value,  "CDRec:" + currentSeriesNames[index]));
+                } else {
+                  chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec:" + currentSeriesNames[index]));
+                }
               } else {
-                chartOptionsImputed.value.series.push(createSeries(index, data));
+                if (displayImputation) {
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "CDRec:" + index));
+                } else {
+                  chartOptionsImputed.value.series.push(createSeries(index, data));
+                }
               }
             });
+            // Push to prevent overwriting other content
+            chartOptionsImputed.value.series.push(...newSeriesData);
             imputedData.value = true;
           } else if (checkedName.toLowerCase() == 'iim') {
             if (!fetchedData[checkedName]) {
@@ -397,14 +418,26 @@ export default {
             miIIM.value = fetchedData[checkedName].mi.toFixed(3);
             corrIIM.value = fetchedData[checkedName].corr.toFixed(3);
             metricsIIM.value = true;
+
+            // Create a new array for the new series data
+            const newSeriesData = [];
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              //The push should theoretically ensure that we are just adding
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                chartOptionsImputed.value.series.push(createSeries(index, data, "IIM:" + currentSeriesNames[index]));
+                if (displayImputation) {
+                  newSeriesData.push(...createSegmentedSeries(index, data ,obfuscatedMatrix[index], chartOptionsImputed.value, "IIM:" + currentSeriesNames[index]));
+                } else {
+                  chartOptionsImputed.value.series.push(createSeries(index, data, "IIM:" + currentSeriesNames[index]));
+                }
               } else {
-                chartOptionsImputed.value.series.push(createSeries(index, data));
+                if (displayImputation) {
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "IIM:" + index));
+                } else {
+                  chartOptionsImputed.value.series.push(createSeries(index, data));
+                }
               }
             });
+            // Push to prevent overwriting other content
+            chartOptionsImputed.value.series.push(...newSeriesData);
             imputedData.value = true;
           } else if (checkedName.toLowerCase() === 'm-rnn') {
             if (!fetchedData[checkedName]) {
@@ -430,14 +463,26 @@ export default {
             miMRNN.value = fetchedData[checkedName].mi.toFixed(3);
             corrMRNN.value = fetchedData[checkedName].corr.toFixed(3);
             metricsMRNN.value = true;
+
+            // Create a new array for the new series data
+            const newSeriesData = [];
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              //The push should theoretically ensure that we are just adding
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                chartOptionsImputed.value.series.push(createSeries(index, data, "MRNN:" + currentSeriesNames[index]));
+                if (displayImputation) {
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "MRNN:" + currentSeriesNames[index]));
+                } else {
+                  chartOptionsImputed.value.series.push(createSeries(index, data, "MRNN:" + currentSeriesNames[index]));
+                }
               } else {
-                chartOptionsImputed.value.series.push(createSeries(index, data));
+                if (displayImputation) {
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "MRNN:" + index));
+                } else {
+                  chartOptionsImputed.value.series.push(createSeries(index, data));
+                }
               }
             });
+            // Push to prevent overwriting other content
+            chartOptionsImputed.value.series.push(...newSeriesData);
             imputedData.value = true;
           } else if (checkedName.toLowerCase() === 'st-mvl') {
             if (!fetchedData[checkedName]) {
@@ -461,14 +506,26 @@ export default {
             miSTMVL.value = fetchedData[checkedName].mi.toFixed(3);
             corrSTMVL.value = fetchedData[checkedName].corr.toFixed(3);
             metricsSTMVL.value = true;
+
+            // Create a new array for the new series data
+            const newSeriesData = [];
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              //The push should theoretically ensure that we are just adding
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                chartOptionsImputed.value.series.push(createSeries(index, data, "ST-MVL:" + currentSeriesNames[index]));
+                if (displayImputation) {
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "ST-MVL:" + currentSeriesNames[index]));
+                } else {
+                  chartOptionsImputed.value.series.push(createSeries(index, data, "ST-MVL:" + currentSeriesNames[index]));
+                }
               } else {
-                chartOptionsImputed.value.series.push(createSeries(index, data));
+                if (displayImputation) {
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "ST-MVL:" + index));
+                } else {
+                  chartOptionsImputed.value.series.push(createSeries(index, data));
+                }
               }
             });
+            // Push to prevent overwriting other content
+            chartOptionsImputed.value.series.push(...newSeriesData);
             imputedData.value = true;
           }
         }
