@@ -1,1 +1,1 @@
-This directory is duplicated code from https://github.com/eXascaleInfolab/orbits/
+This directory is mostly duplicated code from https://github.com/eXascaleInfolab/orbits/
