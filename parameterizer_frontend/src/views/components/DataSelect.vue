@@ -8,9 +8,9 @@
     <select id="dataSelect" v-model="selectedData" class="form-control">
       <!--            <option value="BAFU">BAFU</option>-->
       <!--      <option value="BAFU_half">BAFU 1/2 Size</option>-->
-      <option value="BAFU_quarter">BAFU 1/4 Size</option>
+      <option value="BAFU_sixteenth">BAFU 1/16 Size</option>
       <!--      <option value="BAFU_sixth">BAFU 1/6 Size</option>-->
-      <option value="BAFU_eighth">BAFU 1/8 Size</option>
+      <option value="BAFU_thirthysecond">BAFU 1/32 Size</option>
       <!--            <option value="cl2fullLarge">Chlorine</option>-->
       <!--      <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>-->
       <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>

@@ -10,6 +10,7 @@ import sys
 import numpy as np
 
 import Wrapper.algo_collection
+from Utils_Thesis.utils import load_and_trim_matrix
 
 sys.path.insert(0, os.path.abspath(".."))
 from Utils_Thesis import utils, statistics
@@ -36,8 +37,8 @@ def cdrec(request):
         iterations = data.get('iterations', 100)  # Maximum number of allowed iterations for the algorithm
 
         if clean_file_path is not None and obfuscated_file_path is not None:
-            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
-            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            ground_truth_matrix = load_and_trim_matrix(clean_file_path)
+            obfuscated_matrix = load_and_trim_matrix(obfuscated_file_path)
             # Call the main function with parameters from the request
             imputed_matrix = Wrapper.algo_collection.native_cdrec_param(
                 __py_matrix=obfuscated_matrix,
@@ -65,8 +66,8 @@ def cdrec_optimization(request):
         data, data_set = load_from_request(request)
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
         if clean_file_path is not None and obfuscated_file_path is not None:
-            raw_matrix = np.loadtxt(clean_file_path, delimiter=" ", )
-            obf_matrix = np.loadtxt(obfuscated_file_path, delimiter=" ", )
+            raw_matrix = load_and_trim_matrix(clean_file_path)
+            obf_matrix = load_and_trim_matrix(obfuscated_file_path)
             best_params, best_score = optimization(data, data_set, obf_matrix, raw_matrix)
             if best_params is not None and best_score is not None:
                 best_params = {k: int(v) if isinstance(v, np.int64) else v for k, v in best_params.items()}
@@ -156,8 +157,8 @@ def iim(request):
 
         if clean_file_path is not None and obfuscated_file_path is not None:
             imputed_matrix = iim_alg.main(alg_code, obfuscated_file_path)
-            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
-            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            ground_truth_matrix = load_and_trim_matrix(clean_file_path)
+            obfuscated_matrix = load_and_trim_matrix(obfuscated_file_path)
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
@@ -179,8 +180,8 @@ def iim_optimization(request):
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
 
         if clean_file_path is not None and obfuscated_file_path is not None:
-            raw_matrix = np.loadtxt(clean_file_path, delimiter=" ", )
-            obf_matrix = np.loadtxt(obfuscated_file_path, delimiter=" ", )
+            raw_matrix = load_and_trim_matrix(clean_file_path)
+            obf_matrix = load_and_trim_matrix(obfuscated_file_path)
             best_params, best_score = optimization(data, data_set, obf_matrix, raw_matrix)
             if best_params is not None and best_score is not None:
                 best_params = {k: int(v) if isinstance(v, np.int64) else v for k, v in best_params.items()}
@@ -205,9 +206,8 @@ def mrnn(request):
         # runtime = data.get('runtime', 0)
 
         if clean_file_path is not None and obfuscated_file_path is not None:
-
-            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
-            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            ground_truth_matrix = load_and_trim_matrix(clean_file_path)
+            obfuscated_matrix = load_and_trim_matrix(obfuscated_file_path)
             # Call the main function with parameters from the request
             imputed_matrix = M_RNN.testerMRNN.mrnn_recov(obfuscated_file_path,
                                                          runtime=-1,
@@ -238,8 +238,8 @@ def mrnn_optimization(request):
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
 
         if clean_file_path is not None and obfuscated_file_path is not None:
-            raw_matrix = np.loadtxt(clean_file_path, delimiter=" ", )
-            obf_matrix = np.loadtxt(obfuscated_file_path, delimiter=" ", )
+            raw_matrix = load_and_trim_matrix(clean_file_path)
+            obf_matrix = load_and_trim_matrix(obfuscated_file_path)
             best_params, best_score = optimization(data, data_set, obf_matrix, raw_matrix)
             if best_params is not None and best_score is not None:
                 best_params = {k: int(v) if isinstance(v, np.int64) else v for k, v in best_params.items()}
@@ -258,8 +258,8 @@ def stmvl(request):
         alpha = data.get('alpha', 100)  # power for spatial weight
 
         if clean_file_path is not None and obfuscated_file_path is not None:
-            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
-            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ', )
+            ground_truth_matrix = load_and_trim_matrix(clean_file_path)
+            obfuscated_matrix = load_and_trim_matrix(obfuscated_file_path)
             # Call the main function with parameters from the request
             imputed_matrix = Wrapper.algo_collection.native_stmvl_param(
                 __py_matrix=obfuscated_matrix,
@@ -287,7 +287,7 @@ def stmvl_optimization(request):
         data, data_set = load_from_request(request)
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
         if clean_file_path is not None and obfuscated_file_path is not None:
-            raw_matrix = np.loadtxt(clean_file_path, delimiter=" ", )
+            raw_matrix = load_and_trim_matrix(clean_file_path)
             obf_matrix = np.loadtxt(obfuscated_file_path, delimiter=" ", )
             best_params, best_score = optimization(data, data_set, obf_matrix, raw_matrix)
             if best_params is not None and best_score is not None:
@@ -303,7 +303,7 @@ def fetch_data(request):
         data, data_set = load_from_request(request)
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
         if obfuscated_file_path is not None:
-            obfuscated_matrix = np.loadtxt(obfuscated_file_path, delimiter=' ')
+            obfuscated_matrix = load_and_trim_matrix(obfuscated_file_path)
 
             # Transpose the matrix and convert to a list
             transposed_list = np.transpose(obfuscated_matrix).tolist()
@@ -317,9 +317,9 @@ def fetch_data(request):
             return JsonResponse({'matrix': transposed_list}, status=200)
 
         if clean_file_path is not None:
-            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
-            return JsonResponse({'matrix': np.transpose(ground_truth_matrix).tolist()},
-                                status=200)
+            ground_truth_matrix = load_and_trim_matrix(clean_file_path)
+            return JsonResponse({'matrix': np.transpose(ground_truth_matrix).tolist()}, status=200)
+
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
 
@@ -427,7 +427,7 @@ def categorize_data(request):
         data, data_set = load_from_request(request)
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
         if clean_file_path is not None:
-            ground_truth_matrix = np.loadtxt(clean_file_path, delimiter=' ', )
+            ground_truth_matrix = load_and_trim_matrix(clean_file_path)
             extracted_features = catch.extract_features(ground_truth_matrix, True)
             return JsonResponse(extracted_features, status=200)
     return JsonResponse({'message': 'Invalid request'}, status=400)

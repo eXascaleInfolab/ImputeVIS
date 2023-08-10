@@ -1,6 +1,6 @@
 <template>
   <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time, amount depends on algorithm.">
-    <label for="missingRate" class="form-label">Missing Rate:</label>
+    <label for="missingRate" class="form-label">MCAR Rate:</label>
     <select id="missingRate" v-model="missingRate" class="form-control">
       <option value="1">1%</option>
       <option value="5">5%</option>

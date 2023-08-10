@@ -6,7 +6,7 @@
   <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
     <div class="alert alert-info d-flex align-items-center">
       <div class="spinner-border text-primary me-3" role="status"></div>
-      Determining resulting imputation...
+      Loading...
     </div>
   </div>
 
@@ -22,6 +22,7 @@
             <div class="col-lg-6">
               <form @submit.prevent="submitForm">
                 <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+                <normalization-toggle v-model="normalizationMode"></normalization-toggle>
                 <missing-rate v-model="missingRate"/>
                 <div class="d-flex justify-content-center mt-2">
                   <button type="submit" class="btn btn-primary align-center">Refresh</button>
@@ -128,6 +129,7 @@
 import {ref, watch, reactive, shallowReactive} from 'vue';
 import DataSelect from './components/DataSelect.vue';
 import MissingRate from './components/MissingRate.vue';
+import NormalizationToggle from './components/NormalizationToggle.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
@@ -140,11 +142,13 @@ HighchartsBoost(Highcharts)
 
 export default {
   components: {
+    NormalizationToggle,
     highcharts: Chart,
     DataSelect,
     MissingRate
   }, setup() {
     const dataSelect = ref('climate_eighth') // Default data is BAFU
+    const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const fetchedData = reactive({});
     let loadingResults = ref(false);
@@ -200,10 +204,12 @@ export default {
 
     const fetchData = async () => {
       try {
+        loadingResults.value = true;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
-              data_set: dataSet
+              data_set: dataSet,
+              normalization: normalizationMode.value
             },
             {
               headers: {
@@ -229,6 +235,8 @@ export default {
         chartOptionsOriginal.value.series = seriesCopy;
       } catch (error) {
         console.error(error);
+      } finally {
+        loadingResults.value = false;
       }
     }
 
@@ -530,7 +538,7 @@ export default {
       }
     }
     // Watch for changes and call fetchData when it changes
-    watch([dataSelect, missingRate], handleDataSelectChange, { immediate: true });
+    watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, { immediate: true });
     // Watch for changes and call fetchData when it changes
     watch(selectedParamOption, handleParamSelectChange, {immediate: true});
 
@@ -563,6 +571,7 @@ export default {
       chartOptionsOriginal,
       chartOptionsImputed,
       dataSelect,
+      normalizationMode,
       updateSeriesNames,
       missingRate,
       imputedData,

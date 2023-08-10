@@ -85,7 +85,7 @@ export default {
     const missingRate = ref('1'); // Default missing rate is 1%
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
     const epsilon = ref('E-7'); // Default epsilon is E-7
-    const iterations = ref(500); // Default number of iterations is 1000
+    const iterations = ref(200); // Default number of iterations is 200
     const imputedData = ref(false); // Whether imputation has been carried out
     const rmse = ref(null);
     const mae = ref(null);
