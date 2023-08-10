@@ -1,0 +1,8 @@
+.highcharts-legend-item-hidden text {
+    font-weight: normal !important;
+	text-decoration: none !important;
+}
+
+.highcharts-legend-item text {
+    font-weight: bold;
+}
