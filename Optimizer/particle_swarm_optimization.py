@@ -150,17 +150,20 @@ if __name__ == '__main__':
         'c1': 0.5,  # cognitive parameter
         'c2': 0.5,  # social parameter
         'w': 0.8,  # inertia weight
-        'n_particles': 33,  # number of particles
+        'n_particles': 15,  # number of particles
         'n_processes': None,  # number of processes to use for parallelization (set to None to disable parallelization)
-        'iterations': 75  # number of iterations
+        'iterations': 50  # number of iterations
     }
 
     results = {}
     for algo in algos:
         for dataset, data_file in zip(datasets, dataset_files):
-            raw_file_path = f"../Datasets/{dataset}/drift10/raw_matrices/{data_file}_eighth.txt"
+            raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
             obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_10.txt"
 
+            if dataset == 'drift':
+                raw_file_path = f"../Datasets/{dataset}/drift10/raw_matrices/{data_file}_eighth.txt"
+                obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_10.txt"
             raw_matrix = np.loadtxt(raw_file_path, delimiter=" ", )
             obf_matrix = np.loadtxt(obf_file_path, delimiter=" ", )
 
@@ -188,7 +191,7 @@ if __name__ == '__main__':
             }
 
         # Save results in a JSON file
-        with open(f'optimization_results_{algo}_pso_optimization_{metrics[0] + "_" + metrics[1]}.json', 'w') as outfile:
+        with open(f'optimization_results_{algo}_pso_optimization_{metrics[0]}.json', 'w') as outfile:
             json.dump(results, outfile)
 
         # Print the results for the current algorithm
