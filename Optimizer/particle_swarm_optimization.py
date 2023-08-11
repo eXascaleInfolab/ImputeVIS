@@ -139,11 +139,10 @@ if __name__ == '__main__':
     #
     # print(f"Best parameters for {algo}: {best_params}")
     # print(f"Best score: {best_score}")
-    algos = ['cdrec', 'stmvl']
-    # todo handle drift separately
-    datasets = ['drift']
-    dataset_files = ['batch10']
-    metrics = ['rmse', 'mae']
+    algos = ['mrnn']
+    datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
+    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
+    metrics = ['mi']
 
     # Define  PSO parameters
     pso_parameters = {
