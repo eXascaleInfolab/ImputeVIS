@@ -1,1 +1,57 @@
-{"bafu": {"best_params": {"hidden_dim": 4, "learning_rate": 0.11288378916846883, "iterations": 55, "keep_prob": 2.1544346900318823e-05}, "best_score": 0.7874583458993158, "dataset": "bafu", "time": 1040.4344239234924}, "chlorine": {"best_params": {"hidden_dim": 1, "learning_rate": 0.00615848211066026, "iterations": 30, "keep_prob": 4.641588833612782e-06}, "best_score": 0.6565576742556624, "dataset": "chlorine", "time": 5269.046457767487}, "climate": {"best_params": {"hidden_dim": 6, "learning_rate": 0.11288378916846883, "iterations": 25, "keep_prob": 1e-06}, "best_score": 0.5621003199620882, "dataset": "climate", "time": 619.9995672702789}, "drift": {"best_params": {"hidden_dim": 9, "learning_rate": 1.0, "iterations": 55, "keep_prob": 0.0001}, "best_score": 0.09402394627297384, "dataset": "drift", "time": 3959.4579486846924}, "meteo": {"best_params": {"hidden_dim": 9, "learning_rate": 4.281332398719396e-06, "iterations": 65, "keep_prob": 2.1544346900318823e-05}, "best_score": 0.5619811430206204, "dataset": "meteo", "time": 804.2713711261749}}
+{
+  "bafu": {
+    "best_params": {
+      "hidden_dim": 4,
+      "learning_rate": 0.11288378916846883,
+      "iterations": 55,
+      "keep_prob": 2.1544346900318823e-05
+    },
+    "best_score": 0.7874583458993158,
+    "dataset": "bafu",
+    "time": 1040.4344239234924
+  },
+  "chlorine": {
+    "best_params": {
+      "hidden_dim": 1,
+      "learning_rate": 0.00615848211066026,
+      "iterations": 30,
+      "keep_prob": 4.641588833612782e-06
+    },
+    "best_score": 0.6565576742556624,
+    "dataset": "chlorine",
+    "time": 5269.046457767487
+  },
+  "climate": {
+    "best_params": {
+      "hidden_dim": 6,
+      "learning_rate": 0.11288378916846883,
+      "iterations": 25,
+      "keep_prob": 1e-06
+    },
+    "best_score": 0.5621003199620882,
+    "dataset": "climate",
+    "time": 619.9995672702789
+  },
+  "drift": {
+    "best_params": {
+      "hidden_dim": 9,
+      "learning_rate": 1.0,
+      "iterations": 55,
+      "keep_prob": 0.0001
+    },
+    "best_score": 0.09402394627297384,
+    "dataset": "drift",
+    "time": 3959.4579486846924
+  },
+  "meteo": {
+    "best_params": {
+      "hidden_dim": 9,
+      "learning_rate": 4.281332398719396e-06,
+      "iterations": 65,
+      "keep_prob": 2.1544346900318823e-05
+    },
+    "best_score": 0.5619811430206204,
+    "dataset": "meteo",
+    "time": 804.2713711261749
+  }
+}

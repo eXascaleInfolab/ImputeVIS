@@ -1,1 +1,42 @@
-{"bafu": {"best_params": {"learning_neighbours": 12}, "best_score": 0.6878459539318149, "dataset": "bafu", "time": 12502.837198734283}, "chlorine": {"best_params": {"learning_neighbours": 23}, "best_score": 0.699003436718939, "dataset": "chlorine", "time": 9261.647923707962}, "climate": {"best_params": {"learning_neighbours": 1}, "best_score": 0.6761174724981964, "dataset": "climate", "time": 557.2292342185974}, "drift": {"best_params": {"learning_neighbours": 4}, "best_score": 0.019262266934416905, "dataset": "drift", "time": 3923.1562111377716}, "meteo": {"best_params": {"learning_neighbours": 53}, "best_score": 0.5493631167656794, "dataset": "meteo", "time": 11383.47127699852}}
+{
+  "bafu": {
+    "best_params": {
+      "learning_neighbours": 12
+    },
+    "best_score": 0.6878459539318149,
+    "dataset": "bafu",
+    "time": 12502.837198734283
+  },
+  "chlorine": {
+    "best_params": {
+      "learning_neighbours": 23
+    },
+    "best_score": 0.699003436718939,
+    "dataset": "chlorine",
+    "time": 9261.647923707962
+  },
+  "climate": {
+    "best_params": {
+      "learning_neighbours": 1
+    },
+    "best_score": 0.6761174724981964,
+    "dataset": "climate",
+    "time": 557.2292342185974
+  },
+  "drift": {
+    "best_params": {
+      "learning_neighbours": 4
+    },
+    "best_score": 0.019262266934416905,
+    "dataset": "drift",
+    "time": 3923.1562111377716
+  },
+  "meteo": {
+    "best_params": {
+      "learning_neighbours": 53
+    },
+    "best_score": 0.5493631167656794,
+    "dataset": "meteo",
+    "time": 11383.47127699852
+  }
+}
