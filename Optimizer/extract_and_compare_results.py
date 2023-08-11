@@ -42,22 +42,26 @@ def get_best_params_by_dataset():
                     # By dataset
                     # If the algorithm is not in best_params for the dataset, add it
                     if algorithm not in best_params[dataset]:
-                        best_params[dataset][algorithm] = {
+                        best_params[dataset][algorithm] = {}
+
+                    if metric not in best_params[dataset][algorithm]:
+                        best_params[dataset][algorithm][metric] = {
                             "metric": metric,
                             "best_score": float('inf'),  # set it to infinity initially
                             "best_params": {},
+                            "time": float('inf'),  # set it to infinity initially
                             "optimization_method": ""  # initializing with an empty string
-
                         }
 
-                    # If the current metric's best score is better than stored one, update it
-                    if values["best_score"] < best_params[dataset][algorithm]["best_score"]:
-                        best_params[dataset][algorithm]["best_score"] = values["best_score"]
-                        best_params[dataset][algorithm]["best_params"] = values["best_params"]
-                        best_params[dataset][algorithm]["optimization_method"] = optimization_method
+                    # If the current metric's best score is better than the stored one, update it
+                    if values["best_score"] < best_params[dataset][algorithm][metric]["best_score"]:
+                        best_params[dataset][algorithm][metric]["best_score"] = values["best_score"]
+                        best_params[dataset][algorithm][metric]["time"] = values["time"]
+                        best_params[dataset][algorithm][metric]["best_params"] = values["best_params"]
+                        best_params[dataset][algorithm][metric]["optimization_method"] = optimization_method
 
     # Save the best_params to a JSON file
-    output_file = os.path.join("results", 'best_params_dataset.json')
+    output_file = os.path.join("results", 'best_params_dataset_by_metric.json')
     with open(output_file, 'w') as outfile:
         json.dump(best_params, outfile, indent=4)
 
@@ -82,7 +86,7 @@ def get_best_params_by_algorithm():
         if OPTIMIZATION_RESULTS_PATTERN.match(filename):
             with open(os.path.join(FOLDER_PATH, filename), 'r') as f:
                 data = json.load(f)
-                # Extract the algorithm and metric from the filename
+                # Extract the algorithm, optimization method, and metric from the filename
                 algorithm, optimization_method, metric = OPTIMIZATION_RESULTS_PATTERN.findall(filename)[0]
 
                 # If the algorithm is not in best_params, add it
@@ -92,27 +96,34 @@ def get_best_params_by_algorithm():
                 for dataset, values in data.items():
                     # If the dataset is not in best_params for the algorithm, add it
                     if dataset not in best_params[algorithm]:
-                        best_params[algorithm][dataset] = {
+                        best_params[algorithm][dataset] = {}
+
+                    # Create or update the metric data
+                    if metric not in best_params[algorithm][dataset]:
+                        best_params[algorithm][dataset][metric] = {
                             "metric": metric,
                             "best_score": float('inf'),  # set it to infinity initially
                             "best_params": {},
+                            "time": float('inf'),  # set it to infinity initially
                             "optimization_method": ""  # initializing with an empty string
                         }
 
                     # If the current metric's best score is better than stored one, update it
-                    if values["best_score"] < best_params[algorithm][dataset]["best_score"]:
-                        best_params[algorithm][dataset]["best_score"] = values["best_score"]
-                        best_params[algorithm][dataset]["best_params"] = values["best_params"]
-                        best_params[algorithm][dataset]["optimization_method"] = optimization_method
+                    if values["best_score"] < best_params[algorithm][dataset][metric]["best_score"]:
+                        best_params[algorithm][dataset][metric]["best_score"] = values["best_score"]
+                        best_params[algorithm][dataset][metric]["time"] = values["time"]
+                        best_params[algorithm][dataset][metric]["best_params"] = values["best_params"]
+                        best_params[algorithm][dataset][metric]["optimization_method"] = optimization_method
 
     # Save the best_params to a JSON file
-    output_file = os.path.join('results', 'best_params_algorithm.json')
+    output_file = os.path.join('results', 'best_params_algorithm_by_metric.json')
     with open(output_file, 'w') as outfile:
         json.dump(best_params, outfile, indent=4)
 
     return best_params
 
 
+# TODO Description and know what you want!
 def cdrec_optimal_results(results_path: str) -> dict:
     """
     Run imputation using the best parameters and save the results.
@@ -193,7 +204,7 @@ def cdrec_optimal_results(results_path: str) -> dict:
         np.save(os.path.join(results_path, f"cdrec_{dataset}_imputed.npy"), imputed_matrix)
 
     # Save the summary results to a separate JSON file
-    with open(os.path.join(results_path, 'summary_results.json'), 'w') as outfile:
+    with open(os.path.join(results_path, 'cdrec_summary_results.json'), 'w') as outfile:
         json.dump(results_summary, outfile, indent=4)
 
     return results_summary
@@ -241,9 +252,9 @@ def get_dataset_paths(dataset: str) -> Tuple[str, str]:
 if __name__ == '__main__':
     #### Step 1: Determine optimal results
     # Get the best params by dataset
-    # best_params = get_best_params_by_dataset()
+    best_params = get_best_params_by_dataset()
     # Get the best params by algorithm
-    # best_params = get_best_params_by_algorithm()
+    best_params = get_best_params_by_algorithm()
 
     # Print the best_params
     # print(json.dumps(best_params, indent=4))

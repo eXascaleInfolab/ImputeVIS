@@ -1,0 +1,1278 @@
+{
+    "cdrec": {
+        "bafu": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 2.5796544467437954e-05,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 0.9573330831503682,
+                    "iters": 439
+                },
+                "time": 40.26372671127319,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 0.00928035352853853,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 1.0,
+                    "iters": 100
+                },
+                "time": 31.543094635009766,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5349610963858562,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 0.9999916038344492,
+                    "iters": 438
+                },
+                "time": 39.1116840839386,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.265773205720074,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 0.00755809935070479,
+                    "iters": 100
+                },
+                "time": 311.7673923969269,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.018877650691866508,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 1.0,
+                    "iters": 100
+                },
+                "time": 19.875683069229126,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 0.014079002110202524,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 0.015162811201851307,
+                    "iters": 100
+                },
+                "time": 85.21386766433716,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "chlorine": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.003278061323814585,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 0.07928668168306038,
+                    "iters": 1000
+                },
+                "time": 19.50624942779541,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 0.010095461237358275,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 0.9140115605524411,
+                    "iters": 969
+                },
+                "time": 17.66210651397705,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.4988839839931837,
+                "best_params": {
+                    "rank": 2,
+                    "eps": 0.020873029790350318,
+                    "iters": 159
+                },
+                "time": 22.269049167633057,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.2565167192419035,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 0.30865453834690176,
+                    "iters": 472
+                },
+                "time": 95.10408926010132,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.015260007549353381,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 1.0,
+                    "iters": 1000
+                },
+                "time": 16.714892864227295,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 0.01267773439335583,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 0.48435016109122636,
+                    "iters": 638
+                },
+                "time": 70.48997855186462,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "climate": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.0167560875808056,
+                "best_params": {
+                    "rank": 3,
+                    "eps": 1.0,
+                    "iters": 100
+                },
+                "time": 20.838867902755737,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 51.110927959791404,
+                "best_params": {
+                    "rank": 9,
+                    "eps": 1.0,
+                    "iters": 100
+                },
+                "time": 26.08544397354126,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5470800972656218,
+                "best_params": {
+                    "rank": 8,
+                    "eps": 0.004592420967411992,
+                    "iters": 549
+                },
+                "time": 20.514814138412476,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.28362195591988365,
+                "best_params": {
+                    "rank": 3,
+                    "eps": 0.004657813726545686,
+                    "iters": 126
+                },
+                "time": 81.06489849090576,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 96.19018493471101,
+                "best_params": {
+                    "rank": 3,
+                    "eps": 1.0,
+                    "iters": 484
+                },
+                "time": 21.210970401763916,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 71.96315108048842,
+                "best_params": {
+                    "rank": 3,
+                    "eps": 1.0,
+                    "iters": 100
+                },
+                "time": 63.8157434463501,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "drift": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.0024309884946517313,
+                "best_params": {
+                    "rank": 4,
+                    "eps": 5.11708185581579e-06,
+                    "iters": 586
+                },
+                "time": 29.95312213897705,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 85.25718269412862,
+                "best_params": {
+                    "rank": 4,
+                    "eps": 7.948368533824846e-05,
+                    "iters": 344
+                },
+                "time": 47.19325542449951,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": -0.03991262617709945,
+                "best_params": {
+                    "rank": 2,
+                    "eps": 1.0,
+                    "iters": 974
+                },
+                "time": 38.95267653465271,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 560.7713538001751,
+                "best_params": {
+                    "rank": 4,
+                    "eps": 0.0005966887112077555,
+                    "iters": 341
+                },
+                "time": 45.06901669502258,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "meteo": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.0002818179467143356,
+                "best_params": {
+                    "rank": 3,
+                    "eps": 0.8466887209052565,
+                    "iters": 909
+                },
+                "time": 30.551413774490356,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 1.5297184567476938,
+                "best_params": {
+                    "rank": 2,
+                    "eps": 0.4134985122124577,
+                    "iters": 648
+                },
+                "time": 27.509902715682983,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.4664383235093825,
+                "best_params": {
+                    "rank": 1,
+                    "eps": 1e-06,
+                    "iters": 1000
+                },
+                "time": 42.786606788635254,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.2709661025176637,
+                "best_params": {
+                    "rank": 2,
+                    "eps": 0.012611814575693003,
+                    "iters": 100
+                },
+                "time": 134.78216743469238,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.8648725982889066,
+                "best_params": {
+                    "rank": 3,
+                    "eps": 1.0,
+                    "iters": 100
+                },
+                "time": 26.65150547027588,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 0.738657672739029,
+                "best_params": {
+                    "rank": 3,
+                    "eps": 1.0,
+                    "iters": 1000
+                },
+                "time": 114.17319130897522,
+                "optimization_method": "bayesian_optimization"
+            }
+        }
+    },
+    "iim": {
+        "bafu": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.006180203410134921,
+                "best_params": {
+                    "learning_neighbours": 100
+                },
+                "time": 19991.45960664749,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 0.30541611916004313,
+                "best_params": {
+                    "learning_neighbours": 100
+                },
+                "time": 19333.646896600723,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.6878459539318149,
+                "best_params": {
+                    "learning_neighbours": 12
+                },
+                "time": 12502.837198734283,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.3482137975596273,
+                "best_params": {
+                    "learning_neighbours": 1
+                },
+                "time": 13713.193425416946,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.4217279010421891,
+                "best_params": {
+                    "learning_neighbours": 100
+                },
+                "time": 16599.895572185516,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 0.3635720101011161,
+                "best_params": {
+                    "learning_neighbours": 100
+                },
+                "time": 19815.964156150818,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "chlorine": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.5078880300092191,
+                "best_params": {
+                    "learning_neighbours": 1
+                },
+                "time": 6147.67989563942,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 0.14865666490593374,
+                "best_params": {
+                    "learning_neighbours": 1
+                },
+                "time": 7708.7628519535065,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.699003436718939,
+                "best_params": {
+                    "learning_neighbours": 23
+                },
+                "time": 9261.647923707962,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.617037735312991,
+                "best_params": {
+                    "learning_neighbours": 1
+                },
+                "time": 6111.441164493561,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.21961312673660244,
+                "best_params": {
+                    "learning_neighbours": 1
+                },
+                "time": 7888.376788854599,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "climate": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.05713984091357904,
+                "best_params": {
+                    "learning_neighbours": 22
+                },
+                "time": 660.5554082393646,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 72.56903156922662,
+                "best_params": {
+                    "learning_neighbours": 47
+                },
+                "time": 734.0944719314575,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.6761174724981964,
+                "best_params": {
+                    "learning_neighbours": 1
+                },
+                "time": 557.2292342185974,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.3683295054921292,
+                "best_params": {
+                    "learning_neighbours": 11
+                },
+                "time": 530.7193782329559,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 187.49027379986964,
+                "best_params": {
+                    "learning_neighbours": 31
+                },
+                "time": 542.9999165534973,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "drift": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.11384737764759612,
+                "best_params": {
+                    "learning_neighbours": 3
+                },
+                "time": 3398.3131313323975,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 562.2219675267361,
+                "best_params": {
+                    "learning_neighbours": 1
+                },
+                "time": 1820.2093214988708,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.019262266934416905,
+                "best_params": {
+                    "learning_neighbours": 4
+                },
+                "time": 3923.1562111377716,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.06702451457713582,
+                "best_params": {
+                    "learning_neighbours": 4
+                },
+                "time": 4157.968896389008,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 4526.697252042428,
+                "best_params": {
+                    "learning_neighbours": 1
+                },
+                "time": 2144.1914935112,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 2523.539290212081,
+                "best_params": {
+                    "learning_neighbours": 2
+                },
+                "time": 2265.2983589172363,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "meteo": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.02884021864696429,
+                "best_params": {
+                    "learning_neighbours": 37
+                },
+                "time": 10450.515824317932,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 13.249170360987668,
+                "best_params": {
+                    "learning_neighbours": 100
+                },
+                "time": 18159.804649353027,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5493631167656794,
+                "best_params": {
+                    "learning_neighbours": 53
+                },
+                "time": 11383.47127699852,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.2862974532850487,
+                "best_params": {
+                    "learning_neighbours": 36
+                },
+                "time": 101386.23357629776,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 21.407584519077965,
+                "best_params": {
+                    "learning_neighbours": 100
+                },
+                "time": 20143.409866333008,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 17.328377440032817,
+                "best_params": {
+                    "learning_neighbours": 100
+                },
+                "time": 17643.2587890625,
+                "optimization_method": "bayesian_optimization"
+            }
+        }
+    },
+    "mrnn": {
+        "bafu": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.005122847151280974,
+                "best_params": {
+                    "hidden_dim": 6,
+                    "learning_rate": 0.6850529028589641,
+                    "iterations": 39,
+                    "keep_prob": 2.014061139246155e-05
+                },
+                "time": 1262.1417183876038,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 0.2221528923996291,
+                "best_params": {
+                    "hidden_dim": 7,
+                    "learning_rate": 0.002745061507763296,
+                    "iterations": 91,
+                    "keep_prob": 1.9417716163716384e-05
+                },
+                "time": 1299.7221405506134,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.7184410495223033,
+                "best_params": {
+                    "hidden_dim": 8,
+                    "learning_rate": 0.9927409198785836,
+                    "iterations": 51,
+                    "keep_prob": 2.217075435875572e-05
+                },
+                "time": 1260.7288901805878,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.3564229399519539,
+                "best_params": {
+                    "hidden_dim": 0,
+                    "learning_rate": 0.8752061219071195,
+                    "iterations": 62,
+                    "keep_prob": 1.0340717532195197e-06
+                },
+                "time": 699.5531568527222,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.3231692463097619,
+                "best_params": {
+                    "hidden_dim": 9,
+                    "learning_rate": 0.012248349008248848,
+                    "iterations": 84,
+                    "keep_prob": 1.150443912032195e-06
+                },
+                "time": 1294.9573712348938,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 0.2831366624873895,
+                "best_params": {
+                    "hidden_dim": 0,
+                    "learning_rate": 0.4648806791800015,
+                    "iterations": 19,
+                    "keep_prob": 4.546128949875599e-05
+                },
+                "time": 850.719251871109,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "chlorine": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.8981957769308154,
+                "best_params": {
+                    "hidden_dim": 4,
+                    "learning_rate": 0.8784287868524215,
+                    "iterations": 81,
+                    "keep_prob": 1.6041876565591626e-06
+                },
+                "time": 6087.706672906876,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 0.15822645767349,
+                "best_params": {
+                    "hidden_dim": 4,
+                    "learning_rate": 0.0017947303316047142,
+                    "iterations": 44,
+                    "keep_prob": 1.1749944984462393e-06
+                },
+                "time": 5879.578474521637,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5909933141914503,
+                "best_params": {
+                    "hidden_dim": 6,
+                    "learning_rate": 2.142792489767503e-05,
+                    "iterations": 2,
+                    "keep_prob": 0.9671508292184442
+                },
+                "time": 6253.543638467789,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.7603228420309374,
+                "best_params": {
+                    "hidden_dim": 9,
+                    "learning_rate": 0.0003413876224797998,
+                    "iterations": 94,
+                    "keep_prob": 0.9849751711197006
+                },
+                "time": 4325.261828422546,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.24476297263690525,
+                "best_params": {
+                    "hidden_dim": 4,
+                    "learning_rate": 0.0506117156376428,
+                    "iterations": 38,
+                    "keep_prob": 0.005200428922939562
+                },
+                "time": 5719.096410512924,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 0.20198509396841638,
+                "best_params": {
+                    "hidden_dim": 4,
+                    "learning_rate": 0.002806855173895185,
+                    "iterations": 85,
+                    "keep_prob": 2.0371536595729187e-05
+                },
+                "time": 3392.188283920288,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "climate": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.06338588483217467,
+                "best_params": {
+                    "hidden_dim": 2,
+                    "learning_rate": 5.3237871252757316e-05,
+                    "iterations": 20,
+                    "keep_prob": 0.5817430209386164
+                },
+                "time": 779.4300677776337,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 88.00717395862355,
+                "best_params": {
+                    "hidden_dim": 6,
+                    "learning_rate": 3.12955567998516e-05,
+                    "iterations": 0,
+                    "keep_prob": 0.6549139389451483
+                },
+                "time": 725.8979041576385,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5615229898054769,
+                "best_params": {
+                    "hidden_dim": 9,
+                    "learning_rate": 1.0,
+                    "iterations": 0,
+                    "keep_prob": 9.695402726790059e-05
+                },
+                "time": 736.4412536621094,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.3618491554332534,
+                "best_params": {
+                    "hidden_dim": 0,
+                    "learning_rate": 0.0017174979740381434,
+                    "iterations": 14,
+                    "keep_prob": 0.18904971192210085
+                },
+                "time": 444.32722640037537,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 183.42395673327766,
+                "best_params": {
+                    "hidden_dim": 5,
+                    "learning_rate": 0.1569741496747419,
+                    "iterations": 95,
+                    "keep_prob": 0.7310434128622902
+                },
+                "time": 775.4424715042114,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 138.90023632566172,
+                "best_params": {
+                    "hidden_dim": 9,
+                    "learning_rate": 0.22115059676011922,
+                    "iterations": 0,
+                    "keep_prob": 0.7296280136265327
+                },
+                "time": 440.34149265289307,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "drift": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.2970460358737119,
+                "best_params": {
+                    "hidden_dim": 8,
+                    "learning_rate": 0.00018532016863986387,
+                    "iterations": 78,
+                    "keep_prob": 0.0003661328386121687
+                },
+                "time": 4778.287368297577,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 976.963859453504,
+                "best_params": {
+                    "hidden_dim": 7,
+                    "learning_rate": 4.909024963517434e-06,
+                    "iterations": 58,
+                    "keep_prob": 7.5174947733024475e-06
+                },
+                "time": 4566.055265188217,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.04322489834459586,
+                "best_params": {
+                    "hidden_dim": 5,
+                    "learning_rate": 0.0009902506114342119,
+                    "iterations": 15,
+                    "keep_prob": 0.09921503015443574
+                },
+                "time": 4420.4203317165375,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.20932363517368696,
+                "best_params": {
+                    "hidden_dim": 8,
+                    "learning_rate": 1.1159961441451022e-05,
+                    "iterations": 73,
+                    "keep_prob": 0.006207467198584412
+                },
+                "time": 3421.3456671237946,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 5836.449995179047,
+                "best_params": {
+                    "hidden_dim": 4,
+                    "learning_rate": 0.0013424926415204163,
+                    "iterations": 72,
+                    "keep_prob": 5.407483217087405e-06
+                },
+                "time": 4277.528475046158,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 3399.3929132337303,
+                "best_params": {
+                    "hidden_dim": 7,
+                    "learning_rate": 0.038671915787301434,
+                    "iterations": 48,
+                    "keep_prob": 4.204893077426169e-06
+                },
+                "time": 2701.2948236465454,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "meteo": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.01982461403421909,
+                "best_params": {
+                    "hidden_dim": 1,
+                    "learning_rate": 0.00016960127584525247,
+                    "iterations": 70,
+                    "keep_prob": 0.15851673881695066
+                },
+                "time": 974.7004754543304,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 4.768882512821753,
+                "best_params": {
+                    "hidden_dim": 0,
+                    "learning_rate": 9.313149542648596e-06,
+                    "iterations": 31,
+                    "keep_prob": 0.07866039466957439
+                },
+                "time": 953.083441734314,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5399194052984075,
+                "best_params": {
+                    "hidden_dim": 4,
+                    "learning_rate": 0.024877562840495183,
+                    "iterations": 24,
+                    "keep_prob": 4.3421238401250486e-05
+                },
+                "time": 945.7847504615784,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.29668696329861555,
+                "best_params": {
+                    "hidden_dim": 8,
+                    "learning_rate": 0.013161516662742453,
+                    "iterations": 12,
+                    "keep_prob": 1.0010444162691094e-06
+                },
+                "time": 541.9382791519165,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 7.125007520650923,
+                "best_params": {
+                    "hidden_dim": 9,
+                    "learning_rate": 0.0014334520137400174,
+                    "iterations": 0,
+                    "keep_prob": 0.08727789780664075
+                },
+                "time": 933.1517245769501,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 5.942553059853114,
+                "best_params": {
+                    "hidden_dim": 9,
+                    "learning_rate": 1.0,
+                    "iterations": 95,
+                    "keep_prob": 0.05712823687334751
+                },
+                "time": 526.0997622013092,
+                "optimization_method": "bayesian_optimization"
+            }
+        }
+    },
+    "stmvl": {
+        "bafu": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.00039376868197749104,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 1e-06,
+                    "alpha": 1
+                },
+                "time": 76.12910866737366,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 0.048995903376359645,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 0.00032243633448374805,
+                    "alpha": 1
+                },
+                "time": 70.58537435531616,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5362440044647367,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 0.6141055066310172,
+                    "alpha": 1
+                },
+                "time": 73.48728823661804,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.2657799321813768,
+                "best_params": {
+                    "window_size": 35,
+                    "gamma": 5.6114008727707866e-05,
+                    "alpha": 2
+                },
+                "time": 178.60156846046448,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.07508217146507018,
+                "best_params": {
+                    "window_size": 96,
+                    "gamma": 1.2100675864142366e-06,
+                    "alpha": 1
+                },
+                "time": 71.45449638366699,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 0.06193619004204967,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 1e-06,
+                    "alpha": 1
+                },
+                "time": 197.43736147880554,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "chlorine": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.0003340923692071174,
+                "best_params": {
+                    "window_size": 37,
+                    "gamma": 0.029083763101608137,
+                    "alpha": 4
+                },
+                "time": 377.3642191886902,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 0.003057447027821416,
+                "best_params": {
+                    "window_size": 49,
+                    "gamma": 0.20944717027347381,
+                    "alpha": 5
+                },
+                "time": 481.5598909854889,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.4921953588046992,
+                "best_params": {
+                    "window_size": 30,
+                    "gamma": 2.2585723199362597e-05,
+                    "alpha": 6
+                },
+                "time": 403.2247431278229,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.2471974179465508,
+                "best_params": {
+                    "window_size": 71,
+                    "gamma": 0.0070224656785417856,
+                    "alpha": 5
+                },
+                "time": 969.147109746933,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 0.004953726019761073,
+                "best_params": {
+                    "window_size": 26,
+                    "gamma": 4.042491613537134e-05,
+                    "alpha": 5
+                },
+                "time": 381.9511659145355,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 0.003914071039195414,
+                "best_params": {
+                    "window_size": 24,
+                    "gamma": 1.3068263579834513e-06,
+                    "alpha": 3
+                },
+                "time": 917.920396566391,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "climate": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.017244025408555852,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 0.999999,
+                    "alpha": 1
+                },
+                "time": 18.483767986297607,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 48.37649489707433,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 0.999999,
+                    "alpha": 1
+                },
+                "time": 19.92121458053589,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5736207097301786,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 1e-06,
+                    "alpha": 4
+                },
+                "time": 19.301857709884644,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.31243544459656913,
+                "best_params": {
+                    "window_size": 60,
+                    "gamma": 0.999999,
+                    "alpha": 2
+                },
+                "time": 78.2943902015686,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 97.54105655021966,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 0.999999,
+                    "alpha": 1
+                },
+                "time": 18.588923692703247,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 72.958775723647,
+                "best_params": {
+                    "window_size": 99,
+                    "gamma": 0.999999,
+                    "alpha": 1
+                },
+                "time": 65.1310658454895,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "drift": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.07319139052811896,
+                "best_params": {
+                    "window_size": 20,
+                    "gamma": 0.999999,
+                    "alpha": 1
+                },
+                "time": 210.27724313735962,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 401.2313759536977,
+                "best_params": {
+                    "window_size": 65,
+                    "gamma": 0.07007999902413059,
+                    "alpha": 3
+                },
+                "time": 229.46753478050232,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": -0.006550105845423815,
+                "best_params": {
+                    "window_size": 26,
+                    "gamma": 0.052337915699283866,
+                    "alpha": 1
+                },
+                "time": 224.4525740146637,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 3432.5829979861132,
+                "best_params": {
+                    "window_size": 50,
+                    "gamma": 1e-06,
+                    "alpha": 1
+                },
+                "time": 217.34987664222717,
+                "optimization_method": "bayesian_optimization"
+            }
+        },
+        "meteo": {
+            "corr": {
+                "metric": "corr",
+                "best_score": 0.0014198737172008702,
+                "best_params": {
+                    "window_size": 81,
+                    "gamma": 9.616453915621372e-05,
+                    "alpha": 9
+                },
+                "time": 35.987812757492065,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mae": {
+                "metric": "mae",
+                "best_score": 1.0210350531226593,
+                "best_params": {
+                    "window_size": 46,
+                    "gamma": 0.0018813888099138347,
+                    "alpha": 9
+                },
+                "time": 39.478262424468994,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi": {
+                "metric": "mi",
+                "best_score": 0.5323875880476756,
+                "best_params": {
+                    "window_size": 59,
+                    "gamma": 0.0078115783045013786,
+                    "alpha": 8
+                },
+                "time": 37.22299790382385,
+                "optimization_method": "bayesian_optimization"
+            },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.26747339122859565,
+                "best_params": {
+                    "window_size": 47,
+                    "gamma": 0.00040108854718849104,
+                    "alpha": 6
+                },
+                "time": 120.44925451278687,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse": {
+                "metric": "rmse",
+                "best_score": 1.941392239197295,
+                "best_params": {
+                    "window_size": 85,
+                    "gamma": 4.0817419935477964e-05,
+                    "alpha": 9
+                },
+                "time": 40.686354875564575,
+                "optimization_method": "bayesian_optimization"
+            },
+            "rmse_mae": {
+                "metric": "rmse_mae",
+                "best_score": 1.486999652494301,
+                "best_params": {
+                    "window_size": 72,
+                    "gamma": 0.0008560551406931331,
+                    "alpha": 9
+                },
+                "time": 119.6608407497406,
+                "optimization_method": "bayesian_optimization"
+            }
+        }
+    }
+}
