@@ -63,7 +63,6 @@ DEFAULT_PARAMS = {
     'iim': [5],
     'mrnn': [10, 0.01, 1000, 1.0,
                 # 50
-
                 ],
-    'stmvl': [10, 1e-3, 5] # TODO Check
+    'stmvl': [2, 0.85, 7]
 }
