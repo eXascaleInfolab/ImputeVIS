@@ -1,0 +1,77 @@
+{
+    "bafu": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "window_size": 2,
+            "gamma": 0.85,
+            "alpha": 7
+        },
+        "rmse": 0.2005751918193944,
+        "mae": 0.13327736327360867,
+        "mi": 2.808642102203048,
+        "corr": 0.9973565062667115,
+        "time_taken": 0.38768625259399414
+    },
+    "chlorine": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "window_size": 2,
+            "gamma": 0.85,
+            "alpha": 7
+        },
+        "rmse": 0.011385528689772965,
+        "mae": 0.006559913779295289,
+        "mi": 3.4902580771135447,
+        "corr": 0.9987659307896628,
+        "time_taken": 0.021361589431762695
+    },
+    "climate": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "window_size": 2,
+            "gamma": 0.85,
+            "alpha": 7
+        },
+        "rmse": 150.18274831242994,
+        "mae": 75.01201160426585,
+        "mi": 1.2978805842001262,
+        "corr": 0.9585638781170205,
+        "time_taken": 0.029523134231567383
+    },
+    "drift": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "window_size": 2,
+            "gamma": 0.85,
+            "alpha": 7
+        },
+        "rmse": 14926.021611343118,
+        "mae": 3542.569389253011,
+        "mi": 1.384784339451139,
+        "corr": 0.5906150905758263,
+        "time_taken": 0.01944255828857422
+    },
+    "meteo": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "window_size": 2,
+            "gamma": 0.85,
+            "alpha": 7
+        },
+        "rmse": 6.19357139142438,
+        "mae": 2.4859663870970183,
+        "mi": 2.355520270425953,
+        "corr": 0.9855923208763557,
+        "time_taken": 0.14134550094604492
+    }
+}

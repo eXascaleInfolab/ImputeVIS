@@ -142,18 +142,16 @@ def cdrec_optimal_results(results_path: str) -> dict:
     dict
         A dictionary containing the results summary for each dataset and algorithm.
     """
-    # Load best_params from the saved JSON file
-    with open(os.path.join('results', 'best_params_algorithm_by_metric.json')) as infile:
-        best_params = json.load(infile)
+    best_params = get_best_params()
 
     # Define storage for metrics and configuration details
     results_summary = {}
 
     # Extract 'cdrec' configurations
-    cdrec_configs = best_params.get("cdrec", {})
+    configs = best_params.get("cdrec", {})
 
     # Iterate through algorithms and datasets
-    for dataset, metrics in cdrec_configs.items():
+    for dataset, metrics in configs.items():
         for metric_name, config in metrics.items():
             # Get paths for the dataset using the helper function
             raw_file_path, obf_file_path = get_dataset_paths(dataset)
@@ -206,6 +204,25 @@ def cdrec_optimal_results(results_path: str) -> dict:
     return results_summary
 
 
+def get_best_params() -> dict:
+    """
+    Load the best_params from the saved JSON file.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    dict
+        A dictionary containing the best_params for each algorithm and dataset.
+    """
+    # Load best_params from the saved JSON file
+    with open(os.path.join('results', 'best_params_algorithm_by_metric.json')) as infile:
+        best_params = json.load(infile)
+    return best_params
+
+
 def cdrec_default_results(results_path: str) -> dict:
     """
     Run imputation using the default parameters and save the results.
@@ -233,13 +250,17 @@ def cdrec_default_results(results_path: str) -> dict:
         ground_truth_matrix = utils.load_and_trim_matrix(raw_file_path)
         obfuscated_matrix = utils.load_and_trim_matrix(obf_file_path)
 
+        rank = algorithm_parameters.DEFAULT_PARAMS["cdrec"][0]
+        eps = algorithm_parameters.DEFAULT_PARAMS["cdrec"][1]
+        iters = algorithm_parameters.DEFAULT_PARAMS["cdrec"][2]
+
         # Run the imputation (using CDRec as an example)
         start_time = time.time()
         imputed_matrix = Wrapper.algo_collection.native_cdrec_param(
             __py_matrix=obfuscated_matrix,
-            __py_rank=algorithm_parameters.DEFAULT_PARAMS["cdrec"][0],
-            __py_eps=algorithm_parameters.DEFAULT_PARAMS["cdrec"][1],
-            __py_iters=algorithm_parameters.DEFAULT_PARAMS["cdrec"][2]
+            __py_rank=rank,
+            __py_eps=eps,
+            __py_iters=iters
         )
         end_time = time.time()
 
@@ -251,9 +272,9 @@ def cdrec_default_results(results_path: str) -> dict:
             "metric_used_for_optimization": "N/A",
             "optimization_method": "N/A",
             "best_params": {
-                "rank": -1,
-                "eps": 1.0001,
-                "iters": 100
+                "rank": rank,
+                "eps": eps,
+                "iters": iters
             },
             "rmse": rmse,
             "mae": mae,
@@ -272,7 +293,189 @@ def cdrec_default_results(results_path: str) -> dict:
 
     return results_summary
 
+# TODO
+# def iim_optimal_results(results_path: str) -> dict:
+
+# TODO
+# def iim_default_results(results_path: str) -> dict:
+
+# TODO
+# def mrnn_optimal_results(results_path: str) -> dict:
+
+# TODO
+# def mrnn_default_results(results_path: str) -> dict:
+
+
+def stmvl_optimal_results(results_path: str) -> dict:
+    """
+    Run imputation using the optimal parameters and save the results.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to the folder containing the saved 'best_params_output.json'.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the results summary for each dataset and algorithm.
+
+    """
+    best_params = get_best_params()
+
+    # Define storage for metrics and configuration details
+    results_summary = {}
+
+    # Extract 'stmvl' configurations
+    configs = best_params.get("stmvl", {})
+
+    # Iterate through datasets
+    for dataset, metrics in configs.items():
+        for metric_name, config in metrics.items():
+            # Get paths for the dataset using the helper function
+            raw_file_path, obf_file_path = get_dataset_paths(dataset)
+
+            # Load matrices for the dataset
+            ground_truth_matrix = utils.load_and_trim_matrix(raw_file_path)
+            obfuscated_matrix = utils.load_and_trim_matrix(obf_file_path)
+
+            # Extract the best parameters
+            window_size = config["best_params"]["window_size"]
+            gamma = config["best_params"]["gamma"]
+            alpha = config["best_params"]["alpha"]
+
+            # Run the imputation (using CDRec as an example)
+            start_time = time.time()
+            imputed_matrix = Wrapper.algo_collection.native_stmvl_param(
+                __py_matrix=obfuscated_matrix,
+                __py_window=int(window_size),
+                __py_gamma=float(gamma),
+                __py_alpha=int(alpha)
+            )
+            end_time = time.time()
+
+            corr, mae, mi, rmse = determine_metrics(ground_truth_matrix, imputed_matrix, obfuscated_matrix)
+
+            # Create a unique key for results_summary combining dataset and metric_name
+            key = f"{dataset}_{metric_name}"
+
+            # Store results
+            results_summary[key] = {
+                "algorithm": "stmvl",
+                "metric_used_for_optimization": config["metric"],
+                "optimization_method": config["optimization_method"],
+                "best_params": config["best_params"],
+                "rmse": rmse,
+                "mae": mae,
+                "mi": mi,
+                "corr": corr,
+                "time_taken": end_time - start_time
+            }
+            print(results_summary[key])
+
+            # Save the imputed matrix to a separate file (using numpy as an example)
+            np.save(os.path.join(results_path, f"stmvl_{dataset}_{metric_name}_imputed.npy"), imputed_matrix)
+
+    # Save the summary results to a separate JSON file
+    with open(os.path.join(results_path, 'stmvl_optimized_summary_results.json'), 'w') as outfile:
+        json.dump(results_summary, outfile, indent=4)
+
+    return results_summary
+
+
+def stmvl_default_results(results_path: str) -> dict:
+    """
+    Run imputation using the default parameters and save the results.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to the folder containing the saved 'best_params_output.json'.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the results summary for each dataset and algorithm.
+
+    """
+    # Define storage for metrics and configuration details
+    results_summary = {}
+
+    # Iterate through datasets
+    for dataset in DATASETS:
+        # Get paths for the dataset using the helper function
+        raw_file_path, obf_file_path = get_dataset_paths(dataset)
+
+        # Load matrices for the dataset
+        ground_truth_matrix = utils.load_and_trim_matrix(raw_file_path)
+        obfuscated_matrix = utils.load_and_trim_matrix(obf_file_path)
+
+        window = algorithm_parameters.DEFAULT_PARAMS["stmvl"][0]
+        gamma = algorithm_parameters.DEFAULT_PARAMS["stmvl"][1]
+        alpha = algorithm_parameters.DEFAULT_PARAMS["stmvl"][2]
+
+        # Run the imputation (using CDRec as an example)
+        start_time = time.time()
+        imputed_matrix = Wrapper.algo_collection.native_stmvl_param(
+            __py_matrix=obfuscated_matrix,
+            __py_window=window,
+            __py_gamma=gamma,
+            __py_alpha=alpha
+        )
+        end_time = time.time()
+
+        corr, mae, mi, rmse = determine_metrics(ground_truth_matrix, imputed_matrix, obfuscated_matrix)
+
+        # Store results
+        results_summary[dataset] = {
+            "algorithm": "stmvl",
+            "metric_used_for_optimization": "N/A",
+            "optimization_method": "N/A",
+            "best_params": {
+                "window_size": window,
+                "gamma": gamma,
+                "alpha": alpha
+            },
+            "rmse": rmse,
+            "mae": mae,
+            "mi": mi,
+            "corr": corr,
+            "time_taken": end_time - start_time
+        }
+        print(results_summary[dataset])
+
+        # Save the imputed matrix to a separate file (using numpy as an example)
+        np.save(os.path.join(results_path, f"stmvl_{dataset}_default_imputed.npy"), imputed_matrix)
+
+    # Save the summary results to a separate JSON file
+    with open(os.path.join(results_path, 'stmvl_default_summary_results.json'), 'w') as outfile:
+        json.dump(results_summary, outfile, indent=4)
+
+    return results_summary
+
+
 def determine_metrics(ground_truth_matrix: np.array, imputed_matrix: np.array, obfuscated_matrix: np.array) -> Tuple[float, float, float, float]:
+    """
+    Given the ground truth, imputed and obfuscated matrices, compute the metrics.
+
+    Parameters
+    ----------
+    ground_truth_matrix : np.array
+        Ground truth matrix.
+    imputed_matrix : np.array
+        Imputed matrix.
+    obfuscated_matrix : np.array
+        Obfuscated matrix.
+
+    Returns
+    -------
+    tuple
+        Tuple containing the correlation, MAE, MI and RMSE.
+
+    Notes
+    -----
+    The imputed matrix is converted to a numpy array to ensure compatibility with the metrics functions.
+    """
     # Compute metrics
     rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
     mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
@@ -323,9 +526,9 @@ def get_dataset_paths(dataset: str) -> Tuple[str, str]:
 if __name__ == '__main__':
     #### Step 1: Determine optimal results
     # Get the best params by dataset
-    # best_params = get_best_params_by_dataset()
+    get_best_params_by_dataset()
     # Get the best params by algorithm
-    # best_params = get_best_params_by_algorithm()
+    get_best_params_by_algorithm()
 
     # Print the best_params
     # print(json.dumps(best_params, indent=4))
@@ -333,10 +536,16 @@ if __name__ == '__main__':
 
     ##### Step 2: Run imputation using the best params
     cdrec_optimal_results(results_path="results/cdrec")
+    # iim_optimal_results(results_path="results/iim")
+    # mrnn_optimal_results(results_path="results/mrnn")
+    stmvl_optimal_results(results_path="results/stmvl")
+
+
+    ##### Step 3: Run imputation using the default params
     cdrec_default_results(results_path="results/cdrec")
-
-    #####
-
+    # iim_default_results(results_path="results/iim")
+    # mrnn_default_results(results_path="results/mrnn")
+    stmvl_default_results(results_path="results/stmvl")
 
 
 
