@@ -57,3 +57,13 @@ PARAM_NAMES = {
              ],
     'stmvl': ['window_size', 'gamma', 'alpha']
 }
+
+DEFAULT_PARAMS = {
+    'cdrec': [0, 1e-6, 100],
+    'iim': [5],
+    'mrnn': [10, 0.01, 1000, 1.0,
+                # 50
+
+                ],
+    'stmvl': [10, 1e-3, 5] # TODO Check
+}
