@@ -253,6 +253,7 @@ export default {
           const response = await axios.post('http://localhost:8000/api/fetchParameters/',
               {
                 data_set: dataSet,
+                normalization: normalizationMode.value,
                 param_options: selectedParamOption.value
               },
               {
@@ -358,6 +359,7 @@ export default {
               const response = await axios.post('http://localhost:8000/api/cdrec/',
                   {
                     data_set: dataSet,
+                    normalization: normalizationMode.value,
                     truncation_rank: truncationRank,
                     epsilon: epsilon,
                     iterations: iterations,
@@ -382,7 +384,7 @@ export default {
               //The push should theoretically ensure that we are just adding
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
                 if (displayImputation) {
-                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value,  "CDRec:" + currentSeriesNames[index]));
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "CDRec:" + currentSeriesNames[index]));
                 } else {
                   chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec:" + currentSeriesNames[index]));
                 }
@@ -403,6 +405,7 @@ export default {
               const response = await axios.post('http://localhost:8000/api/iim/',
                   {
                     data_set: dataSet,
+                    normalization: normalizationMode.value,
                     alg_code: formattedAlgCode,
                   },
                   {
@@ -424,7 +427,7 @@ export default {
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
                 if (displayImputation) {
-                  newSeriesData.push(...createSegmentedSeries(index, data ,obfuscatedMatrix[index], chartOptionsImputed.value, "IIM:" + currentSeriesNames[index]));
+                  newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "IIM:" + currentSeriesNames[index]));
                 } else {
                   chartOptionsImputed.value.series.push(createSeries(index, data, "IIM:" + currentSeriesNames[index]));
                 }
@@ -444,6 +447,7 @@ export default {
               const response = await axios.post('http://localhost:8000/api/mrnn/',
                   {
                     data_set: dataSet,
+                    normalization: normalizationMode.value,
                     hidden_dim: hiddenDim,
                     learning_rate: learningRate,
                     iterations: iterationsMRNN,
@@ -489,6 +493,7 @@ export default {
               const response = await axios.post('http://localhost:8000/api/stmvl/',
                   {
                     data_set: dataSet,
+                    normalization: normalizationMode.value,
                     window_size: windowSize,
                     gamma: gamma,
                     alpha: alpha,
@@ -595,10 +600,9 @@ export default {
       }
     }
     // Watch for changes and call fetchData when it changes
-    watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, { immediate: true });
+    watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
     // Watch for changes and call fetchData when it changes
     watch(selectedParamOption, handleParamSelectChange, {immediate: true});
-
 
 
     return {

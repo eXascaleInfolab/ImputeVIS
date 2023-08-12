@@ -94,6 +94,8 @@
     <div class="col-lg-4">
       <div class="sidebar col-lg-5">
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+        Impacts only data display
+        <normalization-toggle v-model="normalizationMode"></normalization-toggle>
         <button type="submit" class="btn btn-primary mt-5" @click="fetchDataFeatures">Get Features</button>
       </div>
     </div>
@@ -105,6 +107,7 @@ import {ref, watch, computed} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
+import NormalizationToggle from '../components/NormalizationToggle.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
@@ -119,9 +122,11 @@ export default {
     DataSelect,
     highcharts: Chart,
     MetricsDisplay,
-    MissingRate
+    MissingRate,
+    NormalizationToggle
   }, setup() {
     const dataSelect = ref('climate_eighth');
+    const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
     const loading = ref(false)
@@ -184,8 +189,8 @@ export default {
         let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
-              data_set: dataSet
-
+              data_set: dataSet,
+              normalization: normalizationMode.value,
             },
             {
               headers: {
@@ -218,7 +223,7 @@ export default {
       error.value = "";
       loadedResults.value = false;
       try {
-        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+        let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/categorizeData/',
             {
               data_set: dataSet
@@ -252,10 +257,11 @@ export default {
       currentSeriesNames = newSeriesNames;
     };
 
-    watch(dataSelect, handleDataSelectChange, {immediate: true});
+watch([dataSelect, normalizationMode], handleDataSelectChange, {immediate: true});
 
     return {
       dataSelect,
+      normalizationMode,
       updateSeriesNames,
       features,
       loading,

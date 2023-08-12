@@ -66,6 +66,7 @@
         <optimization-select v-model="optimizationSelect" @parametersChanged="handleParametersChanged"/>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
+        <normalization-toggle v-model="normalizationMode"></normalization-toggle>
 
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
         <div class="mt-3">
@@ -81,6 +82,7 @@ import {ref, watch, computed} from 'vue';
 import DataSelectOptimization from '../components/DataSelectOptimization.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
+import NormalizationToggle from '../components/NormalizationToggle.vue'
 import OptimizationSelect from '../components/OptimizationSelect.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
@@ -102,11 +104,13 @@ export default {
     highcharts: Chart,
     MetricsDisplay,
     MissingRate,
+    NormalizationToggle,
     OptimizationSelect
   },
   setup() {
     const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
     const dataSelect = ref('climate_eighth') // Default data
+    const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const learningRate = ref(0.01); // Default learning rate is 0.01
@@ -135,8 +139,8 @@ export default {
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
-              data_set: dataSet
-
+              data_set: dataSet,
+              normalization: normalizationMode.value,
             },
             {
               headers: {
@@ -169,6 +173,7 @@ export default {
             {
               ...optimizationParameters.value, // Spread the optimization parameters into the post body
               data_set: dataSet,
+              normalization: normalizationMode.value,
               algorithm: 'mrnn'
             },
             {
@@ -200,6 +205,7 @@ export default {
         const response = await axios.post('http://localhost:8000/api/mrnn/',
             {
               data_set: dataSet,
+              normalization: normalizationMode.value,
               hidden_dim: hiddenDim.value,
               learning_rate: learningRate.value,
               iterations: iterations.value,
@@ -222,7 +228,7 @@ export default {
 
         const displayImputation = missingRate.value != '40' && missingRate.value != '60' && missingRate.value != '80'
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.length > 0  && missingRate) {
+          if (currentSeriesNames.length > 0 && missingRate) {
             if (displayImputation) {
               newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames[index]));
             } else {
@@ -257,9 +263,7 @@ export default {
     };
 
     // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, {immediate: true});
-    // Watch for changes to missingRate and call fetchData when it changes
-    watch(missingRate, handleDataSelectChange, { immediate: true });
+    watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
 
     const resetToOptimalParameters = () => {
       if (optimalResponse) {
@@ -277,6 +281,7 @@ export default {
       chartOptionsOriginal,
       chartOptionsImputed,
       dataSelect,
+      normalizationMode,
       updateSeriesNames,
       learningRate,
       hiddenDim,

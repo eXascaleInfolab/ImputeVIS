@@ -306,8 +306,6 @@ def process_all_datasets_to_split(input_directory):
     drift_dir = os.path.join(input_directory, 'drift', 'drift10', 'raw_matrices')
     split_file_lines(drift_dir)
 
-import numpy as np
-
 
 def load_and_trim_matrix(file_path: str, max_columns: int = 10) -> np.ndarray:
     """

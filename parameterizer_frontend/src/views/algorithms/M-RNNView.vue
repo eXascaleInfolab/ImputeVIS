@@ -14,6 +14,7 @@
     <div class="col-lg-4">
       <form @submit.prevent="submitForm" class="sidebar col-lg-5">
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+        <normalization-toggle v-model="normalizationMode"></normalization-toggle>
         <missing-rate v-model="missingRate"/>
         <!-- Learning Rate -->
         <div class="mb-3">
@@ -60,6 +61,7 @@ import {ref, watch, computed} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
+import NormalizationToggle from '../components/NormalizationToggle.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
@@ -79,10 +81,12 @@ export default {
     DataSelect,
     highcharts: Chart,
     MetricsDisplay,
-    MissingRate
+    MissingRate,
+    NormalizationToggle,
   },
   setup() {
     const dataSelect = ref('climate_eighth') // Default data
+    const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const missingRate = ref('1'); // Default missing rate is 1%
     const learningRate = ref(0.01); // Default learning rate is 0.01
@@ -107,8 +111,8 @@ export default {
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
-              data_set: dataSet
-
+              data_set: dataSet,
+              normalization: normalizationMode.value,
             },
             {
               headers: {
@@ -140,6 +144,7 @@ export default {
         const response = await axios.post('http://localhost:8000/api/mrnn/',
             {
               data_set: dataSet,
+              normalization: normalizationMode.value,
               hidden_dim: hiddenDim.value,
               learning_rate: learningRate.value,
               iterations: iterations.value,
@@ -162,7 +167,7 @@ export default {
 
         const displayImputation = missingRate.value != '40' && missingRate.value != '60' && missingRate.value != '80'
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.length > 0  && missingRate) {
+          if (currentSeriesNames.length > 0 && missingRate) {
             if (displayImputation) {
               newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames[index]));
             } else {
@@ -198,9 +203,7 @@ export default {
       currentSeriesNames = newSeriesNames;
     };
     // Watch for changes and call fetchData when it changes
-    watch(dataSelect, handleDataSelectChange, {immediate: true});
-    // Watch for changes to missingRate and call fetchData when it changes
-    watch(missingRate, handleDataSelectChange, { immediate: true });
+watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
 
     return {
       submitForm,
@@ -209,6 +212,7 @@ export default {
       chartOptionsImputed,
       updateSeriesNames,
       dataSelect,
+      normalizationMode,
       learningRate,
       hiddenDim,
       iterations,

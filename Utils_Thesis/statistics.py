@@ -188,6 +188,32 @@ def determine_correlation(ground_truth_matrix: np.ndarray, imputed_matrix: np.nd
     return float(correlation)
 
 
+def zscore_normalization(matrix: np.ndarray) -> np.ndarray:
+    """
+    Applies Z-score normalization to a matrix.
+
+    Parameters
+    ----------
+    matrix : np.ndarray
+        The input matrix to be normalized.
+
+    Returns
+    -------
+    np.ndarray
+        The Z-score normalized matrix.
+
+    Notes
+    -----
+    This function assumes that NaN values might be present in the input matrix, and will avoid them during computation.
+    """
+    # Calculate mean and std for the matrix excluding NaNs
+    mean_val = np.nanmean(matrix)
+    std_val = np.nanstd(matrix)
+
+    # Apply the z-score normalization
+    normalized_matrix = (matrix - mean_val) / std_val
+
+    return normalized_matrix
 
 # Uncomment for testing and troubleshooting
 # sys.path.insert(0, os.path.abspath(".."))

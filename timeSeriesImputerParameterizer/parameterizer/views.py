@@ -50,6 +50,9 @@ def cdrec(request):
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             corr = statistics.determine_correlation(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished CDRec! RMSE: ", rmse)
+            # Check if normalization is required
+            if data.get('normalization') == 'Normalized':
+                imputed_matrix = statistics.zscore_normalization(imputed_matrix)
             return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi, 'corr': corr,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
                                 , status=200)
@@ -163,6 +166,9 @@ def iim(request):
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             corr = statistics.determine_correlation(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished IIM! RMSE: ", rmse)
+            # Check if normalization is required
+            if data.get('normalization') == 'Normalized':
+                imputed_matrix = statistics.zscore_normalization(imputed_matrix)
             return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi, 'corr': corr,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()},
                                 status=200)
@@ -221,6 +227,9 @@ def mrnn(request):
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             corr = statistics.determine_correlation(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished M-RNN! RMSE: ", rmse)
+            # Check if normalization is required
+            if data.get('normalization') == 'Normalized':
+                imputed_matrix = statistics.zscore_normalization(imputed_matrix)
             return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi, 'corr': corr,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()},
                                 status=200)
@@ -271,6 +280,9 @@ def stmvl(request):
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             corr = statistics.determine_correlation(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             print("Finished STMVL! RMSE: ", rmse)
+            # Check if normalization is required
+            if data.get('normalization') == 'Normalized':
+                imputed_matrix = statistics.zscore_normalization(imputed_matrix)
             return JsonResponse({'rmse': rmse, 'mae': mae, 'mi': mi, 'corr': corr,
                                  'matrix_imputed': np.transpose(np.asarray(imputed_matrix)).tolist()}
                                 , status=200)
@@ -301,11 +313,23 @@ def fetch_data(request):
     if request.method == 'POST':
         data, data_set = load_from_request(request)
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+
+        matrix_to_return = None
+
         if obfuscated_file_path is not None:
             obfuscated_matrix = utils.load_and_trim_matrix(obfuscated_file_path)
+            matrix_to_return = obfuscated_matrix
+        elif clean_file_path is not None:
+            ground_truth_matrix = utils.load_and_trim_matrix(clean_file_path)
+            matrix_to_return = ground_truth_matrix
+
+        if matrix_to_return is not None:
+            # Check if normalization is required
+            if data.get('normalization') == 'Normalized':
+                matrix_to_return = statistics.zscore_normalization(matrix_to_return)
 
             # Transpose the matrix and convert to a list
-            transposed_list = np.transpose(obfuscated_matrix).tolist()
+            transposed_list = np.transpose(matrix_to_return).tolist()
 
             # Replace NaN values with None in the list
             for i in range(len(transposed_list)):
@@ -314,10 +338,6 @@ def fetch_data(request):
                         transposed_list[i][j] = None
 
             return JsonResponse({'matrix': transposed_list}, status=200)
-
-        if clean_file_path is not None:
-            ground_truth_matrix = utils.load_and_trim_matrix(clean_file_path)
-            return JsonResponse({'matrix': np.transpose(ground_truth_matrix).tolist()}, status=200)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
@@ -339,6 +359,8 @@ def handle_data_set(data_set: str) -> str:
 
     if data_set.lower().startswith("bafu"):
         return "bafu"
+    elif data_set.lower().startswith("cl2fullLarge"):
+        return "chlorine"
     elif data_set.lower().startswith("climate"):
         return "climate"
     elif data_set.lower().startswith("batch10"):
