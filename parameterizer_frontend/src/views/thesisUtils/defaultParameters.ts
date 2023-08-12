@@ -17,7 +17,7 @@ export interface CDRecDefaults {
 }
 
 export const CDREC_DEFAULTS: CDRecDefaults = {
-    reductionValue: "reduction value",
+    reductionValue: "0",
     epsilon: 1E-6,
     iterations: 100,
 };

@@ -114,7 +114,6 @@ import Highcharts from 'highcharts'
 import HighchartsBoost from 'highcharts/modules/boost'
 import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
-// Initialize exporting modules
 HighchartsBoost(Highcharts)
 
 export default {

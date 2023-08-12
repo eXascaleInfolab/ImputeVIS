@@ -73,7 +73,6 @@ import {
   generateChartOptionsLarge
 } from "@/views/thesisUtils/utils";
 
-// Initialize exporting modules
 HighchartsBoost(Highcharts)
 
 export default {
