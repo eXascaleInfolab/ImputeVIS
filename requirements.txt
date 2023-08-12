@@ -3,6 +3,7 @@
 Django==4.2.3
 django-cors-headers~=4.0.0
 numpy==1.23.5
+matplotlib~=3.7.2
 pyswarms~=1.3.0
 tensorflow~=2.12.0
 # Editable install with no version control (pip==20.0.2)
