@@ -1,0 +1,37 @@
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+Dataset & Optimized On & Method & Parameters \\ \hline
+Bafu & RMSE MAE & BO & Rank: 9; Epsilon: 0.01516; Iterations: 100 \\ \hline
+Bafu & MI CORR & BO & Rank: 9; Epsilon: 0.00756; Iterations: 100 \\ \hline
+Bafu & RMSE & BO & Rank: 9; Epsilon: 1.0; Iterations: 100 \\ \hline
+Bafu & MAE & BO & Rank: 9; Epsilon: 1.0; Iterations: 100 \\ \hline
+Bafu & MI & BO & Rank: 9; Epsilon: 0.99999; Iterations: 438 \\ \hline
+Bafu & CORR & BO & Rank: 9; Epsilon: 0.95733; Iterations: 439 \\ \hline
+Chlorine & RMSE MAE & BO & Rank: 9; Epsilon: 0.48435; Iterations: 638 \\ \hline
+Chlorine & MI CORR & BO & Rank: 9; Epsilon: 0.30865; Iterations: 472 \\ \hline
+Chlorine & RMSE & BO & Rank: 9; Epsilon: 1.0; Iterations: 1000 \\ \hline
+Chlorine & MAE & BO & Rank: 9; Epsilon: 0.91401; Iterations: 969 \\ \hline
+Chlorine & MI & BO & Rank: 2; Epsilon: 0.02087; Iterations: 159 \\ \hline
+Chlorine & CORR & SH & Rank: 9; Epsilon: 1.0; Iterations: 100 \\ \hline
+Climate & RMSE MAE & BO & Rank: 3; Epsilon: 1.0; Iterations: 100 \\ \hline
+Climate & MI CORR & BO & Rank: 3; Epsilon: 0.00466; Iterations: 126 \\ \hline
+Climate & RMSE & BO & Rank: 3; Epsilon: 1.0; Iterations: 484 \\ \hline
+Climate & MAE & SH & Rank: 3; Epsilon: 1.0; Iterations: 500 \\ \hline
+Climate & MI & SH & Rank: 3; Epsilon: 1.0; Iterations: 700 \\ \hline
+Climate & CORR & BO & Rank: 3; Epsilon: 1.0; Iterations: 100 \\ \hline
+Drift & RMSE MAE & SH & Rank: 4; Epsilon: 2e-05; Iterations: 500 \\ \hline
+Drift & RMSE & SH & Rank: 4; Epsilon: 0.0001; Iterations: 300 \\ \hline
+Drift & MAE & BO & Rank: 4; Epsilon: 8e-05; Iterations: 344 \\ \hline
+Drift & MI & BO & Rank: 2; Epsilon: 1.0; Iterations: 974 \\ \hline
+Drift & CORR & BO & Rank: 4; Epsilon: 1e-05; Iterations: 586 \\ \hline
+Meteo & RMSE MAE & BO & Rank: 3; Epsilon: 1.0; Iterations: 1000 \\ \hline
+Meteo & MI CORR & BO & Rank: 2; Epsilon: 0.01261; Iterations: 100 \\ \hline
+Meteo & RMSE & BO & Rank: 3; Epsilon: 1.0; Iterations: 100 \\ \hline
+Meteo & MAE & BO & Rank: 2; Epsilon: 0.4135; Iterations: 648 \\ \hline
+Meteo & MI & SH & Rank: 1; Epsilon: 0.00215; Iterations: 400 \\ \hline
+Meteo & CORR & SH & Rank: 2; Epsilon: 1.0; Iterations: 200 \\ \hline
+\end{tabular}
+\caption{Results for CDRec}
+\end{table}

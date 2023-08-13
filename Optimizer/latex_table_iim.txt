@@ -1,0 +1,36 @@
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+Dataset & Optimized On & Method & Parameters \\ \hline
+Bafu & RMSE MAE & BO & Learning neighbours: 100 \\ \hline
+Bafu & MI CORR & BO & Learning neighbours: 1 \\ \hline
+Bafu & RMSE & BO & Learning neighbours: 100 \\ \hline
+Bafu & MAE & BO & Learning neighbours: 100 \\ \hline
+Bafu & MI & BO & Learning neighbours: 12 \\ \hline
+Bafu & CORR & BO & Learning neighbours: 100 \\ \hline
+Chlorine & MI CORR & BO & Learning neighbours: 1 \\ \hline
+Chlorine & RMSE & BO & Learning neighbours: 1 \\ \hline
+Chlorine & MAE & BO & Learning neighbours: 1 \\ \hline
+Chlorine & MI & BO & Learning neighbours: 23 \\ \hline
+Chlorine & CORR & BO & Learning neighbours: 1 \\ \hline
+Climate & MI CORR & BO & Learning neighbours: 11 \\ \hline
+Climate & RMSE & BO & Learning neighbours: 31 \\ \hline
+Climate & MAE & BO & Learning neighbours: 47 \\ \hline
+Climate & MI & BO & Learning neighbours: 1 \\ \hline
+Climate & CORR & BO & Learning neighbours: 22 \\ \hline
+Drift & RMSE MAE & BO & Learning neighbours: 2 \\ \hline
+Drift & MI CORR & BO & Learning neighbours: 4 \\ \hline
+Drift & RMSE & BO & Learning neighbours: 1 \\ \hline
+Drift & MAE & BO & Learning neighbours: 1 \\ \hline
+Drift & MI & BO & Learning neighbours: 4 \\ \hline
+Drift & CORR & BO & Learning neighbours: 3 \\ \hline
+Meteo & RMSE MAE & BO & Learning neighbours: 100 \\ \hline
+Meteo & MI CORR & BO & Learning neighbours: 36 \\ \hline
+Meteo & RMSE & BO & Learning neighbours: 100 \\ \hline
+Meteo & MAE & BO & Learning neighbours: 100 \\ \hline
+Meteo & MI & BO & Learning neighbours: 53 \\ \hline
+Meteo & CORR & BO & Learning neighbours: 37 \\ \hline
+\end{tabular}
+\caption{Results for IIM}
+\end{table}
