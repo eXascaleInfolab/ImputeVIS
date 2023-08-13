@@ -372,7 +372,7 @@ def plot_best_algorithm_by_dataset(optimized_paths: List[str], algorithm_names: 
 
 
 def plot_best_algorithm_by_dataset(optimized_file_paths: list) -> None:
-    metrics_to_plot = ['rmse', 'mae', 'mi', 'corr']
+    grouped_metrics = [['rmse', 'mae'], ['mi', 'corr']]
     special_metrics = ['time_taken']
     dataset_metrics_results = {}
 
@@ -393,23 +393,25 @@ def plot_best_algorithm_by_dataset(optimized_file_paths: list) -> None:
                 dataset_metrics_results[dataset][metric_used_for_optimization] = {}
 
             # Store the results for this algorithm
+            all_metrics = [metric for group in grouped_metrics for metric in group] + special_metrics
             dataset_metrics_results[dataset][metric_used_for_optimization][algorithm] = {
-                metric: value[metric] for metric in metrics_to_plot + special_metrics
+                metric: value[metric] for metric in all_metrics
             }
 
     # 2. Plotting
     for dataset, metrics_data in dataset_metrics_results.items():
         for metric_used_for_optimization, algorithms_data in metrics_data.items():
-            # Plot standard metrics
-            plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics_to_plot)
+            # for metric_group in grouped_metrics:
+                plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metric_group, width_factor=0.5)
             # Plot special metrics
-            plot_metrics(dataset, metric_used_for_optimization, algorithms_data, special_metrics)
+            plot_metrics(dataset, metric_used_for_optimization, algorithms_data, special_metrics, width_factor=0.5)
 
-def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics_to_use):
+
+def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics_to_use, width_factor=1.0):
     ind = np.arange(len(metrics_to_use))
     width = 0.35 / len(algorithms_data)
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(10 * width_factor, 5))
     for idx, (algorithm, algo_values) in enumerate(algorithms_data.items()):
         metric_values = [algo_values[metric] for metric in metrics_to_use]
         rects = ax.bar(ind + width * idx, metric_values, width, label=algorithm)
@@ -417,13 +419,13 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
     metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics_to_use]
 
     ax.set_ylabel('Value')
-    ax.set_title(f'{dataset.title()} Metrics Comparison ({metric_used_for_optimization})')
+    ax.set_title(f'{dataset.title()} Metrics Comparison ({metric_used_for_optimization.upper().replace("_", " & ")})')
     ax.set_xticks(ind + width * (len(algorithms_data) - 1) / 2)
     ax.set_xticklabels(metric_display_labels)
     ax.legend()
 
     plt.tight_layout()
-    suffix = "time" if set(metrics_to_use) == set(["time_taken"]) else "metrics"
+    suffix = "_".join(metrics_to_use)
     plt.savefig(f"figures/dataset/{dataset}_comparison_{metric_used_for_optimization}_{suffix}.png")
     plt.show()
 
