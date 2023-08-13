@@ -2,17 +2,17 @@
     "bafu_corr": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "corr",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 99,
-            "gamma": 1e-06,
+            "window_size": 89,
+            "gamma": 0.003981071705534969,
             "alpha": 1
         },
-        "rmse": 0.08709821867355111,
-        "mae": 0.0543543896678837,
-        "mi": 3.173872100290921,
-        "corr": 0.9995262012784882,
-        "time_taken": 1.8015305995941162
+        "rmse": 0.08832677045467335,
+        "mae": 0.05500880287645317,
+        "mi": 3.1705584626612544,
+        "corr": 0.9995115427539101,
+        "time_taken": 1.596696376800537
     },
     "bafu_mae": {
         "algorithm": "stmvl",
@@ -27,7 +27,7 @@
         "mae": 0.05435438572084413,
         "mi": 3.1739387566700175,
         "corr": 0.9995261947869664,
-        "time_taken": 1.8605411052703857
+        "time_taken": 1.9318687915802002
     },
     "bafu_mi": {
         "algorithm": "stmvl",
@@ -42,7 +42,7 @@
         "mae": 0.05692093695142551,
         "mi": 3.1391307824625843,
         "corr": 0.9994577050717987,
-        "time_taken": 1.8004565238952637
+        "time_taken": 1.6625726222991943
     },
     "bafu_mi_corr": {
         "algorithm": "stmvl",
@@ -57,7 +57,7 @@
         "mae": 0.06118884889899103,
         "mi": 3.072365554564198,
         "corr": 0.9994229839824833,
-        "time_taken": 0.8534369468688965
+        "time_taken": 0.7632503509521484
     },
     "bafu_rmse": {
         "algorithm": "stmvl",
@@ -72,7 +72,7 @@
         "mae": 0.054439952353447764,
         "mi": 3.176170578850873,
         "corr": 0.9995246965462772,
-        "time_taken": 1.7894237041473389
+        "time_taken": 2.0782947540283203
     },
     "bafu_rmse_mae": {
         "algorithm": "stmvl",
@@ -87,7 +87,7 @@
         "mae": 0.0543543896678837,
         "mi": 3.173872100290921,
         "corr": 0.9995262012784882,
-        "time_taken": 1.788527011871338
+        "time_taken": 1.614556074142456
     },
     "chlorine_corr": {
         "algorithm": "stmvl",
@@ -102,22 +102,22 @@
         "mae": 0.004701724203993514,
         "mi": 3.557536941283863,
         "corr": 0.9995531087630641,
-        "time_taken": 0.05234789848327637
+        "time_taken": 0.04706072807312012
     },
     "chlorine_mae": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "mae",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 49,
-            "gamma": 0.20944717027347381,
-            "alpha": 5
+            "window_size": 25,
+            "gamma": 0.0630957344480193,
+            "alpha": 4
         },
-        "rmse": 0.006857302981456237,
-        "mae": 0.00466218421595899,
-        "mi": 3.570081729879929,
-        "corr": 0.9995512613875374,
-        "time_taken": 0.06304669380187988
+        "rmse": 0.006995818455647824,
+        "mae": 0.004824282813786847,
+        "mi": 3.537013641174032,
+        "corr": 0.9995355442882538,
+        "time_taken": 0.03478121757507324
     },
     "chlorine_mi": {
         "algorithm": "stmvl",
@@ -132,7 +132,7 @@
         "mae": 0.005161692507137684,
         "mi": 3.4607228844284057,
         "corr": 0.9994748120389285,
-        "time_taken": 0.03468680381774902
+        "time_taken": 0.04242110252380371
     },
     "chlorine_mi_corr": {
         "algorithm": "stmvl",
@@ -147,52 +147,52 @@
         "mae": 0.0047627973149582175,
         "mi": 3.5708258901680825,
         "corr": 0.9995346078215037,
-        "time_taken": 0.07996439933776855
+        "time_taken": 0.08124566078186035
     },
     "chlorine_rmse": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "rmse",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 26,
-            "gamma": 4.042491613537134e-05,
-            "alpha": 5
+            "window_size": 27,
+            "gamma": 3.981071705534969e-06,
+            "alpha": 3
         },
-        "rmse": 0.007299513083946235,
-        "mae": 0.005049256208704199,
-        "mi": 3.493728305905803,
-        "corr": 0.9994931849886008,
-        "time_taken": 0.04110527038574219
+        "rmse": 0.007016696684811667,
+        "mae": 0.004813648850479237,
+        "mi": 3.566135053175879,
+        "corr": 0.9995349343287412,
+        "time_taken": 0.03151583671569824
     },
     "chlorine_rmse_mae": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "rmse_mae",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 24,
-            "gamma": 1.3068263579834513e-06,
-            "alpha": 3
+            "window_size": 37,
+            "gamma": 0.0630957344480193,
+            "alpha": 4
         },
-        "rmse": 0.007049059174761889,
-        "mae": 0.004856983868594276,
-        "mi": 3.5547984783649698,
-        "corr": 0.9995301416604242,
-        "time_taken": 0.04404091835021973
+        "rmse": 0.006782869935901026,
+        "mae": 0.0046482142157479815,
+        "mi": 3.5659489039778802,
+        "corr": 0.9995627598323564,
+        "time_taken": 0.048003196716308594
     },
     "climate_corr": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "corr",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 99,
-            "gamma": 0.999999,
-            "alpha": 1
+            "window_size": 55,
+            "gamma": 0.2511886431509577,
+            "alpha": 3
         },
-        "rmse": 97.54105655021966,
-        "mae": 48.37649489707433,
-        "mi": 1.551558308770899,
-        "corr": 0.9827559745914441,
-        "time_taken": 0.135176420211792
+        "rmse": 127.48247659145893,
+        "mae": 66.45591524617004,
+        "mi": 1.3235779327240729,
+        "corr": 0.9705252550144626,
+        "time_taken": 0.08062911033630371
     },
     "climate_mae": {
         "algorithm": "stmvl",
@@ -207,22 +207,22 @@
         "mae": 48.37649489707433,
         "mi": 1.551558308770899,
         "corr": 0.9827559745914441,
-        "time_taken": 0.1371157169342041
+        "time_taken": 0.11370730400085449
     },
     "climate_mi": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "mi",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 99,
-            "gamma": 1e-06,
+            "window_size": 77,
+            "gamma": 0.003981071705534969,
             "alpha": 4
         },
-        "rmse": 146.78374730542654,
-        "mae": 73.14537148943774,
-        "mi": 1.2554865777650823,
-        "corr": 0.9609934468731648,
-        "time_taken": 0.1347978115081787
+        "rmse": 143.96814405933762,
+        "mae": 71.68662449254421,
+        "mi": 1.2614962772055165,
+        "corr": 0.9624788042852047,
+        "time_taken": 0.08562850952148438
     },
     "climate_mi_corr": {
         "algorithm": "stmvl",
@@ -237,7 +237,7 @@
         "mae": 49.570972196712454,
         "mi": 1.4745291813284935,
         "corr": 0.9811870570697139,
-        "time_taken": 0.07212066650390625
+        "time_taken": 0.08502578735351562
     },
     "climate_rmse": {
         "algorithm": "stmvl",
@@ -252,7 +252,7 @@
         "mae": 48.37649489707433,
         "mi": 1.551558308770899,
         "corr": 0.9827559745914441,
-        "time_taken": 0.12086868286132812
+        "time_taken": 0.11994242668151855
     },
     "climate_rmse_mae": {
         "algorithm": "stmvl",
@@ -267,52 +267,52 @@
         "mae": 48.37649489707433,
         "mi": 1.551558308770899,
         "corr": 0.9827559745914441,
-        "time_taken": 0.13285255432128906
+        "time_taken": 0.11723947525024414
     },
     "drift_corr": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "corr",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 20,
-            "gamma": 0.999999,
+            "window_size": 19,
+            "gamma": 1.584893192461114e-05,
             "alpha": 1
         },
-        "rmse": 3347.622267208059,
-        "mae": 868.6837409312025,
-        "mi": 1.9358615025473447,
-        "corr": 0.9881222213796624,
-        "time_taken": 0.03560996055603027
+        "rmse": 3373.6311589919787,
+        "mae": 832.8276892616858,
+        "mi": 1.9965855264179595,
+        "corr": 0.9886468239359345,
+        "time_taken": 0.030347824096679688
     },
     "drift_mae": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "mae",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 65,
-            "gamma": 0.07007999902413059,
-            "alpha": 3
+            "window_size": 78,
+            "gamma": 0.001,
+            "alpha": 1
         },
-        "rmse": 6593.677916250892,
-        "mae": 1117.2077640923976,
-        "mi": 1.9425280827246012,
-        "corr": 0.9434431903787732,
-        "time_taken": 0.07413864135742188
+        "rmse": 3604.6973399453427,
+        "mae": 781.9809536409637,
+        "mi": 2.1139579174355587,
+        "corr": 0.9861289906072156,
+        "time_taken": 0.07409310340881348
     },
     "drift_mi": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "mi",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 26,
-            "gamma": 0.052337915699283866,
+            "window_size": 82,
+            "gamma": 0.01584893192461114,
             "alpha": 1
         },
-        "rmse": 3758.825678659728,
-        "mae": 828.7830124809855,
-        "mi": 1.9772931798561566,
-        "corr": 0.9867731470639025,
-        "time_taken": 0.041486263275146484
+        "rmse": 3554.6059403997133,
+        "mae": 762.8091074881653,
+        "mi": 2.0971083909445527,
+        "corr": 0.986875658245292,
+        "time_taken": 0.08461928367614746
     },
     "drift_rmse": {
         "algorithm": "stmvl",
@@ -327,22 +327,37 @@
         "mae": 779.4811226946805,
         "mi": 2.023821475771187,
         "corr": 0.9860333900008252,
-        "time_taken": 0.06311511993408203
+        "time_taken": 0.04682111740112305
+    },
+    "drift_rmse_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 14,
+            "gamma": 1e-06,
+            "alpha": 1
+        },
+        "rmse": 3065.471276366992,
+        "mae": 852.0136413517578,
+        "mi": 2.0086977574182945,
+        "corr": 0.9898185555359611,
+        "time_taken": 0.02313685417175293
     },
     "meteo_corr": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "corr",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 81,
-            "gamma": 9.616453915621372e-05,
-            "alpha": 9
+            "window_size": 99,
+            "gamma": 6.309573444801929e-05,
+            "alpha": 7
         },
-        "rmse": 1.9421272747636726,
-        "mae": 1.0325857350900882,
-        "mi": 2.7348722715122697,
-        "corr": 0.9985801262827961,
-        "time_taken": 0.8663930892944336
+        "rmse": 1.9692292287439959,
+        "mae": 1.069092812280897,
+        "mi": 2.69641175721013,
+        "corr": 0.9985398223415258,
+        "time_taken": 0.9420690536499023
     },
     "meteo_mae": {
         "algorithm": "stmvl",
@@ -357,22 +372,22 @@
         "mae": 1.0210350531226593,
         "mi": 2.7865261635438796,
         "corr": 0.9984369518954513,
-        "time_taken": 0.5487508773803711
+        "time_taken": 0.5450093746185303
     },
     "meteo_mi": {
         "algorithm": "stmvl",
         "metric_used_for_optimization": "mi",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "window_size": 59,
-            "gamma": 0.0078115783045013786,
-            "alpha": 8
+            "window_size": 84,
+            "gamma": 0.01584893192461114,
+            "alpha": 2
         },
-        "rmse": 2.017490928417638,
-        "mae": 1.0399219346026303,
-        "mi": 2.733784446661566,
-        "corr": 0.998469120798164,
-        "time_taken": 0.6687710285186768
+        "rmse": 2.1550422457075804,
+        "mae": 1.3274927686534599,
+        "mi": 2.299865640767986,
+        "corr": 0.9982664813771466,
+        "time_taken": 0.8397631645202637
     },
     "meteo_mi_corr": {
         "algorithm": "stmvl",
@@ -387,7 +402,7 @@
         "mae": 1.0895868526679322,
         "mi": 2.6694955111027703,
         "corr": 0.9983236760870756,
-        "time_taken": 0.589200496673584
+        "time_taken": 0.5216751098632812
     },
     "meteo_rmse": {
         "algorithm": "stmvl",
@@ -402,7 +417,7 @@
         "mae": 1.0354683945663796,
         "mi": 2.732968347768401,
         "corr": 0.9985808872297158,
-        "time_taken": 0.9274177551269531
+        "time_taken": 0.8061192035675049
     },
     "meteo_rmse_mae": {
         "algorithm": "stmvl",
@@ -417,6 +432,6 @@
         "mae": 1.02768344029327,
         "mi": 2.7371921131875276,
         "corr": 0.9985742531387023,
-        "time_taken": 0.8330738544464111
+        "time_taken": 0.72176194190979
     }
 }

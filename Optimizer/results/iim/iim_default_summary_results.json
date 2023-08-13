@@ -1,0 +1,57 @@
+{
+    "bafu": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": "N/A",
+        "rmse": 0.46001064136039027,
+        "mae": 0.3415710888684352,
+        "mi": 2.121135889497729,
+        "corr": 0.99370618268427,
+        "time_taken": 183.58012127876282
+    },
+    "chlorine": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": "N/A",
+        "rmse": 0.2105660871640014,
+        "mae": 0.15184730719716955,
+        "mi": 1.0790216593737316,
+        "corr": 0.7762880622036679,
+        "time_taken": 9.54137897491455
+    },
+    "climate": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": "N/A",
+        "rmse": 194.31507572241065,
+        "mae": 81.84655560793428,
+        "mi": 1.308942684198839,
+        "corr": 0.940935457231709,
+        "time_taken": 10.99703335762024
+    },
+    "drift": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": "N/A",
+        "rmse": 11936.265105029135,
+        "mae": 2971.2368533303147,
+        "mi": 2.4916403432155243,
+        "corr": 0.9447597138115392,
+        "time_taken": 7.347411394119263
+    },
+    "meteo": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": "N/A",
+        "rmse": 24.736035742007065,
+        "mae": 15.161252519818563,
+        "mi": 1.5087782537531895,
+        "corr": 0.9615816069409269,
+        "time_taken": 173.53464770317078
+    }
+}

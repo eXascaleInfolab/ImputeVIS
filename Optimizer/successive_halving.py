@@ -140,11 +140,10 @@ if __name__ == '__main__':
     #     ['rmse', 'mse', 'corr', 'mi'],
     #     algo
     # ))
-    algos = ['stmvl']
-    # todo handle drift separately
+    algos = ['mrnn']
     datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
     dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
-    metrics = ['mae']
+    metrics = ['rmse']
 
     results = {}
     for algo in algos:

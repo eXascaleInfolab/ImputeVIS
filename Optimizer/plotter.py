@@ -68,13 +68,15 @@ def compare_results(default_file_path: str, optimized_file_path: str, algorithm:
 
         width = 0.35
 
+
+        labels = [label.title() for label in default_values.keys()]  # Title case looks better
         fig, ax = plt.subplots()
-        rects1 = ax.bar(labels, default_metric_values, width, label='Default')
+        rects1 = ax.bar(labels, default_metric_values, width, label='Author')
         rects2 = ax.bar([label for label in labels], optimized_metric_values, width, bottom=default_metric_values,
                         label='Optimized')
 
         ax.set_ylabel(ylabel)
-        ax.set_title(f'{algorithm}: Comparison of {metric_display} between Default and Optimized Settings')
+        ax.set_title(f'{algorithm} {metric_display}: Author vs. Optimized')
         ax.legend()
         plt.tight_layout()
 
