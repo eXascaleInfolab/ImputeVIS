@@ -180,7 +180,6 @@ def create_latex_table_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, A
         LaTeX formatted table as a string for the specific algorithm.
     """
 
-
     # 1. Identify unique parameters
     unique_params = set()
     for _, algorithm_data in table_data.items():
@@ -192,8 +191,10 @@ def create_latex_table_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, A
     unique_params = sorted(list(unique_params))
 
     # 2. Modify table header
-    table_columns = "|c|c|c|" + "|c|" * len(unique_params)  # columns for Dataset, Metric, Optimization method, and each unique parameter
-    header = "Data Set & Optimized On & Method & " + " & ".join([replace_underscores(p).title() for p in unique_params]) + " \\\\ \\hline\n"
+    table_columns = "|c|c|c|" + "|c|" * len(
+        unique_params)  # columns for Dataset, Metric, Optimization method, and each unique parameter
+    header = "Data Set & Optimized On & Method & " + " & ".join(
+        [replace_underscores(p).title() for p in unique_params]) + " \\\\ \\hline\n"
 
     latex_table = "\\begin{table}\n\\centering\n"
     latex_table += "\\begin{tabular}{" + table_columns + "}\n\\hline\n"
@@ -215,7 +216,8 @@ def create_latex_table_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, A
                 for param in unique_params
             ]
 
-            latex_table += f"{dataset.title()} & {optimized_on_metric.upper()} & {mapper(optimization_method)} & " + " & ".join(param_values) + " \\\\ \\hline\n"
+            latex_table += f"{dataset.title()} & {optimized_on_metric.upper()} & {mapper(optimization_method)} & " + " & ".join(
+                param_values) + " \\\\ \\hline\n"
 
     latex_table += "\\end{tabular}\n\\caption{" + f"Results for {algorithm}" + "}\n\\end{table}"
     return latex_table
@@ -329,6 +331,11 @@ if __name__ == "__main__":
     latex_iim = process_for_algorithm(file_name_iim, "IIM", datasets, metrics)
     with open("latex_table_iim.txt", 'w') as f:
         f.write(latex_iim)
+    # TODO M-RNN Once results
+    file_name_mrnn = "results/mrnn/mrnn_optimized_summary_results.json"
+    latex_mrnn = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics)
+    with open("latex_table_mrnn.txt", 'w') as f:
+        f.write(latex_mrnn)
     file_name_stmvl = "results/stmvl/stmvl_optimized_summary_results.json"
     latex_stmvl = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics)
     with open("latex_table_stmvl.txt", 'w') as f:

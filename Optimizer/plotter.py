@@ -401,7 +401,7 @@ def plot_best_algorithm_by_dataset(optimized_file_paths: list) -> None:
     # 2. Plotting
     for dataset, metrics_data in dataset_metrics_results.items():
         for metric_used_for_optimization, algorithms_data in metrics_data.items():
-            # for metric_group in grouped_metrics:
+            for metric_group in grouped_metrics:
                 plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metric_group, width_factor=0.5)
             # Plot special metrics
             plot_metrics(dataset, metric_used_for_optimization, algorithms_data, special_metrics, width_factor=0.5)
