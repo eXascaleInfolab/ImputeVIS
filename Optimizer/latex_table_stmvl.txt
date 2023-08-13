@@ -1,8 +1,37 @@
 \begin{table}
 \centering
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c||c||c||c|}
 \hline
-Dataset & Optimized On & Method & Parameters \\ \hline
+Data Set & Optimized On & Method & Alpha & Gamma & Window Size \\ \hline
+Bafu & RMSE MAE & BO & 1 & 0.0 & 99 \\ \hline
+Bafu & MI CORR & BO & 2 & 6e-05 & 35 \\ \hline
+Bafu & RMSE & BO & 1 & 0.0 & 96 \\ \hline
+Bafu & MAE & BO & 1 & 0.00032 & 99 \\ \hline
+Bafu & MI & BO & 1 & 0.61411 & 99 \\ \hline
+Bafu & CORR & SH & 1 & 0.00398 & 89 \\ \hline
+Chlorine & RMSE MAE & SH & 4 & 0.0631 & 37 \\ \hline
+Chlorine & MI CORR & BO & 5 & 0.00702 & 71 \\ \hline
+Chlorine & RMSE & SH & 3 & 0.0 & 27 \\ \hline
+Chlorine & MAE & SH & 4 & 0.0631 & 25 \\ \hline
+Chlorine & MI & BO & 6 & 2e-05 & 30 \\ \hline
+Chlorine & CORR & BO & 4 & 0.02908 & 37 \\ \hline
+Climate & RMSE MAE & BO & 1 & 1.0 & 99 \\ \hline
+Climate & MI CORR & BO & 2 & 1.0 & 60 \\ \hline
+Climate & RMSE & BO & 1 & 1.0 & 99 \\ \hline
+Climate & MAE & BO & 1 & 1.0 & 99 \\ \hline
+Climate & MI & SH & 4 & 0.00398 & 77 \\ \hline
+Climate & CORR & SH & 3 & 0.25119 & 55 \\ \hline
+Drift & RMSE MAE & SH & 1 & 0.0 & 14 \\ \hline
+Drift & RMSE & BO & 1 & 0.0 & 50 \\ \hline
+Drift & MAE & SH & 1 & 0.001 & 78 \\ \hline
+Drift & MI & SH & 1 & 0.01585 & 82 \\ \hline
+Drift & CORR & SH & 1 & 2e-05 & 19 \\ \hline
+Meteo & RMSE MAE & BO & 9 & 0.00086 & 72 \\ \hline
+Meteo & MI CORR & BO & 6 & 0.0004 & 47 \\ \hline
+Meteo & RMSE & BO & 9 & 4e-05 & 85 \\ \hline
+Meteo & MAE & BO & 9 & 0.00188 & 46 \\ \hline
+Meteo & MI & SH & 2 & 0.01585 & 84 \\ \hline
+Meteo & CORR & SH & 7 & 6e-05 & 99 \\ \hline
 \end{tabular}
 \caption{Results for ST-MVL}
 \end{table}

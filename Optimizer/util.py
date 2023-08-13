@@ -184,7 +184,7 @@ def create_latex_table_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, A
     # 1. Identify unique parameters
     unique_params = set()
     for _, algorithm_data in table_data.items():
-        algorithm_upper = algorithm.upper()
+        algorithm_upper = algorithm.upper().replace("-", "")  # Caps case and remove hyphens
         if algorithm_upper in algorithm_data:
             params = algorithm_data[algorithm_upper]["params"]
             for param in params:
@@ -205,7 +205,7 @@ def create_latex_table_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, A
         dataset = replace_underscores(dataset)
         optimized_on_metric = replace_underscores(optimized_on_metric)
 
-        algorithm_upper = algorithm.upper()
+        algorithm_upper = algorithm.upper().replace("-", "")  # Caps case and remove hyphens
         if algorithm_upper in algorithm_data:
             details = algorithm_data[algorithm_upper]
             optimization_method = replace_underscores(details["optimization_method"])
@@ -217,7 +217,7 @@ def create_latex_table_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, A
 
             latex_table += f"{dataset.title()} & {optimized_on_metric.upper()} & {mapper(optimization_method)} & " + " & ".join(param_values) + " \\\\ \\hline\n"
 
-    latex_table += "\\end{tabular}\n\\caption{" + f"Results for {algorithm.title()}" + "}\n\\end{table}"
+    latex_table += "\\end{tabular}\n\\caption{" + f"Results for {algorithm}" + "}\n\\end{table}"
     return latex_table
 
 
