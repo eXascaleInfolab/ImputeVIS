@@ -69,6 +69,28 @@ def extract_table_data(data: Dict[str, Dict[str, Any]], datasets: List[str], met
     return table_data
 
 
+def mapper(input_string: str):
+    input_string = input_string.lower()
+    if input_string == "cdrec":
+        return "CDRec"
+    elif input_string == "mrnn":
+        return "M-RNN"
+    elif input_string == "stmvl":
+        return "ST-MVL"
+    elif input_string == "bayesian optimization":
+        return "BO"
+    elif input_string == "pso":
+        return "PSO"
+    elif input_string == "succesive halving":
+        return "SH"
+    elif input_string == "eps":
+        return "Epsilon"
+    elif input_string == "iters":
+        return "Iterations"
+    else:
+        return input_string.capitalize()
+
+
 def extract_table_data_single(json_data: Dict[str, Any], datasets: List[str], metrics: List[str]) -> Dict[
     str, Dict[str, Dict[str, Any]]]:
     """
@@ -157,26 +179,64 @@ def create_latex_table_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, A
     str
         LaTeX formatted table as a string for the specific algorithm.
     """
-    latex_table = "\\begin{table}\n\\centering\n\\begin{tabular}{|c|c|c|c|}\n\\hline\n"
-    latex_table += "Dataset & Optimized On & Optimization Method & Best Params \\\\ \\hline\n"
 
+
+    # 1. Identify unique parameters
+    unique_params = set()
+    for _, algorithm_data in table_data.items():
+        algorithm_upper = algorithm.upper()
+        if algorithm_upper in algorithm_data:
+            params = algorithm_data[algorithm_upper]["params"]
+            for param in params:
+                unique_params.add(param)
+    unique_params = sorted(list(unique_params))
+
+    # 2. Modify table header
+    table_columns = "|c|c|c|" + "|c|" * len(unique_params)  # columns for Dataset, Metric, Optimization method, and each unique parameter
+    header = "Data Set & Optimized On & Method & " + " & ".join([replace_underscores(p).title() for p in unique_params]) + " \\\\ \\hline\n"
+
+    latex_table = "\\begin{table}\n\\centering\n"
+    latex_table += "\\begin{tabular}{" + table_columns + "}\n\\hline\n"
+    latex_table += header
+
+    # 3. Populate table rows
     for key, algorithm_data in table_data.items():
         dataset, optimized_on_metric = key.split("_", 1)
         dataset = replace_underscores(dataset)
         optimized_on_metric = replace_underscores(optimized_on_metric)
 
-        if algorithm in algorithm_data:
-            details = algorithm_data[algorithm]
-            param_str = ", ".join([f"{replace_underscores(k)}: {v}" for k, v in details["params"].items()])
+        algorithm_upper = algorithm.upper()
+        if algorithm_upper in algorithm_data:
+            details = algorithm_data[algorithm_upper]
             optimization_method = replace_underscores(details["optimization_method"])
+            param_values = [
+                f"{round(details['params'].get(param, 0), 5)}" if isinstance(details['params'].get(param), (int, float))
+                else details['params'].get(param, '-')
+                for param in unique_params
+            ]
 
-            # Extract the algorithm's last part after the last '/'
-            algorithm_name = algorithm.split('/')[-1].upper()
+            latex_table += f"{dataset.title()} & {optimized_on_metric.upper()} & {mapper(optimization_method)} & " + " & ".join(param_values) + " \\\\ \\hline\n"
 
-            latex_table += f"{dataset} & {optimized_on_metric} & {optimization_method} & {param_str} \\\\ \\hline\n"
-
-    latex_table += "\\end{tabular}\n\\caption{{Results for {algorithm_name}}}\\end{table}"
+    latex_table += "\\end{tabular}\n\\caption{" + f"Results for {algorithm.title()}" + "}\n\\end{table}"
     return latex_table
+
+
+def round_params_values(params: dict) -> dict:
+    """
+    Recursively round float values in the dictionary to 5 decimal points.
+
+    Parameters:
+    - params (dict): A dictionary containing parameters.
+
+    Returns:
+    - dict: The modified dictionary with rounded float values.
+    """
+    for key, value in params.items():
+        if isinstance(value, float):
+            params[key] = round(value, 5)
+        elif isinstance(value, dict):
+            params[key] = round_params_values(value)
+    return params
 
 
 def json_serializable(item: Any) -> Union[int, float, list, dict, tuple, str]:
