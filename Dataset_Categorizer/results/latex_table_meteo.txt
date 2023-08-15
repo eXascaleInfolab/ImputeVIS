@@ -1,0 +1,55 @@
+\begin{table}[!h]
+\centering
+\caption{Geometry}
+\begin{tabular}{|c|c|}
+\hline
+Feature Name & Value \\ \hline
+SB\_BinaryStats\_mean\_longstretch1 & 4.000 \\ \hline
+SB\_BinaryStats\_diff\_longstretch0 & 4.000 \\ \hline
+SB\_TransitionMatrix\_3ac\_sumdiagcov & 0.013 \\ \hline
+MD\_hrv\_classic\_pnn40 & 0.739 \\ \hline
+DN\_HistogramMode\_5 & -0.751 \\ \hline
+DN\_HistogramMode\_10 & -0.596 \\ \hline
+DN\_OutlierInclude\_p\_001\_mdrmd & 0.044 \\ \hline
+DN\_OutlierInclude\_n\_001\_mdrmd & 0.252 \\ \hline
+CO\_Embed2\_Dist\_tau\_d\_expfit\_meandiff & 0.195 \\ \hline
+SC\_FluctAnal\_2\_dfa\_50\_1\_2\_logi\_prop\_r1 & 0.120 \\ \hline
+SC\_FluctAnal\_2\_rsrangefit\_50\_1\_logi\_prop\_r1 & 0.320 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[!h]
+\centering
+\caption{Correlation}
+\begin{tabular}{|c|c|}
+\hline
+Feature Name & Value \\ \hline
+CO\_f1ecac & 0.480 \\ \hline
+CO\_FirstMin\_ac & 1.000 \\ \hline
+CO\_trev\_1\_num & -0.181 \\ \hline
+CO\_HistogramAMI\_even\_2\_5 & 0.267 \\ \hline
+IN\_AutoMutualInfoStats\_40\_gaussian\_fmmi & 1.000 \\ \hline
+FC\_LocalSimple\_mean1\_tauresrat & 1.000 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[!h]
+\centering
+\caption{Transformation}
+\begin{tabular}{|c|c|}
+\hline
+Feature Name & Value \\ \hline
+SP\_Summaries\_welch\_rect\_area\_5\_1 & 0.016 \\ \hline
+SP\_Summaries\_welch\_rect\_centroid & 1.571 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[!h]
+\centering
+\caption{Trend}
+\begin{tabular}{|c|c|}
+\hline
+Feature Name & Value \\ \hline
+PD\_PeriodicityWang\_th0\_01 & 3.000 \\ \hline
+FC\_LocalSimple\_mean3\_stderr & 1.322 \\ \hline
+SB\_MotifThree\_quantile\_hh & 2.057 \\ \hline
+\end{tabular}
+\end{table}
