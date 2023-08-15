@@ -33,10 +33,10 @@ def select_and_average_errors(errors_dict: Dict[str, float], selected_metrics: L
     selected_errors = [errors_dict[metric] for metric in selected_metrics]
     return np.mean(selected_errors)
 
-
+# 50 normally, 15 for iim and m-rnn (or even less)
 def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray,
                        selected_metrics: List[str], algorithm: str,
-                       num_configs: int = 50, num_iterations: int = 2,
+                       num_configs: int = 15, num_iterations: int = 2,
                        reduction_factor: int = 2) -> tuple:
     """
     Conduct the successive halving hyperparameter optimization.
@@ -140,10 +140,18 @@ if __name__ == '__main__':
     #     ['rmse', 'mse', 'corr', 'mi'],
     #     algo
     # ))
-    algos = ['mrnn']
-    datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
-    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
-    metrics = ['rmse']
+    algos = ['iim']
+    datasets = [
+        'bafu', 'chlorine', 'climate',
+        'drift',
+        'meteo'
+    ]
+    dataset_files = [
+        'BAFU', 'cl2fullLarge', 'climate',
+        'batch10',
+        'meteo_total'
+    ]
+    metrics = ['mi', 'corr']
 
     results = {}
     for algo in algos:
@@ -175,9 +183,10 @@ if __name__ == '__main__':
                 'dataset': dataset,
                 'time': elapsed_time
             }
+            print(dataset)
 
         # Save results in a JSON file
-        with open(f'optimization_results_{algo}_succesive_halving_{metrics[0]}.json',
+        with open(f'optimization_results_{algo}_succesive_halving_{metrics[0]}_{metrics[1]}.json',
                   'w') as outfile:
             json.dump(results, outfile)
 

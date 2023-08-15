@@ -25,6 +25,16 @@
       "gamma": 0.00025118864315095795,
       "alpha": 3
     },
+    "drift": {
+      "best_params": {
+        "window_size": 30,
+        "gamma": 0.2511886431509577,
+        "alpha": 1
+      },
+      "best_score": 0.055429108576104724,
+      "dataset": "drift",
+      "time": 607.2204761505127
+    },
     "best_score": 0.3170120475212883,
     "dataset": "climate",
     "time": 6.7934675216674805
