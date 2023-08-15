@@ -404,10 +404,12 @@ def plot_best_algorithm_by_dataset(optimized_file_paths: list) -> None:
             for metric_group in grouped_metrics:
                 plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metric_group, width_factor=0.5)
             # Plot special metrics
-            plot_metrics(dataset, metric_used_for_optimization, algorithms_data, special_metrics, width_factor=0.5)
+            plot_metrics(dataset, metric_used_for_optimization, algorithms_data, special_metrics, width_factor=0.5,
+                         log_scale=True)
 
 
-def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics_to_use, width_factor=1.0):
+def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics_to_use, width_factor=1.0,
+                 log_scale=False):
     ind = np.arange(len(metrics_to_use))
     width = 0.35 / len(algorithms_data)
 
@@ -422,6 +424,11 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
     ax.set_title(f'{dataset.title()} Metrics Comparison ({metric_used_for_optimization.upper().replace("_", " & ")})')
     ax.set_xticks(ind + width * (len(algorithms_data) - 1) / 2)
     ax.set_xticklabels(metric_display_labels)
+
+    if log_scale:
+        ax.set_yscale('log')
+        ax.set_ylabel('Log(Value)')  # Adjusting the y-label to reflect the log scale
+
     ax.legend()
 
     plt.tight_layout()
