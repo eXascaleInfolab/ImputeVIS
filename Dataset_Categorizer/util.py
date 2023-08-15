@@ -2,6 +2,39 @@ import numpy as np
 
 from Dataset_Categorizer import catch
 
+CATEGORIES = {
+    'Geometry': [
+        'SB_BinaryStats_mean_longstretch1',
+        'SB_BinaryStats_diff_longstretch0',
+        'SB_TransitionMatrix_3ac_sumdiagcov',
+        'MD_hrv_classic_pnn40',
+        'DN_HistogramMode_5',
+        'DN_HistogramMode_10',
+        'DN_OutlierInclude_p_001_mdrmd',
+        'DN_OutlierInclude_n_001_mdrmd',
+        'CO_Embed2_Dist_tau_d_expfit_meandiff',
+        'SC_FluctAnal_2_dfa_50_1_2_logi_prop_r1',
+        'SC_FluctAnal_2_rsrangefit_50_1_logi_prop_r1'
+    ],
+    'Correlation': [
+        'CO_f1ecac',
+        'CO_FirstMin_ac',
+        'CO_trev_1_num',
+        'CO_HistogramAMI_even_2_5',
+        'IN_AutoMutualInfoStats_40_gaussian_fmmi',
+        'FC_LocalSimple_mean1_tauresrat'
+    ],
+    'Transformation': [
+        'SP_Summaries_welch_rect_area_5_1',
+        'SP_Summaries_welch_rect_centroid'
+    ],
+    'Trend': [
+        'PD_PeriodicityWang_th0_01',
+        'FC_LocalSimple_mean3_stderr',
+        'SB_MotifThree_quantile_hh'
+    ]
+}
+
 
 def results_to_latex(extracted_features: dict) -> str:
     """
@@ -17,65 +50,51 @@ def results_to_latex(extracted_features: dict) -> str:
     str
         The resulting LaTeX formatted string.
     """
-    CATEGORIES = {
-        'Geometry': [
-            'SB_BinaryStats_mean_longstretch1',
-            'SB_BinaryStats_diff_longstretch0',
-            'SB_TransitionMatrix_3ac_sumdiagcov',
-            'MD_hrv_classic_pnn40',
-            'DN_HistogramMode_5',
-            'DN_HistogramMode_10',
-            'DN_OutlierInclude_p_001_mdrmd',
-            'DN_OutlierInclude_n_001_mdrmd',
-            'CO_Embed2_Dist_tau_d_expfit_meandiff',
-            'SC_FluctAnal_2_dfa_50_1_2_logi_prop_r1',
-            'SC_FluctAnal_2_rsrangefit_50_1_logi_prop_r1'
-        ],
-        'Correlation': [
-            'CO_f1ecac',
-            'CO_FirstMin_ac',
-            'CO_trev_1_num',
-            'CO_HistogramAMI_even_2_5',
-            'IN_AutoMutualInfoStats_40_gaussian_fmmi',
-            'FC_LocalSimple_mean1_tauresrat'
-        ],
-        'Transformation': [
-            'SP_Summaries_welch_rect_area_5_1',
-            'SP_Summaries_welch_rect_centroid'
-        ],
-        'Trend': [
-            'PD_PeriodicityWang_th0_01',
-            'FC_LocalSimple_mean3_stderr',
-            'SB_MotifThree_quantile_hh'
-        ]
-    }
 
-    # Loop through categories and convert each to a LaTeX table
-    latex_tables = []
+    latex_output = '\\begin{table}[!h]\n'
+    latex_output += '\\centering\n'
+    latex_output += '\\caption{Features from different categories}\n'
+    latex_output += '\\begin{tabular}{|c|c|}\n'
+    latex_output += '\\hline\n'
+    latex_output += '\\textbf{Feature Name} & \\textbf{Value} \\\\ \\hline\n'
+    # Loop through categories and add each as a section to the table
     for category, features in CATEGORIES.items():
-        latex_tables.append(category_to_latex_table(category, features, extracted_features))
+        latex_output += category_to_latex_section(category, features, extracted_features)
 
-    # Print tables in a 2x2 square
-    latex_output = latex_tables[0] + latex_tables[1] + "\n" + latex_tables[2] + latex_tables[3]
+    # End the table
+    latex_output += '\\end{tabular}\n'
+    latex_output += '\\end{table}\n'
     return latex_output
+
+
+def category_to_latex_section(category, features, category_data):
+    latex_section = '\\textbf{%s} & \\\\ \n' % category
+    for feature in features:
+        latex_section += '%s & %s \\\\ \n' % (escape_underscores(feature), format(round(category_data.get(feature, 0), 4), '.3g'))
+    latex_section += '\\midrule\n'
+    return latex_section
 
 
 def category_to_latex_table(category, features, category_data):
     # Start the table
-    latex_table = '\\begin{table}[!h]\n'
-    latex_table += '\\centering\n'
-    latex_table += '\\caption{%s}\n' % category
-    latex_table += '\\begin{tabular}{|c|c|}\n'
-    latex_table += '\\hline\n'
-    latex_table += 'Feature Name & Value \\\\ \\hline\n'
+    latex_output = '\\begin{table}[!h]\n'
+    latex_output += '\\centering\n'
+    latex_output += '\\caption{Features from different categories}\n'
+    latex_output += '\\begin{tabular}{cc}\n'
+    latex_output += '\\toprule\n'
+    latex_output += 'Feature Name & Value \\\\ \n'
+    latex_output += '\\midrule\n'
 
-    for feature in features:
-        latex_table += '%s & %1.3f \\\\ \\hline\n' % (escape_underscores(feature), round(category_data.get(feature, 0), 3))
+    # Loop through categories and add each as a section to the table
+    for category, features in CATEGORIES.items():
+        latex_output += category_to_latex_section(category, features)
 
     # End the table
-    latex_table += '\\end{tabular}\n'
-    latex_table += '\\end{table}\n'
-    return latex_table
+    latex_output = latex_output.rstrip('\\midrule\n')  # Remove the last midrule
+    latex_output += '\\bottomrule\n'
+    latex_output += '\\end{tabular}\n'
+    latex_output += '\\end{table}\n'
+    return latex_output
 
 
 def escape_underscores(text: str) -> str:
