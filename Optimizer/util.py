@@ -73,6 +73,8 @@ def mapper(input_string: str):
     input_string = input_string.lower()
     if input_string == "cdrec":
         return "CDRec"
+    elif input_string == "iim":
+        return "IIM"
     elif input_string == "mrnn":
         return "M-RNN"
     elif input_string == "stmvl":

@@ -4,6 +4,8 @@ from typing import List
 import numpy as np
 import matplotlib.pyplot as plt
 
+from Optimizer import util
+
 LOWER_IS_BETTER = {'rmse', 'mae', 'time_taken'}  # Add other metrics to this set if needed
 ONE_IS_BEST = ["corr"]
 
@@ -284,7 +286,7 @@ def plot_best_algorithm_by_dataset_old(optimized_file_path: str, title_prefix: s
 
         for idx, algorithm in enumerate(algorithms):
             algorithm_values = [best_config_dict[dataset][algorithm][metric] for metric in metrics]
-            ax.bar(positions[idx], algorithm_values, width, label=algorithm)
+            ax.bar(positions[idx], algorithm_values, width, label=util.mapper(algorithm))
 
         metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics]
 
@@ -352,7 +354,7 @@ def plot_best_algorithm_by_dataset(optimized_paths: List[str], algorithm_names: 
 
         for idx, (algorithm, algo_values) in enumerate(dataset_values.items()):
             metric_values = [algo_values[metric] for metric in metrics]
-            rects = ax.bar(ind + width * idx, metric_values, width, label=algorithm)
+            rects = ax.bar(ind + width * idx, metric_values, width, label=util.mapper(algorithm))
 
         # Adjust the y-labels based on metrics
         metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics]
@@ -416,25 +418,30 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
     fig, ax = plt.subplots(figsize=(10 * width_factor, 5))
     for idx, (algorithm, algo_values) in enumerate(algorithms_data.items()):
         metric_values = [algo_values[metric] for metric in metrics_to_use]
-        rects = ax.bar(ind + width * idx, metric_values, width, label=algorithm)
+        rects = ax.bar(ind + width * idx, metric_values, width, label=util.mapper(algorithm))
 
     metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics_to_use]
 
     ax.set_ylabel('Value')
     ax.set_title(f'{dataset.title()} Metrics Comparison ({metric_used_for_optimization.upper().replace("_", " & ")})')
-    ax.set_xticks(ind + width * (len(algorithms_data) - 1) / 2)
-    ax.set_xticklabels(metric_display_labels)
+
 
     if log_scale:
         ax.set_yscale('log')
-        ax.set_ylabel('Log(Value)')  # Adjusting the y-label to reflect the log scale
+        ax.set_ylabel('Time [s]')  # Adjusting the y-label to reflect the log scale
+        ax.set_xticks([],[])
+        ax.set_xticklabels("")
+    else:
+        ax.set_xticks(ind + width * (len(algorithms_data) - 1) / 2)
+        ax.set_xticklabels(metric_display_labels)
 
     ax.legend()
 
     plt.tight_layout()
     suffix = "_".join(metrics_to_use)
     plt.savefig(f"figures/dataset/{dataset}_comparison_{metric_used_for_optimization}_{suffix}.png")
-    plt.show()
+    # plt.show()
+    plt.close()
 
 
 if __name__ == '__main__':
