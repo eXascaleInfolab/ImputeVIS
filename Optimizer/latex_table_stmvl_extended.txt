@@ -1,0 +1,17 @@
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c||c||c||c|}
+\hline
+Data Set & Configuration & RMSE & MAE & MI & CORR & Alpha & Gamma & Window Size \\ \hline
+Bafu & RMSE MAE & 0.087 & 0.054 & 3.174 & 1.0 & 1 & 0.0 & 99 \\ \hline
+Bafu & MI CORR & 0.094 & 0.061 & 3.072 & 0.999 & 2 & 6e-05 & 35 \\ \hline
+Chlorine & RMSE MAE & 0.007 & 0.005 & 3.566 & 1.0 & 4 & 0.0631 & 37 \\ \hline
+Chlorine & MI CORR & 0.007 & 0.005 & 3.571 & 1.0 & 5 & 0.00702 & 71 \\ \hline
+Climate & RMSE MAE & 97.541 & 48.376 & 1.552 & 0.983 & 1 & 1.0 & 99 \\ \hline
+Climate & MI CORR & 101.726 & 49.571 & 1.475 & 0.981 & 2 & 1.0 & 60 \\ \hline
+Drift & RMSE MAE & 3065.471 & 852.014 & 2.009 & 0.99 & 1 & 0.0 & 14 \\ \hline
+Meteo & RMSE MAE & 1.946 & 1.028 & 2.737 & 0.999 & 9 & 0.00086 & 72 \\ \hline
+Meteo & MI CORR & 2.113 & 1.09 & 2.669 & 0.998 & 6 & 0.0004 & 47 \\ \hline
+\end{tabular}
+\caption{Results for ST-MVL}
+\end{table}
