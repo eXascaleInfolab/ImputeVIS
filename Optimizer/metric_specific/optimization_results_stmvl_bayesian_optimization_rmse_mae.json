@@ -29,6 +29,16 @@
     "dataset": "climate",
     "time": 65.1310658454895
   },
+  "drift": {
+    "best_params": {
+      "window_size": 67,
+      "gamma": 0.999999,
+      "alpha": 1
+    },
+    "best_score": 1847.022832652788,
+    "dataset": "drift",
+    "time": 197.8390920162201
+  },
   "meteo": {
     "best_params": {
       "window_size": 72,
