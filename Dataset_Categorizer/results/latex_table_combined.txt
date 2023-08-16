@@ -1,0 +1,37 @@
+\begin{table}[!h]
+\centering
+\caption{Features from different categories}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Feature Name} & \textbf{Bafu} & \textbf{Chlorine} & \textbf{Climate} & \textbf{Drift} & \textbf{Meteo} \\ \hline
+\textbf{Geometry} & \\ \midrule
+SB\_BinaryStats\_mean\_longstretch1 & 7 & 25 & 4 & 2 & 4 \\ 
+SB\_BinaryStats\_diff\_longstretch0 & 6 & 14 & 6 & 6 & 4 \\ 
+SB\_TransitionMatrix\_3ac\_sumdiagcov & 0.0062 & 0.0095 & 0.0062 & 0.0204 & 0.0133 \\ 
+MD\_hrv\_classic\_pnn40 & 0.932 & 0.723 & 0.966 & 0.243 & 0.739 \\ 
+DN\_HistogramMode\_5 & 0.238 & -0.504 & -0.394 & 3.18 & -0.751 \\ 
+DN\_HistogramMode\_10 & 0.0574 & -0.781 & -0.621 & 1.29 & -0.596 \\ 
+DN\_OutlierInclude\_p\_001\_mdrmd & 0.002 & 0.101 & 0.095 & -0.158 & 0.0443 \\ 
+DN\_OutlierInclude\_n\_001\_mdrmd & -0.0019 & -0.359 & -0.0528 & 0.0026 & 0.252 \\ 
+CO\_Embed2\_Dist\_tau\_d\_expfit\_meandiff & 0.188 & 0.177 & 0.12 & 0.0158 & 0.195 \\ 
+SC\_FluctAnal\_2\_dfa\_50\_1\_2\_logi\_prop\_r1 & 0.42 & 0.52 & 0.878 & 0.86 & 0.12 \\ 
+SC\_FluctAnal\_2\_rsrangefit\_50\_1\_logi\_prop\_r1 & 0.5 & 0.64 & 0.122 & 0.88 & 0.32 \\ 
+\midrule
+\textbf{Correlation} & \\ \midrule
+CO\_f1ecac & 0.559 & 3.78 & 0.548 & 0.602 & 0.48 \\ 
+CO\_FirstMin\_ac & 1 & 8 & 1 & 1 & 1 \\ 
+CO\_trev\_1\_num & -0.733 & 0.662 & -1.25 & 0.0421 & -0.18 \\ 
+CO\_HistogramAMI\_even\_2\_5 & 0.255 & 0.188 & 0.225 & 0 & 0.267 \\ 
+IN\_AutoMutualInfoStats\_40\_gaussian\_fmmi & 1 & 7 & 2 & 3 & 1 \\ 
+FC\_LocalSimple\_mean1\_tauresrat & 1 & 0.0244 & 1 & 1 & 1 \\ 
+\midrule
+\textbf{Transformation} & \\ \midrule
+SP\_Summaries\_welch\_rect\_area\_5\_1 & 0.171 & 0.778 & 0.0502 & 0.104 & 0.0163 \\ 
+SP\_Summaries\_welch\_rect\_centroid & 2.09 & 0.265 & 1.89 & 1.57 & 1.57 \\ 
+\midrule
+\textbf{Trend} & \\ \midrule
+PD\_PeriodicityWang\_th0\_01 & 5 & 11 & 9 & 7 & 3 \\ 
+FC\_LocalSimple\_mean3\_stderr & 1.15 & 0.771 & 1.17 & 1.18 & 1.32 \\ 
+SB\_MotifThree\_quantile\_hh & 2.14 & 1.86 & 2.14 & 1.98 & 2.06 \\ \bottomrule
+\end{tabular}
+\end{table}

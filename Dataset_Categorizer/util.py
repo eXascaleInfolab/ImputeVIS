@@ -70,7 +70,8 @@ def results_to_latex(extracted_features: dict) -> str:
 def category_to_latex_section(category, features, category_data):
     latex_section = '\\textbf{%s} & \\\\ \n' % category
     for feature in features:
-        latex_section += '%s & %s \\\\ \n' % (escape_underscores(feature), format(round(category_data.get(feature, 0), 4), '.3g'))
+        latex_section += '%s & %s \\\\ \n' % (
+        escape_underscores(feature), format(round(category_data.get(feature, 0), 4), '.3g'))
     latex_section += '\\midrule\n'
     return latex_section
 
@@ -87,13 +88,57 @@ def category_to_latex_table(category, features, category_data):
 
     # Loop through categories and add each as a section to the table
     for category, features in CATEGORIES.items():
-        latex_output += category_to_latex_section(category, features)
+        latex_output += category_to_latex_section(category, features, category_data)
 
     # End the table
     latex_output = latex_output.rstrip('\\midrule\n')  # Remove the last midrule
     latex_output += '\\bottomrule\n'
     latex_output += '\\end{tabular}\n'
     latex_output += '\\end{table}\n'
+    return latex_output
+
+
+def results_to_latex_in_one(all_extracted_features: dict) -> str:
+    """
+    Transforms results from multiple datasets into a single LaTeX table format.
+
+    Parameters
+    ----------
+    all_extracted_features : dict
+        Dictionary containing extracted features for each dataset.
+
+    Returns
+    -------
+    str
+        The resulting LaTeX formatted string.
+    """
+
+    # Table header
+    datasets = list(all_extracted_features.keys())
+    header = '\\textbf{Feature Name} & ' + ' & '.join(
+        ['\\textbf{%s}' % ds.capitalize() for ds in datasets]) + ' \\\\ \\hline\n'
+
+    # Generate table content based on categories
+    content = ''
+    for category, features in CATEGORIES.items():
+        content += '\\textbf{%s} & \\\\ \\midrule\n' % category
+        for feature in features:
+            content += escape_underscores(feature) + ' & '
+            content += ' & '.join(
+                [format(round(all_extracted_features[dataset].get(feature, 0), 4), '.3g') for dataset in
+                 datasets]) + ' \\\\ \n'
+        content += '\\midrule\n'
+
+    # Combine header and content into the table
+    latex_output = '''\\begin{table}[!h]
+\\centering
+\\caption{Features from different categories}
+\\begin{tabular}{l''' + 'c' * len(datasets) + '''}
+\\toprule
+''' + header + content.rstrip('\\midrule\n') + '''\\bottomrule
+\\end{tabular}
+\\end{table}'''
+
     return latex_output
 
 
@@ -117,6 +162,8 @@ def escape_underscores(text: str) -> str:
 def main():
     datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
     dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
+    # Store all extracted features for each dataset
+    all_results = {}
 
     for dataset, data_file in zip(datasets, dataset_files):
         raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
@@ -124,14 +171,24 @@ def main():
             raw_file_path = f"../Datasets/{dataset}/drift10/raw_matrices/{data_file}_eighth.txt"
         raw_matrix = np.loadtxt(raw_file_path, delimiter=" ")
 
-        # Extract features
-        results = catch.extract_features(raw_matrix)
+        # # Extract features
+        # results = catch.extract_features(raw_matrix)
+        #
+        # # Convert to LaTeX format
+        # latex_format = results_to_latex(results)
+        # # print(latex_format)
+        # with open(f"results/latex_table_{dataset}.txt", 'w') as f:
+        #     f.write(latex_format)
 
-        # Convert to LaTeX format
-        latex_format = results_to_latex(results)
-        # print(latex_format)
-        with open(f"results/latex_table_{dataset}.txt", 'w') as f:
-            f.write(latex_format)
+        # Extract features and store in the dictionary
+        all_results[dataset] = catch.extract_features(raw_matrix)
+
+    # Convert the combined results into LaTeX format
+    latex_format = results_to_latex_in_one(all_results)
+
+    # Save to a single file
+    with open("results/latex_table_combined.txt", 'w') as f:
+        f.write(latex_format)
 
 
 if __name__ == "__main__":
