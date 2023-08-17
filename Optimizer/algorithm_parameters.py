@@ -60,7 +60,7 @@ PARAM_NAMES = {
 
 DEFAULT_PARAMS = {
     'cdrec': [0, 1e-6, 100],
-    'iim': [5],
+    'iim': [10],
     'mrnn': [10, 0.01, 1000, 1.0,
                 # 50
                 ],

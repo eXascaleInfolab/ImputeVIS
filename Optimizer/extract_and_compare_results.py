@@ -1,3 +1,6 @@
+import M_RNN
+import M_RNN.testerMRNN
+import M_RNN.Data_Loader
 from Utils_Thesis import utils, statistics
 import os
 import json
@@ -319,7 +322,6 @@ def cdrec_default_results(results_path: str) -> dict:
     return results_summary
 
 
-# TODO - Redo once all results done
 def iim_optimal_results(results_path: str) -> dict:
     """
     Run imputation using the optimal parameters and save the results.
@@ -432,7 +434,9 @@ def iim_default_results(results_path: str) -> dict:
             "algorithm": "iim",
             "metric_used_for_optimization": "N/A",
             "optimization_method": "N/A",
-            "best_params": "N/A",
+            "best_params": {
+                "learning_neighbours": algorithm_parameters.DEFAULT_PARAMS["iim"][0]
+            },
             "rmse": rmse,
             "mae": mae,
             "mi": mi,
@@ -450,11 +454,161 @@ def iim_default_results(results_path: str) -> dict:
 
     return results_summary
 
-# TODO
-# def mrnn_optimal_results(results_path: str) -> dict:
 
-# TODO
-# def mrnn_default_results(results_path: str) -> dict:
+def mrnn_optimal_results(results_path: str) -> dict:
+    """
+    Run imputation using the optimal parameters and save the results.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to the folder containing the saved 'best_params_output.json'.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the results summary for each dataset and algorithm.
+
+    """
+    best_params = get_best_params()
+
+    # Define storage for metrics and configuration details
+    results_summary = {}
+
+    # Extract 'mrnn' configurations
+    configs = best_params.get("mrnn", {})
+
+    # Iterate through datasets
+    for dataset, metrics in configs.items():
+        for metric_name, config in metrics.items():
+            # Get paths for the dataset using the helper function
+            raw_file_path, obf_file_path = get_dataset_paths(dataset)
+
+            # Load matrices for the dataset
+            ground_truth_matrix = utils.load_and_trim_matrix(raw_file_path)
+            obfuscated_matrix = utils.load_and_trim_matrix(obf_file_path)
+            obfuscated_matrix_copy = np.copy(obfuscated_matrix)
+
+            # Extract the best parameters
+            hidden_dim = config["best_params"]["hidden_dim"]
+            learning_rate = config["best_params"]["learning_rate"]
+            iterations = config["best_params"]["iterations"]
+            keep_prob = config["best_params"]["keep_prob"]
+
+            # Run the imputation (using MRNN as an example)
+            start_time = time.time()
+            imputed_matrix = M_RNN.testerMRNN.mrnn_recov_with_data(obfuscated_matrix_copy,
+                                                                   runtime=-1,
+                                                                   hidden_dim=hidden_dim,
+                                                                   learning_rate=learning_rate,
+                                                                   iterations=iterations,
+                                                                   keep_prob=keep_prob,
+                                                                   )
+            end_time = time.time()
+
+            corr, mae, mi, rmse = determine_metrics(ground_truth_matrix, imputed_matrix, obfuscated_matrix)
+
+            # Create a unique key for results_summary combining dataset and metric_name
+            key = f"{dataset}_{metric_name}"
+
+            # Store results
+            results_summary[key] = {
+                "algorithm": "mrnn",
+                "metric_used_for_optimization": config["metric"],
+                "optimization_method": config["optimization_method"],
+                "best_params": config["best_params"],
+                "rmse": rmse,
+                "mae": mae,
+                "mi": mi,
+                "corr": corr,
+                "time_taken": end_time - start_time
+            }
+            print(results_summary[key])
+
+            # Save the imputed matrix to a separate file (using numpy as an example)
+            np.save(os.path.join(results_path, f"mrnn_{dataset}_{metric_name}_imputed.npy"), imputed_matrix)
+
+    # Save the summary results to a separate JSON file
+    with open(os.path.join(results_path, 'mrnn_optimized_summary_results.json'), 'w') as outfile:
+        json.dump(results_summary, outfile, indent=4)
+
+    return results_summary
+
+
+def mrnn_default_results(results_path: str) -> dict:
+    """
+    Run imputation using the default parameters and save the results.
+
+    Parameters
+    ----------
+    results_path : str
+        Path to the folder containing the saved 'best_params_output.json'.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the results summary for each dataset and algorithm.
+
+    """
+    # Define storage for metrics and configuration details
+    results_summary = {}
+
+    # Iterate through datasets
+    for dataset in DATASETS:
+        # Get paths for the dataset using the helper function
+        raw_file_path, obf_file_path = get_dataset_paths(dataset)
+
+        # Load matrices for the dataset
+        ground_truth_matrix = utils.load_and_trim_matrix(raw_file_path)
+        obfuscated_matrix = utils.load_and_trim_matrix(obf_file_path)
+        obfuscated_matrix_copy = np.copy(obfuscated_matrix)
+
+        # Extract the best parameters
+        hidden_dim = algorithm_parameters.DEFAULT_PARAMS["mrnn"][0]
+        learning_rate = algorithm_parameters.DEFAULT_PARAMS["mrnn"][1]
+        iterations = algorithm_parameters.DEFAULT_PARAMS["mrnn"][2]
+        keep_prob = algorithm_parameters.DEFAULT_PARAMS["mrnn"][3]
+
+        # Run the imputation (using MRNN as an example)
+        start_time = time.time()
+        imputed_matrix = M_RNN.testerMRNN.mrnn_recov_with_data(obfuscated_matrix_copy,
+                                                               runtime=-1,
+                                                               hidden_dim=hidden_dim,
+                                                               learning_rate=learning_rate,
+                                                               iterations=iterations,
+                                                               keep_prob=keep_prob,
+                                                               )
+        end_time = time.time()
+
+        corr, mae, mi, rmse = determine_metrics(ground_truth_matrix, imputed_matrix, obfuscated_matrix)
+
+        # Store results
+        results_summary[dataset] = {
+            "algorithm": "mrnn",
+            "metric_used_for_optimization": "N/A",
+            "optimization_method": "N/A",
+            "best_params": {
+                "hidden_dim": hidden_dim,
+                "learning_rate": learning_rate,
+                "iterations": iterations,
+                "keep_prob": keep_prob
+            },
+            "rmse": rmse,
+            "mae": mae,
+            "mi": mi,
+            "corr": corr,
+            "time_taken": end_time - start_time
+        }
+        print(results_summary[dataset])
+
+        # Save the imputed matrix to a separate file (using numpy as an example)
+        np.save(os.path.join(results_path, f"mrnn_{dataset}_default_imputed.npy"), imputed_matrix)
+
+    # Save the summary results to a separate JSON file
+    with open(os.path.join(results_path, 'mrnn_default_summary_results.json'), 'w') as outfile:
+        json.dump(results_summary, outfile, indent=4)
+
+    return results_summary
 
 
 def stmvl_optimal_results(results_path: str) -> dict:
@@ -678,23 +832,23 @@ def get_dataset_paths(dataset: str) -> Tuple[str, str]:
 if __name__ == '__main__':
     #### Step 1: Determine optimal results
     # Get the best params by dataset
-    get_best_params_by_dataset()
+    # get_best_params_by_dataset()
     # Get the best params by algorithm
-    get_best_params_by_algorithm()
+    # get_best_params_by_algorithm()
 
     # Print the best_params
     # print(json.dumps(best_params, indent=4))
     ####
 
     ##### Step 2: Run imputation using the best params
-    cdrec_optimal_results(results_path="results/cdrec")
+    # cdrec_optimal_results(results_path="results/cdrec")
     # iim_optimal_results(results_path="results/iim")
     # mrnn_optimal_results(results_path="results/mrnn")
-    stmvl_optimal_results(results_path="results/stmvl")
+    # stmvl_optimal_results(results_path="results/stmvl")
 
     ##### Step 3: Run imputation using the default params
     # cdrec_default_results(results_path="results/cdrec")
-    # iim_default_results(results_path="results/iim")
+    iim_default_results(results_path="results/iim")
     # mrnn_default_results(results_path="results/mrnn")
     # stmvl_default_results(results_path="results/stmvl")
 

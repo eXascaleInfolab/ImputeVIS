@@ -4,7 +4,7 @@
 \hline
 Data Set & Configuration & RMSE & MAE & MI & CORR & Learning Neighbours \\ \hline
 Bafu & RMSE MAE & 0.448 & 0.326 & 2.137 & 0.994 & 100 \\ \hline
-Bafu & MI CORR & 0.467 & 0.35 & 2.094 & 0.994 & 1 \\ \hline
+Bafu & MI CORR & 0.458 & 0.337 & 2.135 & 0.994 & 12 \\ \hline
 Chlorine & MI CORR & 0.217 & 0.158 & 1.105 & 0.773 & 1 \\ \hline
 Climate & MI CORR & 190.545 & 77.195 & 1.357 & 0.942 & 11 \\ \hline
 Drift & RMSE MAE & 10937.769 & 2898.228 & 2.516 & 0.975 & 2 \\ \hline

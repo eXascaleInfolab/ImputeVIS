@@ -22,6 +22,7 @@ Climate & MAE & SH & 1.0 & 500 & 3 \\ \hline
 Climate & MI & SH & 1.0 & 700 & 3 \\ \hline
 Climate & CORR & BO & 1.0 & 100 & 3 \\ \hline
 Drift & RMSE MAE & SH & 2e-05 & 500 & 4 \\ \hline
+Drift & MI CORR & BO & 0.0 & 470 & 5 \\ \hline
 Drift & RMSE & SH & 0.0001 & 300 & 4 \\ \hline
 Drift & MAE & BO & 8e-05 & 344 & 4 \\ \hline
 Drift & MI & BO & 1.0 & 974 & 2 \\ \hline

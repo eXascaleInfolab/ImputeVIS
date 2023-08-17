@@ -10,6 +10,7 @@ Chlorine & MI CORR & 0.002 & 0.001 & 4.397 & 1.0 & 0.30865 & 472 & 9 \\ \hline
 Climate & RMSE MAE & 92.598 & 42.625 & 1.68 & 0.984 & 1.0 & 100 & 3 \\ \hline
 Climate & MI CORR & 92.598 & 42.625 & 1.68 & 0.984 & 0.00466 & 126 & 3 \\ \hline
 Drift & RMSE MAE & 16092.233 & 4900.087 & 1.986 & 0.468 & 2e-05 & 500 & 4 \\ \hline
+Drift & MI CORR & 16092.276 & 4900.926 & 1.759 & 0.468 & 0.0 & 470 & 5 \\ \hline
 Meteo & RMSE MAE & 0.865 & 0.612 & 2.974 & 1.0 & 1.0 & 1000 & 3 \\ \hline
 Meteo & MI CORR & 1.798 & 1.2 & 2.415 & 0.999 & 0.01261 & 100 & 2 \\ \hline
 \end{tabular}

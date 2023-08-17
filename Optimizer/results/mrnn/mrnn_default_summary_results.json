@@ -1,0 +1,82 @@
+{
+    "bafu": {
+        "algorithm": "mrnn",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "hidden_dim": 10,
+            "learning_rate": 0.01,
+            "iterations": 1000,
+            "keep_prob": 1.0
+        },
+        "rmse": 0.42521612055952784,
+        "mae": 0.3021986313300602,
+        "mi": 1.8696022853471843,
+        "corr": 0.9932415273727518,
+        "time_taken": 121.74372720718384
+    },
+    "chlorine": {
+        "algorithm": "mrnn",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "hidden_dim": 10,
+            "learning_rate": 0.01,
+            "iterations": 1000,
+            "keep_prob": 1.0
+        },
+        "rmse": 0.6574522015966702,
+        "mae": 0.6157187964861659,
+        "mi": 0.7161173891549009,
+        "corr": 0.002470364570747704,
+        "time_taken": 113.91948127746582
+    },
+    "climate": {
+        "algorithm": "mrnn",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "hidden_dim": 10,
+            "learning_rate": 0.01,
+            "iterations": 1000,
+            "keep_prob": 1.0
+        },
+        "rmse": 190.67223351539653,
+        "mae": 88.39809863330694,
+        "mi": 1.275000057530391,
+        "corr": 0.9347765710718863,
+        "time_taken": 113.62805771827698
+    },
+    "drift": {
+        "algorithm": "mrnn",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "hidden_dim": 10,
+            "learning_rate": 0.01,
+            "iterations": 1000,
+            "keep_prob": 1.0
+        },
+        "rmse": 14383.16753543059,
+        "mae": 3950.854065629225,
+        "mi": 1.2725787699627156,
+        "corr": 0.5681167084702254,
+        "time_taken": 111.52017116546631
+    },
+    "meteo": {
+        "algorithm": "mrnn",
+        "metric_used_for_optimization": "N/A",
+        "optimization_method": "N/A",
+        "best_params": {
+            "hidden_dim": 10,
+            "learning_rate": 0.01,
+            "iterations": 1000,
+            "keep_prob": 1.0
+        },
+        "rmse": 9.645400843786417,
+        "mae": 7.76407557536666,
+        "mi": 0.6117325045366089,
+        "corr": 0.9686345914908487,
+        "time_taken": 60.14934945106506
+    }
+}

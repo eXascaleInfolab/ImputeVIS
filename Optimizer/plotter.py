@@ -452,11 +452,11 @@ if __name__ == '__main__':
     #                 "./results/stmvl/stmvl_optimized_summary_results.json",
     #                 "ST-MVL")
     algorithm_names = ["CDRec",
-                       # "M-RNN",
+                       "M-RNN",
                        "IIM",
                        "ST-MVL"]
     filename_patterns = ["cdrec",
-                         # "mrnn",
+                         "mrnn",
                          "iim",
                          "stmvl"]
 

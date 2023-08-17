@@ -418,14 +418,13 @@ if __name__ == "__main__":
     latex_iim_extended = process_for_algorithm(file_name_iim, "IIM", datasets, metrics_for_table)
     with open("latex_table_iim_extended.txt", 'w') as f:
         f.write(latex_iim_extended)
-    # TODO M-RNN Once results
-    # file_name_mrnn = "results/mrnn/mrnn_optimized_summary_results.json"
-    # latex_mrnn = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics)
-    # with open("latex_table_mrnn.txt", 'w') as f:
-    #     f.write(latex_mrnn)
-    # latex_mrnn_extended = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics_for_table)
-    # with open("latex_table_mrnn_extended.txt", 'w') as f:
-    #     f.write(latex_mrnn_extended)
+    file_name_mrnn = "results/mrnn/mrnn_optimized_summary_results.json"
+    latex_mrnn = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics)
+    with open("latex_table_mrnn.txt", 'w') as f:
+        f.write(latex_mrnn)
+    latex_mrnn_extended = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics_for_table)
+    with open("latex_table_mrnn_extended.txt", 'w') as f:
+        f.write(latex_mrnn_extended)
     file_name_stmvl = "results/stmvl/stmvl_optimized_summary_results.json"
     latex_stmvl = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics)
     with open("latex_table_stmvl.txt", 'w') as f:

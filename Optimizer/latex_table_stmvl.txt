@@ -21,7 +21,8 @@ Climate & RMSE & BO & 1 & 1.0 & 99 \\ \hline
 Climate & MAE & BO & 1 & 1.0 & 99 \\ \hline
 Climate & MI & SH & 4 & 0.00398 & 77 \\ \hline
 Climate & CORR & SH & 3 & 0.25119 & 55 \\ \hline
-Drift & RMSE MAE & SH & 1 & 0.0 & 14 \\ \hline
+Drift & RMSE MAE & BO & 1 & 1.0 & 67 \\ \hline
+Drift & MI CORR & BO & 1 & 1.0 & 17 \\ \hline
 Drift & RMSE & BO & 1 & 0.0 & 50 \\ \hline
 Drift & MAE & SH & 1 & 0.001 & 78 \\ \hline
 Drift & MI & SH & 1 & 0.01585 & 82 \\ \hline

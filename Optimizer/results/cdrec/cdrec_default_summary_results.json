@@ -4,74 +4,74 @@
         "metric_used_for_optimization": "N/A",
         "optimization_method": "N/A",
         "best_params": {
-            "rank": -1,
-            "eps": 1.0001,
+            "rank": 0,
+            "eps": 1e-06,
             "iters": 100
         },
         "rmse": 0.22060836636279926,
         "mae": 0.16210839283083037,
         "mi": 2.651890560600009,
         "corr": 0.9967875961905573,
-        "time_taken": 0.03564000129699707
+        "time_taken": 0.02550220489501953
     },
     "chlorine": {
         "algorithm": "cdrec",
         "metric_used_for_optimization": "N/A",
         "optimization_method": "N/A",
         "best_params": {
-            "rank": -1,
-            "eps": 1.0001,
+            "rank": 0,
+            "eps": 1e-06,
             "iters": 100
         },
         "rmse": 0.11973840815410929,
         "mae": 0.08581543337891391,
         "mi": 1.4878398882591766,
         "corr": 0.8528675816869111,
-        "time_taken": 0.001107931137084961
+        "time_taken": 0.0011811256408691406
     },
     "climate": {
         "algorithm": "cdrec",
         "metric_used_for_optimization": "N/A",
         "optimization_method": "N/A",
         "best_params": {
-            "rank": -1,
-            "eps": 1.0001,
+            "rank": 0,
+            "eps": 1e-06,
             "iters": 100
         },
         "rmse": 228.17193490703013,
         "mae": 135.34034285473808,
         "mi": 1.1068346473226196,
         "corr": 0.9023342880978974,
-        "time_taken": 0.005491971969604492
+        "time_taken": 0.005011320114135742
     },
     "drift": {
         "algorithm": "cdrec",
         "metric_used_for_optimization": "N/A",
         "optimization_method": "N/A",
         "best_params": {
-            "rank": -1,
-            "eps": 1.0001,
+            "rank": 0,
+            "eps": 1e-06,
             "iters": 100
         },
         "rmse": 2902.686030500406,
         "mae": 749.1294403413541,
         "mi": 2.5480264665996284,
         "corr": 0.9862212426313406,
-        "time_taken": 0.0036416053771972656
+        "time_taken": 0.0028061866760253906
     },
     "meteo": {
         "algorithm": "cdrec",
         "metric_used_for_optimization": "N/A",
         "optimization_method": "N/A",
         "best_params": {
-            "rank": -1,
-            "eps": 1.0001,
+            "rank": 0,
+            "eps": 1e-06,
             "iters": 100
         },
         "rmse": 40.91295702542081,
         "mae": 20.08731255362271,
         "mi": 0.8141222420362189,
         "corr": 0.5950802208631021,
-        "time_taken": 0.18925881385803223
+        "time_taken": 0.08772397041320801
     }
 }

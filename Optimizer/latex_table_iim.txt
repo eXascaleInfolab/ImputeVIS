@@ -4,7 +4,7 @@
 \hline
 Data Set & Optimized On & Method & Learning Neighbours \\ \hline
 Bafu & RMSE MAE & BO & 100 \\ \hline
-Bafu & MI CORR & BO & 1 \\ \hline
+Bafu & MI CORR & SH & 12 \\ \hline
 Bafu & RMSE & BO & 100 \\ \hline
 Bafu & MAE & BO & 100 \\ \hline
 Bafu & MI & BO & 12 \\ \hline

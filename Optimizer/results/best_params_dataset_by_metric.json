@@ -98,12 +98,12 @@
             },
             "mi_corr": {
                 "metric": "mi_corr",
-                "best_score": 0.3482137975596273,
+                "best_score": 0.3470979508569898,
                 "best_params": {
-                    "learning_neighbours": 1
+                    "learning_neighbours": 12
                 },
-                "time": 13713.193425416946,
-                "optimization_method": "bayesian_optimization"
+                "time": 18875.323427915573,
+                "optimization_method": "succesive_halving"
             },
             "rmse": {
                 "metric": "rmse",
@@ -820,6 +820,17 @@
                 "time": 38.95267653465271,
                 "optimization_method": "bayesian_optimization"
             },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": -0.06475619513834596,
+                "best_params": {
+                    "rank": 5,
+                    "eps": 1.4450520267066882e-06,
+                    "iters": 470
+                },
+                "time": 298.0444071292877,
+                "optimization_method": "bayesian_optimization"
+            },
             "rmse": {
                 "metric": "rmse",
                 "best_score": 548.8010007554215,
@@ -1007,6 +1018,17 @@
                 "time": 400.71526432037354,
                 "optimization_method": "succesive_halving"
             },
+            "mi_corr": {
+                "metric": "mi_corr",
+                "best_score": 0.04542855478273328,
+                "best_params": {
+                    "window_size": 17,
+                    "gamma": 0.999999,
+                    "alpha": 1
+                },
+                "time": 823.2239592075348,
+                "optimization_method": "bayesian_optimization"
+            },
             "rmse": {
                 "metric": "rmse",
                 "best_score": 3432.5829979861132,
@@ -1020,14 +1042,14 @@
             },
             "rmse_mae": {
                 "metric": "rmse_mae",
-                "best_score": 1900.8697967129883,
+                "best_score": 1847.022832652788,
                 "best_params": {
-                    "window_size": 14,
-                    "gamma": 1e-06,
+                    "window_size": 67,
+                    "gamma": 0.999999,
                     "alpha": 1
                 },
-                "time": 377.35116171836853,
-                "optimization_method": "succesive_halving"
+                "time": 197.8390920162201,
+                "optimization_method": "bayesian_optimization"
             }
         }
     },
