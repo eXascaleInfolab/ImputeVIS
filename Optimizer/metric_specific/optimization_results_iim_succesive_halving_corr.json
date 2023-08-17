@@ -1,0 +1,42 @@
+{
+  "bafu": {
+    "best_params": {
+      "learning_neighbours": 90
+    },
+    "best_score": 0.006191527667065544,
+    "dataset": "bafu",
+    "time": 9109.445013999939
+  },
+  "chlorine": {
+    "best_params": {
+      "learning_neighbours": 12
+    },
+    "best_score": 0.5735828253763857,
+    "dataset": "chlorine",
+    "time": 4705.828809976578
+  },
+  "climate": {
+    "best_params": {
+      "learning_neighbours": 21
+    },
+    "best_score": 0.05710916703926294,
+    "dataset": "climate",
+    "time": 280.79348850250244
+  },
+  "drift": {
+    "best_params": {
+      "learning_neighbours": 1
+    },
+    "best_score": 0.11604298126549373,
+    "dataset": "drift",
+    "time": 2472.6646196842194
+  },
+  "meteo": {
+    "best_params": {
+      "learning_neighbours": 48
+    },
+    "best_score": 0.029164721878031985,
+    "dataset": "meteo",
+    "time": 8331.845114946365
+  }
+}
