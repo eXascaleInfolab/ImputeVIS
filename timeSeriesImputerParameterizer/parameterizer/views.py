@@ -204,7 +204,7 @@ def mrnn(request):
         learning_rate = data.get('learning_rate', 0.01)
         iterations = data.get('iterations', 100)
         keep_prob = data.get('keep_prob', 1.0)
-        seq_len = data.get('seq_len', 7)
+        # seq_len = data.get('seq_len', 7)
 
         # filename_input = data.get('filename_input', '../Datasets/bafu/raw_matrices/BAFU_small_with_NaN.txt')
         # filename_output = data.get('filename_output', '../Results/')
@@ -214,14 +214,14 @@ def mrnn(request):
             ground_truth_matrix = utils.load_and_trim_matrix(clean_file_path)
             obfuscated_matrix = utils.load_and_trim_matrix(obfuscated_file_path)
             # Call the main function with parameters from the request
-            imputed_matrix = M_RNN.testerMRNN.mrnn_recov(obfuscated_file_path,
-                                                         runtime=-1,
-                                                         hidden_dim=hidden_dim,
-                                                         learning_rate=learning_rate,
-                                                         iterations=iterations,
-                                                         keep_prob=keep_prob,
-                                                         seq_length=seq_len,
-                                                         )
+            imputed_matrix = M_RNN.testerMRNN.mrnn_recov_with_data(obfuscated_matrix,
+                                                                   runtime=-1,
+                                                                   hidden_dim=hidden_dim,
+                                                                   learning_rate=learning_rate,
+                                                                   iterations=iterations,
+                                                                   keep_prob=keep_prob,
+                                                                   # seq_length=seq_len,
+                                                                   )
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
