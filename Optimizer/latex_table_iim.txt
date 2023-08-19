@@ -7,30 +7,32 @@ Bafu & RMSE MAE & BO & 100 \\ \hline
 Bafu & MI CORR & SH & 12 \\ \hline
 Bafu & RMSE & BO & 100 \\ \hline
 Bafu & MAE & BO & 100 \\ \hline
-Bafu & MI & BO & 12 \\ \hline
-Bafu & CORR & BO & 100 \\ \hline
+Bafu & MI & SH & 18 \\ \hline
+Bafu & CORR & SH & 90 \\ \hline
+Chlorine & RMSE MAE & SH & 21 \\ \hline
 Chlorine & MI CORR & BO & 1 \\ \hline
 Chlorine & RMSE & BO & 1 \\ \hline
 Chlorine & MAE & BO & 1 \\ \hline
-Chlorine & MI & BO & 23 \\ \hline
-Chlorine & CORR & BO & 1 \\ \hline
+Chlorine & MI & SH & 28 \\ \hline
+Chlorine & CORR & SH & 12 \\ \hline
+Climate & RMSE MAE & SH & 39 \\ \hline
 Climate & MI CORR & BO & 11 \\ \hline
 Climate & RMSE & BO & 31 \\ \hline
 Climate & MAE & BO & 47 \\ \hline
-Climate & MI & BO & 1 \\ \hline
+Climate & MI & SH & 11 \\ \hline
 Climate & CORR & BO & 22 \\ \hline
 Drift & RMSE MAE & BO & 2 \\ \hline
 Drift & MI CORR & BO & 4 \\ \hline
 Drift & RMSE & BO & 1 \\ \hline
-Drift & MAE & BO & 1 \\ \hline
-Drift & MI & BO & 4 \\ \hline
-Drift & CORR & BO & 3 \\ \hline
+Drift & MAE & SH & 3 \\ \hline
+Drift & MI & SH & 17 \\ \hline
+Drift & CORR & SH & 1 \\ \hline
 Meteo & RMSE MAE & BO & 100 \\ \hline
 Meteo & MI CORR & BO & 36 \\ \hline
 Meteo & RMSE & BO & 100 \\ \hline
 Meteo & MAE & BO & 100 \\ \hline
 Meteo & MI & BO & 53 \\ \hline
-Meteo & CORR & BO & 37 \\ \hline
+Meteo & CORR & SH & 48 \\ \hline
 \end{tabular}
 \caption{Results for IIM}
 \end{table}
