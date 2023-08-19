@@ -832,25 +832,25 @@ def get_dataset_paths(dataset: str) -> Tuple[str, str]:
 if __name__ == '__main__':
     #### Step 1: Determine optimal results
     # Get the best params by dataset
-    # get_best_params_by_dataset()
+    get_best_params_by_dataset()
     # Get the best params by algorithm
-    # get_best_params_by_algorithm()
+    get_best_params_by_algorithm()
 
     # Print the best_params
     # print(json.dumps(best_params, indent=4))
     ####
 
     ##### Step 2: Run imputation using the best params
-    # cdrec_optimal_results(results_path="results/cdrec")
-    # iim_optimal_results(results_path="results/iim")
-    # mrnn_optimal_results(results_path="results/mrnn")
-    # stmvl_optimal_results(results_path="results/stmvl")
+    cdrec_optimal_results(results_path="results/cdrec")
+    iim_optimal_results(results_path="results/iim")
+    mrnn_optimal_results(results_path="results/mrnn")
+    stmvl_optimal_results(results_path="results/stmvl")
 
     ##### Step 3: Run imputation using the default params
-    # cdrec_default_results(results_path="results/cdrec")
+    cdrec_default_results(results_path="results/cdrec")
     iim_default_results(results_path="results/iim")
-    # mrnn_default_results(results_path="results/mrnn")
-    # stmvl_default_results(results_path="results/stmvl")
+    mrnn_default_results(results_path="results/mrnn")
+    stmvl_default_results(results_path="results/stmvl")
 
 # Load the best_params from the saved JSON file
 # with open(output_file, 'r') as infile:

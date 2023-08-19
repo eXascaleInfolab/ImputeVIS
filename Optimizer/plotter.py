@@ -452,12 +452,12 @@ if __name__ == '__main__':
     #                 "./results/stmvl/stmvl_optimized_summary_results.json",
     #                 "ST-MVL")
     algorithm_names = ["CDRec",
-                       "M-RNN",
                        "IIM",
+                       "M-RNN",
                        "ST-MVL"]
     filename_patterns = ["cdrec",
-                         "mrnn",
                          "iim",
+                         "mrnn",
                          "stmvl"]
 
     for algo, pattern in zip(algorithm_names, filename_patterns):

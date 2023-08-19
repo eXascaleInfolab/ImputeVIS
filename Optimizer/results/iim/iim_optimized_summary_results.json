@@ -2,15 +2,15 @@
     "bafu_corr": {
         "algorithm": "iim",
         "metric_used_for_optimization": "corr",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "learning_neighbours": 100
+            "learning_neighbours": 90
         },
-        "rmse": 0.4478781953269716,
-        "mae": 0.32639798052582125,
-        "mi": 2.136773804785787,
-        "corr": 0.9937633462467274,
-        "time_taken": 766.1806519031525
+        "rmse": 0.4485551824759636,
+        "mae": 0.32697372978558226,
+        "mi": 2.1374477502655096,
+        "corr": 0.993748624032958,
+        "time_taken": 632.6030809879303
     },
     "bafu_mae": {
         "algorithm": "iim",
@@ -23,20 +23,20 @@
         "mae": 0.32639798052582125,
         "mi": 2.136773804785787,
         "corr": 0.9937633462467274,
-        "time_taken": 740.3271672725677
+        "time_taken": 687.5256478786469
     },
     "bafu_mi": {
         "algorithm": "iim",
         "metric_used_for_optimization": "mi",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "learning_neighbours": 12
+            "learning_neighbours": 18
         },
-        "rmse": 0.4579988284421471,
-        "mae": 0.33706873282147154,
-        "mi": 2.134550481875817,
-        "corr": 0.9936194410734273,
-        "time_taken": 90.15793824195862
+        "rmse": 0.45703056059371555,
+        "mae": 0.3354956830657548,
+        "mi": 2.13641488588396,
+        "corr": 0.993607204579078,
+        "time_taken": 124.69699263572693
     },
     "bafu_mi_corr": {
         "algorithm": "iim",
@@ -49,7 +49,7 @@
         "mae": 0.33706873282147154,
         "mi": 2.134550481875817,
         "corr": 0.9936194410734273,
-        "time_taken": 89.85174870491028
+        "time_taken": 84.06711006164551
     },
     "bafu_rmse": {
         "algorithm": "iim",
@@ -62,7 +62,7 @@
         "mae": 0.32639798052582125,
         "mi": 2.136773804785787,
         "corr": 0.9937633462467274,
-        "time_taken": 732.2767531871796
+        "time_taken": 704.8694682121277
     },
     "bafu_rmse_mae": {
         "algorithm": "iim",
@@ -75,20 +75,20 @@
         "mae": 0.32639798052582125,
         "mi": 2.136773804785787,
         "corr": 0.9937633462467274,
-        "time_taken": 734.1813995838165
+        "time_taken": 678.5023758411407
     },
     "chlorine_corr": {
         "algorithm": "iim",
         "metric_used_for_optimization": "corr",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "learning_neighbours": 1
+            "learning_neighbours": 12
         },
-        "rmse": 0.21653603556709722,
-        "mae": 0.15822058244810674,
-        "mi": 1.1048800252835909,
-        "corr": 0.7727859469802364,
-        "time_taken": 0.7000446319580078
+        "rmse": 0.19903413993620742,
+        "mae": 0.13914387813434975,
+        "mi": 1.04097554752274,
+        "corr": 0.781883054351502,
+        "time_taken": 4.0810558795928955
     },
     "chlorine_mae": {
         "algorithm": "iim",
@@ -101,20 +101,20 @@
         "mae": 0.15822058244810674,
         "mi": 1.1048800252835909,
         "corr": 0.7727859469802364,
-        "time_taken": 0.5834019184112549
+        "time_taken": 0.4276454448699951
     },
     "chlorine_mi": {
         "algorithm": "iim",
         "metric_used_for_optimization": "mi",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "learning_neighbours": 23
+            "learning_neighbours": 28
         },
-        "rmse": 0.1890260829643154,
-        "mae": 0.12720377688390003,
-        "mi": 1.0569381609899713,
-        "corr": 0.7770665185735597,
-        "time_taken": 13.151443004608154
+        "rmse": 0.18603753697086087,
+        "mae": 0.12349039658085958,
+        "mi": 1.1172231594150652,
+        "corr": 0.7735109907491615,
+        "time_taken": 9.411479711532593
     },
     "chlorine_mi_corr": {
         "algorithm": "iim",
@@ -127,7 +127,7 @@
         "mae": 0.15822058244810674,
         "mi": 1.1048800252835909,
         "corr": 0.7727859469802364,
-        "time_taken": 0.6530055999755859
+        "time_taken": 0.42857837677001953
     },
     "chlorine_rmse": {
         "algorithm": "iim",
@@ -140,7 +140,20 @@
         "mae": 0.15822058244810674,
         "mi": 1.1048800252835909,
         "corr": 0.7727859469802364,
-        "time_taken": 0.8042852878570557
+        "time_taken": 0.4243152141571045
+    },
+    "chlorine_rmse_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 21
+        },
+        "rmse": 0.19041361086158987,
+        "mae": 0.1290817204292874,
+        "mi": 1.0706322628510954,
+        "corr": 0.7772700347688335,
+        "time_taken": 7.076775789260864
     },
     "climate_corr": {
         "algorithm": "iim",
@@ -153,7 +166,7 @@
         "mae": 74.20404330058784,
         "mi": 1.3913428274587747,
         "corr": 0.9428601590864212,
-        "time_taken": 13.907580852508545
+        "time_taken": 8.870807886123657
     },
     "climate_mae": {
         "algorithm": "iim",
@@ -166,20 +179,20 @@
         "mae": 72.56903156922662,
         "mi": 1.3937267170244398,
         "corr": 0.9410779721680854,
-        "time_taken": 21.590652227401733
+        "time_taken": 18.698343992233276
     },
     "climate_mi": {
         "algorithm": "iim",
         "metric_used_for_optimization": "mi",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "learning_neighbours": 1
+            "learning_neighbours": 11
         },
-        "rmse": 202.2297305765079,
-        "mae": 90.196312206944,
-        "mi": 1.2762138769915823,
-        "corr": 0.9375423531154727,
-        "time_taken": 0.5776927471160889
+        "rmse": 190.5448487063062,
+        "mae": 77.19454252420103,
+        "mi": 1.3569338408077996,
+        "corr": 0.9422037025492853,
+        "time_taken": 4.479452848434448
     },
     "climate_mi_corr": {
         "algorithm": "iim",
@@ -192,7 +205,7 @@
         "mae": 77.19454252420103,
         "mi": 1.3569338408077996,
         "corr": 0.9422037025492853,
-        "time_taken": 4.927321910858154
+        "time_taken": 4.434651613235474
     },
     "climate_rmse": {
         "algorithm": "iim",
@@ -205,25 +218,25 @@
         "mae": 73.27409728912261,
         "mi": 1.3875683197462454,
         "corr": 0.942413968082629,
-        "time_taken": 13.291188478469849
+        "time_taken": 12.328749418258667
+    },
+    "climate_rmse_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 39
+        },
+        "rmse": 188.0006580230769,
+        "mae": 72.80583030994097,
+        "mi": 1.3974105162989519,
+        "corr": 0.9416730594882876,
+        "time_taken": 15.423055648803711
     },
     "drift_corr": {
         "algorithm": "iim",
         "metric_used_for_optimization": "corr",
-        "optimization_method": "bayesian_optimization",
-        "best_params": {
-            "learning_neighbours": 3
-        },
-        "rmse": 11608.69577945632,
-        "mae": 2950.239023951479,
-        "mi": 2.485919913583377,
-        "corr": 0.9572303251177507,
-        "time_taken": 0.9864308834075928
-    },
-    "drift_mae": {
-        "algorithm": "iim",
-        "metric_used_for_optimization": "mae",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
             "learning_neighbours": 1
         },
@@ -231,20 +244,33 @@
         "mae": 2815.3526141,
         "mi": 2.5117649463042366,
         "corr": 0.9818593685879646,
-        "time_taken": 0.38808298110961914
+        "time_taken": 0.3547511100769043
+    },
+    "drift_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 3
+        },
+        "rmse": 11608.69577945632,
+        "mae": 2950.239023951479,
+        "mi": 2.485919913583377,
+        "corr": 0.9572303251177507,
+        "time_taken": 0.8931288719177246
     },
     "drift_mi": {
         "algorithm": "iim",
         "metric_used_for_optimization": "mi",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "learning_neighbours": 4
+            "learning_neighbours": 17
         },
-        "rmse": 11796.073029694988,
-        "mae": 2942.9493598425943,
-        "mi": 2.491693528574184,
-        "corr": 0.9469410453563266,
-        "time_taken": 1.2633447647094727
+        "rmse": 12144.454592295104,
+        "mae": 2992.347277755951,
+        "mi": 2.436470527919993,
+        "corr": 0.9307323949776648,
+        "time_taken": 4.661208391189575
     },
     "drift_mi_corr": {
         "algorithm": "iim",
@@ -257,7 +283,7 @@
         "mae": 2942.9493598425943,
         "mi": 2.491693528574184,
         "corr": 0.9469410453563266,
-        "time_taken": 1.2541472911834717
+        "time_taken": 1.152923822402954
     },
     "drift_rmse": {
         "algorithm": "iim",
@@ -270,7 +296,7 @@
         "mae": 2815.3526141,
         "mi": 2.5117649463042366,
         "corr": 0.9818593685879646,
-        "time_taken": 0.41234540939331055
+        "time_taken": 0.3463709354400635
     },
     "drift_rmse_mae": {
         "algorithm": "iim",
@@ -283,20 +309,20 @@
         "mae": 2898.2277647093024,
         "mi": 2.516339692992297,
         "corr": 0.9748025112834031,
-        "time_taken": 0.6890926361083984
+        "time_taken": 0.6158177852630615
     },
     "meteo_corr": {
         "algorithm": "iim",
         "metric_used_for_optimization": "corr",
-        "optimization_method": "bayesian_optimization",
+        "optimization_method": "succesive_halving",
         "best_params": {
-            "learning_neighbours": 37
+            "learning_neighbours": 48
         },
-        "rmse": 22.106271914868802,
-        "mae": 13.615479920022246,
-        "mi": 1.4725014752492909,
-        "corr": 0.9711597813530342,
-        "time_taken": 245.3602340221405
+        "rmse": 21.945748312642877,
+        "mae": 13.532670726614166,
+        "mi": 1.4787863856462407,
+        "corr": 0.970835278121968,
+        "time_taken": 297.17852997779846
     },
     "meteo_mae": {
         "algorithm": "iim",
@@ -309,7 +335,7 @@
         "mae": 13.249170360987668,
         "mi": 1.461140663865823,
         "corr": 0.9693536206508412,
-        "time_taken": 661.120717048645
+        "time_taken": 625.7629041671753
     },
     "meteo_mi": {
         "algorithm": "iim",
@@ -322,7 +348,7 @@
         "mae": 13.505853379987542,
         "mi": 1.4714345930493762,
         "corr": 0.9705814070027301,
-        "time_taken": 338.40981817245483
+        "time_taken": 330.20668363571167
     },
     "meteo_mi_corr": {
         "algorithm": "iim",
@@ -335,7 +361,7 @@
         "mae": 13.63144717819825,
         "mi": 1.4723117399773162,
         "corr": 0.9711370846618458,
-        "time_taken": 229.96374702453613
+        "time_taken": 222.78232049942017
     },
     "meteo_rmse": {
         "algorithm": "iim",
@@ -348,7 +374,7 @@
         "mae": 13.249170360987668,
         "mi": 1.461140663865823,
         "corr": 0.9693536206508412,
-        "time_taken": 635.949375629425
+        "time_taken": 615.2956011295319
     },
     "meteo_rmse_mae": {
         "algorithm": "iim",
@@ -361,6 +387,6 @@
         "mae": 13.249170360987668,
         "mi": 1.461140663865823,
         "corr": 0.9693536206508412,
-        "time_taken": 635.5193762779236
+        "time_taken": 614.8013875484467
     }
 }

@@ -1,0 +1,38 @@
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c||c||c||c||c|}
+\hline
+Data Set & Optimized On & Method & Hidden Dim & Iterations & Keep Prob & Learning Rate \\ \hline
+Bafu & RMSE MAE & BO & 0 & 19 & 5e-05 & 0.46488 \\ \hline
+Bafu & MI CORR & BO & 0 & 62 & 0.0 & 0.87521 \\ \hline
+Bafu & RMSE & BO & 9 & 84 & 0.0 & 0.01225 \\ \hline
+Bafu & MAE & BO & 7 & 91 & 2e-05 & 0.00275 \\ \hline
+Bafu & MI & SH & 4 & 55 & 2e-05 & 0.11288 \\ \hline
+Bafu & CORR & SH & 5 & 65 & 0.0 & 0.05456 \\ \hline
+Chlorine & RMSE MAE & BO & 4 & 85 & 2e-05 & 0.00281 \\ \hline
+Chlorine & MI CORR & BO & 9 & 94 & 0.98498 & 0.00034 \\ \hline
+Chlorine & RMSE & BO & 4 & 38 & 0.0052 & 0.05061 \\ \hline
+Chlorine & MAE & BO & 4 & 44 & 0.0 & 0.00179 \\ \hline
+Chlorine & MI & SH & 1 & 30 & 0.0 & 0.00616 \\ \hline
+Chlorine & CORR & SH & 4 & 15 & 2e-05 & 8e-05 \\ \hline
+Climate & RMSE MAE & BO & 9 & 0 & 0.72963 & 0.22115 \\ \hline
+Climate & MI CORR & BO & 0 & 14 & 0.18905 & 0.00172 \\ \hline
+Climate & RMSE & BO & 5 & 95 & 0.73104 & 0.15697 \\ \hline
+Climate & MAE & BO & 6 & 0 & 0.65491 & 3e-05 \\ \hline
+Climate & MI & SH & 6 & 25 & 0.0 & 0.11288 \\ \hline
+Climate & CORR & SH & 7 & 95 & 1.0 & 1.0 \\ \hline
+Drift & RMSE MAE & BO & 7 & 48 & 0.0 & 0.03867 \\ \hline
+Drift & MI CORR & BO & 8 & 73 & 0.00621 & 1e-05 \\ \hline
+Drift & RMSE & BO & 4 & 72 & 1e-05 & 0.00134 \\ \hline
+Drift & MAE & BO & 7 & 58 & 1e-05 & 0.0 \\ \hline
+Drift & MI & SH & 9 & 55 & 0.0001 & 1.0 \\ \hline
+Drift & CORR & SH & 8 & 70 & 2e-05 & 0.00034 \\ \hline
+Meteo & RMSE MAE & BO & 9 & 95 & 0.05713 & 1.0 \\ \hline
+Meteo & MI CORR & BO & 8 & 12 & 0.0 & 0.01316 \\ \hline
+Meteo & RMSE & BO & 9 & 0 & 0.08728 & 0.00143 \\ \hline
+Meteo & MAE & BO & 0 & 31 & 0.07866 & 1e-05 \\ \hline
+Meteo & MI & SH & 9 & 65 & 2e-05 & 0.0 \\ \hline
+Meteo & CORR & SH & 4 & 75 & 0.21544 & 0.00016 \\ \hline
+\end{tabular}
+\caption{Results for M-RNN}
+\end{table}
