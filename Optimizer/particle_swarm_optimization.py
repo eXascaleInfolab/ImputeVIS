@@ -179,6 +179,8 @@ if __name__ == '__main__':
             # Convert optimization result to be JSON serializable
             optimization_result = util.json_serializable(optimization_result)
 
+            print(f"Optimization result: {optimization_result}")
+
             # Assuming optimization_result is a tuple with (best_params, best_score)
             best_params, best_score = optimization_result
 

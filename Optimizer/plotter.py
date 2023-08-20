@@ -415,7 +415,7 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
     ind = np.arange(len(metrics_to_use))
     width = 0.35 / len(algorithms_data)
 
-    fig, ax = plt.subplots(figsize=(10 * width_factor, 5))
+    fig, ax = plt.subplots(figsize=(10 * width_factor, 4.75))
     for idx, (algorithm, algo_values) in enumerate(algorithms_data.items()):
         metric_values = [algo_values[metric] for metric in metrics_to_use]
         rects = ax.bar(ind + width * idx, metric_values, width, label=util.mapper(algorithm))
@@ -423,14 +423,14 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
     metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics_to_use]
 
     ax.set_ylabel('Value')
-    ax.set_title(f'{dataset.title()} Metrics Comparison ({metric_used_for_optimization.upper().replace("_", " & ")})')
+    ax.set_title(f'{dataset.title()} - Params Optimized on {util.mapper(metric_used_for_optimization).upper().replace("_", " & ")}')
 
 
     if log_scale:
         ax.set_yscale('log')
         ax.set_ylabel('Time [s]')  # Adjusting the y-label to reflect the log scale
-        ax.set_xticks([],[])
-        ax.set_xticklabels("")
+        ax.set_xticks([])
+        ax.set_xticklabels([])
     else:
         ax.set_xticks(ind + width * (len(algorithms_data) - 1) / 2)
         ax.set_xticklabels(metric_display_labels)

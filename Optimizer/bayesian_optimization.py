@@ -78,7 +78,6 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
     return optimal_params_dict, np.min(optimizer.yi)
 
 
-
 if __name__ == '__main__':
     # algo = "cdrec"  # choose an algorithm to optimize
     # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=" ", )

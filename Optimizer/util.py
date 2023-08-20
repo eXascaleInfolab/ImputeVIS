@@ -89,6 +89,8 @@ def mapper(input_string: str):
         return "Epsilon"
     elif input_string == "iters":
         return "Iterations"
+    elif input_string == "mi_corr":
+        return "NMI_CORR"
     else:
         return input_string.capitalize()
 

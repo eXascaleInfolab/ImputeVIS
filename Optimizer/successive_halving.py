@@ -68,6 +68,9 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
     # Define the parameter names for each algorithm
     param_names = alg_params.PARAM_NAMES
 
+    data_length = len(ground_truth_matrix)
+    chunk_size = data_length // num_iterations
+
     # prepare configurations for each algorithm separately
     if algorithm == 'cdrec':
         max_rank = obfuscated_matrix.shape[1] - 1
@@ -97,11 +100,15 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
         raise ValueError(f"Invalid algorithm: {algorithm}")
 
     for i in range(num_iterations):
+        # Calculate how much data to use in this iteration
+        end_idx = (i + 1) * chunk_size
+        partial_ground_truth = ground_truth_matrix[:end_idx]
+        partial_obfuscated = obfuscated_matrix[:end_idx]
+
         scores = [select_and_average_errors(
-            Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config,
-                                                      selected_metrics),
-            selected_metrics) for
-            config in configs]
+            Optimizer.evaluate_params.evaluate_params(partial_ground_truth, partial_obfuscated, algorithm, config, selected_metrics),
+            selected_metrics) for config in configs]
+
         top_configs_idx = np.argsort(scores)[:max(1, len(configs) // reduction_factor)]
         configs = [configs[i] for i in top_configs_idx]
         if len(configs) <= 1:
