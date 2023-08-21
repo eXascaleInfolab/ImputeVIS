@@ -15,7 +15,7 @@
           Determining optimal parameters...
         </div>
       </div>
-      <form v-if="optimalParametersDetermined" @submit.prevent="submitFormCustom"
+      <form v-if="optimalParametersDetermined && imputedData" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-7 align-items-center text-center">
         <h5>Optimal Parameters</h5>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
@@ -57,7 +57,7 @@
 
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
         <div class="mt-3">
-          <metrics-display :metrics="metrics"></metrics-display>
+          <metrics-display v-if="imputedData" :metrics="metrics"></metrics-display>
         </div>
       </form>
     </div>
@@ -69,7 +69,7 @@ import {ref, watch, computed} from 'vue';
 import DataSelectOptimization from '../components/DataSelectOptimization.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
-import NormalizationToggle from '../components/NormalizationToggle.vue'
+import NormalizationToggle from '../components/NormalizationToggleOptimization.vue'
 import OptimizationSelect from '../components/OptimizationSelect.vue';
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
@@ -120,6 +120,7 @@ export default {
 
     const fetchData = async () => {
       try {
+        imputedData.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
@@ -240,6 +241,7 @@ export default {
 
     // Define a new function that calls fetchData
     const handleDataSelectChange = () => {
+      chartOptionsImputed.value = generateChartOptionsLarge('Imputed Data', 'Data')
       fetchData();
     }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="btn-group btn-group-sm mt-1 normalization mb-n5" role="group">
+  <div class="btn-group btn-group-sm mb-3" role="group">
     <button type="button"
             class="btn btn-sm"
             :class="{'btn-secondary': displayMode === 'Normal', 'btn-outline-secondary': displayMode !== 'Normal'}"
@@ -15,7 +15,7 @@
 import {defineComponent, ref, watch} from 'vue';
 
 export default defineComponent({
-  name: 'NormalizationToggle',
+  name: 'NormalizationToggleOptimization',
 
   props: {
     modelValue: {

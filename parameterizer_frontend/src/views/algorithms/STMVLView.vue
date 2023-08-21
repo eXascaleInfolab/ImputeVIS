@@ -37,7 +37,7 @@
 
         <button type="submit" class="btn btn-primary">Impute</button>
         <div class="mt-3">
-          <metrics-display :metrics="metrics"></metrics-display>
+          <metrics-display v-if="imputedData" :metrics="metrics"></metrics-display>
         </div>
       </form>
     </div>
@@ -177,6 +177,7 @@ export default {
 
     // Define a new function that calls fetchData
     const handleDataSelectChange = () => {
+      chartOptionsImputed.value = generateChartOptionsLarge('Imputed Data', 'Data')
       fetchData();
     }
 
@@ -185,7 +186,7 @@ export default {
     };
 
     // Watch for changes and call fetchData when it changes
-watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
+    watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
 
     return {
       submitForm,

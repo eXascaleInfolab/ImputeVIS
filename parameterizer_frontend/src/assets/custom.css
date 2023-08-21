@@ -6,3 +6,19 @@
 .highcharts-legend-item text {
     font-weight: bold;
 }
+
+/* Default styles for viewport widths below 1600px */
+.normalization {
+    padding-top: 1rem;
+    margin-bottom: 1rem; /* Assuming mb-3 corresponds to a margin-bottom of 3rem. Adjust if needed. */
+}
+
+/* Styles for viewport widths of 1600px and above */
+@media (min-width: 1400px) {
+    .normalization {
+        top: -10px;
+        margin-left: -135px;
+        padding-top: 0rem;
+        margin-bottom: -2rem; /* Reset the margin-bottom for larger viewports */
+    }
+}

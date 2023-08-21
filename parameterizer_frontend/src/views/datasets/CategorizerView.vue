@@ -107,12 +107,12 @@ import {ref, watch} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
-import NormalizationToggle from '../components/NormalizationToggle.vue'
+import NormalizationToggle from '../components/NormalizationToggleOptimization.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import HighchartsBoost from 'highcharts/modules/boost'
-import {createSeries, generateChartOptions} from "@/views/thesisUtils/utils";
+import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
 HighchartsBoost(Highcharts)
 
@@ -185,6 +185,7 @@ export default {
 
     const fetchData = async () => {
       try {
+        loadedResults.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_0`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
@@ -237,7 +238,6 @@ export default {
         features.value = response.data;
         categorizedFeatures.value = categorizeFeatures(response.data);
         loadedResults.value = true;
-
       } catch (error) {
         error.value = `Error: ${error.message}`;
         console.error(error);
@@ -255,7 +255,7 @@ export default {
       currentSeriesNames = newSeriesNames;
     };
 
-watch([dataSelect, normalizationMode], handleDataSelectChange, {immediate: true});
+    watch([dataSelect, normalizationMode], handleDataSelectChange, {immediate: true});
 
     return {
       dataSelect,
