@@ -12,12 +12,12 @@ testData = [os.path.join("tests", "testData1.txt"),
 # Extract features from each data file in testData
 for dataFile in testData:
 
-    print ('\n'), dataFile
+    print('\n', dataFile)
 
     data = [line.rstrip().split(' ') for line in open(dataFile)]
     flat_data = [float(item) for sublist in data for item in sublist]
 
-    catchOut = pycatch22.catch22_all(flat_data,catch24 = doCatch24)
+    catchOut = pycatch22.catch22_all(flat_data, catch24=doCatch24)
 
     featureNames = catchOut['names']
     featureValues = catchOut['values']

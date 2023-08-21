@@ -22,9 +22,6 @@ import M_RNN.Data_Loader
 import Dataset_Categorizer.catch as catch
 
 
-# TODO Can be removed later on
-# def index(request):
-#     return HttpResponse("Hello, world. You're at the polls index.")
 
 @csrf_exempt
 def cdrec(request):
@@ -33,6 +30,8 @@ def cdrec(request):
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
         truncation_rank = data.get('truncation_rank', 10)  # Truncation rank used (0 = detect truncation automatically)
         epsilon = data.get('epsilon', 0.01)  # Threshold for difference during recovery
+        if not isinstance(epsilon, str):
+            epsilon = str(epsilon)
         iterations = data.get('iterations', 100)  # Maximum number of allowed iterations for the algorithm
 
         if clean_file_path is not None and obfuscated_file_path is not None:
@@ -445,8 +444,8 @@ def fetch_params(request):
 @csrf_exempt
 def categorize_data(request):
     if request.method == 'POST':
-        data, data_set = load_from_request(request)
-        clean_file_path, obfuscated_file_path = get_file_paths(data_set)
+        _, data_set = load_from_request(request)
+        clean_file_path, _ = get_file_paths(data_set)
         if clean_file_path is not None:
             ground_truth_matrix = utils.load_and_trim_matrix(clean_file_path)
             extracted_features = catch.extract_features(ground_truth_matrix, True)

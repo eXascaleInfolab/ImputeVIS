@@ -402,9 +402,6 @@ if __name__ == "__main__":
     metrics = ["rmse_mae", "mi_corr", "rmse", "mae", "mi", "corr"]
     metrics_for_table = ["rmse_mae", "mi_corr"]
 
-    # data = load_json_files(file_names)
-    # table_data = extract_table_data(data, datasets, metrics)
-
     file_name_cdrec = "results/cdrec/cdrec_optimized_summary_results.json"
     latex_cdrec = process_for_algorithm(file_name_cdrec, "CDRec", datasets, metrics)
     with open("latex_table_cdrec.txt", 'w') as f:

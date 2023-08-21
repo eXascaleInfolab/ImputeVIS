@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import {ref, watch, computed, defineComponent} from 'vue';
+import {ref, watch, defineComponent} from 'vue';
 
 
 const bafu_series_names = [

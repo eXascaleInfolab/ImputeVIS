@@ -262,19 +262,6 @@ def plot_best_algorithm_by_dataset_old(optimized_file_path: str, title_prefix: s
                     best_config_dict[dataset][algorithm][metric] = value
                 except KeyError:
                     continue
-                    # try:
-                #     config_values = optimized_results[f"{dataset}_{algorithm}"][metric]
-                #
-                #     if metric in LOWER_IS_BETTER:
-                #         best_value = min(config_values)
-                #     elif metric in ONE_IS_BEST:
-                #         best_value = min(config_values, key=lambda x: abs(x - 1))
-                #     else:
-                #         best_value = max(config_values)
-                #
-                #     best_config_dict[dataset][algorithm][metric] = best_value
-                # except KeyError:
-                #     continue  # The combination of dataset and algorithm might not exist
 
     # Plot the results
     for dataset in datasets:
@@ -445,12 +432,6 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
 
 
 if __name__ == '__main__':
-    # compare_results("./results/cdrec/cdrec_default_summary_results.json",
-    #                 "./results/cdrec/cdrec_optimized_summary_results.json",
-    #                 "CDRec")
-    # compare_results("./results/stmvl/stmvl_default_summary_results.json",
-    #                 "./results/stmvl/stmvl_optimized_summary_results.json",
-    #                 "ST-MVL")
     algorithm_names = ["CDRec",
                        "IIM",
                        "M-RNN",
@@ -468,8 +449,6 @@ if __name__ == '__main__':
         # plot_comparison_by_dataset(default_path, optimized_path, 'DataSet')
         # plot_best_algorithm_by_dataset_old(optimized_path, 'DataSet')
 
-    # TODO Handle what data was trained on for plotting
     optimized_paths = [f"./results/{pattern}/{pattern}_optimized_summary_results.json" for pattern in filename_patterns]
-    # optimized_paths.append([f"./results/{pattern}/{pattern}_optimized_summary_results.json" for pattern in filename_patterns])
     # plot_best_algorithm_by_dataset(optimized_paths, algorithm_names, 'DataSet')
     plot_best_algorithm_by_dataset(optimized_paths)

@@ -62,7 +62,7 @@ def mrnn_recov(matrix_in, runtime=-1, hidden_dim=10, learning_rate=0.01, iterati
     x = (x * denominator) + dmin
     # verification to check for NaN. If found, assign absurdly high value to them.
     nan_mask = np.isnan(x)
-    if recursive and len(nan_mask > 0):  # TODO Variable for recursive & NaN
+    if recursive and len(nan_mask > 0):
         print("NaNs remain, while recursive==True, (Re-)running M-RNN recursively.")
         np.savetxt(matrix_out, x, fmt='%f', delimiter=' ')
         mrnn_recov(matrix_out,
@@ -145,7 +145,7 @@ def mrnn_recov_with_data(matrix_in, runtime=0, hidden_dim=10, learning_rate=0.01
     x = (x * denominator) + dmin
     # verification to check for NaN. If found, assign absurdly high value to them.
     nan_mask = np.isnan(x)
-    if recursive and len(nan_mask > 0):  # TODO Variable for recursive & NaN
+    if recursive and len(nan_mask > 0):
         print("NaNs remain, while recursive==True, (Re-)running M-RNN recursively.")
         np.savetxt(matrix_out, x, fmt='%f', delimiter=' ')
         mrnn_recov(matrix_out,

@@ -36,7 +36,7 @@ def select_and_average_errors(errors_dict: Dict[str, float], selected_metrics: L
 # 50 normally, 15 for iim and m-rnn (or even less)
 def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray,
                        selected_metrics: List[str], algorithm: str,
-                       num_configs: int = 15, num_iterations: int = 2,
+                       num_configs: int = 50, num_iterations: int = 2,
                        reduction_factor: int = 2) -> tuple:
     """
     Conduct the successive halving hyperparameter optimization.
@@ -137,17 +137,7 @@ def successive_halving(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.nd
 
 
 if __name__ == '__main__':
-    # algo = "cdrec"
-    # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_quarter.txt", delimiter=" ", )
-    # obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_quarter_obfuscated_20.txt", delimiter=" ", )
-    #
-    # print(successive_halving(
-    #     raw_matrix,
-    #     obf_matrix,
-    #     ['rmse', 'mse', 'corr', 'mi'],
-    #     algo
-    # ))
-    algos = ['iim']
+    algos = ['cdrec']
     datasets = [
         'bafu', 'chlorine', 'climate',
         'drift',

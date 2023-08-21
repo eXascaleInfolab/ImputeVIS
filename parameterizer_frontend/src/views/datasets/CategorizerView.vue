@@ -103,7 +103,7 @@
 </template>
 
 <script lang="ts">
-import {ref, watch, computed} from 'vue';
+import {ref, watch} from 'vue';
 import DataSelect from '../components/DataSelect.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
@@ -112,7 +112,7 @@ import axios from 'axios';
 import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import HighchartsBoost from 'highcharts/modules/boost'
-import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
+import {createSeries, generateChartOptions} from "@/views/thesisUtils/utils";
 
 HighchartsBoost(Highcharts)
 
@@ -235,7 +235,6 @@ export default {
             }
         );
         features.value = response.data;
-        // features.value = await response.json();
         categorizedFeatures.value = categorizeFeatures(response.data);
         loadedResults.value = true;
 

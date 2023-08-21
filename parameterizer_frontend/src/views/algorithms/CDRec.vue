@@ -18,7 +18,6 @@
         <missing-rate v-model="missingRate"/>
         <!-- Learning Rate -->
         <div class="mb-3">
-          <!-- TODO: Add mouseover for truncation rank -->
           <label for="truncationRank" class="form-label">Truncation Rank: {{ truncationRank }}</label>
           <input id="truncationRank" v-model.number="truncationRank" type="range" min="0" max="10" step="1"
                  class="form-control">

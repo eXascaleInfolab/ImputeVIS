@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.feature_selection import mutual_info_regression
-from sklearn.metrics import normalized_mutual_info_score, mutual_info_score
+from sklearn.metrics import mutual_info_score
 from scipy.stats import pearsonr, entropy
 import sys
 import os

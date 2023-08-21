@@ -83,8 +83,6 @@ export default {
     let obfuscatedMatrix = [];
     const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
-    //TODO Improve tooltip
-
     const fetchData = async () => {
       try {
         imputedData.value = false;

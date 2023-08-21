@@ -139,10 +139,16 @@ if __name__ == '__main__':
     #
     # print(f"Best parameters for {algo}: {best_params}")
     # print(f"Best score: {best_score}")
-    algos = ['mrnn']
-    datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
-    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
-    metrics = ['mi']
+    algos = ['cdrec']
+    datasets = [
+        'bafu',
+        'chlorine',
+        'climate', 'drift', 'meteo']
+    dataset_files = [
+        'BAFU',
+        'cl2fullLarge',
+        'climate', 'batch10', 'meteo_total']
+    metrics = ['rmse', 'mae']
 
     # Define  PSO parameters
     pso_parameters = {
@@ -192,7 +198,7 @@ if __name__ == '__main__':
             }
 
         # Save results in a JSON file
-        with open(f'optimization_results_{algo}_pso_optimization_{metrics[0]}.json', 'w') as outfile:
+        with open(f'optimization_results_{algo}_pso_optimization_{metrics[0]}_{metrics[1]}.json', 'w') as outfile:
             json.dump(results, outfile)
 
         # Print the results for the current algorithm

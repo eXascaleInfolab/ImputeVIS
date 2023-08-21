@@ -44,7 +44,6 @@ def get_best_params_by_dataset():
                 data = json.load(f)
                 # Extract the algorithm and metric from the filename
                 algorithm, optimization_method, metric = OPTIMIZATION_RESULTS_PATTERN.findall(filename)[0]
-                # TODO Check if best_params[dataset] exists! Otherwise, skip!!!
                 for dataset, values in data.items():
                     # If the dataset is not in best_params, add it
                     if dataset not in best_params:
@@ -117,7 +116,6 @@ def get_best_params_by_algorithm():
 
                 for dataset, values in data.items():
                     # If the dataset is not in best_params for the algorithm, add it
-                    # TODO Check if best_params[dataset] exists! Otherwise, skip!!!
                     if dataset not in best_params[algorithm]:
                         best_params[algorithm][dataset] = {}
                     # Create or update the metric data
@@ -155,7 +153,6 @@ def get_best_params_by_algorithm():
     return best_params
 
 
-# TODO Description and know what you want!
 def cdrec_optimal_results(results_path: str) -> dict:
     """
     Run imputation using the best parameters and save the results.

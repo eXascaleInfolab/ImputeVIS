@@ -79,31 +79,17 @@ def bayesian_optimization(ground_truth_matrix: np.ndarray, obfuscated_matrix: np
 
 
 if __name__ == '__main__':
-    # algo = "cdrec"  # choose an algorithm to optimize
-    # raw_matrix = np.loadtxt("../Datasets/bafu/raw_matrices/BAFU_tiny.txt", delimiter=" ", )
-    # obf_matrix = np.loadtxt("../Datasets/bafu/obfuscated/BAFU_tiny_obfuscated_10.txt", delimiter=" ", )
-    #
-    # best_params, best_score = bayesian_optimization(
-    #     raw_matrix,
-    #     obf_matrix,
-    #     ['rmse'],  # choose one or more metrics to optimize
-    #     algo
-    # )
-    #
-    # print(f"Best parameters for {algo}: {best_params}")
-    # print(f"Best score: {best_score}")
-
     algos = ['stmvl']
     datasets = [
-        # 'bafu', 'chlorine', 'climate',
+        'bafu', 'chlorine', 'climate',
         'drift',
-        # 'meteo'
+        'meteo'
     ]
 
     dataset_files = [
-        # 'BAFU', 'cl2fullLarge', 'climate',
+        'BAFU', 'cl2fullLarge', 'climate',
         'batch10',
-        # 'meteo_total'
+        'meteo_total'
     ]
     metrics = ['mi', 'corr']
 

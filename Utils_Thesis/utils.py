@@ -194,22 +194,22 @@ def split_file_lines(input_folder: str):
 
         # Split the lines into halves, quarters, fifths, sixths, and eights
         # half_lines = lines[:len(lines) // 2]
-        # quarter_lines = lines[:len(lines) // 4]
+        quarter_lines = lines[:len(lines) // 4]
         # fifth_lines = lines[:len(lines) // 5]
         # sixth_lines = lines[:len(lines) // 6]
-        # eighth_lines = lines[:len(lines) // 8]
+        eighth_lines = lines[:len(lines) // 8]
         # sixteenth_lines = lines[:len(lines) // 16]
         # thirthysecond_lines = lines[:len(lines) // 32]
-        sixtyfourth_lines = lines[:len(lines) // 64]
-        onetwentyeigth_lines = lines[:len(lines) // 128]
+        # sixtyfourth_lines = lines[:len(lines) // 64]
+        # onetwentyeigth_lines = lines[:len(lines) // 128]
 
         # Save the proportions to new files
         base, ext = os.path.splitext(filename)
         # with open(os.path.join(input_folder, f'{base}_half{ext}'), 'w') as file:
         #     file.writelines(half_lines)
         #
-        # with open(os.path.join(input_folder, f'{base}_quarter{ext}'), 'w') as file:
-        #     file.writelines(quarter_lines)
+        with open(os.path.join(input_folder, f'{base}_quarter{ext}'), 'w') as file:
+            file.writelines(quarter_lines)
 
         # with open(os.path.join(input_folder, f'{base}_fifth{ext}'), 'w') as file:
         #     file.writelines(fifth_lines)
@@ -217,8 +217,8 @@ def split_file_lines(input_folder: str):
         # with open(os.path.join(input_folder, f'{base}_sixth{ext}'), 'w') as file:
         #     file.writelines(sixth_lines)
 
-        # with open(os.path.join(input_folder, f'{base}_eighth{ext}'), 'w') as file:
-        #     file.writelines(eighth_lines)
+        with open(os.path.join(input_folder, f'{base}_eighth{ext}'), 'w') as file:
+            file.writelines(eighth_lines)
 
         # with open(os.path.join(input_folder, f'{base}_sixteenth{ext}'), 'w') as file:
         #     file.writelines(sixteenth_lines)
@@ -226,11 +226,11 @@ def split_file_lines(input_folder: str):
         # with open(os.path.join(input_folder, f'{base}_thirthysecond{ext}'), 'w') as file:
         #     file.writelines(thirthysecond_lines)
 
-        with open(os.path.join(input_folder, f'{base}_sixtyfourth{ext}'), 'w') as file:
-            file.writelines(sixtyfourth_lines)
-
-        with open(os.path.join(input_folder, f'{base}_onetwentyeigth{ext}'), 'w') as file:
-            file.writelines(onetwentyeigth_lines)
+        # with open(os.path.join(input_folder, f'{base}_sixtyfourth{ext}'), 'w') as file:
+        #     file.writelines(sixtyfourth_lines)
+        #
+        # with open(os.path.join(input_folder, f'{base}_onetwentyeigth{ext}'), 'w') as file:
+        #     file.writelines(onetwentyeigth_lines)
 
 
 def find_obfuscated_file(target_dir: str, start_string: str) -> Optional[str]:
@@ -329,7 +329,6 @@ def load_and_trim_matrix(file_path: str, max_columns: int = 10) -> np.ndarray:
     return matrix
 
 
-
 if __name__ == '__main__':
     # split_file_lines(os.path.join('../timeSeriesImputerParameterizer', '..', 'Datasets', 'bafu', 'raw_matrices'))
     # Define the output directory
@@ -344,4 +343,4 @@ if __name__ == '__main__':
 
     # Run the automation
     process_all_datasets_to_split(root_input_directory)
-    # automate_obfuscate(root_input_directory, root_output_directory)
+    automate_obfuscate(root_input_directory, root_output_directory)

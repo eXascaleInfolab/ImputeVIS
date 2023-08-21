@@ -3,16 +3,16 @@
     <button type="button"
             class="btn btn-sm"
             :class="{'btn-secondary': displayMode === 'Normal', 'btn-outline-secondary': displayMode !== 'Normal'}"
-            @click="setDisplayMode('Normal')">Normal</button>
+            @click="setDisplayMode('Normal')">Raw</button>
     <button type="button"
             class="btn btn-sm"
             :class="{'btn-secondary': displayMode === 'Normalized', 'btn-outline-secondary': displayMode !== 'Normalized'}"
-            @click="setDisplayMode('Normalized')">Normalized</button>
+            @click="setDisplayMode('Normalized')">Z-Score</button>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, watch, computed} from 'vue';
+import {defineComponent, ref, watch} from 'vue';
 
 export default defineComponent({
   name: 'NormalizationToggle',

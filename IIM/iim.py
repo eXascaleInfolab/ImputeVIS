@@ -7,8 +7,9 @@ from multiprocessing import Pool
 
 from typing import List
 
-# TODO Return of function doc
 global rmse;
+
+
 def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_neighbors: int = 10):
     """Implementation of the IIM algorithm
     Via the adaptive flag, the algorithm can be run in two modes:
@@ -36,8 +37,10 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
         incomplete_tuples = matrix_nan[tuples_with_nan]
         complete_tuples = matrix_nan[~tuples_with_nan]  # Rows that do not contain a NaN value
         if learning_neighbors > len(complete_tuples):
-            print("Warning: More learning neighbors than complete tuples, setting learning neighbors to number of complete tuples")
-            learning_neighbors = min(len(complete_tuples), learning_neighbors)  # Make sure we don't have more neighbors than tuples
+            print(
+                "Warning: More learning neighbors than complete tuples, setting learning neighbors to number of complete tuples")
+            learning_neighbors = min(len(complete_tuples),
+                                     learning_neighbors)  # Make sure we don't have more neighbors than tuples
         print("Number of learning neighbors: " + str(learning_neighbors))
         # columns_with_nan = np.array(np.where(np.isnan(matrix_nan).any(axis=0) == True))
         # col_with_max_nan = np.argmax(np.count_nonzero(np.isnan(matrix_nan), axis=0))
@@ -46,7 +49,8 @@ def iim_recovery(matrix_nan: np.ndarray, adaptive_flag: bool = False, learning_n
             return matrix_nan
         if adaptive_flag:
             print("Running IIM algorithm with adaptive algorithm, k = " + str(learning_neighbors) + "...")
-            lr_models = adaptive(complete_tuples, incomplete_tuples, learning_neighbors, max_learning_neighbors=min(len(complete_tuples), 10))
+            lr_models = adaptive(complete_tuples, incomplete_tuples, learning_neighbors,
+                                 max_learning_neighbors=min(len(complete_tuples), 10))
             imputation_result = imputation(incomplete_tuples, lr_models)
 
         else:
@@ -211,7 +215,8 @@ def imputation(incomplete_tuples: np.ndarray, lr_coef_and_threshold: np.ndarray)
 
 
 # Algorithm 3: Adaptive
-def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 100, step_size: int = 4):
+def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 100,
+             step_size: int = 4):
     """Adaptive learning of regression parameters
 
     Parameters
@@ -253,16 +258,18 @@ def adaptive(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
             for l in range(0, number_of_models):  # Line 6, for l in 1..n
                 model_params_for_tuple = phi_list[l][incomplete_tuple_idx]
                 for attribute_index, model_params in enumerate(model_params_for_tuple):
-                  #  print(f"Attribute index: {attribute_index}, model_params: {model_params}")
+                    #  print(f"Attribute index: {attribute_index}, model_params: {model_params}")
 
-                    if model_params is not None and not np.any(model_params == None):  # Only compute cost for NaN attributes
+                    if model_params is not None and not np.any(
+                            model_params == None):  # Only compute cost for NaN attributes
                         coefs, intercepts = zip(*model_params)
                         expanded_coef = np.array(coefs)
                         # set NaN attributes in neighbors_filtered to 0 (Nan to Num should also work)
                         neighbors_filtered_copy = np.nan_to_num(neighbors_filtered)
 
                         print(expanded_coef.shape, neighbors_filtered_copy.shape)
-                        phi_models = (expanded_coef @ neighbors_filtered_copy[:, :, None]).squeeze() + np.array(intercepts)
+                        phi_models = (expanded_coef @ neighbors_filtered_copy[:, :, None]).squeeze() + np.array(
+                            intercepts)
                         errors = np.abs(complete_tuple[attribute_index] - phi_models)
                         costs[incomplete_tuple_idx, l] += np.sum(np.power(errors, 2)) / len(phi_models)
 
@@ -292,7 +299,7 @@ def compute_cost_for_tuple(args):
         nan_indicator = np.isnan(incomplete_tuple)
         neighbors_filtered = np.delete(complete_tuples[neighbors], nan_indicator, axis=1)
         for l in range(0, number_of_models):
-            # TODO Find a way to do this with expanded coef better
+            # TODO Find a way to do this with expanded coef better if adaptive is of interest
             expanded_coef = np.array([coef for coef, _ in phi_list[l][incomplete_tuple_idx]])
             phi_models = (expanded_coef @ neighbors_filtered[:, :, None]).squeeze() + np.array(
                 [intercept for _, intercept in phi_list[l][incomplete_tuple_idx]])
@@ -301,8 +308,9 @@ def compute_cost_for_tuple(args):
     return costs
 
 
-def adaptive_multi(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int, max_learning_neighbors: int = 100,
-             step_size: int = 4):
+def adaptive_multi(complete_tuples: np.ndarray, incomplete_tuples: np.ndarray, k: int,
+                   max_learning_neighbors: int = 100,
+                   step_size: int = 4):
     print("Starting Algorithm 3 'adaptive'")
     all_entries = min(int(complete_tuples.shape[0]), max_learning_neighbors)
     phi_list = [learning(complete_tuples, incomplete_tuples, l_learning)
