@@ -1,5 +1,6 @@
 import numpy as np
 import glob
+import math
 import os
 import random
 import fnmatch
@@ -307,7 +308,7 @@ def process_all_datasets_to_split(input_directory):
     split_file_lines(drift_dir)
 
 
-def load_and_trim_matrix(file_path: str, max_columns: int = 10) -> np.ndarray:
+def load_and_trim_matrix(file_path: str, max_columns: int = 10, max_rows: int = 800) -> np.ndarray:
     """
     Load the matrix from the file and trim it to the specified number of columns if necessary.
 
@@ -317,6 +318,8 @@ def load_and_trim_matrix(file_path: str, max_columns: int = 10) -> np.ndarray:
         Path to the file containing the matrix.
     max_columns : int, optional
         The maximum number of columns the matrix should have. Defaults to 20.
+    max_rows : int, optional
+        The maximum number of rows the matrix should have. Defaults to 1000.
 
     Returns
     -------
@@ -324,8 +327,16 @@ def load_and_trim_matrix(file_path: str, max_columns: int = 10) -> np.ndarray:
         The loaded (and possibly trimmed) matrix.
     """
     matrix = np.loadtxt(file_path, delimiter=' ')
-    if matrix.shape[1] > max_columns:
+    matrix_shape = matrix.shape
+    if matrix_shape[1] > max_columns:
         matrix = matrix[:, :max_columns]
+    if matrix_shape[0] > max_rows:
+        if matrix_shape[0] > 2 * max_rows:
+            first_tenth_index = matrix_shape[0] // 10
+            indices_to_keep = list(range(math.ceil(0.4 * first_tenth_index), math.ceil(0.4 * first_tenth_index) + max_rows))
+            matrix = matrix[indices_to_keep, :]
+        else:
+            matrix = matrix[-max_rows:, :]
     return matrix
 
 

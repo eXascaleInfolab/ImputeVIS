@@ -23,13 +23,13 @@
             <option v-for="number in Array.from({ length: 100 }, (_, i) => i + 1)" :key="number">{{ number }}</option>
           </select>
         </div>
-        <div class="mb-3">
-          <label for="typeSelect" class="form-label">Learning Type:</label>
-          <select id="typeSelect" v-model="typeSelect" class="form-control">
-            <option value="">Normal</option>
-            <option value="a">Adaptive (High Processing Cost)</option>
-          </select>
-        </div>
+<!--        <div class="mb-3">-->
+<!--          <label for="typeSelect" class="form-label">Learning Type:</label>-->
+<!--          <select id="typeSelect" v-model="typeSelect" class="form-control">-->
+<!--            <option value="">Normal</option>-->
+<!--            <option value="a">Adaptive (High Processing Cost)</option>-->
+<!--          </select>-->
+<!--        </div>-->
         <button type="submit" class="btn btn-primary">Impute</button>
         <div class="mt-3">
           <metrics-display :metrics="metrics"></metrics-display>
