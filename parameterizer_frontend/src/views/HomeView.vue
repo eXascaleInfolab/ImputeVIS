@@ -68,7 +68,7 @@
           </div>
           <!-- Parameter Options -->
           <div class="col-lg-6 mt-4">
-            <h4>Select parameter option</h4>
+            <h4>Select parameter configuration</h4>
             <select class="form-control" name="paramOption" v-model="selectedParamOption">
               <option value="recommended">Recommended</option>
               <option value="default">Author Default</option>
@@ -273,9 +273,8 @@ export default {
           epsilon = parameters['cdrec'][dataAbbreviation].best_params.eps || epsilon;
           iterations = parameters['cdrec'][dataAbbreviation].best_params.iters || iterations;
 
-          // TODO: IIM Parameters once optimization done
           // IIM Parameters
-          // numberSelect = parameters['iim'][dataAbbreviation].best_params.learning_neighbours || numberSelect;
+          numberSelect = parameters['iim'][dataAbbreviation].best_params.learning_neighbours || numberSelect;
           // typeSelect = parameters['iim'][dataAbbreviation].best_params.type_select || typeSelect;
 
           // M-RNN Parameters
@@ -385,13 +384,13 @@ export default {
               //The push should theoretically ensure that we are just adding
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
                 if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "CDRec:" + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "CDRec: " + currentSeriesNames[index]));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec:" + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec: " + currentSeriesNames[index]));
                 }
               } else {
                 if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "CDRec:" + index));
+                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "CDRec: " + index));
                 } else {
                   chartOptionsImputed.value.series.push(createSeries(index, data));
                 }
@@ -424,13 +423,13 @@ export default {
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
                 if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "IIM:" + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "IIM: " + currentSeriesNames[index]));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, "IIM:" + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, "IIM: " + currentSeriesNames[index]));
                 }
               } else {
                 if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "IIM:" + index));
+                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "IIM: " + index));
                 } else {
                   chartOptionsImputed.value.series.push(createSeries(index, data));
                 }
@@ -466,13 +465,13 @@ export default {
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
                 if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "MRNN:" + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "MRNN: " + currentSeriesNames[index]));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, "MRNN:" + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, "MRNN: " + currentSeriesNames[index]));
                 }
               } else {
                 if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "MRNN:" + index));
+                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "MRNN: " + index));
                 } else {
                   chartOptionsImputed.value.series.push(createSeries(index, data));
                 }
@@ -506,13 +505,13 @@ export default {
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
                 if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "ST-MVL:" + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "ST-MVL: " + currentSeriesNames[index]));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, "ST-MVL:" + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, "ST-MVL: " + currentSeriesNames[index]));
                 }
               } else {
                 if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "ST-MVL:" + index));
+                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "ST-MVL: " + index));
                 } else {
                   chartOptionsImputed.value.series.push(createSeries(index, data));
                 }
@@ -580,6 +579,7 @@ export default {
 
     const handleParamSelectChange = async () => {
       try {
+        console.log("called fetchParams")
         await fetchParameters();
         await submitForm();
       } catch (error) {

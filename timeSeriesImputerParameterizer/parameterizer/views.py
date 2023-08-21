@@ -379,6 +379,7 @@ def fetch_params(request):
     if request.method == 'POST':
         data, data_set = load_from_request(request)
         data_abbreviation = handle_data_set(data_set)
+        optimal_metrics = "rmse_mae"  # Determined via thesis' experiments, holds for most cases
 
         if not data_abbreviation:
             return JsonResponse({'message': 'Invalid request'}, status=400)
@@ -388,7 +389,7 @@ def fetch_params(request):
         if not optimization_method:
             return JsonResponse({'message': 'param_options not provided'}, status=400)
 
-        optimizer_dir = '../Optimizer'
+        optimizer_dir = '../Optimizer/metric_specific'
 
         # If "recommended" is selected, check all optimization methods, otherwise stick with the provided one
         optimization_methods = [f.split('_')[-1].split('.json')[0] for f in os.listdir(optimizer_dir) if
@@ -404,12 +405,14 @@ def fetch_params(request):
             if optimization_method != "recommended":
                 matching_files = [f for f in all_files if
                                   f.startswith("optimization_results_")
-                                  and f.endswith(f".json")
+                                  and optimization_method in f
+                                  and optimal_metrics in f
                                   ]
             else:
                 matching_files = [f for f in all_files if
                                   f.startswith("optimization_results_")
-                                  and f.endswith(f"_{method}.json")
+                                  and "bayesian_optimization" in f
+                                  and optimal_metrics in f
                                   ]
 
             for file in matching_files:
