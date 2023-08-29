@@ -215,25 +215,35 @@ def escape_underscores(text: str) -> str:
 
 
 def main():
-    datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
-    dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
-    # Store all extracted features for each dataset
-    all_results = {}
-
-    for dataset, data_file in zip(datasets, dataset_files):
-        raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
-        if dataset == 'drift':
-            raw_file_path = f"../Datasets/{dataset}/drift10/raw_matrices/{data_file}_eighth.txt"
-        raw_matrix = np.loadtxt(raw_file_path, delimiter=" ")
-
-        # # Extract features
-        # results = catch.extract_features(raw_matrix)
-        #
-        # # Convert to LaTeX format
-        # latex_format = results_to_latex(results)
-        # # print(latex_format)
-        # with open(f"results/latex_table_{dataset}.txt", 'w') as f:
-        #     f.write(latex_format)
+    # datasets = ['bafu', 'chlorine', 'climate', 'drift', 'meteo']
+    # dataset_files = ['BAFU', 'cl2fullLarge', 'climate', 'batch10', 'meteo_total']
+    # # Store all extracted features for each dataset
+    # all_results = {}
+    #
+    # for dataset, data_file in zip(datasets, dataset_files):
+    #     raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
+    #     if dataset == 'drift':
+    #         raw_file_path = f"../Datasets/{dataset}/drift10/raw_matrices/{data_file}_eighth.txt"
+    #     raw_matrix = np.loadtxt(raw_file_path, delimiter=" ")
+    #
+    #     # # Extract features
+    #     # results = catch.extract_features(raw_matrix)
+    #     #
+    #     # # Convert to LaTeX format
+    #     # latex_format = results_to_latex(results)
+    #     # # print(latex_format)
+    #     # with open(f"results/latex_table_{dataset}.txt", 'w') as f:
+    #     #     f.write(latex_format)
+    #
+    #     # Extract features and store in the dictionary
+    #     all_results[dataset] = catch.extract_features(raw_matrix)
+    #
+    # # Convert the combined results into LaTeX format
+    # latex_format = results_to_latex_in_one(all_results)
+    #
+    # # Save to a single file
+    # with open("results/latex_table_combined.txt", 'w') as f:
+    #     f.write(latex_format)
 
     test_string = """
     \\section*{Geometry}
