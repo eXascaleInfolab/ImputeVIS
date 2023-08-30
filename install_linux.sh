@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Unused, but kept for reference
 # Check for Ubuntu 20, 22 or WSL2
 #if ! (lsb_release -a 2>/dev/null | grep -E "Ubuntu 20|Ubuntu 22" || grep -q Microsoft /proc/version); then
 #    echo "Unsupported system! This script is for Ubuntu 20, Ubuntu 22, and WSL2 with Ubuntu."

@@ -49,9 +49,8 @@ npm run dev
 
 - Ubuntu 20 or Ubuntu 22 (including Ubuntu derivatives, e.g., Xubuntu) or the same distribution under WSL2
 - Clone this repository.
-- `install_linux.sh` and `start_servers.sh` should suffice (untested).
 
-Alternatively dependencies if doing it manually:
+Dependencies:
 
 - Node.js and npm (npm is distributed with Node.js) for the frontend dependencies in `package.json`.
 - Python (version 3.8 or later) and pip.
@@ -127,7 +126,7 @@ sudo apt-get install libopenblas-dev
 ```
 
 ### Troubleshooting
-**Docker won't work for the frontend**
+**Docker won't work for the frontend**  
 You are likely under Windows, using WSL2 for Docker.  
 "@esbuild/win32-x64" does not have the same binaries as "@esbuild/linux-x64",
 thus either start the frontend manually with `npm install` and `npm run dev` in the `parameterizer_frontend` directory,
@@ -135,7 +134,7 @@ or manually navigate under your WSL2 installation to the `parameterizer_frontend
 and run `npm install`. Ensure that the node version used is the Linux and not Windows one.  
 After this, the issue should likely be fixed for `docker-compose up frontend`.
 
-**The frontend shows errors and won't start**
+**The frontend shows errors and won't start**  
 Ensure you are using `npm run dev` to start the frontend and not attempting to run `npm run build`.
 
 ## Usage

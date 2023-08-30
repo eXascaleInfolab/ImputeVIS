@@ -1,4 +1,5 @@
 #!/bin/bash
+# Unused, but kept for reference
 
 # Start Backend Server
 echo "Starting backend server..."
