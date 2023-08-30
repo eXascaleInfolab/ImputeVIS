@@ -14,7 +14,7 @@ The thesis on the general topic of Timeseries and focuses on:
 - Possible characterizing datasets
 - Possibly suggesting optimal parameters and best algorithms.
 
-## Quick Start
+## Quick Start Linux (and Mac)
 Install docker and docker-compose. Then run the following commands:
 
 ```bash
@@ -26,6 +26,24 @@ docker-compose up
 This uses the docker-compose.yml file to build the frontend and backend and run them in containers.   
 The frontend is available at http://localhost:5173 (or http://172.19.0.3:5173/), 
 with the backend accessible under http://localhost:8000 (api calls only).
+
+## Quick Start Windows
+Install docker for windows under WSL, then run the following commands:
+
+```bash
+# Build backend image
+docker-compose build backend
+# Start backend image
+docker-compose up backend
+```
+
+Either in Windows directly or under WSL, install npm if not already installed.
+Then navigate into the `parameterizer_frontend` directory, make sure that npm is installed, and run the following commands:
+
+```bash
+npm install
+npm run dev
+```
 
 ## Prerequisites
 

@@ -7,13 +7,10 @@ WORKDIR /app
 # Since Dockerfile is inside 'parameterizer_frontend', just refer directly to the files
 # ADD ./package*.json /app/
 # Brute-force adding all files that may be required
-ADD ./*.json /app/
-ADD ./*.ts /app/
+COPY ./*.json ./*.ts /app/
 
-RUN npm install && npm i vite
+# Install dependencies
+RUN npm install
 
-# Add the startup script.
-ADD ./start_frontend.sh /start_frontend.sh
-
-# Grant execution permissions
-RUN chmod +x /start_frontend.sh
+# The CMD will execute when the container starts and will run the frontend server
+CMD ["npm", "run", "dev-host"]

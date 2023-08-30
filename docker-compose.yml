@@ -21,7 +21,6 @@ services:
 
   frontend:
     build: ./parameterizer_frontend
-    command: /start_frontend.sh
     volumes:
       - ./parameterizer_frontend:/app
       - /parameterizer_frontend/app/node_modules
