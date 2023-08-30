@@ -126,6 +126,18 @@ Furthermore, the following dependency may be needed for WSL:
 sudo apt-get install libopenblas-dev
 ```
 
+### Troubleshooting
+**Docker won't work for the frontend**
+You are likely under Windows, using WSL2 for Docker.  
+"@esbuild/win32-x64" does not have the same binaries as "@esbuild/linux-x64",
+thus either start the frontend manually with `npm install` and `npm run dev` in the `parameterizer_frontend` directory,
+or manually navigate under your WSL2 installation to the `parameterizer_frontend` directory, install node within your WSL,
+and run `npm install`. Ensure that the node version used is the Linux and not Windows one.  
+After this, the issue should likely be fixed for `docker-compose up frontend`.
+
+**The frontend shows errors and won't start**
+Ensure you are using `npm run dev` to start the frontend and not attempting to run `npm run build`.
+
 ## Usage
 
 After setting up the frontend and backend, you can access the application by opening http://localhost:5173 in your
