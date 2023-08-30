@@ -68,6 +68,7 @@
         <!--        <missing-rate v-model="missingRate" />-->
         <normalization-toggle v-model="normalizationMode"></normalization-toggle>
 
+        <br/>
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
         <div class="mt-3">
           <metrics-display v-if="imputedData" :metrics="metrics"></metrics-display>
