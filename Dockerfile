@@ -16,10 +16,4 @@ RUN apt-get update && \
 # Install Python requirements
 RUN pip install -r requirements.txt
 
-# Add the start_backend.sh script to the Docker image
-ADD start_backend.sh /start_backend.sh
-
-# Make sure the start_backend.sh script is executable
-RUN chmod +x /start_backend.sh
-
-CMD ["/start_backend.sh"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

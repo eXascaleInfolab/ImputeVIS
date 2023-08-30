@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Unused, but kept for reference
 echo "Starting backend server..."
 apt update
 apt install -y libopenblas-dev
