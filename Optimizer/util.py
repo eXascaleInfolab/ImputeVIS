@@ -1,10 +1,7 @@
 import numpy as np
-import time
-import json
-import skopt
-from skopt import Optimizer
+import matplotlib.pyplot as plt
 from typing import List, Optional, Tuple, Union, Any
-
+import os
 import json
 from typing import Dict, Any, List
 
@@ -174,6 +171,7 @@ def process_for_algorithm(file_name: str, algorithm_name: str, datasets: List[st
     if metrics == ["rmse_mae", "mi_corr"]:
         return create_latex_table_per_algorithm_extended(table_data, algorithm_name)
     else:
+        create_plots_per_algorithm(table_data, algorithm_name)
         return create_latex_table_per_algorithm(table_data, algorithm_name)
 
 
@@ -304,6 +302,66 @@ def create_latex_table_per_algorithm_extended(table_data: Dict[str, Dict[str, Di
     return latex_table
 
 
+def create_plots_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, Any]]], algorithm: str):
+    """
+    Create a plot for a specific algorithm from the extracted data.
+
+    Parameters
+    ----------
+    table_data : Dict[str, Dict[str, Dict[str, Any]]]
+        Nested dictionary containing table data.
+    algorithm : str
+        Algorithm name to filter the data.
+    """
+
+    # Ensure the figures directory exists
+    if not os.path.exists('figures'):
+        os.makedirs('figures')
+
+    # 1. Identify unique parameters
+    unique_params = set()
+    for _, algorithm_data in table_data.items():
+        algorithm_upper = algorithm.upper().replace("-", "")  # Caps case and remove hyphens
+        if algorithm_upper in algorithm_data:
+            params = algorithm_data[algorithm_upper]["params"]
+            for param in params:
+                unique_params.add(param)
+    unique_params = sorted(list(unique_params))
+
+    # 2. For each parameter, plot its values
+    for param in unique_params:
+
+        # Data for plotting
+        datasets = []
+        param_values = []
+
+        for key, algorithm_data in table_data.items():
+            dataset, _ = key.split("_", 1)
+            dataset = replace_underscores(dataset)
+
+            algorithm_upper = algorithm.upper().replace("-", "")
+            if algorithm_upper in algorithm_data:
+                details = algorithm_data[algorithm_upper]
+
+                datasets.append(dataset)
+                param_values.append(details['params'].get(param, 0))
+
+        # Create plot
+        plt.figure()
+        plt.bar(datasets, param_values)
+        plt.xlabel('Dataset')
+        plt.ylabel('Value')
+        plt.title(f'{param.title()} values for {algorithm}')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+
+        # Save to /figures/
+        plt.savefig(f'figures/{algorithm}_{param}.png')
+        plt.close()
+
+    print(f"Plots for {algorithm} saved under /figures/.")
+
+
 def round_params_values(params: dict) -> dict:
     """
     Recursively round float values in the dictionary to 5 decimal points.
@@ -407,28 +465,27 @@ if __name__ == "__main__":
     with open("latex_table_cdrec.txt", 'w') as f:
         f.write(latex_cdrec)
     latex_cdrec_extended = process_for_algorithm(file_name_cdrec, "CDRec", datasets, metrics_for_table)
-    with open("latex_table_cdrec_extended.txt", 'w') as f:
-        f.write(latex_cdrec_extended)
+    # with open("latex_table_cdrec_extended.txt", 'w') as f:
+    #     f.write(latex_cdrec_extended)
 
-    file_name_iim = "results/iim/iim_optimized_summary_results.json"
-    latex_iim = process_for_algorithm(file_name_iim, "IIM", datasets, metrics)
-    with open("latex_table_iim.txt", 'w') as f:
-        f.write(latex_iim)
-    latex_iim_extended = process_for_algorithm(file_name_iim, "IIM", datasets, metrics_for_table)
-    with open("latex_table_iim_extended.txt", 'w') as f:
-        f.write(latex_iim_extended)
-    file_name_mrnn = "results/mrnn/mrnn_optimized_summary_results.json"
-    latex_mrnn = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics)
-    with open("latex_table_mrnn.txt", 'w') as f:
-        f.write(latex_mrnn)
-    latex_mrnn_extended = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics_for_table)
-    with open("latex_table_mrnn_extended.txt", 'w') as f:
-        f.write(latex_mrnn_extended)
-    file_name_stmvl = "results/stmvl/stmvl_optimized_summary_results.json"
-    latex_stmvl = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics)
-    with open("latex_table_stmvl.txt", 'w') as f:
-        f.write(latex_stmvl)
-    latex_stmvl_extended = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics_for_table)
-    with open("latex_table_stmvl_extended.txt", 'w') as f:
-        f.write(latex_stmvl_extended)
-
+    # file_name_iim = "results/iim/iim_optimized_summary_results.json"
+    # latex_iim = process_for_algorithm(file_name_iim, "IIM", datasets, metrics)
+    # with open("latex_table_iim.txt", 'w') as f:
+    #     f.write(latex_iim)
+    # latex_iim_extended = process_for_algorithm(file_name_iim, "IIM", datasets, metrics_for_table)
+    # with open("latex_table_iim_extended.txt", 'w') as f:
+    #     f.write(latex_iim_extended)
+    # file_name_mrnn = "results/mrnn/mrnn_optimized_summary_results.json"
+    # latex_mrnn = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics)
+    # with open("latex_table_mrnn.txt", 'w') as f:
+    #     f.write(latex_mrnn)
+    # latex_mrnn_extended = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics_for_table)
+    # with open("latex_table_mrnn_extended.txt", 'w') as f:
+    #     f.write(latex_mrnn_extended)
+    # file_name_stmvl = "results/stmvl/stmvl_optimized_summary_results.json"
+    # latex_stmvl = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics)
+    # with open("latex_table_stmvl.txt", 'w') as f:
+    #     f.write(latex_stmvl)
+    # latex_stmvl_extended = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics_for_table)
+    # with open("latex_table_stmvl_extended.txt", 'w') as f:
+    #     f.write(latex_stmvl_extended)
