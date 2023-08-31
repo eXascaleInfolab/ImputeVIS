@@ -125,6 +125,7 @@ def extract_table_data_single(json_data: Dict[str, Any], datasets: List[str], me
                 algorithm = entry["algorithm"].split('/')[-1].upper()  # Get the last part after the '/'
                 params = entry["best_params"]
                 optimization_method = entry["optimization_method"]
+                metric_used_for_optimization = entry["metric_used_for_optimization"]
                 rmse = entry["rmse"]
                 mae = entry["mae"]
                 mi = entry["mi"]
@@ -136,6 +137,7 @@ def extract_table_data_single(json_data: Dict[str, Any], datasets: List[str], me
                 table_data[key][algorithm] = {
                     "params": params,
                     "optimization_method": optimization_method,
+                    "metric_used_for_optimization": metric_used_for_optimization,
                     "rmse": rmse,
                     "mae": mae,
                     "mi": mi,
@@ -314,14 +316,10 @@ def create_plots_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, Any]]],
         Algorithm name to filter the data.
     """
 
-    # Ensure the figures directory exists
-    if not os.path.exists('figures'):
-        os.makedirs('figures')
-
     # 1. Identify unique parameters
     unique_params = set()
     for _, algorithm_data in table_data.items():
-        algorithm_upper = algorithm.upper().replace("-", "")  # Caps case and remove hyphens
+        algorithm_upper = algorithm.upper().replace("-", "")
         if algorithm_upper in algorithm_data:
             params = algorithm_data[algorithm_upper]["params"]
             for param in params:
@@ -345,30 +343,50 @@ def create_plots_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, Any]]],
             algorithm_upper = algorithm.upper().replace("-", "")
             if algorithm_upper in algorithm_data:
                 details = algorithm_data[algorithm_upper]
-                datasets.append(mapper(dataset))
 
-                val = details['params'].get(param, 0)
-                values.append(val)
-                optimization_methods.append(details["optimization_method"])
+                # Extract optimization methods and their values
+                for optimization_method in [details["metric_used_for_optimization"]]:
+                    datasets.append(mapper(dataset))
+                    values.append(details['params'].get(param, 0))
+                    optimization_methods.append(optimization_method)
+
+        # Determine number of optimization methods for bar positions
+        num_methods = len(set(optimization_methods))
+        positions = [i for i in range(len(datasets))]
 
         # Create plot
         fig, ax = plt.subplots()
-        bars = ax.bar(datasets, values, bar_width, color='blue')
 
-        # Annotate bars with rounded values and optimization methods
-        for i, bar in enumerate(bars):
-            height = bar.get_height()
-            annotation_text = f"{round(height, 5)} ({mapper(optimization_methods[i])})"
-            ax.annotate(annotation_text,
-                        xy=(bar.get_x() + bar.get_width() / 2, height),
-                        xytext=(0, 3),  # 3 points vertical offset
-                        textcoords="offset points",
-                        ha='center', va='bottom', rotation=0)
+        num_datasets = len(datasets) // num_methods
+        unique_optimization_methods = []
+        for opt_method in optimization_methods:
+            if opt_method not in unique_optimization_methods:
+                unique_optimization_methods.append(opt_method)
+        # Plot bars for each optimization method
+        for i, method in enumerate(unique_optimization_methods):
+            bars = ax.bar(
+                [p + i * bar_width for p in positions[:num_datasets]],
+                values[i * num_datasets:(i + 1) * num_datasets],
+                bar_width,
+                label=method.upper()
+            )
+
+            # Annotate bars with rounded values and optimization methods
+            for j, bar in enumerate(bars):
+                height = bar.get_height()
+                annotation_text = f"{round(height, 5)} ({mapper(optimization_methods[i + j * num_methods])})"
+                ax.annotate(annotation_text,
+                            xy=(bar.get_x() + bar.get_width() / 2, height),
+                            xytext=(0, 3),  # 3 points vertical offset
+                            textcoords="offset points",
+                            ha='center', va='bottom', rotation=0)
 
         plt.xlabel('Dataset')
         plt.ylabel('Value')
         plt.title(f'{mapper(param)} values for {algorithm}')
-        plt.xticks(rotation=45, ha='right')
+        ax.set_xticks([p + bar_width * (num_methods / 2) for p in positions[0::num_methods]])
+        ax.set_xticklabels(datasets[0::num_methods], rotation=45, ha='right')
+        plt.legend()
         plt.tight_layout()
 
         # Save to /figures/
