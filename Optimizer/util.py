@@ -76,11 +76,11 @@ def mapper(input_string: str):
         return "M-RNN"
     elif input_string == "stmvl":
         return "ST-MVL"
-    elif input_string == "bayesian optimization":
+    elif input_string == "bayesian optimization" or input_string == "bayesian_optimization":
         return "BO"
     elif input_string == "pso":
         return "PSO"
-    elif input_string == "succesive halving":
+    elif input_string == "succesive halving" or input_string == "succesive_halving":
         return "SH"
     elif input_string == "eps":
         return "Epsilon"
@@ -328,35 +328,51 @@ def create_plots_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, Any]]],
                 unique_params.add(param)
     unique_params = sorted(list(unique_params))
 
-    # 2. For each parameter, plot its values
+    # Width of the bars
+    bar_width = 0.35
+
+    # 2. For each parameter, plot its values and annotate them
     for param in unique_params:
 
         # Data for plotting
         datasets = []
-        param_values = []
+        values = []
+        optimization_methods = []
 
         for key, algorithm_data in table_data.items():
             dataset, _ = key.split("_", 1)
-            dataset = replace_underscores(dataset)
 
             algorithm_upper = algorithm.upper().replace("-", "")
             if algorithm_upper in algorithm_data:
                 details = algorithm_data[algorithm_upper]
+                datasets.append(mapper(dataset))
 
-                datasets.append(dataset)
-                param_values.append(details['params'].get(param, 0))
+                val = details['params'].get(param, 0)
+                values.append(val)
+                optimization_methods.append(details["optimization_method"])
 
         # Create plot
-        plt.figure()
-        plt.bar(datasets, param_values)
+        fig, ax = plt.subplots()
+        bars = ax.bar(datasets, values, bar_width, color='blue')
+
+        # Annotate bars with rounded values and optimization methods
+        for i, bar in enumerate(bars):
+            height = bar.get_height()
+            annotation_text = f"{round(height, 5)} ({mapper(optimization_methods[i])})"
+            ax.annotate(annotation_text,
+                        xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom', rotation=0)
+
         plt.xlabel('Dataset')
         plt.ylabel('Value')
-        plt.title(f'{param.title()} values for {algorithm}')
+        plt.title(f'{mapper(param)} values for {algorithm}')
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
 
         # Save to /figures/
-        plt.savefig(f'figures/{algorithm}_{param}.png')
+        plt.savefig(f'figures/{algorithm}_{param}.png', dpi=400)
         plt.close()
 
     print(f"Plots for {algorithm} saved under /figures/.")
