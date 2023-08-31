@@ -1,7 +1,7 @@
 <template>
   <h3 class="mb-4 text-center">ST-MVL Optimization</h3>
   <div class="d-flex mb-auto">
-    <div class="col-lg-8">
+    <div class="col-lg-10">
       <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
         <div class="alert alert-info d-flex align-items-center">
           <div class="spinner-border text-primary me-3" role="status"></div>
@@ -48,8 +48,8 @@
       </form>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
-    <div class="col-lg-4">
-      <form @submit.prevent="submitForm" class="sidebar col-lg-5">
+    <div class="col-lg-2">
+      <form @submit.prevent="submitForm" class="sidebar me-3">
         <optimization-select v-model="optimizationSelect" @parametersChanged="handleParametersChanged"/>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->

@@ -76,11 +76,11 @@
     <div class="mb-3">
       <label for="metricsSelect" class="form-label">Metrics:</label>
       <select id="metricsSelect" v-model="selectedMetrics" class="form-control" multiple>
-        <option value="rmse">Root Mean Square Error (RMSE)</option>
-        <option value="mae">Mean Absolute Error (MAE)</option>
-        <option value="mse">Mean Square Error (MSE)</option>
-        <option value="mi">Normalized Mutual Information (MI)</option>
-        <option value="corr">Correlation (CORR)</option>
+        <option value="rmse">RMSE</option>
+        <option value="mae">MAE</option>
+        <option value="mse">MSE</option>
+        <option value="mi">NMI</option>
+        <option value="corr">CORR</option>
       </select>
     </div>
   </div>

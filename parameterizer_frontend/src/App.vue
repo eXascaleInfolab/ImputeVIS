@@ -2,7 +2,7 @@
   <header>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-      <a class="navbar-brand" href="/">
+      <a class="navbar-brand ps-3" href="/">
         <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="30" height="30">
         <span class="ml-2">ImputeVIS</span>
       </a>
@@ -10,7 +10,7 @@
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="collapse navbar-collapse justify-content-center ps-n3 ms-n3" id="navbarNav">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
             <RouterLink class="nav-link" to="/">Compare</RouterLink>

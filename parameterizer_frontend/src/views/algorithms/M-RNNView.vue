@@ -7,12 +7,12 @@
     </div>
   </div>
   <div class="d-flex mb-auto">
-    <div class="col-lg-8">
+    <div class="col-lg-10">
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
       <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
-    <div class="col-lg-4">
-      <form @submit.prevent="submitForm" class="sidebar col-lg-5">
+    <div class="col-lg-2">
+      <form @submit.prevent="submitForm" class="sidebar me-3">
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <normalization-toggle v-model="normalizationMode"></normalization-toggle>
         <missing-rate v-model="missingRate"/>

@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex mb-auto container mt-5">
-    <div class="col-lg-8">
+    <div class="col-lg-10">
       <div v-if="loading" class="d-flex justify-content-center mt-3">
         <div class="alert alert-info d-flex align-items-center">
           <div class="spinner-border text-primary me-3" role="status"></div>
