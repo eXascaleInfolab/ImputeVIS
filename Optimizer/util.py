@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import List, Optional, Tuple, Union, Any
-import os
+from collections import defaultdict
 import json
 from typing import Dict, Any, List
 
@@ -315,6 +315,10 @@ def create_plots_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, Any]]],
     algorithm : str
         Algorithm name to filter the data.
     """
+    # Assuming bar_width is the width of each bar
+    spacing_between_datasets = 0.15
+    # Width of the bars
+    bar_width = 0.95
 
     # 1. Identify unique parameters
     unique_params = set()
@@ -325,9 +329,6 @@ def create_plots_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, Any]]],
             for param in params:
                 unique_params.add(param)
     unique_params = sorted(list(unique_params))
-
-    # Width of the bars
-    bar_width = 0.35
 
     # 2. For each parameter, plot its values and annotate them
     for param in unique_params:
@@ -352,41 +353,55 @@ def create_plots_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, Any]]],
 
         # Determine number of optimization methods for bar positions
         num_methods = len(set(optimization_methods))
-        positions = [i for i in range(len(datasets))]
+        num_datasets = len(datasets) // num_methods
+        positions = list(range(num_datasets))
+        # Adjusted width based on the number of optimization methods
+        adjusted_bar_width = bar_width / num_methods
 
         # Create plot
         fig, ax = plt.subplots()
 
-        num_datasets = len(datasets) // num_methods
         unique_optimization_methods = []
         for opt_method in optimization_methods:
             if opt_method not in unique_optimization_methods:
                 unique_optimization_methods.append(opt_method)
+
+        print("Datasets:", datasets)
+        print("Opt Methods:", optimization_methods)
+        print("Values:", values)
         # Plot bars for each optimization method
         for i, method in enumerate(unique_optimization_methods):
             bars = ax.bar(
-                [p + i * bar_width for p in positions[:num_datasets]],
+                [p + i * adjusted_bar_width + p * spacing_between_datasets for p in positions[:num_datasets]],
                 values[i * num_datasets:(i + 1) * num_datasets],
-                bar_width,
-                label=method.upper()
+                adjusted_bar_width,
+                label=method.upper(),
             )
 
             # Annotate bars with rounded values and optimization methods
             for j, bar in enumerate(bars):
                 height = bar.get_height()
-                annotation_text = f"{round(height, 5)} ({mapper(optimization_methods[i + j * num_methods])})"
+                annotation_text = str(round(height, 3)).rstrip('0').rstrip('.') if isinstance(height, float) else str(height)
                 ax.annotate(annotation_text,
                             xy=(bar.get_x() + bar.get_width() / 2, height),
-                            xytext=(0, 3),  # 3 points vertical offset
+                            xytext=(0, 0.5),  # vertical offset
                             textcoords="offset points",
-                            ha='center', va='bottom', rotation=0)
+                            ha='center', va='bottom', rotation=45)
 
         plt.xlabel('Dataset')
         plt.ylabel('Value')
         plt.title(f'{mapper(param)} values for {algorithm}')
-        ax.set_xticks([p + bar_width * (num_methods / 2) for p in positions[0::num_methods]])
-        ax.set_xticklabels(datasets[0::num_methods], rotation=45, ha='right')
-        plt.legend()
+
+        tick_positions = [p + bar_width * (num_methods / 2) for p in range(num_datasets)]
+        tick_positions = [p + adjusted_bar_width * (num_methods / 2) + p * spacing_between_datasets for p in
+                          range(num_datasets)]
+
+        tick_labels = [datasets[i * num_methods] for i in range(num_datasets)]
+
+        ax.set_xticks(tick_positions)
+        ax.set_xticklabels(tick_labels, rotation=45, ha='right')
+
+        plt.legend(loc='best', fontsize='x-small')
         plt.tight_layout()
 
         # Save to /figures/
@@ -498,26 +513,26 @@ if __name__ == "__main__":
     latex_cdrec = process_for_algorithm(file_name_cdrec, "CDRec", datasets, metrics)
     with open("latex_table_cdrec.txt", 'w') as f:
         f.write(latex_cdrec)
-    latex_cdrec_extended = process_for_algorithm(file_name_cdrec, "CDRec", datasets, metrics_for_table)
+    # latex_cdrec_extended = process_for_algorithm(file_name_cdrec, "CDRec", datasets, metrics_for_table)
     # with open("latex_table_cdrec_extended.txt", 'w') as f:
     #     f.write(latex_cdrec_extended)
 
-    # file_name_iim = "results/iim/iim_optimized_summary_results.json"
-    # latex_iim = process_for_algorithm(file_name_iim, "IIM", datasets, metrics)
+    file_name_iim = "results/iim/iim_optimized_summary_results.json"
+    latex_iim = process_for_algorithm(file_name_iim, "IIM", datasets, metrics)
     # with open("latex_table_iim.txt", 'w') as f:
     #     f.write(latex_iim)
     # latex_iim_extended = process_for_algorithm(file_name_iim, "IIM", datasets, metrics_for_table)
     # with open("latex_table_iim_extended.txt", 'w') as f:
     #     f.write(latex_iim_extended)
-    # file_name_mrnn = "results/mrnn/mrnn_optimized_summary_results.json"
-    # latex_mrnn = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics)
+    file_name_mrnn = "results/mrnn/mrnn_optimized_summary_results.json"
+    latex_mrnn = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics)
     # with open("latex_table_mrnn.txt", 'w') as f:
     #     f.write(latex_mrnn)
     # latex_mrnn_extended = process_for_algorithm(file_name_mrnn, "M-RNN", datasets, metrics_for_table)
     # with open("latex_table_mrnn_extended.txt", 'w') as f:
     #     f.write(latex_mrnn_extended)
-    # file_name_stmvl = "results/stmvl/stmvl_optimized_summary_results.json"
-    # latex_stmvl = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics)
+    file_name_stmvl = "results/stmvl/stmvl_optimized_summary_results.json"
+    latex_stmvl = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics)
     # with open("latex_table_stmvl.txt", 'w') as f:
     #     f.write(latex_stmvl)
     # latex_stmvl_extended = process_for_algorithm(file_name_stmvl, "ST-MVL", datasets, metrics_for_table)
