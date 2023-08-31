@@ -426,7 +426,7 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
 
     plt.tight_layout()
     suffix = "_".join(metrics_to_use)
-    plt.savefig(f"figures/dataset/{dataset}_comparison_{metric_used_for_optimization}_{suffix}.png")
+    plt.savefig(f"figures/dataset/{dataset}_comparison_{metric_used_for_optimization}_{suffix}.png", dpi=500)
     # plt.show()
     plt.close()
 
