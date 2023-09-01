@@ -66,7 +66,7 @@
         <optimization-select v-model="optimizationSelect" @parametersChanged="handleParametersChanged"/>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
-<!--        <normalization-toggle v-model="normalizationMode"></normalization-toggle>-->
+        <normalization-toggle v-model="normalizationMode"></normalization-toggle>
 
         <br/>
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
@@ -264,8 +264,17 @@ export default {
       currentSeriesNames = newSeriesNames;
     };
 
+    const handleNormalizationModeChange = () => {
+      if (imputedData.value == true) {
+          submitFormCustom();
+      } else {
+          handleDataSelectChange();
+      }
+    }
+
     // Watch for changes and call fetchData when it changes
-    watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
+    watch([dataSelect, missingRate], handleDataSelectChange, {immediate: true});
+    watch(normalizationMode, handleNormalizationModeChange, {immediate: true});
 
     const resetToOptimalParameters = () => {
       if (optimalResponse) {

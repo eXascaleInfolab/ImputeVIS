@@ -195,8 +195,19 @@ export default {
     const updateSeriesNames = (newSeriesNames) => {
       currentSeriesNames = newSeriesNames;
     };
+
+    const handleNormalizationModeChange = () => {
+      if (imputedData.value == true) {
+          submitForm();
+      } else {
+          handleDataSelectChange();
+      }
+    }
+
     // Watch for changes and call fetchData when it changes
-    watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
+    watch([dataSelect, missingRate], handleDataSelectChange, {immediate: true});
+    watch(normalizationMode, handleNormalizationModeChange, {immediate: true});
+
 
     return {
       submitForm,

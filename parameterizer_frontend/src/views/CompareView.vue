@@ -16,7 +16,7 @@
             <highcharts v-if="imputedData" class="mb-5 pb-5" :options="chartOptionsImputed"></highcharts>
             <highcharts :options="chartOptionsOriginal"></highcharts>
           </div>
-          <div class="col-lg-2 mt-3">
+          <div class="col-lg-2">
             <div class="row me-5">
               <div class="">
                 <form @submit.prevent="submitForm">
@@ -586,8 +586,17 @@ export default {
     //     console.error("Error handling parameter selection:", error);
     //   }
     // }
+      const handleNormalizationModeChange = () => {
+      if (imputedData.value == true) {
+          submitForm();
+      } else {
+          handleDataSelectChange();
+      }
+    }
+
     // Watch for changes and call fetchData when it changes
-    watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
+    watch([dataSelect, missingRate], handleDataSelectChange, {immediate: true});
+        watch(normalizationMode, handleNormalizationModeChange, {immediate: true});
     // Watch for changes and call fetchData when it changes
     // watch(selectedParamOption, handleParamSelectChange, {immediate: true});
 
