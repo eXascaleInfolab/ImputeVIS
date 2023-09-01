@@ -152,7 +152,7 @@ export default {
         mae.value = response.data.mae.toFixed(3);
         mi.value = response.data.mi.toFixed(3);
         corr.value = response.data.corr.toFixed(3);
-        chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+        chartOptionsImputed.value.series.length = 0;
 
         // Create a new array for the new series data
         const newSeriesData = [];

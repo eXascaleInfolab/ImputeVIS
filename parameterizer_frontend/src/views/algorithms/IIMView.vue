@@ -118,6 +118,7 @@ export default {
     const submitForm = async () => {
       let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
       loadingResults.value = true;
+        imputedData.value = false;
       try {
         const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
         const response = await axios.post('http://localhost:8000/api/iim/',
@@ -136,7 +137,7 @@ export default {
         mae.value = response.data.mae.toFixed(3);
         mi.value = response.data.mi.toFixed(3);
         corr.value = response.data.corr.toFixed(3);
-        chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+        chartOptionsImputed.value.series.length = 0;
         // Create a new array for the new series data
         const newSeriesData = [];
 

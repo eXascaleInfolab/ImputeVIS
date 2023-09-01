@@ -141,7 +141,7 @@ export default {
       try {
         let dataSet = `${dataSelect.value}_obfuscated_10`;
         loadingParameters.value = true;
-        console.log(dataSet);
+        imputedData.value = false;
         const response = await axios.post('http://localhost:8000/api/optimization/iim/',
             {
               ...optimizationParameters.value, // Spread the optimization parameters into the post body
@@ -155,7 +155,6 @@ export default {
               }
             }
         );
-        console.log(response.data);
         optimalResponse = response;
         numberSelect.value = response.data.best_params.learning_neighbours;
         chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
@@ -172,6 +171,7 @@ export default {
     const submitFormCustom = async () => {
       try {
         loadingResults.value = true;
+        imputedData.value = false;
         const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
         let dataSet = `${dataSelect.value}_obfuscated_10`;
         const response = await axios.post('http://localhost:8000/api/iim/',
@@ -190,7 +190,7 @@ export default {
         mae.value = response.data.mae.toFixed(3);
         mi.value = response.data.mi.toFixed(3);
         corr.value = response.data.corr.toFixed(3);
-        chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+        chartOptionsImputed.value.series.length = 0;
         // Create a new array for the new series data
         const newSeriesData = [];
 

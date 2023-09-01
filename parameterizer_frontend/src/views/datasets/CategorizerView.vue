@@ -1,6 +1,8 @@
 <template>
-  <div class="d-flex mb-auto container mt-5">
+    <h4 class="mb-4 text-center">Dataset Feature Extractor</h4>
+  <div class="d-flex mb-auto">
     <div class="col-lg-10">
+      <highcharts :options="chartOptionsOriginal"></highcharts>
       <div v-if="loading" class="d-flex justify-content-center mt-3">
         <div class="alert alert-info d-flex align-items-center">
           <div class="spinner-border text-primary me-3" role="status"></div>
@@ -12,7 +14,7 @@
         {{ error }}
       </div>
 
-      <div v-else class="mt-3">
+      <div v-else class="mt-2 ms-5">
         <!-- Geometry Table -->
         <div v-if="loadedResults && categoryExists('Geometry')" class="mb-4">
           <h4>Geometry</h4>
@@ -89,13 +91,13 @@
           </table>
         </div>
       </div>
-      <highcharts :options="chartOptionsOriginal"></highcharts>
     </div>
-    <div class="col-lg-4">
-      <div class="sidebar col-lg-5">
-        <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-        Impacts only data display
+    <div class="col-lg-2">
+      <div class="sidebar me-5">
+        <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames" class="mb-5"/>
+        Impacts only data display <br/>
         <normalization-toggle v-model="normalizationMode"></normalization-toggle>
+        <br/>
         <button type="submit" class="btn btn-primary mt-5" @click="fetchDataFeatures">Get Features</button>
       </div>
     </div>
