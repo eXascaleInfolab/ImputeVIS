@@ -19,17 +19,20 @@
 
         <div class="mb-3">
           <label for="numberSelect" class="form-label">Select Learning Neighbors:</label>
-          <select id="numberSelect" v-model="numberSelect" class="form-control">
-            <option v-for="number in Array.from({ length: 100 }, (_, i) => i + 1)" :key="number">{{ number }}</option>
-          </select>
+          <br/>
+          <div class="select-wrapper ">
+            <select id="numberSelect" v-model="numberSelect" class="form-control me-5 pe-5">
+              <option v-for="number in Array.from({ length: 100 }, (_, i) => i + 1)" :key="number">{{ number }}</option>
+            </select>
+          </div>
         </div>
-<!--        <div class="mb-3">-->
-<!--          <label for="typeSelect" class="form-label">Learning Type:</label>-->
-<!--          <select id="typeSelect" v-model="typeSelect" class="form-control">-->
-<!--            <option value="">Normal</option>-->
-<!--            <option value="a">Adaptive (High Processing Cost)</option>-->
-<!--          </select>-->
-<!--        </div>-->
+        <!--        <div class="mb-3">-->
+        <!--          <label for="typeSelect" class="form-label">Learning Type:</label>-->
+        <!--          <select id="typeSelect" v-model="typeSelect" class="form-control">-->
+        <!--            <option value="">Normal</option>-->
+        <!--            <option value="a">Adaptive (High Processing Cost)</option>-->
+        <!--          </select>-->
+        <!--        </div>-->
         <button type="submit" class="btn btn-primary">Impute</button>
         <div class="mt-3">
           <metrics-display v-if="imputedData" :metrics="metrics"></metrics-display>
@@ -118,7 +121,7 @@ export default {
     const submitForm = async () => {
       let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
       loadingResults.value = true;
-        imputedData.value = false;
+      imputedData.value = false;
       try {
         const formattedAlgCode = `iim ${numberSelect.value}${typeSelect.value}`;
         const response = await axios.post('http://localhost:8000/api/iim/',

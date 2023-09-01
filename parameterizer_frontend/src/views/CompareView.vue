@@ -1,128 +1,133 @@
 <template>
   <main>
-  </main>
-  <h3 class="mb-4 text-center">Compare Algorithms</h3>
+    <!--  <h3 class="mb-4 text-center">Compare Algorithms</h3>-->
 
-  <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
-    <div class="alert alert-info d-flex align-items-center">
-      <div class="spinner-border text-primary me-3" role="status"></div>
-      Loading...
-    </div>
-  </div>
-
-  <div class="d-flex mb-auto">
-    <div class="col-lg-12">
-      <div class="row ms-5">
-        <div class="col-lg-9">
-          <highcharts v-if="imputedData" class="mb-5 pb-5" :options="chartOptionsImputed"></highcharts>
-          <highcharts :options="chartOptionsOriginal"></highcharts>
-        </div>
-        <div class="col-lg-3">
-          <div class="row">
-            <div class="col-lg-6">
-              <form @submit.prevent="submitForm">
-                <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-                <normalization-toggle v-model="normalizationMode"></normalization-toggle>
-                <missing-rate v-model="missingRate"/>
-                <div class="d-flex justify-content-center mt-2">
-                  <button type="submit" class="btn btn-primary align-center">Refresh</button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div class="col-lg-8 mt-4">
-            <h4>Select algorithm(s)</h4>
-            <div class="row">
-              <div class="col form-check ">
-                <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames"
-                       @change="handleCheckboxChange">
-                <label class="form-check-label" for="CDRec">
-                  CDRec
-                </label>
-              </div>
-              <div class="col form-check ">
-                <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames"
-                       @change="handleCheckboxChange">
-                <label class="form-check-label" for="IIM">
-                  IIM
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col form-check ">
-                <input class="form-check-input" type="checkbox" value="M-RNN" id="MRNN" v-model="checkedNames"
-                       @change="handleCheckboxChange">
-                <label class="form-check-label" for="MRNN">
-                  M-RNN
-                </label>
-              </div>
-              <div class="col form-check ">
-                <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames"
-                       @change="handleCheckboxChange">
-                <label class="form-check-label" for="ST-MVL">
-                  ST-MVL
-                </label>
-              </div>
-            </div>
-
-          </div>
-          <!-- Parameter Options -->
-          <div class="col-lg-6 mt-4">
-            <h4>Parametrization</h4>
-            <select class="form-control" name="paramOption" v-model="selectedParamOption">
-              <option value="recommended">Recommended</option>
-              <option value="default">Default</option>
-              <option value="bayesian_optimization">Bayesian Optimization</option>
-              <option value="pso_optimization">Particle Swarm Optimization</option>
-              <option value="succesive_halving">Successive Halving</option>
-            </select>
-          </div>
-          <div v-if="metricsCDRec" class="col-lg-8 mt-5">
-            <div class="row">
-              <div class="col-xs">
-                <h6 v-if="rmseCDRec !== null && rmseCDRec !== ''"> CDRec RMSE: {{ rmseCDRec }}</h6>
-                <h6 v-if="maeCDRec !== null && maeCDRec !== ''"> CDRec MAE: {{ maeCDRec }}</h6>
-                <h6 v-if="miCDRec !== null && miCDRec !== ''"> CDRec MI: {{ miCDRec }}</h6>
-                <h6 v-if="corrCDRec !== null && corrCDRec !== ''"> CDRec CORR: {{ corrCDRec }}</h6>
-              </div>
-            </div>
-          </div>
-          <div v-if="metricsIIM" class="col-lg-8 mt-5">
-            <div class="row">
-              <div class="col-xs">
-                <h6 v-if="rmseIIM !== null && rmseIIM !== ''"> IIM RMSE: {{ rmseIIM }}</h6>
-                <h6 v-if="maeIIM !== null && maeIIM !== ''"> IIM MAE: {{ maeIIM }}</h6>
-                <h6 v-if="miIIM !== null && miIIM !== ''"> IIM MI: {{ miIIM }}</h6>
-                <h6 v-if="corrIIM !== null && corrIIM !== ''"> IIM CORR: {{ corrIIM }}</h6>
-              </div>
-            </div>
-          </div>
-          <div v-if="metricsMRNN" class="col-lg-8 mt-5">
-            <div class="row">
-              <div class="col-xs">
-                <h6 v-if="rmseMRNN !== null && rmseMRNN !== ''"> M-RNN RMSE: {{ rmseMRNN }}</h6>
-                <h6 v-if="maeMRNN !== null && maeMRNN !== ''"> M-RNN MAE: {{ maeMRNN }}</h6>
-                <h6 v-if="miMRNN !== null && miMRNN !== ''"> M-RNN MI: {{ miMRNN }}</h6>
-                <h6 v-if="corrMRNN !== null && corrMRNN !== ''"> M-RNN CORR: {{ corrMRNN }}</h6>
-              </div>
-            </div>
-          </div>
-          <div v-if="metricsSTMVL" class="col-lg-8 mt-5">
-            <div class="row">
-              <div class="col-xs">
-                <h6 v-if="rmseSTMVL !== null && rmseSTMVL !== ''"> ST-MVL RMSE: {{ rmseSTMVL }}</h6>
-                <h6 v-if="maeSTMVL !== null && maeSTMVL !== ''"> ST-MVL MAE: {{ maeSTMVL }}</h6>
-                <h6 v-if="miSTMVL !== null && miSTMVL !== ''"> ST-MVL MI: {{ miSTMVL }}</h6>
-                <h6 v-if="corrSTMVL !== null && corrSTMVL !== ''"> ST-MVL CORR: {{ corrSTMVL }}</h6>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div v-if="loadingResults" class="d-flex justify-content-center mt-3">
+      <div class="alert alert-info d-flex align-items-center">
+        <div class="spinner-border text-primary me-3" role="status"></div>
+        Loading...
       </div>
-
-
     </div>
-  </div>
+
+    <div class="mb-auto">
+      <div class="col-lg-12">
+        <div class="row me-1">
+          <div class="col-lg-10">
+            <highcharts v-if="imputedData" class="mb-5 pb-5" :options="chartOptionsImputed"></highcharts>
+            <highcharts :options="chartOptionsOriginal"></highcharts>
+          </div>
+          <div class="col-lg-2 mt-3">
+            <div class="row me-5">
+              <div class="">
+                <form @submit.prevent="submitForm">
+                  <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+                  <normalization-toggle v-model="normalizationMode"></normalization-toggle>
+                  <missing-rate v-model="missingRate"/>
+                  <div class="d-flex justify-content-center mt-2">
+                    <!--                    <button type="submit" class="btn btn-primary align-center">Refresh</button>-->
+                  </div>
+                </form>
+              </div>
+            </div>
+            <form @submit.prevent="submitForm">
+              <div class="mt-4 me-5">
+                <h4>Select algorithm(s)</h4>
+                <div class="row ms-2">
+                  <div class="col form-check ">
+                    <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames">
+<!--                           @change="handleCheckboxChange"-->
+                    <label class="form-check-label" for="CDRec">
+                      CDRec
+                    </label>
+                  </div>
+                  <div class="col form-check ">
+                    <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames">
+<!--                           @change="handleCheckboxChange"-->
+                    <label class="form-check-label" for="IIM">
+                      IIM
+                    </label>
+                  </div>
+                </div>
+                <div class="row ms-2">
+                  <div class="col form-check ">
+                    <input class="form-check-input" type="checkbox" value="M-RNN" id="MRNN" v-model="checkedNames">
+<!--                           @change="handleCheckboxChange"-->
+                    <label class="form-check-label" for="MRNN">
+                      M-RNN
+                    </label>
+                  </div>
+                  <div class="col form-check ">
+                    <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames">
+<!--                           @change="handleCheckboxChange"-->
+                    <label class="form-check-label" for="ST-MVL">
+                      ST-MVL
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+              <!-- Parameter Options -->
+              <div class="mt-4 me-5">
+                <h4>Parametrization</h4>
+                <select class="form-control" name="paramOption" v-model="selectedParamOption">
+                  <option value="recommended">Recommended</option>
+                  <option value="default">Default</option>
+                  <option value="bayesian_optimization">Bayesian Optimization</option>
+                  <option value="pso_optimization">Particle Swarm Optimization</option>
+                  <option value="succesive_halving">Successive Halving</option>
+                </select>
+              </div>
+              <div class="d-flex justify-content-center mt-4 me-5">
+                <button type="submit" class="btn btn-primary align-center">Impute</button>
+              </div>
+            </form>
+            <div v-if="metricsCDRec" class="mt-5">
+              <div class="row">
+                <div class="col-xs">
+                  <h6 v-if="rmseCDRec !== null && rmseCDRec !== ''"> CDRec RMSE: {{ rmseCDRec }}</h6>
+                  <h6 v-if="maeCDRec !== null && maeCDRec !== ''"> CDRec MAE: {{ maeCDRec }}</h6>
+                  <h6 v-if="miCDRec !== null && miCDRec !== ''"> CDRec MI: {{ miCDRec }}</h6>
+                  <h6 v-if="corrCDRec !== null && corrCDRec !== ''"> CDRec CORR: {{ corrCDRec }}</h6>
+                </div>
+              </div>
+            </div>
+            <div v-if="metricsIIM" class="mt-5">
+              <div class="row">
+                <div class="col-xs">
+                  <h6 v-if="rmseIIM !== null && rmseIIM !== ''"> IIM RMSE: {{ rmseIIM }}</h6>
+                  <h6 v-if="maeIIM !== null && maeIIM !== ''"> IIM MAE: {{ maeIIM }}</h6>
+                  <h6 v-if="miIIM !== null && miIIM !== ''"> IIM MI: {{ miIIM }}</h6>
+                  <h6 v-if="corrIIM !== null && corrIIM !== ''"> IIM CORR: {{ corrIIM }}</h6>
+                </div>
+              </div>
+            </div>
+            <div v-if="metricsMRNN" class="mt-5">
+              <div class="row">
+                <div class="col-xs">
+                  <h6 v-if="rmseMRNN !== null && rmseMRNN !== ''"> M-RNN RMSE: {{ rmseMRNN }}</h6>
+                  <h6 v-if="maeMRNN !== null && maeMRNN !== ''"> M-RNN MAE: {{ maeMRNN }}</h6>
+                  <h6 v-if="miMRNN !== null && miMRNN !== ''"> M-RNN MI: {{ miMRNN }}</h6>
+                  <h6 v-if="corrMRNN !== null && corrMRNN !== ''"> M-RNN CORR: {{ corrMRNN }}</h6>
+                </div>
+              </div>
+            </div>
+            <div v-if="metricsSTMVL" class="mt-5">
+              <div class="row">
+                <div class="col-xs">
+                  <h6 v-if="rmseSTMVL !== null && rmseSTMVL !== ''"> ST-MVL RMSE: {{ rmseSTMVL }}</h6>
+                  <h6 v-if="maeSTMVL !== null && maeSTMVL !== ''"> ST-MVL MAE: {{ maeSTMVL }}</h6>
+                  <h6 v-if="miSTMVL !== null && miSTMVL !== ''"> ST-MVL MI: {{ miSTMVL }}</h6>
+                  <h6 v-if="corrSTMVL !== null && corrSTMVL !== ''"> ST-MVL CORR: {{ corrSTMVL }}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
@@ -235,7 +240,7 @@ export default {
             seriesCopy[index] = createSeries(index, data);
           }
         });
-        checkedNames.value = [];
+        // checkedNames.value = [];
         // Assign the shallow copy back to chartOptionsOriginal
         chartOptionsOriginal.value.series = seriesCopy;
       } catch (error) {
@@ -577,19 +582,19 @@ export default {
       currentSeriesNames = newSeriesNames;
     };
 
-    const handleParamSelectChange = async () => {
-      try {
-        console.log("called fetchParams")
-        await fetchParameters();
-        await submitForm();
-      } catch (error) {
-        console.error("Error handling parameter selection:", error);
-      }
-    }
+    // const handleParamSelectChange = async () => {
+    //   try {
+    //     console.log("called fetchParams")
+    //     await fetchParameters();
+    //     await submitForm();
+    //   } catch (error) {
+    //     console.error("Error handling parameter selection:", error);
+    //   }
+    // }
     // Watch for changes and call fetchData when it changes
     watch([dataSelect, normalizationMode, missingRate], handleDataSelectChange, {immediate: true});
     // Watch for changes and call fetchData when it changes
-    watch(selectedParamOption, handleParamSelectChange, {immediate: true});
+    // watch(selectedParamOption, handleParamSelectChange, {immediate: true});
 
 
     return {
@@ -625,7 +630,7 @@ export default {
       imputedData,
       checkedNames,
       handleCheckboxChange,
-      handleParamSelectChange,
+      // handleParamSelectChange,
       selectedParamOption,
       loadingResults
     }

@@ -2,13 +2,16 @@
 
   <div class="mb-3">
     <label for="dataSelect" class="form-label">Dataset:</label>
-    <select id="dataSelect" v-model="selectedData" class="form-control">
-      <option value="BAFU_onetwentyeigth">BAFU</option>
-      <option value="cl2fullLarge_eighth">Chlorine</option>
-      <option value="climate_eighth">Climate</option>
-      <option value="batch10_eighth">Drift</option>
-      <option value="meteo_total_eighth">Meteo</option>
-    </select>
+    <br/>
+    <div class="select-wrapper">
+      <select id="dataSelect" v-model="selectedData" class="form-control me-5 pe-5">
+        <option value="BAFU_onetwentyeigth">BAFU</option>
+        <option value="cl2fullLarge_eighth">Chlorine</option>
+        <option value="climate_eighth">Climate</option>
+        <option value="batch10_eighth">Drift</option>
+        <option value="meteo_total_eighth">Meteo</option>
+      </select>
+    </div>
   </div>
 </template>
 
@@ -16,13 +19,13 @@
 import {ref, watch, defineComponent} from 'vue';
 
 const bafu_series_names = [
-    'Appenzell',
-    'Halden',
-    'Jonschwil',
-    'Liestal',
-    'Moutier',
-    'Rheinhalle',
-    'Wiler'
+  'Appenzell',
+  'Halden',
+  'Jonschwil',
+  'Liestal',
+  'Moutier',
+  'Rheinhalle',
+  'Wiler'
 ]
 
 const climate_series_names = [
@@ -40,15 +43,15 @@ const climate_series_names = [
 
 const drift_series_names = [
   '0-6_EMAi0.1_0',
-    '1-10_|DR|_1',
-    '2-28_EMAi0.01_3',
-    '3-18_|DR|_2',
-    '4-58_|DR|_7',
-    '5-21_EMAi0.001_2',
-    '6-52_EMAi0.01_6',
-    '7-124_EMAi0.01_15',
-    '8-110_EMAi0.1_13',
-    '9-36_EMAi0.01_4',
+  '1-10_|DR|_1',
+  '2-28_EMAi0.01_3',
+  '3-18_|DR|_2',
+  '4-58_|DR|_7',
+  '5-21_EMAi0.001_2',
+  '6-52_EMAi0.01_6',
+  '7-124_EMAi0.01_15',
+  '8-110_EMAi0.1_13',
+  '9-36_EMAi0.01_4',
 ];
 const meteo_series_names = [
   'tde000s0',

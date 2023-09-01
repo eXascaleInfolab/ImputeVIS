@@ -17,14 +17,14 @@
         </div>
       </div>
       <form v-if="optimalParametersDetermined && imputedData" @submit.prevent="submitFormCustom"
-            class="sidebar col-lg-7 align-items-center text-center">
+            class="sidebar col-lg-3 align-items-center text-center">
         <h5>Optimal Parameters</h5>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
 
         <!-- Learning Rate -->
         <div class="mb-3">
-          <label for="learningRate" class="form-label">Learning Rate: {{ parseFloat(learningRate).toFixed(4) }}</label>
-          <input id="learningRate" v-model.number="learningRate" type="range" min="0.001" max="0.1" step="0.005"
+          <label for="learningRate" class="form-label">Learning Rate: {{ parseFloat(learningRate).toFixed(6) }}</label>
+          <input id="learningRate" v-model.number="learningRate" type="range" min="0" max="0.1" step="0.00005"
                  class="form-control">
         </div>
 

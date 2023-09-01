@@ -16,15 +16,15 @@
         </div>
       </div>
       <form v-if="optimalParametersDetermined && imputedData" @submit.prevent="submitFormCustom"
-            class="sidebar col-lg-7 align-items-center text-center">
+            class="sidebar col-lg-3 align-items-center text-center">
         <h5>Optimal Parameters</h5>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
 
         <!-- Number of Iterations -->
         <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
-          <label for="iterations" class="form-label">Number of Iterations: {{ iterations }}</label>
-          <input id="iterations" v-model.number="iterations" type="range" min="100" max="2000" step="100"
+          <label for="iterations" class="form-label">Number of Iterations: {{ numberSelect }}</label>
+          <input id="iterations" v-model.number="numberSelect" type="range" min="1" max="100" step="1"
                  class="form-control">
         </div>
 

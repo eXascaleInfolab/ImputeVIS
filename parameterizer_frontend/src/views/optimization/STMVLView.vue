@@ -16,7 +16,7 @@
         </div>
       </div>
       <form v-if="optimalParametersDetermined && imputedData" @submit.prevent="submitFormCustom"
-            class="sidebar col-lg-7 align-items-center text-center">
+            class="sidebar col-lg-3 align-items-center text-center">
         <h5>Optimal Parameters</h5>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
 
@@ -30,7 +30,7 @@
         <!--Smoothing Parameter Gamma-->
         <div class="mb-3">
           <label for="gamma" class="form-label">Smoothing Parameter (γ): {{ parseFloat(gamma).toFixed(5) }}</label>
-          <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.0005"
+          <input id="gamma" v-model.number="gamma" type="range" min="0.00005" max="0.99" step="0.00005"
                  class="form-control">
         </div>
 

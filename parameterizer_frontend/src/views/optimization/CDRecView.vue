@@ -16,7 +16,7 @@
         </div>
       </div>
       <form v-if="optimalParametersDetermined && imputedData" @submit.prevent="submitFormCustom"
-            class="sidebar col-lg-7 align-items-center text-center">
+            class="sidebar col-lg-3 align-items-center text-center">
         <h5>Optimal Parameters</h5>
         <data-select-optimization v-model="dataSelectOptimization" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
@@ -29,15 +29,8 @@
         <!-- Sequence Length -->
         <div class="mb-3">
           <label for="epsilon" class="form-label">Threshold for Difference: {{ epsilon }}</label>
-          <select id="epsilon" v-model="epsilon" class="form-control">
-            <option value="E-9">E-9</option>
-            <option value="E-8">E-8</option>
-            <option value="E-7">E-7</option>
-            <option value="E-6">E-6</option>
-            <option value="E-5">E-5</option>
-            <option value="E-4">E-4</option>
-            <option value="E-3">E-3</option>
-          </select>
+          <input id="truncationRank" v-model.number="epsilon" type="range" min="0.0001" max="1" step="0.0001"
+                 class="form-control">
         </div>
 
         <!-- Number of Iterations -->
@@ -200,7 +193,6 @@ export default {
             {
               data_set: dataSet,
               truncation_rank: truncationRank.value,
-              //TODO Epsilon is not working
               epsilon: "E-2",
               iterations: iterations.value,
             },
@@ -269,6 +261,7 @@ export default {
 
     return {
       submitForm,
+      submitFormCustom,
       metrics,
       chartOptionsOriginal,
       chartOptionsImputed,
