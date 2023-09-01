@@ -1,49 +1,42 @@
 <template>
   <div class="about">
     <br>
-    <p class="ml-5">
-      This is a master thesis project by Brian Schweigler, supervised by Mourad Khayati and Zakhar Tymchenko.
-      Done at the University of Fribourg, Switzerland in the eXascale Institue.
-
-      ImputeVIS is a built on a Vue front-end and a Django back-end.
-    </p>
-    Its primary features empower users to:
-    <ul>
-      <li>Conduct a comprehensive comparison between CDRec, IIM, M-RNN, and ST-MVL based on imputation metrics such as
-        RMSE, MAE, MI, and correlation.<br>
-        Within this context, users are endowed with the capability to:
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h1>
+            <small>About the tool</small>
+          </h1>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p><b>Technology</b><br>
+          ImputeVIS is a client-server application.
+          The client-side is implemented using <a href="https://vuejs.org/">Vue</a> with TypeScript,
+          supplemented with <a href="https://www.highcharts.com/">HighCharts</a> (a JavaScript library for charts) and
+          HTML/CSS.
+          <br/>
+          The server-side uses <a href="https://www.djangoproject.com/">Django</a>, with additional Python scripts for processing requests.
+        </p>
+        <p><b>Contact</b><br>
+          <a href="https://exascale.info/members/mourad-khayati/">Dr. Mourad Khayati</a>
+        </p>
+        <p><b>Contributors</b><br></p>
         <ul>
-          <li>
-            Opt between various configurations: <br>
-            those recommended by the thesis author, default parameters delineated in             the
-            original algorithm papers, or parameters optimized through techniques like Bayesian Optimization, Particle
-            Swarm Optimization, or Successive Halving.
-          </li>
-          <li>
-            Obtain metrics including RMSE, MAE, MI, and CORR of the chosen configuration.
-
-          </li>
-          <li>
-            Visualize the resulting imputations for each algorithm, dependant on the data set.
-
-          </li>
+          <li><a href="https://www.linkedin.com/in/brian-schweigler/">Brian Schweigler</a></li>
+          <li><a href="https://exascale.info/members/zakhar-tymchenko/">Zakhar Tymchenko</a></li>
         </ul>
-
-      </li>
-      <li>
-        Fine-tune individual algorithm parameters for imputation tasks on predefined datasets, during which they can
-        access the aforementioned metrics and visualization.
-      </li>
-      <li>
-        Employ distinct optimization strategies, such as Bayesian Optimization, Particle Swarm Optimization, or
-        Successive Halving, to pinpoint optimal parameters for a dataset and derive the associated metrics and visual
-        insights.
-      </li>
-      <li>
-        Scrutinize the characteristics of individual data sets using the Catch-22 methodology.
-
-      </li>
-    </ul>
+        <p></p>
+        <p><b>Teams</b><br></p>
+        <div class="col-md-4">
+          <div>
+            <a href="https://exascale.info/"><img style="width: 60%;height: auto;" src="public/Xi_logo.svg"></a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

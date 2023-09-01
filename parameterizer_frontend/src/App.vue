@@ -13,7 +13,7 @@
       <div class="collapse navbar-collapse justify-content-center ps-n3 ms-n3" id="navbarNav">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <RouterLink class="nav-link" to="/">Compare</RouterLink>
+            <RouterLink class="nav-link" to="/compare">Compare</RouterLink>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
@@ -41,7 +41,7 @@
           </li>
           <!-- Add additional links here -->
           <li class="nav-item">
-            <RouterLink class="nav-link" to="/datasets/categorizer">Dataset Categorizer</RouterLink>
+            <RouterLink class="nav-link" to="/datasets/categorizer">Dataset Features</RouterLink>
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link" to="/about">About</RouterLink>
