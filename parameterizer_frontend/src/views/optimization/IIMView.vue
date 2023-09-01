@@ -71,7 +71,7 @@ import {
   generateChartOptionsLarge
 } from "@/views/thesisUtils/utils";
 
-HighchartsBoost(Highcharts)
+// HighchartsBoost(Highcharts)
 
 export default {
   components: {

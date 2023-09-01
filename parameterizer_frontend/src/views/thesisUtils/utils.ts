@@ -64,8 +64,6 @@ const createSegments = (data: number[], referenceData: number[]) => {
 };
 
 
-
-
 // Utility function to segment your data based on the presence of null in the referenceData array
 // const createSegments = (data: number[], referenceData: number[]) => {
 //     const segments = [];
@@ -122,11 +120,17 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         tooltip: {
             valueDecimals: 2
         },
+        navigator: {
+            adaptToUpdatedData: false
+        },
         plotOptions: {
             series: {
                 showInNavigator: isShownInNavigator
             }
-        }
+        },
+        scrollbar: {
+            liveRedraw: false
+        },
     };
 
     const mainSeries = {
@@ -134,16 +138,18 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         name: seriesNameGenerated,
         data: data,
         color: mainSeriesColor,
-        // lineWidth: 1.25,
+        lineWidth: 1.25,
         ...commonProperties
     };
 
     const linkedSeries = segments.map(segment => ({
         linkedTo: mainSeriesId,
-        color: darkenedColor,
+        color: "#FF0000",
         name: seriesNameGenerated,
         data: segment.data,
-        // lineWidth: segment.lineWidth,
+        lineWidth: 3,
+        dashStyle: 'Dot',
+        lineType: 'dashed',
         ...commonProperties
     }));
 
@@ -178,28 +184,29 @@ export const generateChartOptions = (title, seriesName) => ({
     xAxis: {
         type: 'datetime'
     },
-    colors: [
-        '#058DC7',  // Blue
-        '#50B432',  // Green
-        '#ED561B',  // Orange-Red
-        '#DDDF00',  // Yellow
-        '#24CBE5',  // Light Blue
-        '#64E572',  // Light Green
-        '#FF9655',  // Light Orange
-        '#FFD700',  // Gold
-        '#6AF9C4',  // Aqua
-        '#FF69B4',  // Pink
-        '#A020F0',  // Purple
-        '#8B4513',  // Saddle Brown
-        '#2E8B57',  // Sea Green
-        '#D2691E',  // Chocolate
-        '#B22222',  // Firebrick
-        '#20B2AA',  // Light Sea Green
-        '#8A2BE2',  // BlueViolet
-        '#5F9EA0',  // CadetBlue
-        '#FFF263',  // Pale Yellow
-        '#7B68EE'   // MediumSlateBlue
-    ],
+    colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    // colors: [
+    //     '#058DC7',  // Blue
+    //     '#50B432',  // Green
+    //     '#ED561B',  // Orange-Red
+    //     '#DDDF00',  // Yellow
+    //     '#24CBE5',  // Light Blue
+    //     '#64E572',  // Light Green
+    //     '#FF9655',  // Light Orange
+    //     '#FFD700',  // Gold
+    //     '#6AF9C4',  // Aqua
+    //     '#FF69B4',  // Pink
+    //     '#A020F0',  // Purple
+    //     '#8B4513',  // Saddle Brown
+    //     '#2E8B57',  // Sea Green
+    //     '#D2691E',  // Chocolate
+    //     '#B22222',  // Firebrick
+    //     '#20B2AA',  // Light Sea Green
+    //     '#8A2BE2',  // BlueViolet
+    //     '#5F9EA0',  // CadetBlue
+    //     '#FFF263',  // Pale Yellow
+    //     '#7B68EE'   // MediumSlateBlue
+    // ],
     chart: {
         height: 700,
         type: 'line',
@@ -257,6 +264,9 @@ export const generateChartOptions = (title, seriesName) => ({
                 y: 100,
             }],
     },
+    scrollbar: {
+        liveRedraw: false
+    },
     series: [{
         name: seriesName,
         data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
@@ -312,28 +322,29 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         panning: true,
         panKey: 'shift'
     },
-    colors: [
-        '#058DC7',  // Blue
-        '#50B432',  // Green
-        '#ED561B',  // Orange-Red
-        '#DDDF00',  // Yellow
-        '#24CBE5',  // Light Blue
-        '#64E572',  // Light Green
-        '#FF9655',  // Light Orange
-        '#FFD700',  // Gold
-        '#6AF9C4',  // Aqua
-        '#FF69B4',  // Pink
-        '#A020F0',  // Purple
-        '#8B4513',  // Saddle Brown
-        '#2E8B57',  // Sea Green
-        '#D2691E',  // Chocolate
-        '#B22222',  // Firebrick
-        '#20B2AA',  // Light Sea Green
-        '#8A2BE2',  // BlueViolet
-        '#5F9EA0',  // CadetBlue
-        '#FFF263',  // Pale Yellow
-        '#7B68EE'   // MediumSlateBlue
-    ],
+    colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    // colors: [
+    //     '#058DC7',  // Blue
+    //     '#50B432',  // Green
+    //     '#ED561B',  // Orange-Red
+    //     '#DDDF00',  // Yellow
+    //     '#24CBE5',  // Light Blue
+    //     '#64E572',  // Light Green
+    //     '#FF9655',  // Light Orange
+    //     '#FFD700',  // Gold
+    //     '#6AF9C4',  // Aqua
+    //     '#FF69B4',  // Pink
+    //     '#A020F0',  // Purple
+    //     '#8B4513',  // Saddle Brown
+    //     '#2E8B57',  // Sea Green
+    //     '#D2691E',  // Chocolate
+    //     '#B22222',  // Firebrick
+    //     '#20B2AA',  // Light Sea Green
+    //     '#8A2BE2',  // BlueViolet
+    //     '#5F9EA0',  // CadetBlue
+    //     '#FFF263',  // Pale Yellow
+    //     '#7B68EE'   // MediumSlateBlue
+    // ],
     rangeSelector: {
         selected: 1,
         x: 0,
@@ -383,6 +394,9 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
                 x: 900,
                 y: 100,
             }],
+    },
+    scrollbar: {
+        liveRedraw: false
     },
     plotOptions: {
         series: {

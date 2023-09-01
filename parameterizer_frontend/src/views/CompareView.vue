@@ -147,7 +147,7 @@ import {
   generateChartOptionsLarge
 } from "@/views/thesisUtils/utils";
 
-HighchartsBoost(Highcharts)
+// HighchartsBoost(Highcharts)
 
 export default {
   components: {
@@ -229,20 +229,15 @@ export default {
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
         // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
         clearErrorMetrics();
-        // Create a shallow reactive copy
-        const seriesCopy = shallowReactive([...chartOptionsOriginal.value.series]);
 
         obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0) {
-            seriesCopy[index] = createSeries(index, data, currentSeriesNames[index]);
+            chartOptionsOriginal.value.series[index] = createSeries(index, data, currentSeriesNames[index]);
           } else {
-            seriesCopy[index] = createSeries(index, data);
+            chartOptionsOriginal.value.series[index] = createSeries(index, data);
           }
         });
-        // checkedNames.value = [];
-        // Assign the shallow copy back to chartOptionsOriginal
-        chartOptionsOriginal.value.series = seriesCopy;
       } catch (error) {
         console.error(error);
       } finally {
