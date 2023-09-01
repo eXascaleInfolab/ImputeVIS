@@ -157,9 +157,9 @@ def iim(request):
         alg_code = data.get('alg_code', 'iim 2')
 
         if clean_file_path is not None and obfuscated_file_path is not None:
-            imputed_matrix = iim_alg.main(alg_code, obfuscated_file_path)
             ground_truth_matrix = utils.load_and_trim_matrix(clean_file_path)
             obfuscated_matrix = utils.load_and_trim_matrix(obfuscated_file_path)
+            imputed_matrix = iim_alg.impute_with_algorithm(alg_code, obfuscated_matrix.copy())
             rmse = statistics.determine_rmse(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mae = statistics.determine_mae(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
             mi = statistics.determine_mutual_info(ground_truth_matrix, np.asarray(imputed_matrix), obfuscated_matrix)
