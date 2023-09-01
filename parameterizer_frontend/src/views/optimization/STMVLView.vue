@@ -29,14 +29,14 @@
 
         <!--Smoothing Parameter Gamma-->
         <div class="mb-3">
-          <label for="gamma" class="form-label">Smoothing Parameter Gamma: {{ parseFloat(gamma).toFixed(5) }}</label>
+          <label for="gamma" class="form-label">Smoothing Parameter (γ): {{ parseFloat(gamma).toFixed(5) }}</label>
           <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.0005"
                  class="form-control">
         </div>
 
         <!-- Power for Spatial Weight (Alpha) -->
         <div class="mb-3">
-          <label for="alpha" class="form-label">Power for Spatial Weight (alpha): {{ alpha }}</label>
+          <label for="alpha" class="form-label">Power for Spatial Weight (α): {{ alpha }}</label>
           <input id="alpha" v-model.number="alpha" type="range" min="0.5" max="20" step="0.5" class="form-control">
         </div>
 
@@ -53,7 +53,7 @@
         <optimization-select v-model="optimizationSelect" @parametersChanged="handleParametersChanged"/>
         <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
-        <normalization-toggle v-model="normalizationMode"></normalization-toggle>
+<!--        <normalization-toggle v-model="normalizationMode"></normalization-toggle>-->
 
         <br/>
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>

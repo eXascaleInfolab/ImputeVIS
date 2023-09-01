@@ -125,6 +125,15 @@ Furthermore, the following dependency may be needed for WSL:
 sudo apt-get install libopenblas-dev
 ```
 
+## Browsers support
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Chrome |
+| --------- | --------- | --------- |
+| 116.X| 116.X| 116.X
+
+Unlisted configurations were not tested in-depth and may not work as expected, but generally all modern browsers should
+work.
+
 ### Troubleshooting
 **Docker won't work for the frontend**  
 You are likely under Windows, using WSL2 for Docker.  
@@ -136,6 +145,9 @@ After this, the issue should likely be fixed for `docker-compose up frontend`.
 
 **The frontend shows errors and won't start**  
 Ensure you are using `npm run dev` to start the frontend and not attempting to run `npm run build`.
+
+**The frontend runs but keeps loading forever**
+You may have browser extensions that block the tool from working properly. Try disabling them.
 
 ## Usage
 

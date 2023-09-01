@@ -2,56 +2,61 @@
   <div>
     <div class="mb-3">
       <label for="optimizationSelect" class="form-label">Optimization:</label>
-      <select id="optimizationSelect" v-model="selectedOptimization" class="form-control">
-        <option value="bayesianOptimization">Bayesian Optimization</option>
-        <option value="particleSwarmOptimization">Particle Swarm Optimization</option>
-        <option value="successiveHalving">Successive Halving</option>
-      </select>
+      <div class="select-wrapper">
+        <select id="optimizationSelect" v-model="selectedOptimization" class="form-control me-3">
+          <option value="bayesianOptimization">Bayesian Optimization</option>
+          <option value="particleSwarmOptimization">Particle Swarm Optimization</option>
+          <option value="successiveHalving">Successive Halving</option>
+        </select>
+      </div>
     </div>
 
     <!-- Bayesian Optimization parameters -->
     <div v-if="selectedOptimization === 'bayesianOptimization'">
       <div class="mb-3">
-        <label for="nCalls" class="form-label">Number of Calls: {{nCalls}}</label>
+        <label for="nCalls" class="form-label">Number of Calls: {{ nCalls }}</label>
         <input id="nCalls" v-model.number="nCalls" type="range" min="1" max="100" step="1" class="form-control">
       </div>
       <div class="mb-3">
-        <label for="nRandomStarts" class="form-label">Number of Random Starts: {{ nRandomStarts }}</label>
-        <input id="nRandomStarts" v-model.number="nRandomStarts" type="range" min="1" max="100" step="1" class="form-control">
+        <label for="nRandomStarts" class="form-label">Random Starts: {{ nRandomStarts }}</label>
+        <input id="nRandomStarts" v-model.number="nRandomStarts" type="range" min="1" max="100" step="1"
+               class="form-control">
       </div>
       <div class="mb-3">
         <label for="acqFunc" class="form-label">Acquisition Function:</label>
-        <select id="acqFunc" v-model="acqFunc" class="form-control">
-          <option value="gp_hedge">gp_hedge</option>
-          <option value="EI">EI</option>
-          <option value="LCB">LCB</option>
-          <option value="PI">PI</option>
-          <option value="EIps">EIps</option>
-          <option value="PIps">PIps</option>
-        </select>
+        <div class="select-wrapper">
+          <select id="acqFunc" v-model="acqFunc" class="form-control me-5">
+            <option value="gp_hedge">gp_hedge</option>
+            <option value="EI">EI</option>
+            <option value="LCB">LCB</option>
+            <option value="PI">PI</option>
+            <option value="EIps">EIps</option>
+            <option value="PIps">PIps</option>
+          </select>
+        </div>
       </div>
     </div>
 
     <!-- PSO parameters -->
     <div v-if="selectedOptimization === 'particleSwarmOptimization'">
       <div class="mb-3">
-        <label for="c1" class="form-label">Cognitive Parameter: {{c1}}</label>
+        <label for="c1" class="form-label">Cognitive Parameter: {{ c1 }}</label>
         <input id="c1" v-model.number="c1" type="range" min="0.1" max="1" step="0.1" class="form-control">
       </div>
       <div class="mb-3">
-        <label for="c2" class="form-label">Social Parameter: {{c2}}</label>
+        <label for="c2" class="form-label">Social Parameter: {{ c2 }}</label>
         <input id="c2" v-model.number="c2" type="range" min="0.1" max="1" step="0.1" class="form-control">
       </div>
       <div class="mb-3">
-        <label for="w" class="form-label">Inertia Weight: {{w}}</label>
+        <label for="w" class="form-label">Inertia Weight: {{ w }}</label>
         <input id="w" v-model.number="w" type="range" min="0.1" max="1" step="0.1" class="form-control">
       </div>
       <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
-        <label for="nParticles" class="form-label">Number of Particles: {{nParticles}}</label>
+        <label for="nParticles" class="form-label">Particles: {{ nParticles }}</label>
         <input id="nParticles" v-model.number="nParticles" type="range" min="1" max="100" step="1" class="form-control">
       </div>
       <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
-        <label for="iterations" class="form-label">Number of Iterations: {{iterations}}</label>
+        <label for="iterations" class="form-label">Iterations: {{ iterations }}</label>
         <input id="iterations" v-model.number="iterations" type="range" min="1" max="100" step="1" class="form-control">
       </div>
     </div>
@@ -59,23 +64,25 @@
     <!-- Successive Halving parameters -->
     <div v-if="selectedOptimization === 'successiveHalving'">
       <div class="mb-3">
-        <label for="numConfigs" class="form-label">Number of Configurations: {{numConfigs}}</label>
+        <label for="numConfigs" class="form-label">Configurations: {{ numConfigs }}</label>
         <input id="numConfigs" v-model.number="numConfigs" type="range" min="1" max="100" step="1" class="form-control">
       </div>
       <div class="mb-3" data-toggle="tooltip" data-placement="top" title="Also impacts run-time proportionally.">
-        <label for="numIterations" class="form-label">Number of Iterations: {{numIterations}}</label>
-        <input id="numIterations" v-model.number="numIterations" type="range" min="1" max="100" step="1" class="form-control">
+        <label for="numIterations" class="form-label">Iterations: {{ numIterations }}</label>
+        <input id="numIterations" v-model.number="numIterations" type="range" min="1" max="100" step="1"
+               class="form-control">
       </div>
       <div class="mb-3">
-        <label for="reductionFactor" class="form-label">Reduction Factor: {{reductionFactor}}</label>
-        <input id="reductionFactor" v-model.number="reductionFactor" type="range" min="2" max="20" step="1" class="form-control">
+        <label for="reductionFactor" class="form-label">Reduction Factor: {{ reductionFactor }}</label>
+        <input id="reductionFactor" v-model.number="reductionFactor" type="range" min="2" max="20" step="1"
+               class="form-control">
       </div>
     </div>
 
     <!-- Metrics parameters -->
     <div class="mb-3">
       <label for="metricsSelect" class="form-label">Metrics:</label>
-      <select id="metricsSelect" v-model="selectedMetrics" class="form-control" multiple>
+      <select id="metricsSelect" v-model="selectedMetrics" class="form-control pb-4" multiple>
         <option value="rmse">RMSE</option>
         <option value="mae">MAE</option>
         <option value="mse">MSE</option>
@@ -87,11 +94,11 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, computed, watch } from 'vue';
+import {ref, defineComponent, computed, watch} from 'vue';
 
 export default defineComponent({
   name: 'OptimizationSelect',
-  setup(props, { emit }) {
+  setup(props, {emit}) {
     const selectedOptimization = ref('bayesianOptimization');
     const selectedMetrics = ref(['rmse']);
 
@@ -134,7 +141,7 @@ export default defineComponent({
     // Emit the custom event whenever the parameters change
     watch(optimizationParams, (newValue) => {
       emit('parametersChanged', newValue);
-    }, { immediate: true });
+    }, {immediate: true});
 
     return {
       selectedOptimization,

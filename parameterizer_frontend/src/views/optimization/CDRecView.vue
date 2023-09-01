@@ -60,7 +60,7 @@
         <optimization-select v-model="optimizationSelect" @parametersChanged="handleParametersChanged"/>
         <data-select-optimization v-model="dataSelectOptimization" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
-        <normalization-toggle v-model="normalizationMode"></normalization-toggle>
+<!--        <normalization-toggle v-model="normalizationMode"></normalization-toggle>-->
 
         <br/>
         <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>

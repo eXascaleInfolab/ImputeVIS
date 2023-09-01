@@ -1,7 +1,7 @@
 <template>
 
   <div class="mb-3">
-    <label for="dataSelect" class="form-label">Data:</label>
+    <label for="dataSelect" class="form-label">Dataset:</label>
     <select id="dataSelect" v-model="selectedData" class="form-control">
       <option value="BAFU_onetwentyeigth">BAFU</option>
       <option value="cl2fullLarge_eighth">Chlorine</option>

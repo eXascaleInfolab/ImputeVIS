@@ -25,13 +25,13 @@
 
         <!--Smoothing Parameter Gamma-->
         <div class="mb-3">
-          <label for="gamma" class="form-label">Smoothing Parameter Gamma: {{ gamma }}</label>
+          <label for="gamma" class="form-label">Smoothing Parameter (γ): {{ gamma }}</label>
           <input id="gamma" v-model.number="gamma" type="range" min="0.05" max="0.99" step="0.05" class="form-control">
         </div>
 
         <!-- Power for Spatial Weight (Alpha) -->
         <div class="mb-3">
-          <label for="alpha" class="form-label">Power for Spatial Weight (alpha): {{ alpha }}</label>
+          <label for="alpha" class="form-label">Power for Spatial Weight (α): {{ alpha }}</label>
           <input id="alpha" v-model.number="alpha" type="range" min="0.5" max="20" step="0.5" class="form-control">
         </div>
 
