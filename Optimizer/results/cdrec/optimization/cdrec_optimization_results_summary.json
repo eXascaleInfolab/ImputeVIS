@@ -1,0 +1,233 @@
+{
+    "bayesian_optimization": {
+        "bafu": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "bayesian_optimization",
+            "best_params": {
+                "rank": 9,
+                "eps": 0.015162811201851307,
+                "iters": 100
+            },
+            "rmse": 0.005284684867096707,
+            "mae": 0.0019696489083480774,
+            "mi": 4.840557086689059,
+            "corr": 0.999998136630613,
+            "time_taken": 0.002414703369140625
+        },
+        "chlorine": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "bayesian_optimization",
+            "best_params": {
+                "rank": 9,
+                "eps": 0.48435016109122636,
+                "iters": 638
+            },
+            "rmse": 0.0024348255567642916,
+            "mae": 0.0012440645619612512,
+            "mi": 4.397401874260015,
+            "corr": 0.9999435214467016,
+            "time_taken": 0.0010714530944824219
+        },
+        "climate": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "bayesian_optimization",
+            "best_params": {
+                "rank": 3,
+                "eps": 1.0,
+                "iters": 100
+            },
+            "rmse": 96.19018493471101,
+            "mae": 47.73611722626581,
+            "mi": 1.5833089310657305,
+            "corr": 0.9832439124191944,
+            "time_taken": 0.002088785171508789
+        },
+        "drift": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "bayesian_optimization",
+            "best_params": {
+                "rank": 4,
+                "eps": 0.0005966887112077555,
+                "iters": 341
+            },
+            "rmse": 16092.28710526374,
+            "mae": 4900.111909922413,
+            "mi": 1.9799890316977988,
+            "corr": 0.4684695001834156,
+            "time_taken": 0.01801013946533203
+        },
+        "meteo": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "bayesian_optimization",
+            "best_params": {
+                "rank": 3,
+                "eps": 1.0,
+                "iters": 1000
+            },
+            "rmse": 0.9554933292209272,
+            "mae": 0.6819789392611502,
+            "mi": 2.8375038879567116,
+            "corr": 0.9992211351411178,
+            "time_taken": 0.0004458427429199219
+        }
+    },
+    "pso": {
+        "bafu": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "pso",
+            "best_params": {
+                "rank": 9,
+                "eps": 0.0001,
+                "iters": 803
+            },
+            "rmse": 0.014758943700970337,
+            "mae": 0.007590200272338637,
+            "mi": 4.249176122920851,
+            "corr": 0.9999854706138843,
+            "time_taken": 0.017635583877563477
+        },
+        "chlorine": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "pso",
+            "best_params": {
+                "rank": 9,
+                "eps": 0.0001,
+                "iters": 526
+            },
+            "rmse": 0.009188076741824475,
+            "mae": 0.005258604901956151,
+            "mi": 3.5055737387972843,
+            "corr": 0.9991917810391246,
+            "time_taken": 0.0064814090728759766
+        },
+        "climate": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "pso",
+            "best_params": {
+                "rank": 3,
+                "eps": 0.0001,
+                "iters": 354
+            },
+            "rmse": 180.8320997995279,
+            "mae": 84.17040291130718,
+            "mi": 1.44934569922011,
+            "corr": 0.9443944940397747,
+            "time_taken": 0.04367518424987793
+        },
+        "drift": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "pso",
+            "best_params": {
+                "rank": 4,
+                "eps": 0.0001,
+                "iters": 304
+            },
+            "rmse": 16092.26306776522,
+            "mae": 4900.100627408251,
+            "mi": 1.9838370396454708,
+            "corr": 0.468470976235583,
+            "time_taken": 0.02785801887512207
+        },
+        "meteo": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "pso",
+            "best_params": {
+                "rank": 2,
+                "eps": 0.0001,
+                "iters": 733
+            },
+            "rmse": 9.675036954895704,
+            "mae": 4.864073106654726,
+            "mi": 1.6100165405006983,
+            "corr": 0.9413079250481582,
+            "time_taken": 0.030407190322875977
+        }
+    },
+    "succesive_halving": {
+        "bafu": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "succesive_halving",
+            "best_params": {
+                "rank": 9,
+                "eps": 0.046415888336127725,
+                "iters": 200
+            },
+            "rmse": 0.005284684867096707,
+            "mae": 0.0019696489083480774,
+            "mi": 4.840557086689059,
+            "corr": 0.999998136630613,
+            "time_taken": 0.0013213157653808594
+        },
+        "chlorine": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "succesive_halving",
+            "best_params": {
+                "rank": 9,
+                "eps": 0.046415888336127725,
+                "iters": 100
+            },
+            "rmse": 0.0024348255567642916,
+            "mae": 0.0012440645619612512,
+            "mi": 4.397401874260015,
+            "corr": 0.9999435214467016,
+            "time_taken": 0.0013470649719238281
+        },
+        "climate": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "succesive_halving",
+            "best_params": {
+                "rank": 3,
+                "eps": 0.21544346900318823,
+                "iters": 400
+            },
+            "rmse": 106.58508762428434,
+            "mae": 56.90977278287668,
+            "mi": 1.5761533805231696,
+            "corr": 0.9795542637900566,
+            "time_taken": 0.006595134735107422
+        },
+        "drift": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "succesive_halving",
+            "best_params": {
+                "rank": 4,
+                "eps": 2.1544346900318823e-05,
+                "iters": 500
+            },
+            "rmse": 16092.220001351827,
+            "mae": 4900.079959131806,
+            "mi": 1.9861474177750522,
+            "corr": 0.4684736074543355,
+            "time_taken": 0.05984306335449219
+        },
+        "meteo": {
+            "algorithm": "cdrec",
+            "metric_used_for_optimization": "rmse_mae",
+            "optimization_method": "succesive_halving",
+            "best_params": {
+                "rank": 2,
+                "eps": 1.0,
+                "iters": 400
+            },
+            "rmse": 1.2428829671287829,
+            "mae": 0.9395027790188276,
+            "mi": 2.564513044418542,
+            "corr": 0.9986867995193524,
+            "time_taken": 0.0005037784576416016
+        }
+    }
+}

@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple, Union, Any
 from collections import defaultdict
 import json
 from typing import Dict, Any, List
+import os
 
 
 def load_json_files(file_names: List[str]) -> Dict[str, Dict[str, Any]]:
@@ -381,7 +382,8 @@ def create_plots_per_algorithm(table_data: Dict[str, Dict[str, Dict[str, Any]]],
             # Annotate bars with rounded values and optimization methods
             for j, bar in enumerate(bars):
                 height = bar.get_height()
-                annotation_text = str(round(height, 3)).rstrip('0').rstrip('.') if isinstance(height, float) else str(height)
+                annotation_text = str(round(height, 3)).rstrip('0').rstrip('.') if isinstance(height, float) else str(
+                    height)
                 ax.annotate(annotation_text,
                             xy=(bar.get_x() + bar.get_width() / 2, height),
                             xytext=(0, 0.5),  # vertical offset
@@ -499,6 +501,30 @@ def escape_underscores(text: str) -> str:
         The text with underscores escaped for LaTeX.
     """
     return text.replace("_", "\\_")
+
+
+def extract_file_info(file_path: str) -> str:
+    """
+    Extract optimization method from the file name.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the file.
+
+    Returns
+    -------
+    str
+        The optimization method used for the file.
+    """
+    file_name = os.path.basename(file_path)
+    optimizations = ["bayesian_optimization", "pso", "succesive_halving"]
+
+    for opt in optimizations:
+        if opt in file_name:
+            return opt
+
+    raise ValueError(f"Unexpected file name format: {file_name}")
 
 
 if __name__ == "__main__":

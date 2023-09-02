@@ -2,7 +2,7 @@
   "bafu": {
     "best_params": {
       "rank": 9,
-      "eps": 0,
+      "eps": 0.0001,
       "iters": 803
     },
     "best_score": 0.014079002110202524,
@@ -12,7 +12,7 @@
   "chlorine": {
     "best_params": {
       "rank": 9,
-      "eps": 0,
+      "eps": 0.0001,
       "iters": 526
     },
     "best_score": 0.01267773439335583,
@@ -22,7 +22,7 @@
   "climate": {
     "best_params": {
       "rank": 3,
-      "eps": 0,
+      "eps": 0.0001,
       "iters": 354
     },
     "best_score": 71.96315108048842,
@@ -32,7 +32,7 @@
   "drift": {
     "best_params": {
       "rank": 4,
-      "eps": 0,
+      "eps": 0.0001,
       "iters": 304
     },
     "best_score": 317.5185152882667,
@@ -42,7 +42,7 @@
   "meteo": {
     "best_params": {
       "rank": 2,
-      "eps": 0,
+      "eps": 0.0001,
       "iters": 733
     },
     "best_score": 1.93589839432901,
