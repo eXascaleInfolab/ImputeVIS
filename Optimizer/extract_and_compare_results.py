@@ -470,6 +470,82 @@ def iim_optimal_results(results_path: str) -> dict:
     return results_summary
 
 
+def iim_optimization_results(input_folder: str, results_path: str, metric: str = "rmse_mae") -> dict:
+    """
+    Run imputation using the best parameters for each optimization method and save the results.
+
+    Parameters
+    ----------
+    input_folder : str
+        Path to the folder containing the parameters resulting from optimization.
+    results_path : str
+        Path to the folder to save the imputation results.
+    metric : str
+        Metric used for optimization. Default is "rmse_mae".
+    """
+    # Define storage for metrics and configuration details
+    results_summary = {}
+
+    # Iterate through each file matching the pattern in the input_folder
+    for file_path in glob.glob(os.path.join(input_folder, "optimization_results_iim_*" + metric + ".json")):
+        # Extracting optimization method from the file name
+        optimization_method = util.extract_file_info(file_path)
+
+        # Load the optimization parameters from the file
+        with open(file_path, 'r') as file:
+            optimization_params = json.load(file)
+
+        # Iterate through algorithms and datasets
+        for dataset in DATASETS:
+            # Get paths for the dataset using the helper function
+            raw_file_path, obf_file_path = get_dataset_paths(dataset)
+
+            # Load matrices for the dataset
+            ground_truth_matrix = utils.load_and_trim_matrix(raw_file_path)
+            obfuscated_matrix = utils.load_and_trim_matrix(obf_file_path)
+            obfuscated_matrix_copy = np.copy(obfuscated_matrix)
+
+            # Extract the best parameters
+            learning_neighbours = optimization_params[dataset]["best_params"]["learning_neighbours"]
+            alg_code = "iim " + re.sub(r'[\W_]', '', str(learning_neighbours))
+
+            # Run the imputation (using IIM as an example)
+            start_time = time.time()
+            imputed_matrix = iim_alg.impute_with_algorithm(alg_code, obfuscated_matrix_copy)
+            end_time = time.time()
+
+            corr, mae, mi, rmse = determine_metrics(ground_truth_matrix, imputed_matrix, obfuscated_matrix)
+
+            # Check if the optimization method is already in the results_summary.
+            if optimization_method not in results_summary:
+                results_summary[optimization_method] = {}
+
+            # Store results
+            results_summary[optimization_method][dataset] = {
+                "algorithm": "iim",
+                "metric_used_for_optimization": metric,
+                "optimization_method": optimization_method,
+                "best_params": {
+                    "learning_neighbours": optimization_params[dataset]["best_params"]["learning_neighbours"]
+                },
+                "rmse": rmse,
+                "mae": mae,
+                "mi": mi,
+                "corr": corr,
+                "time_taken": end_time - start_time
+            }
+            print(results_summary[optimization_method][dataset])
+
+            # Save the imputed matrix to a separate file
+            np.save(os.path.join(results_path, f"iim_{dataset}_{optimization_method}_imputed.npy"), imputed_matrix)
+
+    # Save the summary results to a separate JSON file
+    with open(os.path.join(results_path, 'iim_optimization_results_summary.json'), 'w') as outfile:
+        json.dump(results_summary, outfile, indent=4)
+
+    return results_summary
+
+
 def iim_default_results(results_path: str) -> dict:
     """
     Run imputation using the default parameters and save the results.
@@ -688,6 +764,93 @@ def mrnn_default_results(results_path: str) -> dict:
     return results_summary
 
 
+def mrnn_optimization_results(input_folder: str, results_path: str, metric: str = "rmse_mae") -> dict:
+    """
+    Run imputation using the best parameters for each optimization method and save the results.
+
+    Parameters
+    ----------
+    input_folder : str
+        Path to the folder containing the parameters resulting from optimization.
+    results_path : str
+        Path to the folder to save the imputation results.
+    metric : str
+        Metric used for optimization. Default is "rmse_mae".
+    """
+    # Define storage for metrics and configuration details
+    results_summary = {}
+
+    # Iterate through each file matching the pattern in the input_folder
+    for file_path in glob.glob(os.path.join(input_folder, "optimization_results_mrnn_*" + metric + ".json")):
+        # Extracting optimization method from the file name
+        optimization_method = util.extract_file_info(file_path)
+
+        # Load the optimization parameters from the file
+        with open(file_path, 'r') as file:
+            optimization_params = json.load(file)
+
+        # Iterate through algorithms and datasets
+        for dataset in DATASETS:
+            # Get paths for the dataset using the helper function
+            raw_file_path, obf_file_path = get_dataset_paths(dataset)
+
+            # Load matrices for the dataset
+            ground_truth_matrix = utils.load_and_trim_matrix(raw_file_path)
+            obfuscated_matrix = utils.load_and_trim_matrix(obf_file_path)
+            obfuscated_matrix_copy = np.copy(obfuscated_matrix)
+
+            # Extract the best parameters
+            hidden_dim = optimization_params[dataset]["best_params"]["hidden_dim"]
+            learning_rate = optimization_params[dataset]["best_params"]["learning_rate"]
+            iterations = optimization_params[dataset]["best_params"]["iterations"]
+            keep_prob = optimization_params[dataset]["best_params"]["keep_prob"]
+
+            # Run the imputation (using MRNN as an example)
+            start_time = time.time()
+            imputed_matrix = M_RNN.testerMRNN.mrnn_recov_with_data(obfuscated_matrix_copy,
+                                                                   runtime=-1,
+                                                                   hidden_dim=hidden_dim,
+                                                                   learning_rate=learning_rate,
+                                                                   iterations=iterations,
+                                                                   keep_prob=keep_prob,
+                                                                   )
+            end_time = time.time()
+
+            corr, mae, mi, rmse = determine_metrics(ground_truth_matrix, imputed_matrix, obfuscated_matrix)
+
+            # Check if the optimization method is already in the results_summary.
+            if optimization_method not in results_summary:
+                results_summary[optimization_method] = {}
+
+            # Store results
+            results_summary[optimization_method][dataset] = {
+                "algorithm": "mrnn",
+                "metric_used_for_optimization": metric,
+                "optimization_method": optimization_method,
+                "best_params": {
+                    "hidden_dim": hidden_dim,
+                    "learning_rate": learning_rate,
+                    "iterations": iterations,
+                    "keep_prob": keep_prob
+                },
+                "rmse": rmse,
+                "mae": mae,
+                "mi": mi,
+                "corr": corr,
+                "time_taken": end_time - start_time
+            }
+            print(results_summary[optimization_method][dataset])
+
+            # Save the imputed matrix to a separate file
+            np.save(os.path.join(results_path, f"mrnn_{dataset}_{optimization_method}_imputed.npy"), imputed_matrix)
+
+    # Save the summary results to a separate JSON file
+    with open(os.path.join(results_path, 'mrnn_optimization_results_summary.json'), 'w') as outfile:
+        json.dump(results_summary, outfile, indent=4)
+
+    return results_summary
+
+
 def stmvl_optimal_results(results_path: str) -> dict:
     """
     Run imputation using the optimal parameters and save the results.
@@ -836,6 +999,89 @@ def stmvl_default_results(results_path: str) -> dict:
     return results_summary
 
 
+def stmvl_optimization_results(input_folder: str, results_path: str, metric: str = "rmse_mae") -> dict:
+    """
+    Run imputation using the best parameters for each optimization method and save the results.
+
+    Parameters
+    ----------
+    input_folder : str
+        Path to the folder containing the parameters resulting from optimization.
+    results_path : str
+        Path to the folder to save the imputation results.
+    metric : str
+        Metric used for optimization. Default is "rmse_mae".
+    """
+    # Define storage for metrics and configuration details
+    results_summary = {}
+
+    # Iterate through each file matching the pattern in the input_folder
+    for file_path in glob.glob(os.path.join(input_folder, "optimization_results_stmvl_*" + metric + ".json")):
+        # Extracting optimization method from the file name
+        optimization_method = util.extract_file_info(file_path)
+
+        # Load the optimization parameters from the file
+        with open(file_path, 'r') as file:
+            optimization_params = json.load(file)
+
+        # Iterate through algorithms and datasets
+        for dataset in DATASETS:
+            # Get paths for the dataset using the helper function
+            raw_file_path, obf_file_path = get_dataset_paths(dataset)
+
+            # Load matrices for the dataset
+            ground_truth_matrix = utils.load_and_trim_matrix(raw_file_path)
+            obfuscated_matrix = utils.load_and_trim_matrix(obf_file_path)
+
+            # Extract the best parameters
+            window = optimization_params[dataset]["best_params"]["window_size"]
+            gamma = optimization_params[dataset]["best_params"]["gamma"]
+            alpha = optimization_params[dataset]["best_params"]["alpha"]
+
+            # Run the imputation (using CDRec as an example)
+            start_time = time.time()
+            imputed_matrix = Wrapper.algo_collection.native_stmvl_param(
+                __py_matrix=obfuscated_matrix,
+                __py_window=int(window),
+                __py_gamma=float(gamma),
+                __py_alpha=int(alpha)
+            )
+            end_time = time.time()
+
+            corr, mae, mi, rmse = determine_metrics(ground_truth_matrix, imputed_matrix, obfuscated_matrix)
+
+            # Check if the optimization method is already in the results_summary.
+            if optimization_method not in results_summary:
+                results_summary[optimization_method] = {}
+
+            # Store results
+            results_summary[optimization_method][dataset] = {
+                "algorithm": "stmvl",
+                "metric_used_for_optimization": metric,
+                "optimization_method": optimization_method,
+                "best_params": {
+                    "window_size": window,
+                    "gamma": gamma,
+                    "alpha": alpha
+                },
+                "rmse": rmse,
+                "mae": mae,
+                "mi": mi,
+                "corr": corr,
+                "time_taken": end_time - start_time
+            }
+            print(results_summary[optimization_method][dataset])
+
+            # Save the imputed matrix to a separate file
+            np.save(os.path.join(results_path, f"stmvl_{dataset}_{optimization_method}_imputed.npy"), imputed_matrix)
+
+    # Save the summary results to a separate JSON file
+    with open(os.path.join(results_path, 'stmvl_optimization_results_summary.json'), 'w') as outfile:
+        json.dump(results_summary, outfile, indent=4)
+
+    return results_summary
+
+
 def determine_metrics(ground_truth_matrix: np.array, imputed_matrix: np.array, obfuscated_matrix: np.array) -> Tuple[
     float, float, float, float]:
     """
@@ -924,10 +1170,11 @@ if __name__ == '__main__':
     # stmvl_optimal_results(results_path="results/stmvl")
 
     #### Step 2.1: Run imputation for each optimization method's best result
-    cdrec_optimization_results(input_folder="metric_specific", results_path="results/cdrec/optimization")
-    # iim_optimization_results(input_folder="metric_specific", results_path="results/iim/optimization")
-    # mrnn_optimization_results(input_folder="metric_specific", results_path="results/mrnn/optimization")
-    # stmvl_optimization_results(input_folder="metric_specific", results_path="results/stmvl/optimization")
+    # cdrec_optimization_results(input_folder="metric_specific", results_path="results/cdrec/optimization")
+    # TODO Completely test IIM, M-RNN, ST-MVL
+    iim_optimization_results(input_folder="metric_specific", results_path="results/iim/optimization")
+    mrnn_optimization_results(input_folder="metric_specific", results_path="results/mrnn/optimization")
+    stmvl_optimization_results(input_folder="metric_specific", results_path="results/stmvl/optimization")
 
     ##### Step 3: Run imputation using the default params
     # cdrec_default_results(results_path="results/cdrec")
