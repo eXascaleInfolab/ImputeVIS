@@ -9,7 +9,7 @@
   <div class="d-flex mb-auto">
     <div class="col-lg-10">
       <highcharts v-if="imputedData" :options="chartOptionsImputed"></highcharts>
-      <highcharts :options="chartOptionsOriginal"></highcharts>
+      <highcharts v-if="!imputedData"  :options="chartOptionsOriginal"></highcharts>
     </div>
     <div class="col-lg-2">
       <form @submit.prevent="submitForm" class="sidebar me-3">
@@ -87,7 +87,7 @@ export default {
     const dataSelect = ref('climate_eighth') // Default data
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
-    const missingRate = ref('1'); // Default missing rate is 1%
+    const missingRate = ref('10'); // Default missing rate
     const learningRate = ref(0.01); // Default learning rate is 0.01
     const hiddenDim = ref(5); // Default hidden dimension size is 5
     const iterations = ref(10); // Default number of iterations is 10

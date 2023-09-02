@@ -46,7 +46,7 @@
         </button>
 
       </form>
-      <highcharts :options="chartOptionsOriginal"></highcharts>
+      <highcharts v-if="!imputedData"  :options="chartOptionsOriginal"></highcharts>
     </div>
     <div class="col-lg-2">
       <form @submit.prevent="submitForm" class="sidebar me-3">
@@ -99,7 +99,7 @@ export default {
     const dataSelect = ref('climate_eighth') // Default data
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
-    const missingRate = ref('1'); // Default missing rate is 1%
+    const missingRate = ref('10'); // Default missing rate
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
     const epsilon = ref('E-7'); // Default epsilon is E-7
     const iterations = ref(500); // Default number of iterations is 1000

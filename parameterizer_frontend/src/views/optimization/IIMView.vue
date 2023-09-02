@@ -34,7 +34,7 @@
         </button>
 
       </form>
-      <highcharts :options="chartOptionsOriginal"></highcharts>
+      <highcharts v-if="!imputedData" :options="chartOptionsOriginal"></highcharts>
     </div>
     <div class="col-lg-2">
       <form @submit.prevent="submitForm" class="sidebar me-3">
@@ -87,7 +87,7 @@ export default {
     const dataSelect = ref('climate_eighth') // Default data
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
-    const missingRate = ref('1'); // Default missing rate is 1%
+    const missingRate = ref('10'); // Default missing rate
     const numberSelect = ref(1); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
     const imputedData = ref(false); // Whether imputation has been carried out

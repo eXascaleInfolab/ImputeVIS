@@ -165,7 +165,7 @@ export default {
 
 
     //CDRec Parameters
-    const missingRate = ref('1'); // Default missing rate is 5%
+    const missingRate = ref('10'); // Default missing rate
     let truncationRank = '1' // Default truncation rank is 1, 0 means detect truncation automatically
     let epsilon = 'E-7'; // Default epsilon is E-7
     let iterations = (500); // Default number of iterations is 1000
