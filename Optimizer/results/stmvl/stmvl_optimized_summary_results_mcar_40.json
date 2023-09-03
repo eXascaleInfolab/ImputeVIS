@@ -1,0 +1,452 @@
+{
+    "bafu_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 89,
+            "gamma": 0.003981071705534969,
+            "alpha": 1
+        },
+        "rmse": 0.09557015747005145,
+        "mae": 0.06550541046228171,
+        "mi": 2.578709342092805,
+        "corr": 0.9994248922724314,
+        "time_taken": 0.10694193840026855
+    },
+    "bafu_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 99,
+            "gamma": 0.00032243633448374805,
+            "alpha": 1
+        },
+        "rmse": 0.09587822408558237,
+        "mae": 0.0655780669973992,
+        "mi": 2.610951426640745,
+        "corr": 0.9994227000866728,
+        "time_taken": 0.11662602424621582
+    },
+    "bafu_mi": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 99,
+            "gamma": 0.6141055066310172,
+            "alpha": 1
+        },
+        "rmse": 0.09838778827173658,
+        "mae": 0.06670961087064185,
+        "mi": 2.572821984685175,
+        "corr": 0.9993905501488582,
+        "time_taken": 0.11575913429260254
+    },
+    "bafu_mi_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 35,
+            "gamma": 5.6114008727707866e-05,
+            "alpha": 2
+        },
+        "rmse": 0.10878683171613784,
+        "mae": 0.0737028785217144,
+        "mi": 2.441876144480002,
+        "corr": 0.9992514688625652,
+        "time_taken": 0.05359506607055664
+    },
+    "bafu_rmse": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 96,
+            "gamma": 1.2100675864142366e-06,
+            "alpha": 1
+        },
+        "rmse": 0.09588053180253898,
+        "mae": 0.06566265861657027,
+        "mi": 2.6115337812433026,
+        "corr": 0.9994224607908742,
+        "time_taken": 0.11294054985046387
+    },
+    "bafu_rmse_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 99,
+            "gamma": 1e-06,
+            "alpha": 1
+        },
+        "rmse": 0.0958782113443889,
+        "mae": 0.06557790524132787,
+        "mi": 2.610908738873607,
+        "corr": 0.999422700636268,
+        "time_taken": 0.11603736877441406
+    },
+    "chlorine_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 37,
+            "gamma": 0.029083763101608137,
+            "alpha": 4
+        },
+        "rmse": 0.01790408436677041,
+        "mae": 0.01227229211972125,
+        "mi": 2.690602446648382,
+        "corr": 0.9971701559704529,
+        "time_taken": 0.03792238235473633
+    },
+    "chlorine_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 25,
+            "gamma": 0.0630957344480193,
+            "alpha": 4
+        },
+        "rmse": 0.01774403878433215,
+        "mae": 0.01188699360396772,
+        "mi": 2.7454482488034424,
+        "corr": 0.9972832688605061,
+        "time_taken": 0.02952265739440918
+    },
+    "chlorine_mi": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 30,
+            "gamma": 2.2585723199362597e-05,
+            "alpha": 6
+        },
+        "rmse": 0.017773375447030247,
+        "mae": 0.01217034412762035,
+        "mi": 2.6983473138619187,
+        "corr": 0.9972327379400457,
+        "time_taken": 0.03417181968688965
+    },
+    "chlorine_mi_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 71,
+            "gamma": 0.0070224656785417856,
+            "alpha": 5
+        },
+        "rmse": 0.01853678210113103,
+        "mae": 0.01253988362447449,
+        "mi": 2.6620975059031333,
+        "corr": 0.9969638113242364,
+        "time_taken": 0.06119966506958008
+    },
+    "chlorine_rmse": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 27,
+            "gamma": 3.981071705534969e-06,
+            "alpha": 3
+        },
+        "rmse": 0.01815115241607212,
+        "mae": 0.012025932070173368,
+        "mi": 2.736937495613202,
+        "corr": 0.9971835373101455,
+        "time_taken": 0.03128457069396973
+    },
+    "chlorine_rmse_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 37,
+            "gamma": 0.0630957344480193,
+            "alpha": 4
+        },
+        "rmse": 0.01785139594688176,
+        "mae": 0.012254419320068922,
+        "mi": 2.696007992533764,
+        "corr": 0.9971855978605235,
+        "time_taken": 0.03867292404174805
+    },
+    "climate_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 55,
+            "gamma": 0.2511886431509577,
+            "alpha": 3
+        },
+        "rmse": 214.98010392208076,
+        "mae": 102.02829474033514,
+        "mi": 1.137952103347903,
+        "corr": 0.9083814659015801,
+        "time_taken": 0.06527876853942871
+    },
+    "climate_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 99,
+            "gamma": 0.999999,
+            "alpha": 1
+        },
+        "rmse": 173.54765086543972,
+        "mae": 82.5944166058299,
+        "mi": 1.2257109383890148,
+        "corr": 0.9412072219303818,
+        "time_taken": 0.10329771041870117
+    },
+    "climate_mi": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 77,
+            "gamma": 0.003981071705534969,
+            "alpha": 4
+        },
+        "rmse": 222.22181336914565,
+        "mae": 104.96536615588317,
+        "mi": 1.1253073838295844,
+        "corr": 0.9017719553691315,
+        "time_taken": 0.08447718620300293
+    },
+    "climate_mi_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 60,
+            "gamma": 0.999999,
+            "alpha": 2
+        },
+        "rmse": 175.37788843715566,
+        "mae": 82.48450380756591,
+        "mi": 1.1906800595620628,
+        "corr": 0.9399113006075643,
+        "time_taken": 0.06949877738952637
+    },
+    "climate_rmse": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 99,
+            "gamma": 0.999999,
+            "alpha": 1
+        },
+        "rmse": 173.54765086543972,
+        "mae": 82.5944166058299,
+        "mi": 1.2257109383890148,
+        "corr": 0.9412072219303818,
+        "time_taken": 0.10400390625
+    },
+    "climate_rmse_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 99,
+            "gamma": 0.999999,
+            "alpha": 1
+        },
+        "rmse": 173.54765086543972,
+        "mae": 82.5944166058299,
+        "mi": 1.2257109383890148,
+        "corr": 0.9412072219303818,
+        "time_taken": 0.10401773452758789
+    },
+    "drift_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 19,
+            "gamma": 1.584893192461114e-05,
+            "alpha": 1
+        },
+        "rmse": 3373.6311589919787,
+        "mae": 832.8276892616858,
+        "mi": 1.9965855264179595,
+        "corr": 0.9886468239359345,
+        "time_taken": 0.024269580841064453
+    },
+    "drift_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 78,
+            "gamma": 0.001,
+            "alpha": 1
+        },
+        "rmse": 3604.6973399453427,
+        "mae": 781.9809536409637,
+        "mi": 2.1139579174355587,
+        "corr": 0.9861289906072156,
+        "time_taken": 0.06607723236083984
+    },
+    "drift_mi": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 82,
+            "gamma": 0.01584893192461114,
+            "alpha": 1
+        },
+        "rmse": 3554.6059403997133,
+        "mae": 762.8091074881653,
+        "mi": 2.0971083909445527,
+        "corr": 0.986875658245292,
+        "time_taken": 0.06974291801452637
+    },
+    "drift_mi_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 17,
+            "gamma": 0.999999,
+            "alpha": 1
+        },
+        "rmse": 3279.501776228269,
+        "mae": 909.7736542583275,
+        "mi": 1.9085252399970383,
+        "corr": 0.9877166707331191,
+        "time_taken": 0.022851228713989258
+    },
+    "drift_rmse": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 50,
+            "gamma": 1e-06,
+            "alpha": 1
+        },
+        "rmse": 3687.362501795803,
+        "mae": 779.4811226946805,
+        "mi": 2.023821475771187,
+        "corr": 0.9860333900008252,
+        "time_taken": 0.04624533653259277
+    },
+    "drift_rmse_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 67,
+            "gamma": 0.999999,
+            "alpha": 1
+        },
+        "rmse": 3902.071818094001,
+        "mae": 796.8870241195967,
+        "mi": 1.988730246962208,
+        "corr": 0.9837066491610243,
+        "time_taken": 0.057396650314331055
+    },
+    "meteo_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 99,
+            "gamma": 6.309573444801929e-05,
+            "alpha": 7
+        },
+        "rmse": 5.5475467805926675,
+        "mae": 3.218719565384635,
+        "mi": 1.6451504890894832,
+        "corr": 0.9763030722400478,
+        "time_taken": 0.036301374435424805
+    },
+    "meteo_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 46,
+            "gamma": 0.0018813888099138347,
+            "alpha": 9
+        },
+        "rmse": 5.9276731816165205,
+        "mae": 3.300028858015295,
+        "mi": 1.775147881183388,
+        "corr": 0.9746093036008168,
+        "time_taken": 0.018926143646240234
+    },
+    "meteo_mi": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "window_size": 84,
+            "gamma": 0.01584893192461114,
+            "alpha": 2
+        },
+        "rmse": 5.157019264473676,
+        "mae": 3.098146909002644,
+        "mi": 1.6753246159326878,
+        "corr": 0.9800718782180754,
+        "time_taken": 0.032029151916503906
+    },
+    "meteo_mi_corr": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 47,
+            "gamma": 0.00040108854718849104,
+            "alpha": 6
+        },
+        "rmse": 5.828555647599346,
+        "mae": 3.233857569049088,
+        "mi": 1.7674237549035836,
+        "corr": 0.9752613699937179,
+        "time_taken": 0.01954364776611328
+    },
+    "meteo_rmse": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 85,
+            "gamma": 4.0817419935477964e-05,
+            "alpha": 9
+        },
+        "rmse": 5.691970890468084,
+        "mae": 3.2487458274004615,
+        "mi": 1.7109700148187468,
+        "corr": 0.9756868186104409,
+        "time_taken": 0.03193926811218262
+    },
+    "meteo_rmse_mae": {
+        "algorithm": "stmvl",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "window_size": 72,
+            "gamma": 0.0008560551406931331,
+            "alpha": 9
+        },
+        "rmse": 5.7442799591852545,
+        "mae": 3.2560591438858073,
+        "mi": 1.7254021828641632,
+        "corr": 0.9755184392569219,
+        "time_taken": 0.02827143669128418
+    }
+}

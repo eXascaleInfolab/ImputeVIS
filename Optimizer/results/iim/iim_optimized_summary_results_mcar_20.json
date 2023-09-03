@@ -1,0 +1,392 @@
+{
+    "bafu_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 90
+        },
+        "rmse": 0.17107975186365892,
+        "mae": 0.09826034324436912,
+        "mi": 2.2047217248398114,
+        "corr": 0.9983714310613351,
+        "time_taken": 87.05977201461792
+    },
+    "bafu_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 100
+        },
+        "rmse": 0.16965936599018466,
+        "mae": 0.09794188436848794,
+        "mi": 2.1965040212472284,
+        "corr": 0.9983764315786826,
+        "time_taken": 97.88058400154114
+    },
+    "bafu_mi": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 18
+        },
+        "rmse": 0.21085644390202019,
+        "mae": 0.12766159339136324,
+        "mi": 2.2548188234143733,
+        "corr": 0.9981168934599677,
+        "time_taken": 17.639291286468506
+    },
+    "bafu_mi_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 12
+        },
+        "rmse": 0.21875522115556625,
+        "mae": 0.13519074784055646,
+        "mi": 2.2254637996204627,
+        "corr": 0.9980454351794655,
+        "time_taken": 11.88368844985962
+    },
+    "bafu_rmse": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 100
+        },
+        "rmse": 0.16965936599018466,
+        "mae": 0.09794188436848794,
+        "mi": 2.1965040212472284,
+        "corr": 0.9983764315786826,
+        "time_taken": 96.263010263443
+    },
+    "bafu_rmse_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 100
+        },
+        "rmse": 0.16965936599018466,
+        "mae": 0.09794188436848794,
+        "mi": 2.1965040212472284,
+        "corr": 0.9983764315786826,
+        "time_taken": 96.01615881919861
+    },
+    "chlorine_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 12
+        },
+        "rmse": 0.2545548521449577,
+        "mae": 0.17988750666285985,
+        "mi": 0.7423294509565199,
+        "corr": 0.6895528524675585,
+        "time_taken": 8.26954174041748
+    },
+    "chlorine_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 1
+        },
+        "rmse": 0.26139422122748723,
+        "mae": 0.1950993278529976,
+        "mi": 1.0234332794284882,
+        "corr": 0.7113598170255842,
+        "time_taken": 0.9115896224975586
+    },
+    "chlorine_mi": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 28
+        },
+        "rmse": 0.2559528907511171,
+        "mae": 0.18589682901886795,
+        "mi": 0.7863614461254373,
+        "corr": 0.6967262379554989,
+        "time_taken": 18.9970600605011
+    },
+    "chlorine_mi_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 1
+        },
+        "rmse": 0.26139422122748723,
+        "mae": 0.1950993278529976,
+        "mi": 1.0234332794284882,
+        "corr": 0.7113598170255842,
+        "time_taken": 0.9045426845550537
+    },
+    "chlorine_rmse": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 1
+        },
+        "rmse": 0.26139422122748723,
+        "mae": 0.1950993278529976,
+        "mi": 1.0234332794284882,
+        "corr": 0.7113598170255842,
+        "time_taken": 0.8940656185150146
+    },
+    "chlorine_rmse_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 21
+        },
+        "rmse": 0.2476041969977043,
+        "mae": 0.18031011336781821,
+        "mi": 0.7599906585637144,
+        "corr": 0.71541286110214,
+        "time_taken": 14.292761087417603
+    },
+    "climate_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 22
+        },
+        "rmse": 223.28435544598707,
+        "mae": 86.05129649595315,
+        "mi": 1.370897314502971,
+        "corr": 0.9162712593300942,
+        "time_taken": 17.90783143043518
+    },
+    "climate_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 47
+        },
+        "rmse": 225.61623696667868,
+        "mae": 86.82011155147714,
+        "mi": 1.3200501371742188,
+        "corr": 0.9136521913312529,
+        "time_taken": 37.98053550720215
+    },
+    "climate_mi": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 11
+        },
+        "rmse": 222.70472345548689,
+        "mae": 87.1839478009322,
+        "mi": 1.298443927158503,
+        "corr": 0.9172963684155888,
+        "time_taken": 9.126742601394653
+    },
+    "climate_mi_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 11
+        },
+        "rmse": 222.70472345548689,
+        "mae": 87.1839478009322,
+        "mi": 1.298443927158503,
+        "corr": 0.9172963684155888,
+        "time_taken": 9.158984184265137
+    },
+    "climate_rmse": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 31
+        },
+        "rmse": 224.3505495284227,
+        "mae": 86.26234272992612,
+        "mi": 1.3739186914227894,
+        "corr": 0.915160022535958,
+        "time_taken": 25.12111759185791
+    },
+    "climate_rmse_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 39
+        },
+        "rmse": 225.08531658439003,
+        "mae": 86.54242971023983,
+        "mi": 1.3579731760076386,
+        "corr": 0.9142742556327033,
+        "time_taken": 31.57237696647644
+    },
+    "drift_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 1
+        },
+        "rmse": 9939.461993685796,
+        "mae": 2815.3526141,
+        "mi": 2.5117649463042366,
+        "corr": 0.9818593685879646,
+        "time_taken": 0.3486323356628418
+    },
+    "drift_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 3
+        },
+        "rmse": 11608.69577945632,
+        "mae": 2950.239023951479,
+        "mi": 2.485919913583377,
+        "corr": 0.9572303251177507,
+        "time_taken": 0.8798375129699707
+    },
+    "drift_mi": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 17
+        },
+        "rmse": 12144.454592295104,
+        "mae": 2992.347277755951,
+        "mi": 2.436470527919993,
+        "corr": 0.9307323949776648,
+        "time_taken": 4.641295671463013
+    },
+    "drift_mi_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 4
+        },
+        "rmse": 11796.073029694988,
+        "mae": 2942.9493598425943,
+        "mi": 2.491693528574184,
+        "corr": 0.9469410453563266,
+        "time_taken": 1.1530115604400635
+    },
+    "drift_rmse": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 1
+        },
+        "rmse": 9939.461993685796,
+        "mae": 2815.3526141,
+        "mi": 2.5117649463042366,
+        "corr": 0.9818593685879646,
+        "time_taken": 0.3462667465209961
+    },
+    "drift_rmse_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 2
+        },
+        "rmse": 10937.768911450454,
+        "mae": 2898.2277647093024,
+        "mi": 2.516339692992297,
+        "corr": 0.9748025112834031,
+        "time_taken": 0.6108834743499756
+    },
+    "meteo_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "corr",
+        "optimization_method": "succesive_halving",
+        "best_params": {
+            "learning_neighbours": 48
+        },
+        "rmse": 15.336056298764277,
+        "mae": 9.649597065289596,
+        "mi": 1.2450149039022103,
+        "corr": 0.9134262322451937,
+        "time_taken": 14.634619235992432
+    },
+    "meteo_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 100
+        },
+        "rmse": 14.432101561035786,
+        "mae": 8.91580255776826,
+        "mi": 1.140256061529882,
+        "corr": 0.9071907674948793,
+        "time_taken": 30.32876706123352
+    },
+    "meteo_mi": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 53
+        },
+        "rmse": 15.235847398198148,
+        "mae": 9.568809707214962,
+        "mi": 1.2541175948887533,
+        "corr": 0.9117614863629401,
+        "time_taken": 16.13984990119934
+    },
+    "meteo_mi_corr": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "mi_corr",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 36
+        },
+        "rmse": 15.659187848559077,
+        "mae": 9.904752418521557,
+        "mi": 1.2460451212859849,
+        "corr": 0.91590414107625,
+        "time_taken": 10.919481992721558
+    },
+    "meteo_rmse": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 100
+        },
+        "rmse": 14.432101561035786,
+        "mae": 8.91580255776826,
+        "mi": 1.140256061529882,
+        "corr": 0.9071907674948793,
+        "time_taken": 30.26671600341797
+    },
+    "meteo_rmse_mae": {
+        "algorithm": "iim",
+        "metric_used_for_optimization": "rmse_mae",
+        "optimization_method": "bayesian_optimization",
+        "best_params": {
+            "learning_neighbours": 100
+        },
+        "rmse": 14.432101561035786,
+        "mae": 8.91580255776826,
+        "mi": 1.140256061529882,
+        "corr": 0.9071907674948793,
+        "time_taken": 30.276315927505493
+    }
+}
