@@ -1170,11 +1170,11 @@ if __name__ == '__main__':
     # stmvl_optimal_results(results_path="results/stmvl")
 
     #### Step 2.1: Run imputation for each optimization method's best result
-    # cdrec_optimization_results(input_folder="metric_specific", results_path="results/cdrec/optimization")
+    #cdrec_optimization_results(input_folder="metric_specific", results_path="results/cdrec/optimization")
     # TODO Completely test IIM, M-RNN, ST-MVL
-    iim_optimization_results(input_folder="metric_specific", results_path="results/iim/optimization")
+    #iim_optimization_results(input_folder="metric_specific", results_path="results/iim/optimization")
     mrnn_optimization_results(input_folder="metric_specific", results_path="results/mrnn/optimization")
-    stmvl_optimization_results(input_folder="metric_specific", results_path="results/stmvl/optimization")
+    #stmvl_optimization_results(input_folder="metric_specific", results_path="results/stmvl/optimization")
 
     ##### Step 3: Run imputation using the default params
     # cdrec_default_results(results_path="results/cdrec")

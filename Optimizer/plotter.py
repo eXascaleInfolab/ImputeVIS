@@ -431,24 +431,91 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
     plt.close()
 
 
+def plot_optimization_comparison(input_file_path: str,
+                                 output_plot_path: str,
+                                 algorithm_code: str,
+                                 width: int,
+                                 height: int,
+                                 dpi: int) -> None:
+    """
+    Create comparison plots for different optimization methods across datasets.
+
+    Parameters
+    ----------
+    input_file_path : str
+        Path to the JSON file containing optimization results.
+    output_plot_path : str
+        Directory where generated plots will be saved.
+    algorithm_code : str
+        String representing the algorithm code. Used in plot title and filename.
+    width : int
+        Width of the generated plot.
+    height : int
+        Height of the generated plot.
+    dpi : int
+        Dots-per-inch setting for the generated plot.
+
+    Returns
+    -------
+    None
+        The function saves plots to the specified directory and does not return any values.
+
+    """
+    with open(input_file_path, 'r') as file:
+        data = json.load(file)
+
+    optimization_methods = list(data.keys())
+    datasets = list(data[optimization_methods[0]].keys())
+    datasets_labels = [name.title() for name in datasets]
+    metrics = ["rmse", "mae", "mi", "corr", "time_taken"]
+
+    bar_width = 0.25  # adjust this as needed based on the number of optimization methods
+    index = np.arange(len(datasets))
+
+    for metric in metrics:
+        plt.figure(figsize=(width, height), dpi=dpi)
+
+        for idx, opt_method in enumerate(optimization_methods):
+            values = [data[opt_method][dataset][metric] for dataset in datasets]
+            plt.bar(index + idx * bar_width, values, bar_width, label=util.mapper(opt_method))
+
+        plt.title(f'Comparison of {metric.upper()} for {algorithm_code}')
+        plt.xlabel('Dataset')
+        plt.ylabel(metric.upper())
+        plt.xticks(index + bar_width, datasets_labels)  # to center the tick labels
+        # Check if the metric is rmse or mae and set the y-axis to logarithmic scale
+        if metric in ["rmse", "mae"]:
+            plt.yscale("log")
+            plt.grid(True, which="major", axis="y", ls="--", alpha=0.5)
+        else:
+            plt.grid(True, which="both", axis="y", ls="--")
+        plt.legend()
+        plt.tight_layout()
+        #plt.show()
+        plt.savefig(f'{output_plot_path}/{algorithm_code}_{metric}.png')
+        plt.close()
+
+
 if __name__ == '__main__':
     algorithm_names = ["CDRec",
-                       "IIM",
-                       "M-RNN",
+                      # "IIM",
+                      # "M-RNN",
                        "ST-MVL"]
     filename_patterns = ["cdrec",
-                         "iim",
-                         "mrnn",
+                       #  "iim",
+                       #  "mrnn",
                          "stmvl"]
 
     for algo, pattern in zip(algorithm_names, filename_patterns):
         default_path = f"./results/{pattern}/{pattern}_default_summary_results.json"
         optimized_path = f"./results/{pattern}/{pattern}_optimized_summary_results.json"
-
         # compare_results(default_path, optimized_path, algo)
         # plot_comparison_by_dataset(default_path, optimized_path, 'DataSet')
         # plot_best_algorithm_by_dataset_old(optimized_path, 'DataSet')
+        optimizations_path = f"./results/{pattern}/optimization/{pattern}_optimization_results_summary.json"
+        plot_optimization_comparison(optimizations_path, f"figures/optimizations/{pattern}/", algo, width=4, height=4,dpi=400)
 
-    optimized_paths = [f"./results/{pattern}/{pattern}_optimized_summary_results.json" for pattern in filename_patterns]
+
+    # optimized_paths = [f"./results/{pattern}/{pattern}_optimized_summary_results.json" for pattern in filename_patterns]
     # plot_best_algorithm_by_dataset(optimized_paths, algorithm_names, 'DataSet')
-    plot_best_algorithm_by_dataset(optimized_paths)
+    # plot_best_algorithm_by_dataset(optimized_paths)
