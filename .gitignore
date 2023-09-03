@@ -132,3 +132,4 @@ dmypy.json
 /Datasets/electricity/obfuscated/
 /.idea/
 /Datasets/electricity/raw_matrices/
+*.npy
