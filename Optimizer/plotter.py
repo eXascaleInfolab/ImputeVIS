@@ -410,8 +410,8 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
     metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics_to_use]
 
     ax.set_ylabel('Value')
-    ax.set_title(f'{dataset.title()} - Params Optimized on {util.mapper(metric_used_for_optimization).upper().replace("_", " & ")}')
-
+    ax.set_title(
+        f'{dataset.title()} - Params Optimized on {util.mapper(metric_used_for_optimization).upper().replace("_", " & ")}')
 
     if log_scale:
         ax.set_yscale('log')
@@ -489,21 +489,21 @@ def plot_optimization_comparison(input_file_path: str,
             plt.grid(True, which="major", axis="y", ls="--", alpha=0.5)
         else:
             plt.grid(True, which="both", axis="y", ls="--")
-        plt.legend()
+        plt.legend(loc='lower right', fontsize='x-small')
         plt.tight_layout()
-        #plt.show()
+        # plt.show()
         plt.savefig(f'{output_plot_path}/{algorithm_code}_{metric}.png')
         plt.close()
 
 
 if __name__ == '__main__':
     algorithm_names = ["CDRec",
-                      # "IIM",
-                      # "M-RNN",
+                       "IIM",
+                       "M-RNN",
                        "ST-MVL"]
     filename_patterns = ["cdrec",
-                       #  "iim",
-                       #  "mrnn",
+                         "iim",
+                         "mrnn",
                          "stmvl"]
 
     for algo, pattern in zip(algorithm_names, filename_patterns):
@@ -513,8 +513,8 @@ if __name__ == '__main__':
         # plot_comparison_by_dataset(default_path, optimized_path, 'DataSet')
         # plot_best_algorithm_by_dataset_old(optimized_path, 'DataSet')
         optimizations_path = f"./results/{pattern}/optimization/{pattern}_optimization_results_summary.json"
-        plot_optimization_comparison(optimizations_path, f"figures/optimizations/{pattern}/", algo, width=4, height=4,dpi=400)
-
+        plot_optimization_comparison(optimizations_path, f"figures/optimizations/{pattern}/", algo, width=4, height=4,
+                                     dpi=400)
 
     # optimized_paths = [f"./results/{pattern}/{pattern}_optimized_summary_results.json" for pattern in filename_patterns]
     # plot_best_algorithm_by_dataset(optimized_paths, algorithm_names, 'DataSet')

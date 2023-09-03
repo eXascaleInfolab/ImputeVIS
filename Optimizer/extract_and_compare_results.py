@@ -1155,9 +1155,9 @@ def get_dataset_paths(dataset: str) -> Tuple[str, str]:
 if __name__ == '__main__':
     #### Step 1: Determine optimal results
     # Get the best params by dataset
-    # get_best_params_by_dataset()
+    get_best_params_by_dataset()
     # Get the best params by algorithm
-    # get_best_params_by_algorithm()
+    get_best_params_by_algorithm()
 
     # Print the best_params
     # print(json.dumps(best_params, indent=4))
@@ -1171,9 +1171,8 @@ if __name__ == '__main__':
 
     #### Step 2.1: Run imputation for each optimization method's best result
     #cdrec_optimization_results(input_folder="metric_specific", results_path="results/cdrec/optimization")
-    # TODO Completely test IIM, M-RNN, ST-MVL
     #iim_optimization_results(input_folder="metric_specific", results_path="results/iim/optimization")
-    mrnn_optimization_results(input_folder="metric_specific", results_path="results/mrnn/optimization")
+    #mrnn_optimization_results(input_folder="metric_specific", results_path="results/mrnn/optimization")
     #stmvl_optimization_results(input_folder="metric_specific", results_path="results/stmvl/optimization")
 
     ##### Step 3: Run imputation using the default params
