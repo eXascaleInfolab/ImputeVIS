@@ -497,7 +497,7 @@ def plot_optimization_comparison(input_file_path: str,
 
 
 def plot_across_mcar_rates(metric: str, output_file_path: str,
-                           width: int = 10, height: int = 6, dpi: int = 100) -> None:
+                           width: int = 10, height: int = 6, dpi: int = 400) -> None:
     """
     Plots the metric across different MCAR rates for all datasets and algorithms.
 
@@ -531,16 +531,49 @@ def plot_across_mcar_rates(metric: str, output_file_path: str,
                 y_values.append(result[metric])
             plt.plot(mcar_rates, y_values, label=util.mapper(alg), marker='o')
 
-        plt.title(f"{dataset.capitalize()} - {util.mapper(metric)} across MCAR Rates")
+        plt.title(f"{dataset.capitalize()} - {util.mapper(metric)} across MCAR Scenarios")
         plt.xlabel('MCAR Rate')
         plt.ylabel(util.mapper(metric))
-        plt.legend(fontsize='small')
+        # plt.legend(fontsize='small')
         plt.grid(True, which='both', linestyle='--', linewidth=0.5)
         plt.xticks(mcar_rates)
 
         file_name = f"{dataset}_{metric}_across_mcar_rates.png"
         plt.savefig(os.path.join(output_file_path, file_name), dpi=dpi)
         plt.close()
+
+
+def save_legend_only(output_file_path: str, dpi: int = 100) -> None:
+    """
+    Generates and saves only the legend using representative data.
+
+    Parameters
+    ----------
+    output_file_path : str
+        Directory path to save the legend.
+    dpi : int, optional
+        Dots per inch for the saved legend, by default 100.
+    """
+    algorithms = ["cdrec", "iim", "mrnn", "stmvl"]
+    mcar_rate = 1  # representative MCAR rate
+    dataset = "bafu"  # representative dataset
+    metric = "rmse"  # representative metric
+    base_path = "results/{alg}/{alg}_optimized_summary_results_mcar_{mcar}.json"
+
+    plt.figure(figsize=(10, 2))  # Adjust for desired legend size
+    for alg in algorithms:
+        file_path = base_path.format(alg=alg, mcar=mcar_rate)
+        result = util.read_json_for_metric(file_path, dataset + "_rmse_mae")
+        plt.plot([0, 1], [result[metric], result[metric]], label=util.mapper(alg))
+
+    # Create horizontal legend
+    legend = plt.legend(loc='center', ncol=len(algorithms), frameon=False)
+    plt.gca().set_axis_off()
+    plt.subplots_adjust(top=1, bottom=0, left=0, right=1)
+    plt.margins(0, 0)
+    plt.gca().xaxis.set_major_locator(plt.NullLocator())
+    plt.gca().yaxis.set_major_locator(plt.NullLocator())
+    plt.savefig(os.path.join(output_file_path, "legend_only.png"), dpi=dpi, bbox_inches='tight', pad_inches=0)
 
 
 if __name__ == '__main__':
@@ -569,3 +602,4 @@ if __name__ == '__main__':
 
     for metric_to_plot in ["rmse", "mi", "corr", "time_taken"]:
         plot_across_mcar_rates(metric_to_plot, 'figures/scenario', width=6, height=3, dpi=400)
+    save_legend_only('figures/scenario', dpi=400)

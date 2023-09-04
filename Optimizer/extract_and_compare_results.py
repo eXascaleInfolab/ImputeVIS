@@ -1407,8 +1407,8 @@ if __name__ == '__main__':
     ####
 
     ##### Step 2: Run imputation using the best params
-    # cdrec_optimal_results(results_path="results/cdrec", mcar_scenario=True)
-    # iim_optimal_results(results_path="results/iim", mcar_scenario=True)
+    cdrec_optimal_results(results_path="results/cdrec", mcar_scenario=True)
+    iim_optimal_results(results_path="results/iim", mcar_scenario=True)
     mrnn_optimal_results(results_path="results/mrnn", mcar_scenario=True)
     stmvl_optimal_results(results_path="results/stmvl", mcar_scenario=True)
 
