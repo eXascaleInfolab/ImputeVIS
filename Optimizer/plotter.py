@@ -1,6 +1,6 @@
 import json
 from typing import List
-
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -496,26 +496,76 @@ def plot_optimization_comparison(input_file_path: str,
         plt.close()
 
 
-if __name__ == '__main__':
-    algorithm_names = ["CDRec",
-                       "IIM",
-                       "M-RNN",
-                       "ST-MVL"]
-    filename_patterns = ["cdrec",
-                         "iim",
-                         "mrnn",
-                         "stmvl"]
+def plot_across_mcar_rates(metric: str, output_file_path: str,
+                           width: int = 10, height: int = 6, dpi: int = 100) -> None:
+    """
+    Plots the metric across different MCAR rates for all datasets and algorithms.
 
-    for algo, pattern in zip(algorithm_names, filename_patterns):
-        default_path = f"./results/{pattern}/{pattern}_default_summary_results.json"
-        optimized_path = f"./results/{pattern}/{pattern}_optimized_summary_results.json"
-        # compare_results(default_path, optimized_path, algo)
-        # plot_comparison_by_dataset(default_path, optimized_path, 'DataSet')
-        # plot_best_algorithm_by_dataset_old(optimized_path, 'DataSet')
-        optimizations_path = f"./results/{pattern}/optimization/{pattern}_optimization_results_summary.json"
-        plot_optimization_comparison(optimizations_path, f"figures/optimizations/{pattern}/", algo, width=4, height=4,
-                                     dpi=400)
+    Parameters
+    ----------
+    metric : str
+        The metric name (e.g., 'rmse') to plot.
+    output_file_path : str
+        Directory path to save the plots.
+    width : int, optional
+        Width of the plot, by default 10.
+    height : int, optional
+        Height of the plot, by default 6.
+    dpi : int, optional
+        Dots per inch for the saved plot, by default 100.
+    """
+    algorithms = ["cdrec", "iim", "mrnn", "stmvl"]
+    datasets = ["bafu", "chlorine", "climate", "drift", "meteo"]
+    mcar_rates = [1, 5, 10, 20, 40, 80]
+    base_path = "results/{alg}/{alg}_optimized_summary_results_mcar_{mcar}.json"
+
+    # Loop through each dataset
+    for dataset in datasets:
+        plt.figure(figsize=(width, height))
+        # Loop through each algorithm
+        for alg in algorithms:
+            y_values = []
+            for mcar_rate in mcar_rates:
+                file_path = base_path.format(alg=alg, mcar=mcar_rate)
+                result = util.read_json_for_metric(file_path, dataset + "_rmse_mae")
+                y_values.append(result[metric])
+            plt.plot(mcar_rates, y_values, label=util.mapper(alg), marker='o')
+
+        plt.title(f"{dataset.capitalize()} - {util.mapper(metric)} across MCAR Rates")
+        plt.xlabel('MCAR Rate')
+        plt.ylabel(util.mapper(metric))
+        plt.legend(fontsize='small')
+        plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+        plt.xticks(mcar_rates)
+
+        file_name = f"{dataset}_{metric}_across_mcar_rates.png"
+        plt.savefig(os.path.join(output_file_path, file_name), dpi=dpi)
+        plt.close()
+
+
+if __name__ == '__main__':
+    # algorithm_names = ["CDRec",
+    #                    "IIM",
+    #                    "M-RNN",
+    #                    "ST-MVL"]
+    # filename_patterns = ["cdrec",
+    #                      "iim",
+    #                      "mrnn",
+    #                      "stmvl"]
+    #
+    # for algo, pattern in zip(algorithm_names, filename_patterns):
+    #     default_path = f"./results/{pattern}/{pattern}_default_summary_results.json"
+    #     optimized_path = f"./results/{pattern}/{pattern}_optimized_summary_results.json"
+    #     # compare_results(default_path, optimized_path, algo)
+    #     # plot_comparison_by_dataset(default_path, optimized_path, 'DataSet')
+    #     # plot_best_algorithm_by_dataset_old(optimized_path, 'DataSet')
+    #     optimizations_path = f"./results/{pattern}/optimization/{pattern}_optimization_results_summary.json"
+    #     plot_optimization_comparison(optimizations_path, f"figures/optimizations/{pattern}/", algo, width=4, height=4,
+    #                                  dpi=400)
 
     # optimized_paths = [f"./results/{pattern}/{pattern}_optimized_summary_results.json" for pattern in filename_patterns]
     # plot_best_algorithm_by_dataset(optimized_paths, algorithm_names, 'DataSet')
     # plot_best_algorithm_by_dataset(optimized_paths)
+
+    for metric_to_plot in ["rmse", "mi", "corr", "time_taken"]:
+        plot_across_mcar_rates(metric_to_plot, 'figures/scenario', width=6, height=3, dpi=400)

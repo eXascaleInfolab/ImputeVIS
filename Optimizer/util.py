@@ -27,6 +27,26 @@ def load_json_files(file_names: List[str]) -> Dict[str, Dict[str, Any]]:
     return data
 
 
+def read_json_for_metric(file_path: str, metric: str) -> dict:
+    """
+    Reads the given JSON file and extracts the metric information.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the JSON file.
+    metric : str
+        Metric name (e.g., 'bafu_rmse_mae') to extract from the JSON.
+
+    Returns
+    -------
+    dict
+        Dictionary containing metric details.
+    """
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    return data[metric]
+
 def load_json_file(data, file_name):
     with open(file_name, 'r') as f:
         algorithm_name = file_name.split("_")[0]
@@ -89,6 +109,16 @@ def mapper(input_string: str):
         return "Iterations"
     elif input_string == "mi_corr":
         return "NMI_CORR"
+    elif input_string == "time_taken":
+        return "Time [s]"
+    elif input_string == "rmse":
+        return "RMSE"
+    elif input_string == "mae":
+        return "MAE"
+    elif input_string == "mi":
+        return "MI"
+    elif input_string == "corr":
+        return "CORR"
     else:
         return input_string.capitalize()
 
