@@ -12,7 +12,7 @@ import Wrapper.algo_collection
 
 
 def evaluate_params(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarray, algorithm: str, config: tuple,
-                    selected_metrics: List[str]) -> Dict[str, float]:
+                    selected_metrics: List[str] = ["rmse"]) -> Dict[str, float]:
     """
     Evaluate various statistics for given parameters.
 
@@ -28,7 +28,7 @@ def evaluate_params(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarr
     config : tuple
         The configuration of the algorithm.
     selected_metrics : List[str]
-        List of selected metrics to compute.
+        List of selected metrics to compute. Defaults to ["rmse"].
 
     Returns
     -------
