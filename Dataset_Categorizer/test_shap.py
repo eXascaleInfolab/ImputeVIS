@@ -6,13 +6,10 @@ from sklearn.ensemble import RandomForestRegressor
 import Optimizer.evaluate_params
 
 
-def myfunc(a):
-    return a[0] * a[0] - a[1] * a[1] * a[1] * a[1];
-
-
-def myfunc2(a):
-    return a + a * a;
-
+ALGORITHMS = ["cdrec",
+              "iim",
+              # "mrnn",
+              "stmvl"]
 
 def load_config(json_path: str, algorithm: str, dataset_name: str) -> tuple:
     """
@@ -41,7 +38,7 @@ def load_config(json_path: str, algorithm: str, dataset_name: str) -> tuple:
     # Extract values dynamically from the params_dict and convert them into a tuple
     return tuple(params_dict.values())
 
-def shap_tester(dataset_path: str, obfuscated_dataset_path: str, algorithm: str = "cdrec"):
+def shap_tester(dataset_path: str, obfuscated_dataset_path: str, dataset: str):
     """
     Test SHAP on a given dataset and algorithm.
 
@@ -51,9 +48,8 @@ def shap_tester(dataset_path: str, obfuscated_dataset_path: str, algorithm: str 
         Path to the original dataset.
     obfuscated_dataset_path : str
         Path to the obfuscated dataset.
-    algorithm : str, optional
-        The algorithm to use. Defaults to "cdrec".
-        Valid values: "cdrec", "iim", "mrnn", "stmvl"
+    dataset : str
+        The name of the dataset. E.g., "bafu", "chlorine".
 
     Returns
     -------
@@ -64,46 +60,82 @@ def shap_tester(dataset_path: str, obfuscated_dataset_path: str, algorithm: str 
     # Load datasets
     obfuscated_matrix = np.loadtxt(obfuscated_dataset_path, delimiter=' ')
     ground_truth_matrix = np.loadtxt(dataset_path)
-    X_train = np.array(list(catch.extract_features(ground_truth_matrix).values()))
+    X_train = np.array(list(catch.extract_features(ground_truth_matrix, False).values()))
         # .reshape(-1, 1)
-    # Sample X_test from X_train, and then optionally remove those samples from X_train to avoid overfitting
+
+    # Sample X_test from X_train; could optionally remove those samples from X_train to avoid overfitting
     sample_indices = np.random.choice(X_train.shape[0], size=3,
-                                      replace=False)  # Sample size of 10 is used as an example. Adjust as needed.
+                                      replace=False)  # Sample size of 3 is used as an example. Adjust as desired???
     X_test = X_train[sample_indices]
+    total_weights_for_all_algorithms = []
 
-    # for algorithm in ALGORITHMS:
-    config = load_config("../Optimizer/results/best_params_algorithm.json", algorithm, "bafu")
+    for algorithm in ALGORITHMS:
+        config = load_config("../Optimizer/results/best_params_algorithm.json", algorithm, dataset)
 
-    # Assuming evaluate_params provides RMSE as per its signature.
-    y_train = np.array(Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config,
-                                        selected_metrics=["rmse"])["rmse"])
+        # Assuming evaluate_params provides RMSE as per its signature.
+        y_train = (np.array(Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config,
+                                            selected_metrics=["rmse"])["rmse"]))
 
 
-    # X_train = np.delete(X_train, sample_indices, axis=0)
-    # y_train = np.delete(y_train, sample_indices, axis=0)
+        # X_train = np.delete(X_train, sample_indices, axis=0)
+        # y_train = np.delete(y_train, sample_indices, axis=0)
 
-    # Train a random forest regressor
-    model = RandomForestRegressor()
-    model.fit(X_train.reshape(-1, 1), np.repeat(y_train, 24))
-    # or
-    # model.fit(X_train.reshape(1, -1), [y_train])
+        # Train a random forest regressor
+        model = RandomForestRegressor()
+        model.fit(X_train.reshape(-1, 1), np.repeat(y_train, 22))
+        # or model.fit(X_train.reshape(1, -1), [y_train])
 
-    # Use SHAP to explain the test set
-    exp = shap.KernelExplainer(model.predict, X_test.reshape(-1, 1))
-    shval = exp.shap_values(X_test.reshape(-1, 1))
+        # Use SHAP to explain the test set
+        exp = shap.KernelExplainer(model.predict, X_test.reshape(-1, 1))
+        shval = exp.shap_values(X_test.reshape(-1, 1))
 
-    # Aggregate shapely values per element of X_test
-    total_weights = [np.abs(shval.T[i]).mean(0) for i in range(len(shval[0]))]
-    # total_weights = np.mean(np.abs(shval[0]), axis=0)
-    return total_weights
+        # Aggregate shapely values per element of X_test
+        total_weights = [np.abs(shval.T[i]).mean(0) for i in range(len(shval[0]))]
+        total_weights_for_all_algorithms = np.append(total_weights_for_all_algorithms, total_weights)
+
+    return total_weights_for_all_algorithms
 
 
 if __name__ == '__main__':
     # Test SHAP on a given dataset and algorithm
-    total_weights = shap_tester("../Datasets/bafu/raw_matrices/BAFU_eighth.txt",
-                                "../Datasets/bafu/obfuscated/BAFU_eighth_obfuscated_10.txt", algorithm="cdrec")
-    print(total_weights)
+    # total_weights = shap_tester("../Datasets/bafu/raw_matrices/BAFU_eighth.txt",
+    #                             "../Datasets/bafu/obfuscated/BAFU_eighth_obfuscated_10.txt", "bafu")
+    # print("Bafu:" + total_weights)
+    datasets = [
+        # 'bafu',
+        'chlorine',
+        # 'climate',
+        # 'drift',
+        # 'meteo'
+    ]
 
+    dataset_files = [
+        # 'BAFU',
+        'cl2fullLarge',
+        # 'climate',
+        # 'batch10',
+        # 'meteo_total'
+    ]
+    for dataset, data_file in zip(datasets, dataset_files):
+        raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
+        obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_10.txt"
+
+        if dataset == 'drift':
+            raw_file_path = f"../Datasets/{dataset}/drift10/raw_matrices/{data_file}_eighth.txt"
+            obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_10.txt"
+
+        total_weights = shap_tester(raw_file_path, obf_file_path, dataset)
+
+        print(dataset + ":" + str(total_weights))
+
+
+
+# def myfunc(a):
+#     return a[0] * a[0] - a[1] * a[1] * a[1] * a[1];
+#
+#
+# def myfunc2(a):
+#     return a + a * a;
 # X_train, X_test, y_train, y_test
 
 # features, or other "arguments" for the "function" SHAP is studying
