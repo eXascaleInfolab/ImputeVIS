@@ -497,7 +497,7 @@ def plot_optimization_comparison(input_file_path: str,
 
 
 def plot_across_mcar_rates(metric: str, output_file_path: str,
-                           width: int = 10, height: int = 6, dpi: int = 400) -> None:
+                           width: int = 10, height: int = 6.5, dpi: int = 400) -> None:
     """
     Plots the metric across different MCAR rates for all datasets and algorithms.
 
@@ -567,7 +567,7 @@ def save_legend_only(output_file_path: str, dpi: int = 100) -> None:
         plt.plot([0, 1], [result[metric], result[metric]], label=util.mapper(alg))
 
     # Create horizontal legend
-    legend = plt.legend(loc='center', ncol=len(algorithms), frameon=False)
+    legend = plt.legend(loc='center', frameon=False)
     plt.gca().set_axis_off()
     plt.subplots_adjust(top=1, bottom=0, left=0, right=1)
     plt.margins(0, 0)
@@ -601,5 +601,5 @@ if __name__ == '__main__':
     # plot_best_algorithm_by_dataset(optimized_paths)
 
     for metric_to_plot in ["rmse", "mi", "corr", "time_taken"]:
-        plot_across_mcar_rates(metric_to_plot, 'figures/scenario', width=6, height=3, dpi=400)
+        plot_across_mcar_rates(metric_to_plot, 'figures/scenario', width=6, height=3.6, dpi=400)
     save_legend_only('figures/scenario', dpi=400)

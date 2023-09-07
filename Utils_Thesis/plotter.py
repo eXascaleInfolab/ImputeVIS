@@ -10,7 +10,8 @@ def plot_time_series(time_series: np.ndarray,
                      granularity: str = "daily",
                      year: int = 1975,
                      dpi: int = 400,
-                     save: bool = True) -> None:
+                     save: bool = True,
+                     rate: int = 0) -> None:
     """
     Plot a time series.
 
@@ -29,6 +30,8 @@ def plot_time_series(time_series: np.ndarray,
         Dots Per Inch for the plot. Defaults to 400.
     save : bool, optional
         Whether to save the plot to the "Results" directory. Defaults to True.
+    rate : int, optional
+        The rate of missing values in the time series. Defaults to 0.
 
     Returns
     -------
@@ -38,6 +41,8 @@ def plot_time_series(time_series: np.ndarray,
 
     # Arbitrary starting point: start of the current year
     start_date = datetime(year, 1, 1)
+    if title == "Bafu":
+        start_date = datetime(year, 12, 12)
 
     # Generate time labels based on granularity
     if granularity == "daily":
@@ -76,7 +81,8 @@ def plot_time_series(time_series: np.ndarray,
 
     if save:
         # Save the figure in the Results folder
-        filename = os.path.join("Results", f"{title}.png")
+        # filename = os.path.join("Results", f"{title}.png")
+        filename = os.path.join("Results", f"{title}_{rate}.png")
         plt.savefig(filename, dpi=dpi)
 
     # plt.show()
@@ -124,6 +130,16 @@ if __name__ == "__main__":
         raw_matrix = np.loadtxt(raw_file_path, delimiter=" ")
         plot_time_series(raw_matrix[:, 0], series_name, dataset.title(), granularity=granularity, year=start_year,
                          dpi=400, save=True)
+
+    for dataset, data_file, granularity, series_name, start_year in zip(datasets, dataset_files, granularities,
+                                                                        series_names, starting_years):
+        for mcar in ["1", "5", "10", "20", "40","80"]:
+            obfuscated_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_{mcar}.txt"
+
+            raw_matrix = np.loadtxt(obfuscated_file_path, delimiter=" ")
+            plot_time_series(raw_matrix[:, 0], series_name, dataset.title(), granularity=granularity, year=start_year,
+                             dpi=400, save=True, rate=mcar)
+
     # Test the plot_time_series function
     # Generate a random time series
     # time_series = np.random.rand(100)
