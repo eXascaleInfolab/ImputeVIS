@@ -155,9 +155,9 @@ export default {
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
 
           if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames[index]);
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value, currentSeriesNames[index]);
           } else {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value);
           }
         });
       } catch (error) {
@@ -233,13 +233,13 @@ export default {
             if (displayImputation) {
               newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames[index]));
             } else {
-              newSeriesData.push(createSeries(index, data, currentSeriesNames[index]));
+              newSeriesData.push(createSeries(index, data, dataSelect.value, currentSeriesNames[index]));
             }
           } else {
             if (displayImputation) {
               newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value));
             } else {
-              newSeriesData.push(createSeries(index, data))
+              newSeriesData.push(createSeries(index, data, dataSelect.value))
             }
           }
         });

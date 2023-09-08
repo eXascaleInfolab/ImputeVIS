@@ -233,9 +233,9 @@ export default {
         obfuscatedMatrix = response.data.matrix;
         response.data.matrix.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, data, currentSeriesNames[index]);
+            chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index]);
           } else {
-            chartOptionsOriginal.value.series[index] = createSeries(index, data);
+            chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value);
           }
         });
       } catch (error) {
@@ -386,13 +386,13 @@ export default {
                 if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "CDRec: " + currentSeriesNames[index]));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, "CDRec: " + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
                 }
               } else {
                 if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "CDRec: " + index));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
                 }
               }
             });
@@ -425,13 +425,13 @@ export default {
                 if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "IIM: " + currentSeriesNames[index]));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, "IIM: " + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "IIM: " + currentSeriesNames[index]));
                 }
               } else {
                 if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "IIM: " + index));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
                 }
               }
             });
@@ -467,13 +467,13 @@ export default {
                 if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "MRNN: " + currentSeriesNames[index]));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, "MRNN: " + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "MRNN: " + currentSeriesNames[index]));
                 }
               } else {
                 if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "MRNN: " + index));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
                 }
               }
             });
@@ -507,13 +507,13 @@ export default {
                 if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "ST-MVL: " + currentSeriesNames[index]));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, "ST-MVL: " + currentSeriesNames[index]));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "ST-MVL: " + currentSeriesNames[index]));
                 }
               } else {
                 if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, "ST-MVL: " + index));
                 } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data));
+                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
                 }
               }
             });

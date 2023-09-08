@@ -5,12 +5,8 @@ const BASE_DAY = 1;
 const THIRTY_MINUTES = 1000 * 60 * 30;
 const VISIBILITY_THRESHOLD = 10;
 
-export const createSeries = (index: number, data: number[], seriesName: string = 'Series') => {
-    // Helper function to determine visibility and showInNavigator values
-    const shouldShow = (idx: number): boolean => {
-        return idx < VISIBILITY_THRESHOLD ? idx % 2 === 0 : idx % 10 === 0;
-    };
-
+export const createSeries = (index: number, data: number[], datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series') => {
+    const datasetCode = datasetSelected.split('_')[0].toLowerCase();
     return {
         name: `${seriesName} ${seriesName === 'Series' ? index + 1 : ''}`.trim(),
         data,
@@ -20,13 +16,13 @@ export const createSeries = (index: number, data: number[], seriesName: string =
         },
         pointStart: Date.UTC(BASE_YEAR, BASE_MONTH, BASE_DAY),
         pointInterval: THIRTY_MINUTES,
-        visible: shouldShow(index),
+        visible: shouldShow(index, datasetCode),
         tooltip: {
             valueDecimals: 2
         },
         plotOptions: {
             series: {
-                showInNavigator: shouldShow(index),
+                showInNavigator: shouldShow(index, datasetCode),
             }
         }
     };
@@ -442,4 +438,15 @@ function lightenColor(color: string, percent: number): string {
 
 function darkenColor(color: string, percent: number): string {
     return lightenColor(color, -1 * percent);
+}
+
+function shouldShow(idx: number, datasetName: string): boolean {
+    console.log(datasetName)
+    if (datasetName === 'bafu') return idx === 0 || idx === 5;
+    else if (datasetName === 'climate') return idx === 1 || idx === 8;
+    else if (datasetName === 'chlorine') return idx === 2 || idx === 8;
+    else if (datasetName === 'batch10') return idx === 3 || idx === 7; // drift
+    else if (datasetName === 'meteo') return idx === 1 || idx === 3;
+    else
+        return idx === 1 || idx === 3;
 }
