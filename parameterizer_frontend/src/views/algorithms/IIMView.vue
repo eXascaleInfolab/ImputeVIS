@@ -148,13 +148,13 @@ export default {
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0 && missingRate) {
             if (displayImputation) {
-              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, currentSeriesNames[index]));
+              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]));
             } else {
               newSeriesData.push(createSeries(index, data, currentSeriesNames[index], dataSelect.value));
             }
           } else {
             if (displayImputation) {
-              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value));
+              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, dataSelect.value));
             } else {
               newSeriesData.push(createSeries(index, data, dataSelect.value))
             }

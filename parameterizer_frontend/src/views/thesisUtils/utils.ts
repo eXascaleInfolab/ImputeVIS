@@ -95,14 +95,15 @@ const createSegments = (data: number[], referenceData: number[]) => {
 // };
 
 
-export const createSegmentedSeries = (index: number, data: number[], referenceData: number[], chartOptions, seriesName: string = 'Series') => {
+export const createSegmentedSeries = (index: number, data: number[], referenceData: number[], chartOptions, datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series') => {
+    const datasetCode = datasetSelected.split('_')[0].toLowerCase();
     const segments = createSegments(data, referenceData);
     const mainSeriesId = `${seriesName}_${index}_main`;
     const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
     const darkenedColor = darkenColor(mainSeriesColor, 0.55);
 
-    const isVisible = index < 10 ? index % 2 !== 1 : index % 10 === 0;
-    const isShownInNavigator = index < 10 ? index % 2 !== 0 : index % 10 === 0;
+    const isVisible = shouldShow(index, datasetCode);
+    const isShownInNavigator = shouldShow(index, datasetCode);
     const seriesNameGenerated = seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName;
 
     const commonProperties = {
