@@ -70,7 +70,7 @@ def plot_time_series(time_series: np.ndarray,
     plt.plot(time_labels, time_series, label=name)
     plt.xlabel("Time")
     plt.ylabel(name + " " + "Value")
-    plt.title(title)
+    # plt.title(title)
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
@@ -82,7 +82,12 @@ def plot_time_series(time_series: np.ndarray,
     if save:
         # Save the figure in the Results folder
         # filename = os.path.join("Results", f"{title}.png")
-        filename = os.path.join("Results", f"{title}_{rate}.png")
+
+        if rate != 0:
+            filename = os.path.join("Results", f"{title}_{rate}.png")
+        else:
+            filename = os.path.join("Results", f"{title}.png")
+
         plt.savefig(filename, dpi=dpi)
 
     # plt.show()
