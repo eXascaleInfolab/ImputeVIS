@@ -113,7 +113,7 @@ def compare_results(default_file_path: str, optimized_file_path: str, algorithm:
         rects2 = ax.bar(ind + width / 2, optimized_metric_values, width, label='Optimized')
 
         ax.set_ylabel(ylabel)
-        ax.set_title(f'{algorithm} {metric_display}: Author vs. Optimized')
+        #ax.set_title(f'{algorithm} {metric_display}: Author vs. Optimized')
 
         # Set the tick positions and labels
         ax.set_xticks(ind)
@@ -209,7 +209,7 @@ def plot_comparison_by_dataset(default_file_path: str, optimized_file_path: str,
         metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics]
 
         ax.set_ylabel('Value')
-        ax.set_title(f'{title_prefix} Metrics Comparison: {label.title()}')
+        #ax.set_title(f'{title_prefix} Metrics Comparison: {label.title()}')
         ax.set_xticks(ind)
         ax.set_xticklabels(metric_display_labels)
         ax.legend()
@@ -278,7 +278,7 @@ def plot_best_algorithm_by_dataset_old(optimized_file_path: str, title_prefix: s
         metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics]
 
         ax.set_ylabel('Value')
-        ax.set_title(f'{title_prefix} Best Configuration per Algorithm for Metrics: {dataset.title()}')
+        #ax.set_title(f'{title_prefix} Best Configuration per Algorithm for Metrics: {dataset.title()}')
         ax.set_xticks(ind + width * (len(algorithms) - 1) / 2)  # Center the tick marks under the group of bars
         ax.set_xticklabels(metric_display_labels)
         ax.legend()
@@ -347,7 +347,7 @@ def plot_best_algorithm_by_dataset(optimized_paths: List[str], algorithm_names: 
         metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics]
 
         ax.set_ylabel('Value')
-        ax.set_title(f'{title_prefix} Metrics Comparison: {dataset.title()}')
+        #ax.set_title(f'{title_prefix} Metrics Comparison: {dataset.title()}')
         ax.set_xticks(ind + width * (len(algorithm_names) - 1) / 2)  # Adjust xticks position
         ax.set_xticklabels(metric_display_labels)
         ax.legend()
@@ -410,8 +410,7 @@ def plot_metrics(dataset, metric_used_for_optimization, algorithms_data, metrics
     metric_display_labels = ["Time [s]" if metric == "time_taken" else metric.upper() for metric in metrics_to_use]
 
     ax.set_ylabel('Value')
-    ax.set_title(
-        f'{dataset.title()} - Params Optimized on {util.mapper(metric_used_for_optimization).upper().replace("_", " & ")}')
+    #ax.set_title(f'{dataset.title()} - Params Optimized on {util.mapper(metric_used_for_optimization).upper().replace("_", " & ")}')
 
     if log_scale:
         ax.set_yscale('log')
@@ -479,7 +478,7 @@ def plot_optimization_comparison(input_file_path: str,
             values = [data[opt_method][dataset][metric] for dataset in datasets]
             plt.bar(index + idx * bar_width, values, bar_width, label=util.mapper(opt_method))
 
-        plt.title(f'Comparison of {metric.upper()} for {algorithm_code}')
+        #plt.title(f'Comparison of {metric.upper()} for {algorithm_code}')
         plt.xlabel('Dataset')
         plt.ylabel(metric.upper())
         plt.xticks(index + bar_width, datasets_labels)  # to center the tick labels
@@ -489,7 +488,7 @@ def plot_optimization_comparison(input_file_path: str,
             plt.grid(True, which="major", axis="y", ls="--", alpha=0.5)
         else:
             plt.grid(True, which="both", axis="y", ls="--")
-        plt.legend(loc='lower right', fontsize='x-small')
+        #plt.legend(loc='lower right', fontsize='x-small')
         plt.tight_layout()
         # plt.show()
         plt.savefig(f'{output_plot_path}/{algorithm_code}_{metric}.png')
@@ -531,7 +530,7 @@ def plot_across_mcar_rates(metric: str, output_file_path: str,
                 y_values.append(result[metric])
             plt.plot(mcar_rates, y_values, label=util.mapper(alg), marker='o')
 
-        plt.title(f"{dataset.capitalize()} - {util.mapper(metric)} across MCAR Scenarios")
+        #plt.title(f"{dataset.capitalize()} - {util.mapper(metric)} across MCAR Scenarios")
         plt.xlabel('MCAR Rate')
         plt.ylabel(util.mapper(metric))
         # plt.legend(fontsize='small')
