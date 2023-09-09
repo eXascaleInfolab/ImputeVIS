@@ -1,13 +1,5 @@
 // algorithmsDefaults.ts
 
-// IIM
-export interface IIMDefaults {
-    learningNeighbors: number;
-}
-
-export const IIM_DEFAULTS: IIMDefaults = {
-    learningNeighbors: 10,
-};
 
 // CDREC
 export interface CDRecDefaults {
@@ -20,6 +12,15 @@ export const CDREC_DEFAULTS: CDRecDefaults = {
     reductionValue: "0",
     epsilon: 1E-6,
     iterations: 100,
+};
+
+// IIM
+export interface IIMDefaults {
+    learningNeighbors: number;
+}
+
+export const IIM_DEFAULTS: IIMDefaults = {
+    learningNeighbors: 10,
 };
 
 // M-RNN

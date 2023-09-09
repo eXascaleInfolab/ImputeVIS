@@ -358,16 +358,16 @@ def handle_data_set(data_set: str) -> str:
 
     if data_set.lower().startswith("bafu"):
         return "bafu"
-    elif data_set.lower().startswith("cl2fullLarge"):
+    elif data_set.lower().startswith("cl2fullLarge") or data_set.lower().startswith("chlorine"):
         return "chlorine"
     elif data_set.lower().startswith("climate"):
         return "climate"
-    elif data_set.lower().startswith("batch10"):
+    elif data_set.lower().startswith("batch") or data_set.lower().startswith("drift"):
         return "drift"
     elif data_set.lower().startswith("meteo"):
         return "meteo"
     else:
-        return ""
+        return "climate"  # Default
 
 
 # Then, in your `fetch_params` function, you can use:

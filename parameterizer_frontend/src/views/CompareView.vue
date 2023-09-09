@@ -23,9 +23,6 @@
                   <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
                   <normalization-toggle v-model="normalizationMode"></normalization-toggle>
                   <missing-rate v-model="missingRate"/>
-                  <div class="d-flex justify-content-center mt-2">
-                    <!--                    <button type="submit" class="btn btn-primary align-center">Refresh</button>-->
-                  </div>
                 </form>
               </div>
             </div>
@@ -81,7 +78,7 @@
                 <button type="submit" class="btn btn-primary align-center">Impute</button>
               </div>
             </form>
-            <div v-if="metricsCDRec" class="mt-5">
+            <div v-if="metricsCDRec" class="mt-4">
               <div class="row">
                 <div class="col-xs">
                   <h6 v-if="rmseCDRec !== null && rmseCDRec !== ''"> CDRec RMSE: {{ rmseCDRec }}</h6>
@@ -91,7 +88,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="metricsIIM" class="mt-5">
+            <div v-if="metricsIIM" class="mt-4">
               <div class="row">
                 <div class="col-xs">
                   <h6 v-if="rmseIIM !== null && rmseIIM !== ''"> IIM RMSE: {{ rmseIIM }}</h6>
@@ -101,7 +98,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="metricsMRNN" class="mt-5">
+            <div v-if="metricsMRNN" class="mt-4">
               <div class="row">
                 <div class="col-xs">
                   <h6 v-if="rmseMRNN !== null && rmseMRNN !== ''"> M-RNN RMSE: {{ rmseMRNN }}</h6>
@@ -111,7 +108,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="metricsSTMVL" class="mt-5">
+            <div v-if="metricsSTMVL" class="mt-4">
               <div class="row">
                 <div class="col-xs">
                   <h6 v-if="rmseSTMVL !== null && rmseSTMVL !== ''"> ST-MVL RMSE: {{ rmseSTMVL }}</h6>
@@ -250,10 +247,12 @@ export default {
     const fetchParameters = async () => {
       if (selectedParamOption.value !== 'Default') {
         try {
+          const dataAbbreviation = getCategory(dataSelect.value);
+          console.log("dataAbbreviation: ", dataAbbreviation)
           let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
           const response = await axios.post('http://localhost:8000/api/fetchParameters/',
               {
-                data_set: dataSet,
+                data_set: dataAbbreviation,
                 normalization: normalizationMode.value,
                 param_options: selectedParamOption.value
               },
@@ -263,11 +262,6 @@ export default {
                 }
               }
           );
-          // const paramsForAlgorithm = response.data[dataSelect.value][selectedParamOption.value];
-          // Get parameters for the selected algorithm and dataset.
-          const selectedAlgorithm = dataSelect.value;
-          const dataAbbreviation = getCategory(dataSelect.value);
-          // TODO Permanent variable to not refetch if not required
           const parameters = response.data.params;
 
           // CDRec Parameters
@@ -297,7 +291,7 @@ export default {
         }
       } else {
         // Set parameters to default (author's choice)
-        truncationRank = String(10);
+        truncationRank = String(CDREC_DEFAULTS.reductionValue);
         epsilon = String(CDREC_DEFAULTS.epsilon);
         iterations = CDREC_DEFAULTS.iterations;
 
@@ -348,6 +342,7 @@ export default {
       loadingResults.value = true;
       imputedData.value = false;
       chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length)
+      await fetchParameters();
       clearErrorMetrics();
 
       try {
@@ -579,15 +574,14 @@ export default {
       currentSeriesNames = newSeriesNames;
     };
 
-    // const handleParamSelectChange = async () => {
-    //   try {
-    //     console.log("called fetchParams")
-    //     await fetchParameters();
-    //     await submitForm();
-    //   } catch (error) {
-    //     console.error("Error handling parameter selection:", error);
-    //   }
-    // }
+    const handleParamSelectChange = async () => {
+      try {
+        await fetchParameters();
+        await submitForm();
+      } catch (error) {
+        console.error("Error handling parameter selection:", error);
+      }
+    }
       const handleNormalizationModeChange = () => {
       if (imputedData.value == true) {
           submitForm();
