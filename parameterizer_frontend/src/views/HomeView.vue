@@ -3,7 +3,7 @@
     <h3 class="mb-4 text-center">ImputeVIS</h3>
     <p class="text-center">
       ImputeVis is an online tool that allows visualization, parameterization, and optimization of time series
-      imptuation algorithms.
+      imputation algorithms.
       <br/>
       This tool was created at the <a href="http://exascale.info/">eXascale Infolab</a>, a research group
       at the <a href="http://www.unifr.ch/">University of Fribourg</a>, Switzerland.
@@ -24,17 +24,17 @@
         <p><b>Tools:</b></p>
         <ul>
           <li>
-            <RouterLink to="/compare">Compare Algorithms</RouterLink>
+            <RouterLink to="/compare">Imputation Comparison</RouterLink>
           </li>
           <li>
-            <RouterLink to="/datasets/categorizer">Dataset Features</RouterLink>
+            <RouterLink to="/datasets/categorizer">Feature Extraction</RouterLink>
           </li>
         </ul>
       </div>
 
       <!-- Second Column for Algorithms -->
       <div class="col-md-3">
-        <p><b>Algorithms:</b></p>
+        <p><b>Imputation Analysis:</b></p>
         <ul>
           <li>
             <RouterLink to="/algorithms/cdrec">CDRec</RouterLink>
@@ -53,7 +53,7 @@
 
       <!-- Third Column for Algorithm Optimization -->
       <div class="col-md-3">
-        <p><b>Algorithm Optimization:</b></p>
+        <p><b>Imputation Optimization:</b></p>
         <ul>
           <li>
             <RouterLink to="/optimization/cdrec">CDRec</RouterLink>

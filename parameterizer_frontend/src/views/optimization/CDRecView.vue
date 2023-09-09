@@ -21,7 +21,7 @@
         <data-select-optimization v-model="dataSelectOptimization" @update:seriesNames="updateSeriesNames"/>
         <!--        <missing-rate v-model="missingRate" />-->
         <div class="mb-3">
-          <label for="truncationRank" class="form-label">Truncation Rank: {{ truncationRank }}</label>
+          <label for="truncationRank" class="form-label">Reduction Rank: {{ truncationRank }}</label>
           <input id="truncationRank" v-model.number="truncationRank" type="range" min="0" max="10" step="1"
                  class="form-control">
         </div>
@@ -101,7 +101,7 @@ export default {
     let currentSeriesNames = []; // Names of series currently displayed
     const missingRate = ref('10'); // Default missing rate
     const truncationRank = ref('1') // Default truncation rank is 1, 0 means detect truncation automatically
-    const epsilon = ref('E-7'); // Default epsilon is E-7
+    const epsilon = ref('E-6'); // Default epsilon is E-6
     const iterations = ref(500); // Default number of iterations is 1000
     const rmse = ref(null);
     const mae = ref(null);

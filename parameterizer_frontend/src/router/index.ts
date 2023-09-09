@@ -8,13 +8,21 @@ const router = createRouter({
             name: 'home',
             component: () => import('../views/HomeView.vue')
         },
-                {
+        {
+            path: '/compare/:datasetName',
+            name: 'compare-overview',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/CompareView.vue')
+        },
+        {
             path: '/compare',
             name: 'compare',
             // route level code-splitting
             // this generates a separate chunk (About.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
-            component: () => import('../views/CompareView.vue')
+            component: () => import('../views/CompareOverviewView.vue')
         },
         {
             path: '/about',
@@ -43,16 +51,22 @@ const router = createRouter({
             component: () => import('../views/algorithms/M-RNNView.vue')
         },
         {
+            path: '/datasets/categorizer',
+            name: 'categorizer-overview',
+            // route level code-splitting
+            component: () => import('../views/datasets/CategorizerOverviewView.vue')
+        },
+        {
+            path: '/datasets/categorizer/:datasetName',
+            name: 'categorizer',
+            // route level code-splitting
+            component: () => import('../views/datasets/CategorizerView.vue')
+        },
+        {
             path: '/algorithms/stmvl',
             name: 'stmvl',
             // route level code-splitting
             component: () => import('../views/algorithms/STMVLView.vue')
-        },
-        {
-            path: '/datasets/categorizer',
-            name: 'categorizer',
-            // route level code-splitting
-            component: () => import('../views/datasets/CategorizerView.vue')
         },
         {
             path: '/optimization/cdrec',

@@ -106,6 +106,7 @@
 
 <script lang="ts">
 import {ref, watch} from 'vue';
+import { useRoute } from 'vue-router'
 import DataSelect from '../components/DataSelect.vue';
 import MetricsDisplay from '../components/MetricsDisplay.vue';
 import MissingRate from '../components/MissingRate.vue';
@@ -126,7 +127,8 @@ export default {
     MissingRate,
     NormalizationToggle
   }, setup() {
-    const dataSelect = ref('climate_eighth');
+    const route = useRoute()
+    const dataSelect = ref(route.params.datasetName || 'climate_eighth');
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
@@ -206,9 +208,9 @@ export default {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
           if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, currentSeriesNames[index]);
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value, currentSeriesNames[index]);
           } else {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData);
+            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value);
           }
         });
       } catch (error) {

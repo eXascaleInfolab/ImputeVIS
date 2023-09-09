@@ -132,6 +132,7 @@
 
 <script lang="ts">
 import {ref, watch, reactive, shallowReactive} from 'vue';
+import { useRoute } from 'vue-router'
 import DataSelect from './components/DataSelect.vue';
 import MissingRate from './components/MissingRate.vue';
 import NormalizationToggle from './components/NormalizationToggle.vue'
@@ -156,7 +157,8 @@ export default {
     DataSelect,
     MissingRate
   }, setup() {
-    const dataSelect = ref('climate_eighth') // Default data is BAFU
+    const route = useRoute()
+    const dataSelect = ref(route.params.datasetName || 'climate_eighth') // Default data is BAFU
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const fetchedData = reactive({});
@@ -167,7 +169,7 @@ export default {
     //CDRec Parameters
     const missingRate = ref('10'); // Default missing rate
     let truncationRank = '1' // Default truncation rank is 1, 0 means detect truncation automatically
-    let epsilon = 'E-7'; // Default epsilon is E-7
+    let epsilon = 'E-6'; // Default epsilon is E-6
     let iterations = (500); // Default number of iterations is 1000
     const rmseCDRec = ref(null);
     const maeCDRec = ref(null);
