@@ -488,11 +488,22 @@ def plot_optimization_comparison(input_file_path: str,
             plt.grid(True, which="major", axis="y", ls="--", alpha=0.5)
         else:
             plt.grid(True, which="both", axis="y", ls="--")
+
+        # Extract legend handles and labels for later use
+        legend_handles, legend_labels = plt.gca().get_legend_handles_labels()
+
         #plt.legend(loc='lower right', fontsize='x-small')
         plt.tight_layout()
         # plt.show()
         plt.savefig(f'{output_plot_path}/{algorithm_code}_{metric}.png')
         plt.close()
+
+    # Saving legend separately
+    if legend_handles and legend_labels:
+        fig_legend = plt.figure(figsize=(width, 1), dpi=400)  # adjust the height for a horizontal legend
+        plt.figlegend(legend_handles, legend_labels, loc='center', ncol=len(legend_handles))
+        fig_legend.savefig(f'{output_plot_path}/optimization-legend-horizontal.png', dpi=400, bbox_inches='tight')
+        plt.close(fig_legend)
 
 
 def plot_across_mcar_rates(metric: str, output_file_path: str,

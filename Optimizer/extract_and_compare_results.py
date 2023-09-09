@@ -1398,19 +1398,19 @@ def get_dataset_paths(dataset: str, mcar: int = 10) -> Tuple[str, str]:
 if __name__ == '__main__':
     #### Step 1: Determine optimal results
     # Get the best params by dataset
-    get_best_params_by_dataset()
+    # get_best_params_by_dataset()
     # Get the best params by algorithm
-    get_best_params_by_algorithm()
+    # get_best_params_by_algorithm()
 
     # Print the best_params
     # print(json.dumps(best_params, indent=4))
     ####
 
     ##### Step 2: Run imputation using the best params
-    cdrec_optimal_results(results_path="results/cdrec", mcar_scenario=True)
-    iim_optimal_results(results_path="results/iim", mcar_scenario=True)
-    mrnn_optimal_results(results_path="results/mrnn", mcar_scenario=True)
-    stmvl_optimal_results(results_path="results/stmvl", mcar_scenario=True)
+    # cdrec_optimal_results(results_path="results/cdrec", mcar_scenario=True)
+    # iim_optimal_results(results_path="results/iim", mcar_scenario=True)
+    # mrnn_optimal_results(results_path="results/mrnn", mcar_scenario=True)
+    # stmvl_optimal_results(results_path="results/stmvl", mcar_scenario=True)
 
     #### Step 2.1: Run imputation for each optimization method's best result
     # cdrec_optimization_results(input_folder="metric_specific", results_path="results/cdrec/optimization")
@@ -1419,7 +1419,7 @@ if __name__ == '__main__':
     # stmvl_optimization_results(input_folder="metric_specific", results_path="results/stmvl/optimization")
 
     ##### Step 3: Run imputation using the default params
-    # cdrec_default_results(results_path="results/cdrec")
+    cdrec_default_results(results_path="results/cdrec")
     # iim_default_results(results_path="results/iim")
     # mrnn_default_results(results_path="results/mrnn")
     # stmvl_default_results(results_path="results/stmvl")
