@@ -195,9 +195,8 @@ uint64_t CDMissingValueRecovery::performRecovery(bool determineReduction /*= fal
     }
     
     lastIterations = iter - 1;
-#ifdef RECOVERY_VERBOSE
+
     std::cout << "recovery performed in " << lastIterations << " iterations " << std::endl;
-#endif
     
     // when the recovery is done, we need to clean up some stuff
     missingBlocks.clear();
@@ -263,9 +262,9 @@ void CDMissingValueRecovery::determineReduction()
     
     double squaresum = 0.0;
     
-#ifdef RECOVERY_VERBOSE
+
     std::cout << "CValues (rank=" << rank << "): ";
-#endif
+
     for (auto &a : centroidValues)
     {
         a /= (double)matrix.n_rows;
@@ -299,12 +298,12 @@ void CDMissingValueRecovery::determineReduction()
         contributionSum += relContribution[red];
     }
     
-#ifdef RECOVERY_VERBOSE
+
     std::cout << "Auto-reduction [entropy] detected as: "
               << red << " in [1..." << rank - 1 << "]," << std::endl
               << "with  sum(contrib)=" << contributionSum
               << " entropy=" << entropy << std::endl << std::endl;
-#endif
+
     
     // cleanup - we will have less dimensions later
     cd.destroyDecomposition();
