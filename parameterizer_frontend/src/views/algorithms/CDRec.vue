@@ -17,7 +17,8 @@
         <normalization-toggle v-model="normalizationMode"></normalization-toggle>
         <missing-rate v-model="missingRate"/>
         <!-- Learning Rate -->
-        <div class="mb-3">
+        <div class="mb-3" data-toggle="tooltip" data-placement="top"
+       title="0 means to detect Reduction Rank automatically.">
           <label for="truncationRank" class="form-label">Reduction Rank: {{ truncationRank }}</label>
           <input id="truncationRank" v-model.number="truncationRank" type="range" min="0" max="10" step="1"
                  class="form-control">
