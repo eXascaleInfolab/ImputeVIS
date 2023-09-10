@@ -14,19 +14,19 @@
       <div class="col-md-12">
         <p><b>Technology</b><br>
           ImputeVIS is a client-server application.
-          The client-side is implemented using <a href="https://vuejs.org/">Vue</a> with TypeScript,
-          supplemented with <a href="https://www.highcharts.com/">HighCharts</a> (a JavaScript library for charts) and
+          The client-side is implemented using <a href="https://vuejs.org/" target="_blank">Vue</a> with TypeScript,
+          supplemented with <a href="https://www.highcharts.com/" target="_blank">HighCharts</a> (a JavaScript library for charts) and
           HTML/CSS.
           <br/>
-          The server-side uses <a href="https://www.djangoproject.com/">Django</a>, with additional Python scripts for processing requests.
+          The server-side uses <a href="https://www.djangoproject.com/" target="_blank">Django</a>, with additional Python scripts for processing requests.
         </p>
         <p><b>Contact</b><br>
-          <a href="https://exascale.info/members/mourad-khayati/">Dr. Mourad Khayati</a>
+          <a href="https://exascale.info/members/mourad-khayati/" target="_blank">Dr. Mourad Khayati</a>
         </p>
         <p><b>Contributors</b><br></p>
         <ul>
-          <li><a href="https://www.linkedin.com/in/brian-schweigler/">Brian Schweigler</a></li>
-          <li><a href="https://exascale.info/members/zakhar-tymchenko/">Zakhar Tymchenko</a></li>
+          <li><a href="https://www.linkedin.com/in/brian-schweigler/" target="_blank">Brian Schweigler</a></li>
+          <li><a href="https://exascale.info/members/zakhar-tymchenko/" target="_blank">Zakhar Tymchenko</a></li>
         </ul>
         <p></p>
         <p><b>Teams</b><br></p>

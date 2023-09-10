@@ -5,8 +5,8 @@
       ImputeVis is an online tool that allows visualization, parameterization, and optimization of time series
       imputation algorithms.
       <br/>
-      This tool was created at the <a href="http://exascale.info/">eXascale Infolab</a>, a research group
-      at the <a href="http://www.unifr.ch/">University of Fribourg</a>, Switzerland.
+      This tool was created at the <a href="http://exascale.info/" target="_blank">eXascale Infolab</a>, a research group
+      at the <a href="http://www.unifr.ch/" target="_blank">University of Fribourg</a>, Switzerland.
     </p>
     <p class="ml-5 text-center">
       This is a master thesis project by Brian Schweigler, supervised by Dr. Mourad Khayati, Prof. Philippe
