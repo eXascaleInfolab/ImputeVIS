@@ -14,7 +14,7 @@
         <div class="row me-1">
           <div class="col-lg-10">
             <highcharts v-if="imputedData" class="mb-5 pb-5" :options="chartOptionsImputed"></highcharts>
-            <highcharts :options="chartOptionsOriginal"></highcharts>
+            <highcharts v-if="!imputedData" :options="chartOptionsOriginal"></highcharts>
           </div>
           <div class="col-lg-2">
             <div class="row me-5">
