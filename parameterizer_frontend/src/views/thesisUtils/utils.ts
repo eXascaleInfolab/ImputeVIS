@@ -28,79 +28,18 @@ export const createSeries = (index: number, data: number[], datasetSelected: str
     };
 };
 
-
-const createSegments = (data: number[], referenceData: number[]) => {
-    const segments = [];
-    // const DASHED_WIDTH = 2.5;
-    // const lineWidth = referenceData[0] === null ? DASHED_WIDTH : 1.25;
-
-    for (let i = 0; i < data.length; i++) {
-        if (referenceData[i] === null) {
-            let j = i;
-            const segmentData = new Array(data.length).fill(null);
-
-            // Only pad with the preceding value from the 'data' array
-            if (i > 0 && referenceData[i - 1] !== null) segmentData[i - 1] = data[i - 1];
-
-            while (j < data.length && referenceData[j] === null) {
-                segmentData[j] = data[j];
-                j++;
-            }
-
-            segments.push({
-                data: segmentData,
-                // lineWidth: lineWidth,
-            });
-
-            i = j - 1;  // Jump to the end of the segment
-        }
-    }
-
-    return segments;
+const createSingleSeries = (data: number[], referenceData: number[]): (number | null)[] => {
+    return data.map((value, index) => {
+        return referenceData[index] == null ? value : null;
+    });
 };
-
-
-// Utility function to segment your data based on the presence of null in the referenceData array
-// const createSegments = (data: number[], referenceData: number[]) => {
-//     const segments = [];
-//     let currentWidth = referenceData[0] === null ? 2.5 : 1.25;
-//     let currentDashStyle = referenceData[0] === null ? 'ShortDash' : 'Solid';
-//
-//     for (let i = 0; i < data.length; i++) {
-//         // Start of a new segment
-//         if ((referenceData[i] === null && currentWidth === 1.25) || (referenceData[i] !== null && currentWidth === 2.5)) {
-//             const segmentData = Array(data.length).fill(null);
-//             let j = i;
-//
-//             while (j < data.length && ((currentWidth === 2.5 && referenceData[j] === null) || (currentWidth === 1.25 && referenceData[j] !== null))) {
-//                 segmentData[j] = data[j];
-//                 j++;
-//             }
-//             i = j - 1;  // Update the loop counter to skip over the current segment
-//
-//             segments.push({
-//                 data: segmentData,
-//                 color: 'black',
-//                 lineWidth: currentWidth,
-//                 dashStyle: 'ShortDash'
-//             });
-//
-//             // Set the next width
-//             currentWidth = currentWidth === 1.25 ? 2.5 : 1.25;
-//             currentDashStyle = currentDashStyle === 'Solid' ? 'ShortDash' : 'Solid';
-//         }
-//     }
-//
-//     return segments;
-// };
 
 
 export const createSegmentedSeries = (index: number, data: number[], referenceData: number[], chartOptions, datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series') => {
     const datasetCode = datasetSelected.split('_')[0].toLowerCase();
-    const segments = createSegments(data, referenceData);
+    const imputedData = createSingleSeries(data, referenceData);
     const mainSeriesId = `${seriesName}_${index}_main`;
     const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
-    const darkenedColor = darkenColor(mainSeriesColor, 0.55);
 
     const isVisible = shouldShow(index, datasetCode);
     const isShownInNavigator = shouldShow(index, datasetCode);
@@ -133,24 +72,29 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
     const mainSeries = {
         id: mainSeriesId,
         name: seriesNameGenerated,
-        data: data,
+        data: referenceData,
         color: mainSeriesColor,
-        lineWidth: 1.25,
+        lineWidth: 1.5,
         ...commonProperties
     };
 
-    const linkedSeries = segments.map(segment => ({
-        linkedTo: mainSeriesId,
+    const imputedSeries = {
+        id: `${mainSeriesId}_imputed`,
+        name: `(Imp.) ${seriesNameGenerated}`,
+        data: imputedData,
+        connectNulls: false,  // is false by default, added for ease of toggling
         color: "#FF0000",
-        name: seriesNameGenerated,
-        data: segment.data,
-        lineWidth: 3,
-        dashStyle: 'Dot',
-        lineType: 'dashed',
-        ...commonProperties
-    }));
+        lineWidth: 3.25,
+        // dashStyle: 'Dot',
+        ...commonProperties,
+        marker: {
+            enabled: true,
+            symbol: "diamond",
+            radius: 5,
+        },
+    }
 
-    return [mainSeries, ...linkedSeries];
+    return [mainSeries, imputedSeries];
 };
 
 export const generateChartOptions = (title, seriesName) => ({
@@ -442,7 +386,6 @@ function darkenColor(color: string, percent: number): string {
 }
 
 function shouldShow(idx: number, datasetName: string): boolean {
-    console.log(datasetName)
     if (datasetName === 'bafu') return idx === 0 || idx === 5;
     else if (datasetName === 'climate') return idx === 1 || idx === 8;
     else if (datasetName === 'chlorine') return idx === 2 || idx === 8;
