@@ -105,7 +105,6 @@ export default defineComponent({
           seriesNames = drift_series_names;
           break;
         case selectedData.value.toString().startsWith("meteo_total"):
-          console.log("entered meteo_total")
           seriesNames = meteo_series_names;
           break;
 

@@ -313,32 +313,32 @@ def fetch_data(request):
         data, data_set = load_from_request(request)
         clean_file_path, obfuscated_file_path = get_file_paths(data_set)
 
-        matrix_to_return = None
+        obfuscated_matrix = None
+        ground_truth_matrix = None
 
         if obfuscated_file_path is not None:
             obfuscated_matrix = utils.load_and_trim_matrix(obfuscated_file_path)
-            matrix_to_return = obfuscated_matrix
-        elif clean_file_path is not None:
+        if clean_file_path is not None:
             ground_truth_matrix = utils.load_and_trim_matrix(clean_file_path)
-            matrix_to_return = ground_truth_matrix
 
-        if matrix_to_return is not None:
-            # Check if normalization is required
-            if data.get('normalization') == 'Normalized':
-                matrix_to_return = statistics.zscore_normalization(matrix_to_return)
+        response_data = {}
 
-            # Transpose the matrix and convert to a list
-            transposed_list = np.transpose(matrix_to_return).tolist()
+        if obfuscated_matrix is not None and ground_truth_matrix is not None:
+            # Process both matrices
+            response_data['matrix'] = process_matrix(obfuscated_matrix, data)
+            response_data['groundtruth'] = process_matrix(ground_truth_matrix, data)
+        elif obfuscated_matrix is not None:
+            # Process only obfuscated matrix
+            response_data['matrix'] = process_matrix(obfuscated_matrix, data)
+        elif ground_truth_matrix is not None:
+            # Process only ground truth matrix
+            response_data['matrix'] = process_matrix(ground_truth_matrix, data)
 
-            # Replace NaN values with None in the list
-            for i in range(len(transposed_list)):
-                for j in range(len(transposed_list[i])):
-                    if np.isnan(transposed_list[i][j]):
-                        transposed_list[i][j] = None
-
-            return JsonResponse({'matrix': transposed_list}, status=200)
-
-    return JsonResponse({'message': 'Invalid request'}, status=400)
+        if response_data:
+            return JsonResponse(response_data, status=200)
+        else:
+            # Handle case where neither matrix is available (you can change this to your desired error response)
+            return JsonResponse({'error': 'No matrices found'}, status=400)
 
 
 def handle_data_set(data_set: str) -> str:
@@ -499,3 +499,21 @@ def get_file_paths(search_string: str = 'BAFU_small') -> Tuple[str, str]:
     obfuscated_file_path = utils.find_obfuscated_file(folder_path, search_string)
     print(f'Found obfuscated file at: {obfuscated_file_path}')
     return clean_file_path, obfuscated_file_path
+
+
+def process_matrix(matrix, data):
+    """Process matrix by normalizing, transposing, and replacing NaN."""
+    # Check if normalization is required
+    if data.get('normalization') == 'Normalized':
+        matrix = statistics.zscore_normalization(matrix)
+
+    # Transpose the matrix and convert to a list
+    transposed_list = np.transpose(matrix).tolist()
+
+    # Replace NaN values with None in the list
+    for i in range(len(transposed_list)):
+        for j in range(len(transposed_list[i])):
+            if np.isnan(transposed_list[i][j]):
+                transposed_list[i][j] = None
+
+    return transposed_list

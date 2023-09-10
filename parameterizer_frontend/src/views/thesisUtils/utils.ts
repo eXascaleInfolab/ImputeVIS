@@ -2,6 +2,7 @@
 const BASE_YEAR = 2010;
 const BASE_MONTH = 1;
 const BASE_DAY = 1;
+const POINT_START = Date.UTC(2010, 1, 1);
 const THIRTY_MINUTES = 1000 * 60 * 30;
 const VISIBILITY_THRESHOLD = 10;
 
@@ -42,11 +43,42 @@ const createSingleSeries = (data: number[], referenceData: number[]): (number | 
     });
 };
 
+// const createZonesFromReference = (referenceData: number[]): {value?: number, dashStyle?: string}[] => {
+//     const zones: {value?: number, dashStyle?: string}[] = [];
+//
+//     let inNullZone = false;
+//     for (let i = 0; i < referenceData.length; i++) {
+//         const xValue = POINT_START + (i * THIRTY_MINUTES);
+//         if (referenceData[i] === null && !inNullZone) {
+//             inNullZone = true;
+//             // Start of a new null zone, use dash style
+//             zones.push({
+//                 value: xValue,
+//                 dashStyle: 'Dot'
+//             });
+//         } else if (referenceData[i] !== null && inNullZone) {
+//             inNullZone = false;
+//             // End of the null zone, revert to default style
+//             zones.push({
+//                 value: xValue
+//             });
+//         }
+//     }
+//
+//     // If the last data point is also in the null zone, add a terminating zone
+//     if (inNullZone) {
+//         zones.push({});
+//     }
+//
+//     return zones;
+// };
 
-export const createSegmentedSeries = (index: number, data: number[], referenceData: number[], chartOptions, datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series') => {
+export const createSegmentedSeries = (index: number, data: number[], obfuscatedData: number[], groundtruthData: number[], chartOptions, datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series') => {
     const datasetCode = datasetSelected.split('_')[0].toLowerCase();
-    const imputedData = createSingleSeries(data, referenceData);
+    const imputedData = createSingleSeries(data, obfuscatedData);
+    // const zones = createZonesFromReference(obfuscatedData);
     const mainSeriesId = `${seriesName}_${index}_main`;
+    const imputedSeriesId = `${seriesName}_${index}_imputed`;
     const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
 
     const isVisible = shouldShow(index, datasetCode);
@@ -57,8 +89,8 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         marker: {
             enabled: false
         },
-        pointStart: Date.UTC(2010, 1, 1),
-        pointInterval: 1000 * 60 * 30,
+        pointStart: POINT_START,
+        pointInterval: THIRTY_MINUTES,
         animation: false,
         findNearestPointBy: 'xy',
         opacity: 0.9,
@@ -77,14 +109,16 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         scrollbar: {
             liveRedraw: false
         },
+        // zoneAxis: 'x',
     };
 
     const mainSeries = {
-        id: mainSeriesId,
-        name: seriesNameGenerated,
-        data: referenceData,
+        id: `${index}_main`,
+        name: processSeriesName(seriesName, index),
+        data: groundtruthData,
         color: mainSeriesColor,
         lineWidth: 1.5,
+        // zones: zones,
         ...commonProperties
     };
 
@@ -352,7 +386,8 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
     },
     plotOptions: {
         series: {
-            showInNavigator: true
+            showInNavigator: true,
+            // zoneAxis: 'x',
         }
     },
     series: [{
@@ -405,6 +440,24 @@ function shouldShow(idx: number, datasetName: string): boolean {
     else if (datasetName === 'meteo') return idx === 1 || idx === 3;
     else
         return idx === 1 || idx === 3;
+}
+
+function processSeriesName(seriesName: string, index: number): string {
+    if (seriesName.startsWith('Series')) {
+        return seriesName + ' ' + (index + 1);
+    }
+
+
+    if (!seriesName.includes(':')) {
+        return seriesName.trim();
+    }
+
+
+    // Remove everything before the first ":"
+    const afterColon = seriesName.split(':').slice(1).join(':');
+
+    // Trim whitespace from beginning and end
+    return afterColon.trim();
 }
 
 const determineSymbol = (seriesName: string): string => {

@@ -86,6 +86,7 @@ export default {
     const corr = ref(null);
 
     let obfuscatedMatrix = [];
+    let groundtruthMatrix = [];
     let loadingResults = ref(false);
     const metrics = computed(() => ({rmse: rmse.value, mae: mae.value, mi: mi.value, corr: corr.value}));
 
@@ -107,6 +108,7 @@ export default {
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
 
         obfuscatedMatrix = response.data.matrix;
+        groundtruthMatrix = response.data.groundtruth;
         response.data.matrix.forEach((data: number[], index: number) => {
           // Replace NaN with 0
           const cleanData = data.map(value => isNaN(value) ? 0 : value);
@@ -152,13 +154,13 @@ export default {
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0 && missingRate) {
             if (displayImputation) {
-              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]));
+              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]));
             } else {
               newSeriesData.push(createSeries(index, data, dataSelect.value, currentSeriesNames[index]));
             }
           } else {
             if (displayImputation) {
-              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], chartOptionsImputed.value, dataSelect.value));
+              newSeriesData.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value));
             } else {
               newSeriesData.push(createSeries(index, data, dataSelect.value))
             }
