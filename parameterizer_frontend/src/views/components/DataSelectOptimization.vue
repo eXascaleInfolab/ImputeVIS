@@ -19,15 +19,21 @@
 import {ref, watch, defineComponent} from 'vue';
 
 const bafu_series_names = [
-  'Appenzell',
-  'Halden',
-  'Jonschwil',
-  'Liestal',
-  'Moutier',
-  'Rheinhalle',
-  'Wiler'
+  'Thur-Andelfingen',
+  'Emme-Emmenmatt',
+  'Sitter-Appenzell',
+  'Murg-Wängi',
+  'Emme-Wiler',
+  'Thur-Halden',
+  'Thur-Jonschwil',
+  'Murg-Frauenfeld',
+  'Emme-Eggowoö',
+  'Rietholzbach-Mosnang',
+  'Sitter-St. Gallen',
+  'Ilfis-Langnau'
 ]
 
+// Based on https://viterbi-web.usc.edu/~liu32/data.html
 const climate_series_names = [
   'CLD',
   'CO',
@@ -41,17 +47,34 @@ const climate_series_names = [
   'WET'
 ]
 
+// Based on https://archive.ics.uci.edu/dataset/270/gas+sensor+array+drift+dataset+at+different+concentrations
 const drift_series_names = [
-  '0-6_EMAi0.1_0',
-  '1-10_|DR|_1',
-  '2-28_EMAi0.01_3',
-  '3-18_|DR|_2',
-  '4-58_|DR|_7',
-  '5-21_EMAi0.001_2',
-  '6-52_EMAi0.01_6',
-  '7-124_EMAi0.01_15',
-  '8-110_EMAi0.1_13',
-  '9-36_EMAi0.01_4',
+  // '0-6_EMAi0.1_0',
+  //   '1-10_|DR|_1',
+  //   '2-28_EMAi0.01_3',
+  //   '3-18_|DR|_2',
+  //   '4-58_|DR|_7',
+  //   '5-21_EMAi0.001_2',
+  //   '6-52_EMAi0.01_6',
+  //   '7-124_EMAi0.01_15',
+  //   '8-110_EMAi0.1_13',
+  //   '9-36_EMAi0.01_4',
+  'DR_1', '|DR|_1', 'EMAi0.001_1', 'EMAi0.01_1', 'EMAi0.1_1', 'EMAd0.001_1', 'EMAd0.01_1', 'EMAd0.1_1',
+  'DR_2', '|DR|_2', 'EMAi0.001_2', 'EMAi0.01_2', 'EMAi0.1_2', 'EMAd0.001_2', 'EMAd0.01_2', 'EMAd0.1_2',
+  'DR_3', '|DR|_3', 'EMAi0.001_3', 'EMAi0.01_3', 'EMAi0.1_3', 'EMAd0.001_3', 'EMAd0.01_3', 'EMAd0.1_3',
+  'DR_4', '|DR|_4', 'EMAi0.001_4', 'EMAi0.01_4', 'EMAi0.1_4', 'EMAd0.001_4', 'EMAd0.01_4', 'EMAd0.1_4',
+  'DR_5', '|DR|_5', 'EMAi0.001_5', 'EMAi0.01_5', 'EMAi0.1_5', 'EMAd0.001_5', 'EMAd0.01_5', 'EMAd0.1_5',
+  'DR_6', '|DR|_6', 'EMAi0.001_6', 'EMAi0.01_6', 'EMAi0.1_6', 'EMAd0.001_6', 'EMAd0.01_6', 'EMAd0.1_6',
+  'DR_7', '|DR|_7', 'EMAi0.001_7', 'EMAi0.01_7', 'EMAi0.1_7', 'EMAd0.001_7', 'EMAd0.01_7', 'EMAd0.1_7',
+  'DR_8', '|DR|_8', 'EMAi0.001_8', 'EMAi0.01_8', 'EMAi0.1_8', 'EMAd0.001_8', 'EMAd0.01_8', 'EMAd0.1_8',
+  'DR_9', '|DR|_9', 'EMAi0.001_9', 'EMAi0.01_9', 'EMAi0.1_9', 'EMAd0.001_9', 'EMAd0.01_9', 'EMAd0.1_9',
+  'DR_10', '|DR|_10', 'EMAi0.001_10', 'EMAi0.01_10', 'EMAi0.1_10', 'EMAd0.001_10', 'EMAd0.01_10', 'EMAd0.1_10',
+  'DR_11', '|DR|_11', 'EMAi0.001_11', 'EMAi0.01_11', 'EMAi0.1_11', 'EMAd0.001_11', 'EMAd0.01_11', 'EMAd0.1_11',
+  'DR_12', '|DR|_12', 'EMAi0.001_12', 'EMAi0.01_12', 'EMAi0.1_12', 'EMAd0.001_12', 'EMAd0.01_12', 'EMAd0.1_12',
+  'DR_13', '|DR|_13', 'EMAi0.001_13', 'EMAi0.01_13', 'EMAi0.1_13', 'EMAd0.001_13', 'EMAd0.01_13', 'EMAd0.1_13',
+  'DR_14', '|DR|_14', 'EMAi0.001_14', 'EMAi0.01_14', 'EMAi0.1_14', 'EMAd0.001_14', 'EMAd0.01_14', 'EMAd0.1_14',
+  'DR_15', '|DR|_15', 'EMAi0.001_15', 'EMAi0.01_15', 'EMAi0.1_15', 'EMAd0.001_15', 'EMAd0.01_15', 'EMAd0.1_15',
+  'DR_16', '|DR|_16', 'EMAi0.001_16', 'EMAi0.01_16', 'EMAi0.1_16', 'EMAd0.001_16', 'EMAd0.01_16', 'EMAd0.1_16',
 ];
 const meteo_series_names = [
   'tde000s0',
@@ -93,26 +116,25 @@ export default defineComponent({
     };
 
     const emitSeriesNamesBasedOnSelection = () => {
-      let seriesNames: string[] = [];
-      switch (true) {
-        case selectedData.value.toString().toLowerCase().startsWith("bafu"):
-          seriesNames = bafu_series_names;
-          break;
-        case selectedData.value.toString().startsWith("climate"):
-          seriesNames = climate_series_names;
-          break;
-        case selectedData.value.toString().startsWith("batch10"):
-          seriesNames = drift_series_names;
-          break;
-        case selectedData.value.toString().startsWith("meteo_total"):
-          seriesNames = meteo_series_names;
-          break;
+      const datasetMapping: { [key: string]: string[] } = {
+        "bafu": bafu_series_names,
+        "climate": climate_series_names,
+        "batch10": drift_series_names,
+        "meteo_total": meteo_series_names,
+        // ... add other conditions for more datasets as needed
+      };
 
-        default:
-          seriesNames = [];
+      const selectedValue = selectedData.value.toString().toLowerCase();
+
+      let seriesNames: string[] = [];
+
+      for (const [key, value] of Object.entries(datasetMapping)) {
+        if (selectedValue.startsWith(key)) {
+          seriesNames = value;
           break;
-          // ... add other conditions for more datasets as needed
+        }
       }
+
       emit('update:seriesNames', seriesNames);
     };
 

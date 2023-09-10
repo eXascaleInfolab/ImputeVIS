@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive mx-5">
+  <div class="table-responsive mx-5 mt-5">
     <table class="table mx-5">
       <tbody>
       <tr>

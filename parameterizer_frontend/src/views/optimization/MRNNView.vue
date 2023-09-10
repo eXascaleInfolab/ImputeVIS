@@ -19,12 +19,12 @@
       <form v-if="optimalParametersDetermined && imputedData" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-3 align-items-center text-center">
         <h5>Optimal Parameters</h5>
-        <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+<!--        <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>-->
 
         <!-- Learning Rate -->
         <div class="mb-3">
           <label for="learningRate" class="form-label">Learning Rate: {{ parseFloat(learningRate).toFixed(6) }}</label>
-          <input id="learningRate" v-model.number="learningRate" type="range" min="0" max="0.1" step="0.00005"
+          <input id="learningRate" v-model.number="learningRate" type="range" min="0" max="1.0" step="0.00005"
                  class="form-control">
         </div>
 
@@ -50,13 +50,12 @@
         <!-- Keep Rate -->
         <div class="mb-3">
           <label for="keepProb" class="form-label">Keep Rate: {{ parseFloat(keepProb).toFixed(4) }}</label>
-          <input id="keepProb" v-model.number="keepProb" type="range" min="0" max="1" step="0.1" class="form-control">
+          <input id="keepProb" v-model.number="keepProb" type="range" min="0" max="1" step="0.05" class="form-control">
         </div>
 
-        <button type="submit" class="btn btn-primary mr-3">Impute</button>
-        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Determined
-          Parameters
-        </button>
+        <button type="submit" class="btn btn-primary mr-3 mb-2">Impute</button>
+        <br/>
+        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Optimized</button>
 
       </form>
       <highcharts v-if="!imputedData" :options="chartOptionsOriginal"></highcharts>
@@ -69,7 +68,7 @@
         <normalization-toggle v-model="normalizationMode"></normalization-toggle>
 
         <br/>
-        <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
+        <button type="submit" class="btn btn-primary">Optimize</button>
         <div class="mt-3">
           <metrics-display v-if="imputedData" :metrics="metrics"></metrics-display>
         </div>
@@ -136,6 +135,7 @@ export default {
     };
 
     const fetchData = async () => {
+      imputedData.value = false;
       try {
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
@@ -268,6 +268,7 @@ export default {
 
     const handleNormalizationModeChange = () => {
       if (imputedData.value == true) {
+          fetchData();
           submitFormCustom();
       } else {
           handleDataSelectChange();

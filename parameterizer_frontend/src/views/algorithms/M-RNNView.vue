@@ -45,7 +45,7 @@
         <!-- Keep Rate -->
         <div class="mb-3">
           <label for="keepProb" class="form-label">Keep Rate: {{ keepProb }}</label>
-          <input id="keepProb" v-model.number="keepProb" type="range" min="0" max="1" step="0.1" class="form-control">
+          <input id="keepProb" v-model.number="keepProb" type="range" min="0" max="1" step="0.05" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary">Impute</button>
         <div class="mt-3">
@@ -208,6 +208,7 @@ export default {
 
     const handleNormalizationModeChange = () => {
       if (imputedData.value == true) {
+          fetchData();
           submitForm();
       } else {
           handleDataSelectChange();

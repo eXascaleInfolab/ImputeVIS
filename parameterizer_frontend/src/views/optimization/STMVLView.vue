@@ -18,7 +18,7 @@
       <form v-if="optimalParametersDetermined && imputedData" @submit.prevent="submitFormCustom"
             class="sidebar col-lg-3 align-items-center text-center">
         <h5>Optimal Parameters</h5>
-        <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+<!--        <data-select-optimization v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>-->
 
         <!--Window Size-->
         <div class="mb-3">
@@ -40,10 +40,9 @@
           <input id="alpha" v-model.number="alpha" type="range" min="0.5" max="20" step="0.5" class="form-control">
         </div>
 
-        <button type="submit" class="btn btn-primary mr-3">Impute</button>
-        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Determined
-          Parameters
-        </button>
+        <button type="submit" class="btn btn-primary mr-3 mb-2">Impute</button>
+        <br/>
+        <button type="button" class="btn btn-secondary ml-3" @click="resetToOptimalParameters">Reset to Optimized</button>
 
       </form>
       <highcharts v-if="!imputedData" :options="chartOptionsOriginal"></highcharts>
@@ -56,7 +55,7 @@
         <normalization-toggle v-model="normalizationMode"></normalization-toggle>
 
         <br/>
-        <button type="submit" class="btn btn-primary">Find Optimal Parameters</button>
+        <button type="submit" class="btn btn-primary">Optimize</button>
         <div class="mt-3">
           <metrics-display v-if="imputedData" :metrics="metrics"></metrics-display>
         </div>
@@ -121,6 +120,7 @@ export default {
     };
 
     const fetchData = async () => {
+      imputedData.value = false;
       try {
         imputedData.value = false;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
@@ -254,6 +254,7 @@ export default {
 
     const handleNormalizationModeChange = () => {
       if (imputedData.value == true) {
+          fetchData();
           submitFormCustom();
       } else {
           handleDataSelectChange();

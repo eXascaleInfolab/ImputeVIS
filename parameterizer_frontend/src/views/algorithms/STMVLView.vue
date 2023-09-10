@@ -190,6 +190,7 @@ export default {
 
     const handleNormalizationModeChange = () => {
       if (imputedData.value == true) {
+          fetchData();
           submitForm();
       } else {
           handleDataSelectChange();

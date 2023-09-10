@@ -23,7 +23,7 @@
                class="form-control">
       </div>
       <div class="mb-3">
-        <label for="acqFunc" class="form-label">Acquisition Function:</label>
+        <label for="acqFunc" class="form-label">Acquisition Function:</label> <br/>
         <div class="select-wrapper">
           <select id="acqFunc" v-model="acqFunc" class="form-control me-5">
             <option value="gp_hedge">gp_hedge</option>
