@@ -30,7 +30,15 @@ export const createSeries = (index: number, data: number[], datasetSelected: str
 
 const createSingleSeries = (data: number[], referenceData: number[]): (number | null)[] => {
     return data.map((value, index) => {
-        return referenceData[index] == null ? value : null;
+        const prevIsNull = referenceData[index - 1] === null;
+        const currentIsNull = referenceData[index] === null;
+        const nextIsNull = referenceData[index + 1] === null;
+
+        if (prevIsNull || currentIsNull || nextIsNull) {
+            return value;
+        }
+
+        return null;
     });
 };
 
@@ -52,6 +60,8 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         pointStart: Date.UTC(2010, 1, 1),
         pointInterval: 1000 * 60 * 30,
         animation: false,
+        findNearestPointBy: 'xy',
+        opacity: 0.9,
         visible: isVisible,
         tooltip: {
             valueDecimals: 2
@@ -84,17 +94,17 @@ export const createSegmentedSeries = (index: number, data: number[], referenceDa
         data: imputedData,
         connectNulls: false,  // is false by default, added for ease of toggling
         color: "#FF0000",
-        lineWidth: 3.25,
+        lineWidth: 2.5,
         // dashStyle: 'Dot',
         ...commonProperties,
         marker: {
             enabled: true,
-            symbol: "diamond",
-            radius: 5,
+            symbol: determineSymbol(seriesName),
+            radius: 3.5,
         },
     }
 
-    return [mainSeries, imputedSeries];
+    return [imputedSeries, mainSeries];
 };
 
 export const generateChartOptions = (title, seriesName) => ({
@@ -212,6 +222,7 @@ export const generateChartOptions = (title, seriesName) => ({
         name: seriesName,
         data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
         animation: false,
+        findNearestPointBy: 'xy',
         pointStart: Date.UTC(2010, 1, 1),
         pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
         tooltip: {
@@ -349,6 +360,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
         animation: false,
         pointStart: Date.UTC(2010, 1, 1),
+        findNearestPointBy: 'xy',
         pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
         tooltip: {
             valueDecimals: 2
@@ -394,3 +406,11 @@ function shouldShow(idx: number, datasetName: string): boolean {
     else
         return idx === 1 || idx === 3;
 }
+
+const determineSymbol = (seriesName: string): string => {
+    if (seriesName.includes('CDRec')) return 'circle';
+    if (seriesName.includes('IIM')) return 'square';
+    if (seriesName.includes('M-RNN')) return 'diamond';
+    if (seriesName.includes('ST-MVL')) return 'triangle';
+    return 'diamond';  // default value if none of the above
+};

@@ -348,8 +348,7 @@ export default {
       try {
         for (let checkedName of checkedNames.value) {
           // TODO Using displayImputation = false as when using multiple algorithms, performance is really, really slow.
-          // const displayImputation = missingRate.value != '20' && missingRate.value != '40' && missingRate.value != '60' && missingRate.value != '80'
-          const displayImputation = false
+          const displayImputation =  missingRate.value != '60' && missingRate.value != '80'
           let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
           if (checkedName.toLowerCase() === 'cdrec') {
             if (!fetchedData[checkedName]) {

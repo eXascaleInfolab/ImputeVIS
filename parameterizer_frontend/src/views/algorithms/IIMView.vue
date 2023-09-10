@@ -144,7 +144,7 @@ export default {
         // Create a new array for the new series data
         const newSeriesData = [];
 
-        const displayImputation = missingRate.value != '40' && missingRate.value != '60' && missingRate.value != '80'
+        const displayImputation = missingRate.value != '60' && missingRate.value != '80'
         response.data.matrix_imputed.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0 && missingRate) {
             if (displayImputation) {
