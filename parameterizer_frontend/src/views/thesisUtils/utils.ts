@@ -447,6 +447,11 @@ function processSeriesName(seriesName: string, index: number): string {
         return seriesName + ' ' + (index + 1);
     }
 
+    // Check if seriesName is just a number
+    if (!isNaN(Number(seriesName))) {
+        return 'Series :' + seriesName.trim();
+    }
+
 
     if (!seriesName.includes(':')) {
         return seriesName.trim();
@@ -455,6 +460,11 @@ function processSeriesName(seriesName: string, index: number): string {
 
     // Remove everything before the first ":"
     const afterColon = seriesName.split(':').slice(1).join(':');
+
+    // Check if seriesName is just a number
+    if (!isNaN(Number(afterColon))) {
+        return 'Series: ' + afterColon.trim();
+    }
 
     // Trim whitespace from beginning and end
     return afterColon.trim();
