@@ -173,14 +173,51 @@ export default {
     };
     type FeatureMap = { [key: string]: any };
 
+    const featureDescriptionMapper: { [key: string]: string } = {
+      "DN_HistogramMode_5": "5-bin histogram mode",
+      "DN_HistogramMode_10": "10-bin histogram mode",
+      "DN_OutlierInclude_p_001_mdrmd": "Positive outlier timing",
+      "DN_OutlierInclude_n_001_mdrmd": "Negative outlier timing",
+      "CO_f1ecac": "First 1/e crossing of the ACF",
+      "CO_FirstMin_ac": "First minimum of the ACF",
+      "SP_Summaries_welch_rect_area_5_1": "Power in lowest 20% frequencies",
+      "SP_Summaries_welch_rect_centroid": "Centroid frequency",
+      "FC_LocalSimple_mean3_stderr": "Error of 3-point rolling mean forecast",
+      "FC_LocalSimple_mean1_tauresrat": "Change in autocorrelation timescale after incremental differencing",
+      "MD_hrv_classic_pnn40": "Proportion of high incremental changes in the series",
+      "SB_BinaryStats_mean_longstretch1": "Longest stretch of above-mean values",
+      "SB_BinaryStats_diff_longstretch0": "Longest stretch of decreasing values",
+      "SB_MotifThree_quantile_hh": "Entropy of successive pairs in symbolized series",
+      "CO_HistogramAMI_even_2_5": "Histogram-based automutual information (lag 2, 5 bins)",
+      "CO_trev_1_num": "Time reversibility",
+      "IN_AutoMutualInfoStats_40_gaussian_fmmi": "First minimum of the AMI function",
+      "SB_TransitionMatrix_3ac_sumdiagcov": "Transition matrix column variance",
+      "PD_PeriodicityWang_th0_01": "Wang's periodicity metric",
+      "CO_Embed2_Dist_tau_d_expfit_meandiff": "Goodness of exponential fit to embedding distance distribution",
+      "SC_FluctAnal_2_rsrangeﬁt_50_1_logi_prop_r1": "Rescaled range fluctuation analysis (low-scale scaling)",
+      "SC_FluctAnal_2_dfa_50_1_2_logi_prop_r1": "Detrended fluctuation analysis (low-scale scaling)",
+      "mean": "Mean",
+      "DN_Spread_Std": "Standard deviation"
+    };
+
+    function replaceFeatureNameWithDescription(inputString: string, mapper: { [key: string]: string }): string {
+      for (const featureName in mapper) {
+        if (featureName == inputString) {
+          return mapper[featureName];
+        }
+      }
+      return "";
+    }
+
     function categorizeFeatures(features: FeatureMap): { [category: string]: FeatureMap } {
       const tempCategorizedFeatures: { [category: string]: FeatureMap } = {};
 
       for (const category in CATEGORIES) {
         tempCategorizedFeatures[category] = {};
         for (const featureKey of CATEGORIES[category]) {
+          let featureVerbose = replaceFeatureNameWithDescription(featureKey, featureDescriptionMapper)
           if (features[featureKey] !== undefined) {
-            tempCategorizedFeatures[category][featureKey] = features[featureKey];
+            tempCategorizedFeatures[category][featureVerbose] = features[featureKey];
           }
         }
       }
