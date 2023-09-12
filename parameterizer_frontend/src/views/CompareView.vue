@@ -247,7 +247,7 @@ export default {
     }
 
     const fetchParameters = async () => {
-      if (selectedParamOption.value !== 'Default') {
+      if (selectedParamOption.value !== 'default') {
         try {
           const dataAbbreviation = getCategory(dataSelect.value);
           let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
