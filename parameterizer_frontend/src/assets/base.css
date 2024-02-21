@@ -36,6 +36,11 @@
   --section-gap: 160px;
 }
 
+.mdi-reload {
+  content: "\F0453";
+}
+
+
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--vt-c-black);

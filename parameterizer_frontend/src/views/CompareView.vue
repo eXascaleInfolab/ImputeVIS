@@ -19,14 +19,14 @@
           <div class="col-lg-2">
             <div class="row me-5">
               <div class="">
-                <form @submit.prevent="submitForm">
+                <form ref="ref_missingvalues" @submit.prevent="submitForm">
                   <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
                   <normalization-toggle v-model="normalizationMode"></normalization-toggle>
                   <missing-rate v-model="missingRate"/>
                 </form>
               </div>
             </div>
-            <form @submit.prevent="submitForm">
+            <form ref="ref_algos" @submit.prevent="submitForm">
               <div class="mt-4 me-5">
                 <h4>Select algorithm(s)</h4>
                 <div class="row ms-2">
@@ -75,7 +75,10 @@
                 </select>
               </div>
               <div class="d-flex justify-content-center mt-4 me-5">
-                <button type="submit" class="btn btn-primary align-center">Impute</button>
+                <button type="submit" id="alpha_run" class="btn btn-primary align-center">Run</button>
+              </div>
+              <div class="d-flex justify-content-center mt-4 me-5">
+                <button type="submit" id="delta_reset" class="btn btn-primary align-center">Reset</button>
               </div>
             </form>
             <div v-if="metricsCDRec" class="mt-4">
@@ -606,8 +609,17 @@ export default {
     }
 
     const submitForm = async () => {
-      imputedData.value = false;
-      clearFetchedData();
+
+      if (document.activeElement.id === "alpha_run")
+      {
+        imputedData.value = false;
+        clearFetchedData();
+        await handleCheckboxChange();
+      }
+      else if (document.activeElement.id === "delta_reset")
+      {
+        location.reload();
+      }
       await handleCheckboxChange();
     }
 

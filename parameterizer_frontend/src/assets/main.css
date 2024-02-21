@@ -8,6 +8,11 @@
   font-weight: normal;
 }
 
+.mdi-reload {
+   content: "\F0453";
+}
+
+
 a,
 .green {
   text-decoration: none;

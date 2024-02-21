@@ -216,6 +216,7 @@ export const generateChartOptions = (title, seriesName) => ({
         inputEnabled: false,
         // inputDateFormat: '%y',
         // inputEditDateFormat: '%y',
+
         buttons: [
             {
                 type: 'hour',

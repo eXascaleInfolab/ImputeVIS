@@ -1,10 +1,10 @@
 <template>
-  <div class="mb-3" data-toggle="tooltip" data-placement="top"
+  <div class="mb-3" data-toggle="tooltip" data-placement="top" style="margin-bottom: 12px; margin-top:12px;"
        title="Also impacts run-time, amount depends on algorithm.">
-    <label for="missingRate" class="form-label">MCAR Rate</label>
+    <label for="missingRate" class="form-label">Contamination Rate:</label>
 
     <!-- Dropdown for MCAR Rate -->
-    <select v-model="sliderValue" id="missingRate" class="form-control" @change="adjustSliderValue">
+    <select v-model="missingValue" id="missingRate" class="form-control" @change="adjustMissingValues">
       <option value="0">0%</option>
       <option value="1">1%</option>
       <option value="5">5%</option>
@@ -29,15 +29,15 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const sliderValue = ref(props.modelValue);
+    const missingValue = ref(props.modelValue);
 
-    const adjustSliderValue = () => {
-      emit('update:modelValue', sliderValue.value);
+    const adjustMissingValues = () => {
+      emit('update:modelValue', missingValue.value);
     };
 
     return {
-      sliderValue,
-      adjustSliderValue,
+      missingValue,
+      adjustMissingValues,
     };
   },
 });

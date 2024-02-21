@@ -3,6 +3,11 @@
 	text-decoration: none !important;
 }
 
+.mdi-reload {
+    content: "\F0453";
+}
+
+
 .highcharts-legend-item text {
     font-weight: bold;
 }

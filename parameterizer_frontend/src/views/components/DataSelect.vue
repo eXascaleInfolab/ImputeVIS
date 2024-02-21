@@ -6,7 +6,7 @@
     <span class="glyphicon glyphicon-info-sign info-icon" data-toggle="tooltip" data-placement="right"
           title="For faster results, consider selecting the 1/8 size dataset"></span>
 
-    <div class="select-wrapper">
+    <div class="mb-3" data-toggle="tooltip" data-placement="top" >
       <select id="dataSelect" v-model="selectedData" class="form-control me-5 pe-5">
         <!--            <option value="BAFU">BAFU</option>-->
         <!--      <option value="BAFU_half">BAFU 1/2 Size</option>-->
