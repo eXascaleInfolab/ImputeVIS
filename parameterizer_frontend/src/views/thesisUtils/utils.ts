@@ -6,8 +6,9 @@ const POINT_START = Date.UTC(2010, 1, 1);
 const THIRTY_MINUTES = 1000 * 60 * 30;
 const VISIBILITY_THRESHOLD = 10;
 
-export const createSeries = (index: number, data: number[], datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series') => {
+export const createSeries = (index: number, data: number[], datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series', lineT = 'line') => {
     const datasetCode = datasetSelected.split('_')[0].toLowerCase();
+
     return {
         name: `${seriesName} ${seriesName === 'Series' ? index + 1 : ''}`.trim(),
         data,
@@ -25,9 +26,11 @@ export const createSeries = (index: number, data: number[], datasetSelected: str
             series: {
                 showInNavigator: shouldShow(index, datasetCode),
             }
-        }
+        },
+        dashStyle: lineT
     };
 };
+
 
 const createSingleSeries = (data: number[], referenceData: number[]): (number | null)[] => {
     return data.map((value, index) => {
@@ -261,7 +264,7 @@ export const generateChartOptions = (title, seriesName) => ({
         pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
         tooltip: {
             valueDecimals: 2
-        }
+        },
     }],
     // plotOptions: {
     //   series: {
@@ -400,7 +403,8 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         tooltip: {
             valueDecimals: 2
         }
-    }],
+        //dashStyle: 'dash'
+    }]
 });
 
 
