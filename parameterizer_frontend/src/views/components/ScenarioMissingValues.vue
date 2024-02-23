@@ -4,10 +4,12 @@
     <label for="scenarios" class="form-label">Scenario:</label>
 
     <!-- Dropdown for MCAR Rate -->
-    <select v-model="scenarioMissingValues" id="scenarioMissingValues" class="form-control" @change="adjustScenarios">
-      <option value="MCAR">MCAR</option>
-      <option value="Blackout">Blackout</option>
-    </select>
+    <div class="custom-select">
+        <select v-model="scenarioMissingValues" id="scenarioMissingValues" class="form-control" @change="adjustScenarios">
+        <option value="MCAR">MCAR</option>
+        <option value="Blackout">Blackout</option>
+      </select>
+    </div>
   </div>
 </template>
 

@@ -28,6 +28,23 @@
     }
 }
 
+
+.custom-select
+{
+    position: relative;
+}
+
+
+.custom-select::after
+{
+    content: '\25BC'; /* Unicode character for down arrow */
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
 /*.slider-ticks {*/
 /*  display: flex;*/
 /*  justify-content: space-between;*/

@@ -408,6 +408,139 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
     }]
 });
 
+export const generateChartOptionsHeight = (title, seriesName) => ({
+    credits: {
+        enabled: false
+    },
+    boost: {
+        seriesThreshold: 1,
+        useGPUTranslations: true,
+        usePreAllocated: true
+    },
+    title: {
+        text: title
+    },
+    navigator: {
+        enabled: true,
+        adaptToUpdateData: false,
+        stickToMax: true
+    },
+    legend: {
+        showCheckbox: true,
+        title: {
+            text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
+            style: {
+                fontStyle: 'italic'
+            }
+        },
+        verticalAlign: "top"
+    },
+    xAxis: {
+        type: 'datetime'
+    },
+    chart: {
+        height: 490,
+        type: 'line',
+        zoomType: 'x',
+        panning: true,
+        panKey: 'shift'
+    },
+    colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    // colors: [
+    //     '#058DC7',  // Blue
+    //     '#50B432',  // Green
+    //     '#ED561B',  // Orange-Red
+    //     '#DDDF00',  // Yellow
+    //     '#24CBE5',  // Light Blue
+    //     '#64E572',  // Light Green
+    //     '#FF9655',  // Light Orange
+    //     '#FFD700',  // Gold
+    //     '#6AF9C4',  // Aqua
+    //     '#FF69B4',  // Pink
+    //     '#A020F0',  // Purple
+    //     '#8B4513',  // Saddle Brown
+    //     '#2E8B57',  // Sea Green
+    //     '#D2691E',  // Chocolate
+    //     '#B22222',  // Firebrick
+    //     '#20B2AA',  // Light Sea Green
+    //     '#8A2BE2',  // BlueViolet
+    //     '#5F9EA0',  // CadetBlue
+    //     '#FFF263',  // Pale Yellow
+    //     '#7B68EE'   // MediumSlateBlue
+    // ],
+    rangeSelector: {
+        selected: 1,
+        x: 0,
+        // floating: true,
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            position: 'relative',
+            "font-family": "Arial"
+        },
+        enabled: true,
+        inputEnabled: false,
+        // inputDateFormat: '%y',
+        // inputEditDateFormat: '%y',
+        buttons: [
+            {
+                type: 'hour',
+                count: 12,
+                text: '12H'
+            },
+            {
+                type: 'day',
+                count: 3,
+                text: '3D'
+            },
+
+            {
+                type: 'day',
+                count: 5,
+                text: '5D'
+            },
+            {
+                type: 'week',
+                count: 1,
+                text: 'W'
+            },
+            {
+                type: 'month',
+                count: 1,
+                text: 'M'
+            },
+
+            {
+                type: 'all',
+                text: 'All',
+                align: 'right',
+                x: 900,
+                y: 100,
+            }],
+    },
+    scrollbar: {
+        liveRedraw: false
+    },
+    plotOptions: {
+        series: {
+            showInNavigator: true,
+            // zoneAxis: 'x',
+        }
+    },
+    series: [{
+        name: seriesName,
+        data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
+        animation: false,
+        pointStart: Date.UTC(2010, 1, 1),
+        findNearestPointBy: 'xy',
+        pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+        tooltip: {
+            valueDecimals: 2
+        }
+        //dashStyle: 'dash'
+    }]
+});
+
 
 function hexToRgb(hex: string): [number, number, number] {
     // Remove the hash at the start if it's there

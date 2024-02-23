@@ -27,6 +27,7 @@
         <ul>
           <li><a href="https://www.linkedin.com/in/brian-schweigler/" target="_blank">Brian Schweigler</a></li>
           <li><a href="https://exascale.info/members/zakhar-tymchenko/" target="_blank">Zakhar Tymchenko</a></li>
+          <li><a href="https://www.linkedin.com/in/quentin-nater/" target="_blank">Quentin Nater</a></li>
         </ul>
         <p></p>
         <p><b>Teams</b><br></p>

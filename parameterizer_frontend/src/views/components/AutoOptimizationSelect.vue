@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="mb-3">
-      <label for="optimizationSelect" class="form-label">Optimization:</label> <br/>
+      <label for="optimizationSelect" class="form-label">Auto-ML Optimization:</label> <br/>
       <div class="custom-select" >
         <select id="optimizationSelect" v-model="selectedOptimization" class="form-control me-3" >
           <option value="bayesianOptimization">Bayesian Optimization</option>
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Bayesian Optimization parameters -->
-    <div v-if="selectedOptimization === 'bayesianOptimization' && !natehidden">
+    <div v-if="selectedOptimization === 'bayesianOptimization'">
       <div class="mb-3">
         <label for="nCalls" class="form-label">Number of Calls: {{ nCalls }}</label>
         <input id="nCalls" v-model.number="nCalls" type="range" min="1" max="100" step="1" class="form-control">
@@ -38,7 +38,7 @@
     </div>
 
     <!-- PSO parameters -->
-    <div v-if="selectedOptimization === 'particleSwarmOptimization' && !natehidden">
+    <div v-if="selectedOptimization === 'particleSwarmOptimization'">
       <div class="mb-3">
         <label for="c1" class="form-label">Cognitive Parameter: {{ c1 }}</label>
         <input id="c1" v-model.number="c1" type="range" min="0.1" max="1" step="0.1" class="form-control">
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Successive Halving parameters -->
-    <div v-if="selectedOptimization === 'successiveHalving' && !natehidden">
+    <div v-if="selectedOptimization === 'successiveHalving'">
       <div class="mb-3">
         <label for="numConfigs" class="form-label">Configurations: {{ numConfigs }}</label>
         <input id="numConfigs" v-model.number="numConfigs" type="range" min="1" max="100" step="1" class="form-control">
@@ -80,7 +80,7 @@
     </div>
 
     <!-- Metrics parameters -->
-    <div class="mb-3"  v-if="!natehidden">
+    <div class="mb-3">
       <label for="metricsSelect" class="form-label">Metrics:</label>
       <select id="metricsSelect" v-model="selectedMetrics" class="form-control pb-4" multiple>
         <option value="rmse">RMSE</option>
@@ -94,17 +94,11 @@
 </template>
 
 <script lang="ts">
-import {ref, defineComponent, computed, watch, PropType} from 'vue';
+import {ref, defineComponent, computed, watch} from 'vue';
 
 export default defineComponent({
   name: 'OptimizationSelect',
-  props: {
-    natehidden: {
-      type: Boolean,
-      required: true
-      },
-    },
-    setup(props, {emit}) {
+  setup(props, {emit}) {
     const selectedOptimization = ref('bayesianOptimization');
     const selectedMetrics = ref(['rmse']);
 

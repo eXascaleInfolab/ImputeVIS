@@ -4,18 +4,21 @@
     <label for="missingRate" class="form-label">Contamination Rate:</label>
 
     <!-- Dropdown for MCAR Rate -->
-    <select v-model="missingValue" id="missingRate" class="form-control" @change="adjustMissingValues">
-      <option value="0">0%</option>
-      <option value="1">1%</option>
-      <option value="5">5%</option>
-      <option value="10">10%</option>
-      <option value="20">20%</option>
-      <option value="40">40%</option>
-      <option value="60">60%</option>
-      <option value="80">80%</option>
-    </select>
+    <div class="custom-select">
+      <select v-model="missingValue" id="missingRate" class="form-control" @change="adjustMissingValues">
+        <option value="0">0%</option>
+        <option value="1">1%</option>
+        <option value="5">5%</option>
+        <option value="10">10%</option>
+        <option value="20">20%</option>
+        <option value="40">40%</option>
+        <option value="60">60%</option>
+        <option value="80">80%</option>
+      </select>
+    </div>
   </div>
 </template>
+
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
