@@ -127,17 +127,12 @@ import MetricsDisplay from './components/MetricsDisplay.vue';
 import MissingRate from './components/MissingRate.vue';
 import NormalizationToggle from './components/NormalizationToggleOptimization.vue'
 import axios from 'axios';
-import {Chart} from 'highcharts-vue'
-import Highcharts from 'highcharts'
-import HighchartsBoost from 'highcharts/modules/boost'
 import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
 
-HighchartsBoost(Highcharts)
 
 export default {
   components: {
     DataSelect,
-    highcharts: Chart,
     MetricsDisplay,
     MissingRate,
     NormalizationToggle
@@ -150,7 +145,6 @@ export default {
     const loading = ref(false)
     const error = ref("");
     const loadedResults = ref(false);
-    const chartOptionsOriginal = ref(generateChartOptions('Data', 'Data'));
     const categorizedFeatures = ref({});
 
     // Define the features for each category
@@ -254,17 +248,6 @@ export default {
               }
             }
         );
-        chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-
-        response.data.matrix.forEach((data: number[], index: number) => {
-          // Replace NaN with 0
-          const cleanData = data.map(value => isNaN(value) ? 0 : value);
-          if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value, currentSeriesNames[index]);
-          } else {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value);
-          }
-        });
       } catch (error) {
         console.error(error);
       }
@@ -309,6 +292,7 @@ export default {
       }
     }
 
+
     // Define a new function that calls fetchData
     const handleDataSelectChange = () => {
       fetchData();
@@ -329,7 +313,6 @@ export default {
       error,
       loadedResults,
       fetchDataFeatures,
-      chartOptionsOriginal,
       categorizedFeatures,
       categoryExists,
       submitForm

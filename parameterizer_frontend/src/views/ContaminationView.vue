@@ -93,8 +93,8 @@ export default {
               }
             }
         );
+
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-        // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
 
         obfuscatedMatrix = response.data.matrix;
         groundtruthMatrix = response.data.groundtruth;
@@ -152,12 +152,11 @@ export default {
       loadingResults.value = false;
     };
 
-    const chartOptionsOriginal = ref(generateChartOptionsLarge('', 'Data'));
-
+    const chartOptionsOriginal = ref(generateChartOptionsLarge('', 'Data Contamination'));
 
 
     const submitForm = async () => {
-
+      chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length)
       if (document.activeElement.id === "delta_reset")
       {
         location.reload();
@@ -170,6 +169,7 @@ export default {
     const handleDataSelectChange = async () => {
       try {
         imputedData.value = false;
+
         await fetchData();
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -177,6 +177,7 @@ export default {
     }
 
     const updateSeriesNames = (newSeriesNames) => {
+
       currentSeriesNames = newSeriesNames;
     };
 
@@ -220,8 +221,11 @@ export default {
       selectedParamOption,
       loadingResults
     }
+
   }
 }
+
+
 </script>
 <style scoped>
 .sidebar {
