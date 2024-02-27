@@ -9,24 +9,20 @@
     <div class="mb-auto">
       <div class="col-lg-12">
         <div class="row me-1">
-          <form ref="ref_reload" @submit.prevent="submitForm">
-            <div class="justify-content-right" style="padding: 10px; position: absolute; z-index: 100; right: 0;">
-               <button type="submit" id="delta_reset" class="btn align-center" style="background-color: #f0f0f0; padding: 10px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="-2 0 24 24" style="margin-top: -2px; margin-right: 4px;">
-                  <path fill="currentColor" d="M2 12a9 9 0 0 0 9 9c2.39 0 4.68-.94 6.4-2.6l-1.5-1.5A6.706 6.706 0 0 1 11 19c-6.24 0-9.36-7.54-4.95-11.95C10.46 2.64 18 5.77 18 12h-3l4 4h.1l3.9-4h-3a9 9 0 0 0-18 0"/>
-                </svg>
-              </button>
-            </div>
-          </form>
-          <div class="col-lg-10">
+          <div class="col-lg-12">
             <highcharts class="mb-5 pb-5" :options="chartOptionsOriginal" style="margin-top: 30px;"></highcharts>
           </div>
-          <div class="col-lg-2" style="margin-top: 60px;">
-              <form ref="ref_missingvalues" @submit.prevent="submitForm">
-                <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-                <normalization-toggle v-model="normalizationMode"></normalization-toggle>
-              </form>
+          <div class="col-lg-2" style="padding: 10px; position: absolute; z-index: 100; right: 150px; top:75px;">
+            <form ref="ref_missingvalues" @submit.prevent="submitForm">
+              <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+            </form>
           </div>
+          <form ref="ref_missingvalues" @submit.prevent="submitForm">
+            <div style="padding: 10px; position: absolute; z-index: 100; right: 0; top:100px;">
+              <normalization-toggle v-model="normalizationMode"   ></normalization-toggle>
+            </div>
+          </form>
+
         </div>
       </div>
     </div>
@@ -171,15 +167,15 @@ export default {
         console.error("Error handling parameter selection:", error);
       }
     }
-      const handleNormalizationModeChange = () => {
+    const handleNormalizationModeChange = () => {
       if (imputedData.value == true)
       {
-          fetchData();
-          submitForm();
+        fetchData();
+        submitForm();
       }
       else
       {
-          handleDataSelectChange();
+        handleDataSelectChange();
       }
     }
 
@@ -210,3 +206,5 @@ export default {
 }
 </style>
 
+<script setup lang="ts">
+</script>
