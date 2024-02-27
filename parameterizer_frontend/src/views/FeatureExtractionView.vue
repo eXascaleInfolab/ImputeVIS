@@ -15,82 +15,104 @@
 
 
       <div v-else class="mt-2 ms-5">
-        <!-- Geometry Table -->
-        <div>
-          <h4>Geometry</h4>
-          <table class="table"  style="margin-bottom: 50px;">
-            <thead>
-            <tr>
-              <th  style="width: 90%;" >Feature Name</th>
-              <th  style="width: 10%;" >Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(value, key) in categorizedFeatures['Geometry']" :key="key">
-              <td>{{ key }}</td>
-              <td>{{ value.toFixed(4) }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        <h4>Geometry</h4>
+        <table class="table" style="margin-bottom: 50px;">
+          <thead>
+          <tr>
+            <th style="width: 50%;">Feature Name</th>
+            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `Run N°${index + 1}` }}</th>
+          </tr>
+          </thead>
 
-        <!-- Correlation Table -->
-        <div>
-          <h4>Correlation</h4>
-          <table class="table"  style="margin-bottom: 50px;">
-            <thead>
-            <tr>
-              <th style="width: 90%;" >Feature Name</th>
-              <th style="width: 10%;" >Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(value, key) in categorizedFeatures['Correlation']" :key="key">
-              <td>{{ key }}</td>
-              <td>{{ value.toFixed(4) }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+          <tbody>
+          <tr>
+            <td>
+              <div v-for="(value, key) in categorizedFeatures['Geometry']" :key="key">
+                <tr style="height: 10px;">{{ key }}</tr>
+              </div>
+            </td>
+            <td v-for="(category, categoryIndex) in featureResults" :key="categoryIndex">
+                <tr style="height: 10px;" v-for="(value, key) in category['Geometry']" :key="key">{{ value.toFixed(4) }}</tr>
+            </td>
+          </tr>
+          </tbody>
+        </table>
 
-        <!-- Transformation Table -->
-        <div class="mb-4">
-          <h4>Transformation</h4>
-          <table class="table"  style="margin-bottom: 50px;">
-            <thead>
-            <tr>
-              <th style="width: 90%;">Feature Name</th>
-              <th style="width: 10%;" >Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(value, key) in categorizedFeatures['Transformation']" :key="key">
-              <td>{{ key }}</td>
-              <td>{{ value.toFixed(4) }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
 
-        <!-- Trend Table <div v-if="loadedResults && categoryExists('Trend')" class="mb-4">
- -->
-        <div>
-          <h4>Trend</h4>
-          <table class="table"  style="margin-bottom: 50px;">
-            <thead>
-            <tr>
-              <th style="width: 90%;">Feature Name</th>
-              <th style="width: 10%;">Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(value, key) in categorizedFeatures['Trend']" :key="key">
-              <td>{{ key }}</td>
-              <td>{{ value.toFixed(4) }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        <h4>Correlation</h4>
+        <table class="table" style="margin-bottom: 50px;">
+          <thead>
+          <tr>
+            <th style="width: 50%;">Feature Name</th>
+            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `Run N°${index + 1}` }}</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr>
+            <td>
+              <div v-for="(value, key) in categorizedFeatures['Correlation']" :key="key">
+                <tr style="height: 10px;">{{ key }}</tr>
+              </div>
+            </td>
+            <td v-for="(category, categoryIndex) in featureResults" :key="categoryIndex">
+              <tr style="height: 10px;" v-for="(value, key) in category['Correlation']" :key="key">{{ value.toFixed(4) }}</tr>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+
+
+
+
+        <h4>Transformation</h4>
+        <table class="table" style="margin-bottom: 50px;">
+          <thead>
+          <tr>
+            <th style="width: 50%;">Feature Name</th>
+            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `Run N°${index + 1}` }}</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr>
+            <td>
+              <div v-for="(value, key) in categorizedFeatures['Transformation']" :key="key">
+                <tr style="height: 10px;">{{ key }}</tr>
+              </div>
+            </td>
+            <td v-for="(category, categoryIndex) in featureResults" :key="categoryIndex">
+              <tr style="height: 10px;" v-for="(value, key) in category['Transformation']" :key="key">{{ value.toFixed(4) }}</tr>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+
+        <h4>Trend</h4>
+        <table class="table" style="margin-bottom: 50px;">
+          <thead>
+          <tr>
+            <th style="width: 50%;">Feature Name</th>
+            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `Run N°${index + 1}` }}</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr>
+            <td>
+              <div v-for="(value, key) in categorizedFeatures['Trend']" :key="key">
+                <tr style="height: 10px;">{{ key }}</tr>
+              </div>
+            </td>
+            <td v-for="(category, categoryIndex) in featureResults" :key="categoryIndex">
+              <tr style="height: 10px;" v-for="(value, key) in category['Trend']" :key="key">{{ value.toFixed(4) }}</tr>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
       </div>
     </div>
 
@@ -146,6 +168,8 @@ export default {
     const error = ref("");
     const loadedResults = ref(false);
     const categorizedFeatures = ref({});
+    const featureResults = ref([]); // New data property to store results
+
 
     // Define the features for each category
     const CATEGORIES = {
@@ -203,7 +227,7 @@ export default {
       "SB_TransitionMatrix_3ac_sumdiagcov": "Transition matrix column variance",
       "PD_PeriodicityWang_th0_01": "Wang's periodicity metric",
       "CO_Embed2_Dist_tau_d_expfit_meandiff": "Goodness of exponential fit to embedding distance distribution",
-      "SC_FluctAnal_2_rsrangeﬁt_50_1_logi_prop_r1": "Rescaled range fluctuation analysis (low-scale scaling)",
+      "SC_FluctAnal_2_rsrangefit_50_1_logi_prop_r1": "Rescaled range fluctuation analysis (low-scale scaling)",
       "SC_FluctAnal_2_dfa_50_1_2_logi_prop_r1": "Detrended fluctuation analysis (low-scale scaling)",
       "mean": "Mean",
       "DN_Spread_Std": "Standard deviation"
@@ -274,8 +298,12 @@ export default {
               }
             }
         );
+
         features.value = response.data;
         categorizedFeatures.value = categorizeFeatures(response.data);
+        featureResults.value.push(categorizedFeatures.value);
+
+
         loadedResults.value = true;
       } catch (error) {
         error.value = `Error: ${error.message}`;
@@ -315,7 +343,8 @@ export default {
       fetchDataFeatures,
       categorizedFeatures,
       categoryExists,
-      submitForm
+      submitForm,
+      featureResults
     }
   }
 }

@@ -24,10 +24,16 @@
           <div class="col-lg-2" style="margin-top: 60px;">
               <form ref="ref_missingvalues" @submit.prevent="submitForm">
                 <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-                <normalization-toggle v-model="normalizationMode"></normalization-toggle>
-                <scenario-missing-values v-model="scenarioMissingValues"/>
+                <normalization-toggle v-model="normalizationMode" ></normalization-toggle>
+                <scenario-missing-values v-model="scenarioMissingValues" />
                 <missing-rate v-model="missingRate"/>
+                <div class="d-flexs mt-4 me-5" >
+                  <button type="submit" id="alpha_run" class="btn btn-primary" style="margin-top:36px;">Run</button>
+                </div>
+
               </form>
+
+
           </div>
         </div>
       </div>
@@ -76,6 +82,7 @@ export default {
     const checkedNames = ref([]);
     const imputedData = ref(false); // Whether imputation has been carried out
 
+    const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
 
     const fetchData = async () => {
       try
@@ -98,24 +105,25 @@ export default {
 
         obfuscatedMatrix = response.data.matrix;
         groundtruthMatrix = response.data.groundtruth;
-
         obfuscatedMatrix.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(
                 index,
                 data,
                 dataSelect.value,
-                currentSeriesNames[index]
+                currentSeriesNames[index],
+                obfuscatedColors[index]
             );
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(
                 index,
                 data,
-                dataSelect.value
+                dataSelect.value,
+                undefined,
+                obfuscatedColors[index]
             );
           }
         });
-
         if(missingRate.value != "0")
         {
           // Adding ground truth series to the chart
@@ -125,7 +133,9 @@ export default {
                 data,
                 dataSelect.value,
                 currentSeriesNames[index] + " Missing values",
-                'dash'
+                'dash',
+                1,
+                obfuscatedColors[index]
             ));
           });
         }
@@ -148,7 +158,6 @@ export default {
       // chartOptionsImputed.value.series = [];
       loadingResults.value = true;
       imputedData.value = false;
-      chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length)
       loadingResults.value = false;
     };
 
@@ -156,7 +165,12 @@ export default {
 
 
     const submitForm = async () => {
-      chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length)
+
+      if (document.activeElement.id === "alpha_run")
+      {
+        imputedData.value = false;
+        await fetchData();
+      }
       if (document.activeElement.id === "delta_reset")
       {
         location.reload();
@@ -204,7 +218,7 @@ export default {
     }
 
     // Watch for changes and call fetchData when it changes
-    watch([dataSelect, missingRate, scenarioMissingValues], handleDataSelectChange, {immediate: true});
+    watch([dataSelect], handleDataSelectChange, {immediate: true});
     watch(normalizationMode, handleNormalizationModeChange, {immediate: true});
 
     return {

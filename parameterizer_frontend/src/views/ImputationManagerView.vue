@@ -235,6 +235,8 @@ export default {
     const imputedData = ref(false); // Whether imputation has been carried out
 
 
+    const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
+
     const fetchData = async () => {
       try {
         loadingResults.value = true;
@@ -256,25 +258,26 @@ export default {
 
         obfuscatedMatrix = response.data.matrix;
         groundtruthMatrix = response.data.groundtruth;
-
         obfuscatedMatrix.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0) {
             chartOptionsOriginal.value.series[index] = createSeries(
                 index,
                 data,
                 dataSelect.value,
-                currentSeriesNames[index]
+                currentSeriesNames[index],
+                obfuscatedColors[index]
             );
           } else {
             chartOptionsOriginal.value.series[index] = createSeries(
                 index,
                 data,
-                dataSelect.value
+                dataSelect.value,
+                undefined,
+                obfuscatedColors[index]
             );
           }
         });
-
-        if (groundtruthMatrix !== null && missingRate.value != "0")
+        if(missingRate.value != "0")
         {
           // Adding ground truth series to the chart
           groundtruthMatrix.forEach((data: number[], index: number) => {
@@ -283,7 +286,9 @@ export default {
                 data,
                 dataSelect.value,
                 currentSeriesNames[index] + " Missing values",
-                'dash'
+                'dash',
+                1,
+                obfuscatedColors[index]
             ));
           });
         }

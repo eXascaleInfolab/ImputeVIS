@@ -21,19 +21,20 @@
       </div>
 
       <br />
+
       <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-12 offset-md-12">
           <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'cdrec'" @submit.prevent="submitFormCustom">
 
             <div class="row">
-              <div class="col">
+              <div class="col-5" style="padding: 40px;">
                 <h5 style="text-align: center;">Optimal Parameters</h5>
 
-                <table class="table table-bordered">
+                <table class="table table-bordered" style="width: 100%;">
                   <thead class="thead-dark">
                   <tr>
-                    <th scope="col" style="width: 60%">Parameter</th>
-                    <th scope="col" style="width: 40%">Value</th>
+                    <th scope="col" style="width: 50%">Parameter</th>
+                    <th scope="col" style="width: 50%">Value</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -52,9 +53,8 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col">
+              <div class="col-7" style="padding: 20px;">
                 <h5 style="text-align: center;">Metrics</h5>
-
                 <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
               </div>
             </div>
@@ -64,18 +64,20 @@
 
 
 
+
+
       <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-12 offset-md-12">
           <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'stmvl'" @submit.prevent="submitFormCustom" >
             <div class="row">
-              <div class="col">
+              <div class="col-5" style="padding: 40px;">
                 <h5 style="text-align: center;">Optimal Parameters</h5>
 
                 <table class="table table-bordered">
                   <thead class="thead-dark">
                   <tr>
-                    <th scope="col" style="width: 60%">Parameter</th>
-                    <th scope="col" style="width: 40%">Value</th>
+                    <th scope="col" style="width: 50%">Parameter</th>
+                    <th scope="col" style="width: 50%">Value</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -95,7 +97,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col">
+              <div class="col-7" style="padding: 20px;">
                 <h5 style="text-align: center;">Metrics</h5>
                 <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
               </div>
@@ -108,17 +110,17 @@
 
 
       <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-12 offset-md-12">
           <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'iim'" @submit.prevent="submitFormCustom" >
             <div class="row">
-              <div class="col">
+              <div class="col-5" style="padding: 40px;">
                 <h5 style="text-align: center;">Optimal Parameters</h5>
 
                 <table class="table table-bordered">
                   <thead class="thead-dark">
                   <tr>
-                    <th scope="col" style="width: 60%">Parameter</th>
-                    <th scope="col" style="width: 40%">Value</th>
+                    <th scope="col" style="width: 50%">Parameter</th>
+                    <th scope="col" style="width: 50%">Value</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -129,7 +131,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col">
+              <div class="col-7" style="padding: 20px;">
                 <h5 style="text-align: center;">Metrics</h5>
                 <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
               </div>
@@ -140,17 +142,17 @@
 
 
       <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-12 offset-md-12">
           <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'mrnn'" @submit.prevent="submitFormCustom" >
             <div class="row">
-              <div class="col">
+              <div class="col-5" style="padding: 40px;">
                 <h5 style="text-align: center;">Optimal Parameters</h5>
 
                 <table class="table table-bordered">
                   <thead class="thead-dark">
                   <tr>
-                    <th scope="col" style="width: 60%">Parameter</th>
-                    <th scope="col" style="width: 40%">Value</th>
+                    <th scope="col" style="width: 50%">Parameter</th>
+                    <th scope="col" style="width: 50%">Value</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -173,7 +175,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col">
+              <div class="col-7" style="padding: 20px;">
                 <h5 style="text-align: center;">Metrics</h5>
                 <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
               </div>
@@ -298,6 +300,7 @@ export default {
       optimizationParameters.value = newParams; // Update the optimization parameters
     };
 
+    const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
 
     const fetchData = async () => {
       imputedData.value = false;
@@ -315,20 +318,29 @@ export default {
             }
         );
         chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
+
         obfuscatedMatrix = response.data.matrix;
         groundtruthMatrix = response.data.groundtruth;
-        response.data.matrix.forEach((data: number[], index: number) => {
-          // Replace NaN with 0
-          const cleanData = data.map(value => isNaN(value) ? 0 : value);
-
+        obfuscatedMatrix.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value, currentSeriesNames[index]);
+            chartOptionsOriginal.value.series[index] = createSeries(
+                index,
+                data,
+                dataSelect.value,
+                currentSeriesNames[index],
+                obfuscatedColors[index]
+            );
           } else {
-            chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value);
+            chartOptionsOriginal.value.series[index] = createSeries(
+                index,
+                data,
+                dataSelect.value,
+                undefined,
+                obfuscatedColors[index]
+            );
           }
         });
-
-        if (groundtruthMatrix !== null)
+        if(missingRate.value != "0")
         {
           // Adding ground truth series to the chart
           groundtruthMatrix.forEach((data: number[], index: number) => {
@@ -337,7 +349,9 @@ export default {
                 data,
                 dataSelect.value,
                 currentSeriesNames[index] + " Missing values",
-                'dash'
+                'dash',
+                1,
+                obfuscatedColors[index]
             ));
           });
         }

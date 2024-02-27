@@ -1,12 +1,14 @@
+import { color } from "highcharts";
+
 // Constants for clarity
 const BASE_YEAR = 2010;
 const BASE_MONTH = 1;
 const BASE_DAY = 1;
 const POINT_START = Date.UTC(2010, 1, 1);
-const THIRTY_MINUTES = 1000 * 60 * 30;
+const THIRTY_MINUTES = 1000 * 60 * 42;
 const VISIBILITY_THRESHOLD = 10;
 
-export const createSeries = (index: number, data: number[], datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series', lineT = 'line') => {
+export const createSeries = (index: number, data: number[], datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series', lineT = 'line', l_size = 2, s_color = "") => {
     const datasetCode = datasetSelected.split('_')[0].toLowerCase();
 
     return {
@@ -27,7 +29,9 @@ export const createSeries = (index: number, data: number[], datasetSelected: str
                 showInNavigator: shouldShow(index, datasetCode),
             }
         },
-        dashStyle: lineT
+        dashStyle: lineT,
+        color : s_color,
+        lineWidth: l_size
     };
 };
 
@@ -173,28 +177,6 @@ export const generateChartOptions = (title, seriesName) => ({
         type: 'datetime'
     },
     colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
-    // colors: [
-    //     '#058DC7',  // Blue
-    //     '#50B432',  // Green
-    //     '#ED561B',  // Orange-Red
-    //     '#DDDF00',  // Yellow
-    //     '#24CBE5',  // Light Blue
-    //     '#64E572',  // Light Green
-    //     '#FF9655',  // Light Orange
-    //     '#FFD700',  // Gold
-    //     '#6AF9C4',  // Aqua
-    //     '#FF69B4',  // Pink
-    //     '#A020F0',  // Purple
-    //     '#8B4513',  // Saddle Brown
-    //     '#2E8B57',  // Sea Green
-    //     '#D2691E',  // Chocolate
-    //     '#B22222',  // Firebrick
-    //     '#20B2AA',  // Light Sea Green
-    //     '#8A2BE2',  // BlueViolet
-    //     '#5F9EA0',  // CadetBlue
-    //     '#FFF263',  // Pale Yellow
-    //     '#7B68EE'   // MediumSlateBlue
-    // ],
     chart: {
         height: 700,
         type: 'line',
@@ -262,7 +244,7 @@ export const generateChartOptions = (title, seriesName) => ({
         animation: false,
         findNearestPointBy: 'xy',
         pointStart: Date.UTC(2010, 1, 1),
-        pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+        pointInterval: 1000 * 60 * 42, // Granularity of 42 minutes
         tooltip: {
             valueDecimals: 2
         },
@@ -313,28 +295,6 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         panKey: 'shift'
     },
     colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
-    // colors: [
-    //     '#058DC7',  // Blue
-    //     '#50B432',  // Green
-    //     '#ED561B',  // Orange-Red
-    //     '#DDDF00',  // Yellow
-    //     '#24CBE5',  // Light Blue
-    //     '#64E572',  // Light Green
-    //     '#FF9655',  // Light Orange
-    //     '#FFD700',  // Gold
-    //     '#6AF9C4',  // Aqua
-    //     '#FF69B4',  // Pink
-    //     '#A020F0',  // Purple
-    //     '#8B4513',  // Saddle Brown
-    //     '#2E8B57',  // Sea Green
-    //     '#D2691E',  // Chocolate
-    //     '#B22222',  // Firebrick
-    //     '#20B2AA',  // Light Sea Green
-    //     '#8A2BE2',  // BlueViolet
-    //     '#5F9EA0',  // CadetBlue
-    //     '#FFF263',  // Pale Yellow
-    //     '#7B68EE'   // MediumSlateBlue
-    // ],
     rangeSelector: {
         selected: 1,
         x: 0,
@@ -392,6 +352,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         series: {
             showInNavigator: true,
             // zoneAxis: 'x',
+
         }
     },
     series: [{
@@ -400,7 +361,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         animation: false,
         pointStart: Date.UTC(2010, 1, 1),
         findNearestPointBy: 'xy',
-        pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+        pointInterval: 1000 * 60 * 42, // Granularity of 42 minutes
         tooltip: {
             valueDecimals: 2
         }
@@ -439,35 +400,13 @@ export const generateChartOptionsHeight = (title, seriesName) => ({
         type: 'datetime'
     },
     chart: {
-        height: 490,
+        height: 620,
         type: 'line',
         zoomType: 'x',
         panning: true,
         panKey: 'shift'
     },
     colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
-    // colors: [
-    //     '#058DC7',  // Blue
-    //     '#50B432',  // Green
-    //     '#ED561B',  // Orange-Red
-    //     '#DDDF00',  // Yellow
-    //     '#24CBE5',  // Light Blue
-    //     '#64E572',  // Light Green
-    //     '#FF9655',  // Light Orange
-    //     '#FFD700',  // Gold
-    //     '#6AF9C4',  // Aqua
-    //     '#FF69B4',  // Pink
-    //     '#A020F0',  // Purple
-    //     '#8B4513',  // Saddle Brown
-    //     '#2E8B57',  // Sea Green
-    //     '#D2691E',  // Chocolate
-    //     '#B22222',  // Firebrick
-    //     '#20B2AA',  // Light Sea Green
-    //     '#8A2BE2',  // BlueViolet
-    //     '#5F9EA0',  // CadetBlue
-    //     '#FFF263',  // Pale Yellow
-    //     '#7B68EE'   // MediumSlateBlue
-    // ],
     rangeSelector: {
         selected: 1,
         x: 0,
@@ -533,7 +472,7 @@ export const generateChartOptionsHeight = (title, seriesName) => ({
         animation: false,
         pointStart: Date.UTC(2010, 1, 1),
         findNearestPointBy: 'xy',
-        pointInterval: 1000 * 60 * 30, // Granularity of 30 minutes
+        pointInterval: 1000 * 60 * 42, // Granularity of 42 minutes
         tooltip: {
             valueDecimals: 2
         }
