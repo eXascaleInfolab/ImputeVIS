@@ -9,11 +9,7 @@
 
     <form ref="ref_reload" @submit.prevent="submitForm">
       <div class="justify-content-right" style="padding: 10px; position: absolute; z-index: 100; right: 0;">
-        <button type="submit" id="delta_reset" class="btn align-center" style="background-color: #f0f0f0; padding: 10px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="-2 0 24 24" style="margin-top: -2px; margin-right: 4px;">
-            <path fill="currentColor" d="M2 12a9 9 0 0 0 9 9c2.39 0 4.68-.94 6.4-2.6l-1.5-1.5A6.706 6.706 0 0 1 11 19c-6.24 0-9.36-7.54-4.95-11.95C10.46 2.64 18 5.77 18 12h-3l4 4h.1l3.9-4h-3a9 9 0 0 0-18 0"/>
-          </svg>
-        </button>
+        <normalization-toggle v-model="normalizationMode"></normalization-toggle>
       </div>
     </form>
 
@@ -24,52 +20,68 @@
             <highcharts v-if="imputedData" class="mb-3 pb-3" :options="chartOptionsImputed"></highcharts>
             <highcharts v-if="!imputedData" class="mb-3 pb-3" :options="chartOptionsOriginal"></highcharts>
 
-            <div v-if="metricsCDRec || metricsIIM || metricsMRNN || metricsSTMVL" class="mt-4" style="margin: 3%;">
-              <div class="row">
-                <table class="table">
-                  <thead>
-                  <tr>
-                    <th scope="col"></th>
-                    <th scope="col" v-if="metricsCDRec">CDRec</th>
-                    <th scope="col" v-if="metricsIIM">IIM</th>
-                    <th scope="col" v-if="metricsMRNN">M-RNN</th>
-                    <th scope="col" v-if="metricsSTMVL">ST-MVL</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <!-- Metrics Rows -->
-                  <tr>
-                    <th scope="row" v-if="rmseCDRec !== null && rmseCDRec !== ''">RMSE</th>
-                    <td v-if="metricsCDRec">{{ rmseCDRec }}</td>
-                    <td v-if="metricsIIM">{{ rmseIIM }}</td>
-                    <td v-if="metricsMRNN">{{ rmseMRNN }}</td>
-                    <td v-if="metricsSTMVL">{{ rmseSTMVL }}</td>
-                  </tr>
-                  <tr>
-                    <th scope="row" v-if="maeCDRec !== null && maeCDRec !== ''">MAE</th>
-                    <td v-if="metricsCDRec">{{ maeCDRec }}</td>
-                    <td v-if="metricsIIM">{{ maeIIM }}</td>
-                    <td v-if="metricsMRNN">{{ maeMRNN }}</td>
-                    <td v-if="metricsSTMVL">{{ maeSTMVL }}</td>
-                  </tr>
-                  <tr>
-                    <th scope="row" v-if="miCDRec !== null && miCDRec !== ''">MI</th>
-                    <td v-if="metricsCDRec">{{ miCDRec }}</td>
-                    <td v-if="metricsIIM">{{ miIIM }}</td>
-                    <td v-if="metricsMRNN">{{ miMRNN }}</td>
-                    <td v-if="metricsSTMVL">{{ miSTMVL }}</td>
-                  </tr>
-                  <tr>
-                    <th scope="row" v-if="corrCDRec !== null && corrCDRec !== ''">CORR</th>
-                    <td v-if="metricsCDRec">{{ corrCDRec }}</td>
-                    <td v-if="metricsIIM">{{ corrIIM }}</td>
-                    <td v-if="metricsMRNN">{{ corrMRNN }}</td>
-                    <td v-if="metricsSTMVL">{{ corrSTMVL }}</td>
-                  </tr>
-                  </tbody>
-                </table>
+
+
+            <div v-if="metricsCDRec || metricsIIM || metricsMRNN || metricsSTMVL" style="margin-left: 20%; margin-right: 20%; margin-top: 5%; width:60%; text-align:center;">
+              <kiviat-display v-if="imputedData" :metrics="{
+                CDRec :{rmse_1: rmseCDRec, mae_1: maeCDRec, mi_1: miCDRec, corr_1: corrCDRec },
+                IIM :{ rmse_2: rmseIIM, mae_2: maeIIM, mi_2: miIIM, corr_2: corrIIM },
+                MRNN :{ rmse_3: rmseMRNN, mae_3: maeMRNN, mi_3: miMRNN, corr_3: corrMRNN },
+                STMVL :{ rmse_4: rmseSTMVL, mae_4: maeSTMVL, mi_4: miSTMVL, corr_4: corrSTMVL }
+                }" />
+
+
+              <div v-if="metricsCDRec || metricsIIM || metricsMRNN || metricsSTMVL || imputedData" class="mt-4" style="margin: 3%;">
+                <div class="row">
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th scope="col"></th>
+                      <th scope="col" v-if="metricsCDRec">CDRec</th>
+                      <th scope="col" v-if="metricsIIM">IIM</th>
+                      <th scope="col" v-if="metricsMRNN">M-RNN</th>
+                      <th scope="col" v-if="metricsSTMVL">ST-MVL</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Metrics Rows -->
+                    <tr>
+                      <th scope="row" v-if="rmseCDRec !== null && rmseCDRec !== ''">RMSE</th>
+                      <td v-if="metricsCDRec">{{ rmseCDRec }}</td>
+                      <td v-if="metricsIIM">{{ rmseIIM }}</td>
+                      <td v-if="metricsMRNN">{{ rmseMRNN }}</td>
+                      <td v-if="metricsSTMVL">{{ rmseSTMVL }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" v-if="maeCDRec !== null && maeCDRec !== ''">MAE</th>
+                      <td v-if="metricsCDRec">{{ maeCDRec }}</td>
+                      <td v-if="metricsIIM">{{ maeIIM }}</td>
+                      <td v-if="metricsMRNN">{{ maeMRNN }}</td>
+                      <td v-if="metricsSTMVL">{{ maeSTMVL }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" v-if="miCDRec !== null && miCDRec !== ''">MI</th>
+                      <td v-if="metricsCDRec">{{ miCDRec }}</td>
+                      <td v-if="metricsIIM">{{ miIIM }}</td>
+                      <td v-if="metricsMRNN">{{ miMRNN }}</td>
+                      <td v-if="metricsSTMVL">{{ miSTMVL }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" v-if="corrCDRec !== null && corrCDRec !== ''">CORR</th>
+                      <td v-if="metricsCDRec">{{ corrCDRec }}</td>
+                      <td v-if="metricsIIM">{{ corrIIM }}</td>
+                      <td v-if="metricsMRNN">{{ corrMRNN }}</td>
+                      <td v-if="metricsSTMVL">{{ corrSTMVL }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
+
+
+
+
 
 
           </div>
@@ -77,9 +89,8 @@
             <div class="row me-5">
               <div class="">
                 <form ref="ref_missingvalues" @submit.prevent="submitForm">
-                  <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-                  <normalization-toggle v-model="normalizationMode"></normalization-toggle><br /><br />
-                  <missing-rate v-model="missingRate"/>
+                  <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/><br />
+                  <missing-rate v-model="missingRate"/><br />
                 </form>
               </div>
             </div>
@@ -140,9 +151,11 @@
                 </div>
               </div>
 
-              <div class="d-flexs mt-4 me-5" >
-                <button type="submit" id="alpha_run" class="btn btn-primary" style="margin-top:36px;">Run</button>
+              <div class="d-flexs mt-4 me-10" >
+                <button type="submit" id="alpha_run" class="btn btn-primary" style="margin-top:36px;  width:100px; ">Run</button>
+                <button type="submit" id="delta_reset" class="btn btn-danger" style="margin-top:36px; margin-left : 10%; width:100px; ">Reset</button>
               </div>
+
             </form>
           </div>
         </div>
@@ -150,6 +163,8 @@
     </div>
   </main>
 </template>
+
+
 
 <script lang="ts">
 import {ref, watch, reactive, shallowReactive} from 'vue';
@@ -159,6 +174,7 @@ import MissingRate from './components/MissingRate.vue';
 import NormalizationToggle from './components/NormalizationToggle.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
+
 import Highcharts from 'highcharts'
 import HighchartsBoost from "highcharts/modules/boost";
 import {IIM_DEFAULTS, CDREC_DEFAULTS, MRNN_DEFAULTS, STMVL_DEFAULTS} from './thesisUtils/defaultParameters';
@@ -168,11 +184,15 @@ import {
   generateChartOptions, generateChartOptionsHeight,
   generateChartOptionsLarge
 } from "@/views/thesisUtils/utils";
+import Metrics2Display from "@/views/components/Metrics2Display.vue";
+import KiviatDisplay from './components/KiviatDisplay.vue';
 
 // HighchartsBoost(Highcharts)
 
 export default {
   components: {
+    Metrics2Display,
+    KiviatDisplay,
     NormalizationToggle,
     highcharts: Chart,
     DataSelect,
@@ -285,7 +305,7 @@ export default {
                 index,
                 data,
                 dataSelect.value,
-                currentSeriesNames[index] + " Missing values",
+                currentSeriesNames[index] + " (MV)",
                 'dash',
                 1,
                 obfuscatedColors[index]
@@ -409,7 +429,7 @@ export default {
       {
         for (let checkedName of checkedNames.value)
         {
-          const displayImputation =  missingRate.value != '60' && missingRate.value != '80'
+          const displayImputation =  true
           let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
 
           if (checkedName.toLowerCase() === 'cdrec')
@@ -642,6 +662,7 @@ export default {
       {
         imputedData.value = false;
         clearFetchedData();
+        clearErrorMetrics();
         await handleCheckboxChange();
       }
       else if (document.activeElement.id === "delta_reset")

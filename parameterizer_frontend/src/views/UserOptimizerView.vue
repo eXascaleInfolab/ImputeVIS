@@ -23,39 +23,45 @@
       <br />
 
       <div class="row">
-        <div class="col-md-12 offset-md-12">
+        <div class="col-md-12">
           <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'cdrec'" @submit.prevent="submitFormCustom">
-
             <div class="row">
-              <div class="col-5" style="padding: 40px;">
-                <h5 style="text-align: center;">Optimal Parameters</h5>
-
-                <table class="table table-bordered" style="width: 100%;">
-                  <thead class="thead-dark">
-                  <tr>
-                    <th scope="col" style="width: 50%">Parameter</th>
-                    <th scope="col" style="width: 50%">Value</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>Reduction Rank</td>
-                    <td>{{ truncationRank }}</td>
-                  </tr>
-                  <tr>
-                    <td>Threshold for Difference</td>
-                    <td>{{ epsilon }}</td>
-                  </tr>
-                  <tr>
-                    <td>Number of Iterations</td>
-                    <td>{{ iterations }}</td>
-                  </tr>
-                  </tbody>
-                </table>
+              <div class="col-md-6" style="padding: 20px; height: 100%; margin-top:100px;">
+                <h5 style="text-align: center; margin-bottom: 20px;">Optimal Parameters</h5>
+                <div class="row"  style="margin:5%;">
+                  <div class="col-12" style="height: 100%;">
+                    <!-- 1st table taking 100% width and matching the kiviat height -->
+                    <table class="table table-bordered" style="width: 100%; height: 100%;">
+                      <thead class="thead-dark">
+                      <tr>
+                        <th scope="col" style="width: 50%;">Parameter</th>
+                        <th scope="col" style="width: 50%;">Value</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td>Reduction Rank</td>
+                        <td>{{ truncationRank }}</td>
+                      </tr>
+                      <tr>
+                        <td>Threshold for Difference</td>
+                        <td>{{ epsilon }}</td>
+                      </tr>
+                      <tr>
+                        <td>Number of Iterations</td>
+                        <td>{{ iterations }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="col-12" style="margin-top: 120px;;">
+                    <h5 style="text-align: center; margin-bottom: 20px;">Metrics</h5>
+                    <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
+                  </div>
+                </div>
               </div>
-              <div class="col-7" style="padding: 20px;">
-                <h5 style="text-align: center;">Metrics</h5>
-                <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
+              <div class="col-md-5" style="padding: 20px; text-align: center; margin-left: 5%;">
+                <metrics2-kiviat-display v-if="imputedData" :metrics="metrics" style="height: 100%;"></metrics2-kiviat-display>
               </div>
             </div>
           </form>
@@ -66,40 +72,93 @@
 
 
 
+
+
+
       <div class="row">
-        <div class="col-md-12 offset-md-12">
-          <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'stmvl'" @submit.prevent="submitFormCustom" >
+        <div class="col-md-12">
+          <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'stmvl'" @submit.prevent="submitFormCustom">
             <div class="row">
-              <div class="col-5" style="padding: 40px;">
-                <h5 style="text-align: center;">Optimal Parameters</h5>
+              <div class="col-md-6" style="padding: 20px; height: 100%; margin-top:100px;">
+                <h5 style="text-align: center; margin-bottom: 20px;">Optimal Parameters</h5>
+                <div class="row"  style="margin:5%;">
+                  <div class="col-12" style="height: 100%;">
+                    <!-- 1st table taking 100% width and matching the kiviat height -->
+                    <table class="table table-bordered">
+                      <thead class="thead-dark">
+                      <tr>
+                        <th scope="col" style="width: 50%">Parameter</th>
+                        <th scope="col" style="width: 50%">Value</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td>Window Size</td>
+                        <td>{{ windowSize }}</td>
+                      </tr>
+                      <tr>
+                        <td>Smoothing Parameter (γ)</td>
+                        <td>{{ parseFloat(gamma).toFixed(5) }}</td>
+                      </tr>
 
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                  <tr>
-                    <th scope="col" style="width: 50%">Parameter</th>
-                    <th scope="col" style="width: 50%">Value</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>Window Size</td>
-                    <td>{{ windowSize }}</td>
-                  </tr>
-                  <tr>
-                    <td>Smoothing Parameter (γ)</td>
-                    <td>{{ parseFloat(gamma).toFixed(5) }}</td>
-                  </tr>
-
-                  <tr>
-                    <td>Power for Spatial Weight (α)</td>
-                    <td>{{ alpha }}</td>
-                  </tr>
-                  </tbody>
-                </table>
+                      <tr>
+                        <td>Power for Spatial Weight (α)</td>
+                        <td>{{ alpha }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="col-12" style="margin-top: 120px;;">
+                    <h5 style="text-align: center; margin-bottom: 20px;">Metrics</h5>
+                    <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
+                  </div>
+                </div>
               </div>
-              <div class="col-7" style="padding: 20px;">
-                <h5 style="text-align: center;">Metrics</h5>
-                <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
+              <div class="col-md-5" style="padding: 20px; text-align: center; margin-left: 5%;">
+                <metrics2-kiviat-display v-if="imputedData" :metrics="metrics" style="height: 100%;"></metrics2-kiviat-display>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+
+
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'iim'" @submit.prevent="submitFormCustom">
+            <div class="row">
+              <div class="col-md-6" style="padding: 20px; height: 100%; margin-top:100px;">
+                <h5 style="text-align: center; margin-bottom: 20px;">Optimal Parameters</h5>
+                <div class="row"  style="margin:5%;">
+                  <div class="col-12" style="height: 100%;">
+                    <!-- 1st table taking 100% width and matching the kiviat height -->
+                    <table class="table table-bordered">
+                      <thead class="thead-dark">
+                      <tr>
+                        <th scope="col" style="width: 50%">Parameter</th>
+                        <th scope="col" style="width: 50%">Value</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td>Number of Iterations</td>
+                        <td>{{ numberSelect }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="col-12" style="margin-top: 120px;;">
+                    <h5 style="text-align: center; margin-bottom: 20px;">Metrics</h5>
+                    <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5" style="padding: 20px; text-align: center; margin-left: 5%;">
+                <metrics2-kiviat-display v-if="imputedData" :metrics="metrics" style="height: 100%;"></metrics2-kiviat-display>
               </div>
             </div>
           </form>
@@ -110,74 +169,49 @@
 
 
       <div class="row">
-        <div class="col-md-12 offset-md-12">
-          <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'iim'" @submit.prevent="submitFormCustom" >
+        <div class="col-md-12">
+          <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'mrnn'" @submit.prevent="submitFormCustom">
             <div class="row">
-              <div class="col-5" style="padding: 40px;">
-                <h5 style="text-align: center;">Optimal Parameters</h5>
-
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                  <tr>
-                    <th scope="col" style="width: 50%">Parameter</th>
-                    <th scope="col" style="width: 50%">Value</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>Number of Iterations</td>
-                    <td>{{ numberSelect }}</td>
-                  </tr>
-                  </tbody>
-                </table>
+              <div class="col-md-6" style="padding: 20px; height: 100%; margin-top:100px;">
+                <h5 style="text-align: center; margin-bottom: 20px;">Optimal Parameters</h5>
+                <div class="row"  style="margin:5%;">
+                  <div class="col-12" style="height: 100%;">
+                    <!-- 1st table taking 100% width and matching the kiviat height -->
+                    <table class="table table-bordered">
+                      <thead class="thead-dark">
+                      <tr>
+                        <th scope="col" style="width: 50%">Parameter</th>
+                        <th scope="col" style="width: 50%">Value</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td>Learning Rate</td>
+                        <td>{{ parseFloat(learningRate).toFixed(6) }}</td>
+                      </tr>
+                      <tr>
+                        <td>Hidden Dimension Size</td>
+                        <td>{{ hiddenDim }}</td>
+                      </tr>
+                      <tr>
+                        <td>Number of Iterations</td>
+                        <td>{{ iterations }}</td>
+                      </tr>
+                      <tr>
+                        <td>Keep Rate</td>
+                        <td>{{ parseFloat(keepProb).toFixed(4) }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="col-12" style="margin-top: 120px;;">
+                    <h5 style="text-align: center; margin-bottom: 20px;">Metrics</h5>
+                    <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
+                  </div>
+                </div>
               </div>
-              <div class="col-7" style="padding: 20px;">
-                <h5 style="text-align: center;">Metrics</h5>
-                <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-
-      <div class="row">
-        <div class="col-md-12 offset-md-12">
-          <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'mrnn'" @submit.prevent="submitFormCustom" >
-            <div class="row">
-              <div class="col-5" style="padding: 40px;">
-                <h5 style="text-align: center;">Optimal Parameters</h5>
-
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                  <tr>
-                    <th scope="col" style="width: 50%">Parameter</th>
-                    <th scope="col" style="width: 50%">Value</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>Learning Rate</td>
-                    <td>{{ parseFloat(learningRate).toFixed(6) }}</td>
-                  </tr>
-                  <tr>
-                    <td>Hidden Dimension Size</td>
-                    <td>{{ hiddenDim }}</td>
-                  </tr>
-                  <tr>
-                    <td>Number of Iterations</td>
-                    <td>{{ iterations }}</td>
-                  </tr>
-                  <tr>
-                    <td>Keep Rate</td>
-                    <td>{{ parseFloat(keepProb).toFixed(4) }}</td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="col-7" style="padding: 20px;">
-                <h5 style="text-align: center;">Metrics</h5>
-                <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
+              <div class="col-md-5" style="padding: 20px; text-align: center; margin-left: 5%;">
+                <metrics2-kiviat-display v-if="imputedData" :metrics="metrics" style="height: 100%;"></metrics2-kiviat-display>
               </div>
             </div>
           </form>
@@ -189,11 +223,10 @@
       <highcharts v-if="!imputedData"  :options="chartOptionsOriginal"></highcharts>
 
     </div>
-    <div class="col-lg-2" style="margin-top: 50px">
+    <div class="col-lg-2" style="margin-top: 80px">
       <form @submit.prevent="submitForm" class="sidebar me-3">
 
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
-        <normalization-toggle v-model="normalizationMode"></normalization-toggle>
         <algorithm-choice v-model="algorithmChoice"  @submit.prevent="submitFormCustom"  />
 
         <optimization-select v-model="optimizationSelect" :natehidden=nate_hidden @parametersChanged="handleParametersChanged"/>
@@ -206,8 +239,11 @@
 
 
     <form ref="ref_reload" @submit.prevent="submitForm">
-      <div class="justify-content-right" style="padding: 10px; position: absolute; z-index: 100; right: 0; top: 60px;">
-        <button type="submit" id="delta_reset" class="btn align-center" style="background-color: #f0f0f0; padding: 10px;">
+      <div class="justify-content-right" style="padding: 10px; position: absolute; z-index: 200; right: 60px; top: 68px;">
+        <normalization-toggle v-model="normalizationMode" ></normalization-toggle>
+      </div>
+      <div class="justify-content-right" style="padding: 10px; position: absolute; z-index: 100; right: 0px; top: 63px;">
+        <button type="submit" id="delta_reset" class="btn align-center" style="background-color: #f0f0f0; padding: 6px;">
           <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="-2 0 24 24" style="margin-top: -2px; margin-right: 4px;">
             <path fill="currentColor" d="M2 12a9 9 0 0 0 9 9c2.39 0 4.68-.94 6.4-2.6l-1.5-1.5A6.706 6.706 0 0 1 11 19c-6.24 0-9.36-7.54-4.95-11.95C10.46 2.64 18 5.77 18 12h-3l4 4h.1l3.9-4h-3a9 9 0 0 0-18 0"/>
           </svg>
@@ -237,6 +273,7 @@ import {
 import ScenarioMissingValues from "@/views/components/ScenarioMissingValues.vue";
 import optimizationSelect from "@/views/components/OptimizationSelect.vue";
 import DataSelect from "@/views/components/DataSelect.vue";
+import Metrics2KiviatDisplay from "@/views/components/Metrics2KiviatDisplay.vue";
 
 // HighchartsBoost(Highcharts)
 
@@ -247,6 +284,7 @@ export default {
     }
   },
   components: {
+    Metrics2KiviatDisplay,
     DataSelect,
     ScenarioMissingValues,
     highcharts: Chart,
@@ -348,7 +386,7 @@ export default {
                 index,
                 data,
                 dataSelect.value,
-                currentSeriesNames[index] + " Missing values",
+                currentSeriesNames[index] + " (MV)",
                 'dash',
                 1,
                 obfuscatedColors[index]

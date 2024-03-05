@@ -22,7 +22,8 @@ export const createSeries = (index: number, data: number[], datasetSelected: str
         pointInterval: THIRTY_MINUTES,
         visible: shouldShow(index, datasetCode),
         tooltip: {
-            valueDecimals: 2
+            valueDecimals: 2,
+            fontSize:'20px'
         },
         plotOptions: {
             series: {
@@ -166,10 +167,17 @@ export const generateChartOptions = (title, seriesName) => ({
     legend: {
         showCheckbox: true,
         title: {
-            text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
+            text: '<span style="font-size: 20px; color: #666; font-weight: normal;">click on series to hide...</span>',
             style: {
                 fontStyle: 'italic'
             }
+        },
+        itemStyle: {
+            fontSize: '20px',
+            opacity: 1
+        },
+        itemHiddenStyle: {
+            opacity: 0.5 // Set the opacity for hidden legends
         },
         verticalAlign: "top"
     },
@@ -246,7 +254,7 @@ export const generateChartOptions = (title, seriesName) => ({
         pointStart: Date.UTC(2010, 1, 1),
         pointInterval: 1000 * 60 * 42, // Granularity of 42 minutes
         tooltip: {
-            valueDecimals: 2
+            valueDecimals: 2,
         },
     }],
     // plotOptions: {
@@ -277,10 +285,18 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
     legend: {
         showCheckbox: true,
         title: {
-            text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
+            text: '<span style="font-size: 16px; color: #666; font-weight: normal;">click on series to hide...</span>',
             style: {
                 fontStyle: 'italic'
             }
+        },
+        itemStyle: {
+            fontSize: '20px',
+            opacity: 1
+        },
+        itemHiddenStyle: {
+            fontStyle: 'italic',
+            opacity: 0.5 // Set the opacity for hidden legends
         },
         verticalAlign: "top"
     },
@@ -389,10 +405,18 @@ export const generateChartOptionsHeight = (title, seriesName) => ({
     legend: {
         showCheckbox: true,
         title: {
-            text: '<span style="font-size: 11px; color: #666; font-weight: normal;">(Click on series to hide)</span>',
+            text: '<span style="font-size: 16px; color: #666; font-weight: normal;">click on series to hide...</span>',
             style: {
                 fontStyle: 'italic'
             }
+        },
+        itemStyle: {
+            fontSize: '20px',
+            opacity: 1
+        },
+        itemHiddenStyle: {
+            fontStyle: 'italic',
+            opacity: 0.5 // Set the opacity for hidden legends
         },
         verticalAlign: "top"
     },
@@ -475,8 +499,8 @@ export const generateChartOptionsHeight = (title, seriesName) => ({
         pointInterval: 1000 * 60 * 42, // Granularity of 42 minutes
         tooltip: {
             valueDecimals: 2
-        }
-        //dashStyle: 'dash'
+        },
+
     }]
 });
 
