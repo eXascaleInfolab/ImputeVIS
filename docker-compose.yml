@@ -14,6 +14,12 @@ services:
       - ./Results:/Results
       - ./Utils_Thesis:/app/Utils_Thesis
       - ./Wrapper:/app/Wrapper
+
+      - ./Optimizer:/app/Optimizer
+      - ./Results:/app/Results
+      - ./Datasets:/app/Datasets
+
+
     ports:
       - "8000:8000"
     environment:
