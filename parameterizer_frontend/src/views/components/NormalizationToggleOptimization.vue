@@ -8,6 +8,10 @@
             class="btn btn-sm"
             :class="{'btn-secondary': displayMode === 'Normalized', 'btn-outline-secondary': displayMode !== 'Normalized'}"
             @click="setDisplayMode('Normalized')">Z-Score</button>
+    <button type="button"
+            class="btn btn-sm"
+            :class="{'btn-secondary': displayMode === 'MinMax', 'btn-outline-secondary': displayMode !== 'MinMax'}"
+            @click="setDisplayMode('MinMax')">Min-Max</button>
   </div>
 </template>
 

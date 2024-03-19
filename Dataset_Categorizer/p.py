@@ -79,6 +79,21 @@ def shap_tester(dataset_path: str, obfuscated_dataset_path: str, dataset: str):
     obfuscated_matrix = np.loadtxt(obfuscated_dataset_path, delimiter=' ')
     ground_truth_matrix = np.loadtxt(dataset_path)
 
+    print("\t\t\tNATERQ obfuscated_matrix Shape: ", obfuscated_matrix.shape)
+    for o in obfuscated_matrix :
+        print("\t\t\tNATERQ o Shape: ", o.shape)
+        print("\t\t\tNATERQ o : ", o)
+        print("\t\t\tNATERQ o : 166 is the number of time series")
+        break
+    print("=======================================\n\n")
+
+    print("\t\t\tNATERQ ground_truth_matrix Shape: ", ground_truth_matrix.shape)
+    for g in ground_truth_matrix :
+        print("\t\t\tNATERQ g Shape: ", g.shape)
+        print("\t\t\tNATERQ g : ", g)
+        break
+    print("=======================================\n\n")
+
     X_train = np.array(list(catch.extract_features(ground_truth_matrix, False).values()))
 
     # Sample X_test from X_train; could optionally remove those samples from X_train to avoid overfitting
@@ -184,6 +199,19 @@ def alpha_test ():
 
     # SHAP output
     print(total_weights / max(total_weights))
+
+    shap.summary_plot(shval,
+                     X_test.reshape(-1, 1),
+                     #plot_type="beeswarm",
+                     feature_names=["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5",
+                                    "Feature 6", "Feature 7", "Feature 8", "Feature 9", "Feature 10",
+                                    "Feature 11", "Feature 12"]
+                     )
+    # Adjust feature names as needed
+    #shap.force_plot(exp.expected_value, shval)
+    #shap.plots.beeswarm(shval)
+    name = "shape_"+algorithm+"_plot.png"
+    plt.savefig(name)
 
     #total_weights = [shval.T[i].mean(0) for i in range(0, len(shval[0]))]
 

@@ -100,39 +100,28 @@
             <form ref="ref_algos" @submit.prevent="submitForm">
               <div class="mt-4 me-5">
                 <label for="ref_algos" class="form-label">Select algorithm(s):</label>
-
-                <div class="row ms-2">
-                  <div class="col form-check ">
-                    <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames" checked >
-<!--                           @change="handleCheckboxChange"-->
-                    <label class="form-check-label" for="CDRec">
-                      CDRec
-                    </label>
-                  </div>
-                  <div class="col form-check ">
-                    <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames">
-<!--                           @change="handleCheckboxChange"-->
-                    <label class="form-check-label" for="IIM">
-                      IIM
-                    </label>
-                  </div>
+              <div class="row ms-2">
+                <div class="col form-check ">
+                  <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames" checked >
+                  <label class="form-check-label" for="CDRec">Matrix</label>
                 </div>
+                <div class="col form-check ">
+                  <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames">
+                  <label class="form-check-label" for="ST-MVL">Pattern</label>
+                </div>
+              </div>
                 <div class="row ms-2">
                   <div class="col form-check ">
                     <input class="form-check-input" type="checkbox" value="M-RNN" id="MRNN" v-model="checkedNames">
-<!--                           @change="handleCheckboxChange"-->
-                    <label class="form-check-label" for="MRNN">
-                      M-RNN
-                    </label>
+                    <label class="form-check-label" for="MRNN">RNNs</label>
                   </div>
+                  <!--
                   <div class="col form-check ">
-                    <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames">
-<!--                           @change="handleCheckboxChange"-->
-                    <label class="form-check-label" for="ST-MVL">
-                      ST-MVL
-                    </label>
-                  </div>
+                    <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames">
+                    <label class="form-check-label" for="IIM">Regression</label>
+                  </div> -->
                 </div>
+                <button type="submit" id="upload" class="btn btn-success" style="margin-top:6px; width:100px; ">Upload</button>
               </div>
 
 
@@ -152,7 +141,7 @@
               </div>
 
               <div class="d-flexs mt-4 me-10" >
-                <button type="submit" id="alpha_run" class="btn btn-primary" style="margin-top:36px;  width:100px; ">Run</button>
+                <button type="submit" id="alpha_run" class="btn btn-primary" style="margin-top:36px;  width:100px; ">Impute</button>
                 <button type="submit" id="delta_reset" class="btn btn-danger" style="margin-top:36px; margin-left : 10%; width:100px; ">Reset</button>
               </div>
 
