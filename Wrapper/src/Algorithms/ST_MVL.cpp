@@ -680,7 +680,7 @@ int ST_MVL::chlk(arma::vec &a, uint64_t n, uint64_t m, std::array<double, viewCo
     uint64_t i, j, k, u, v;
     if ((a[0] + 1.0 == 1.0) || (a[0] < 0.0))
     {
-        std::cout << "fail" << std::endl;
+        //std::cout << "fail" << std::endl;
         return (-2);
     }
     a[0] = sqrt(a[0]);
@@ -698,7 +698,7 @@ int ST_MVL::chlk(arma::vec &a, uint64_t n, uint64_t m, std::array<double, viewCo
         }
         if ((a[u] + 1.0 == 1.0) || (a[u] < 0.0))
         {
-            std::cout << "fail" << std::endl;
+            //std::cout << "fail" << std::endl;
             return (-2);
         }
         a[u] = sqrt(a[u]);

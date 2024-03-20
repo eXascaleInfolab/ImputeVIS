@@ -1,4 +1,6 @@
 import json
+import math
+from builtins import tuple
 
 import numpy as np
 import shap
@@ -56,7 +58,24 @@ def load_config(json_path: str, algorithm: str, dataset_name: str) -> tuple:
     return tuple(params_dict.values())
 
 
-def shap_tester(dataset_path: str, obfuscated_dataset_path: str, dataset: str):
+def shap_tester(dataset_path: str, obfuscated_dataset_path: str, dataset: str, cross_validation:int):
+    # Initialize a list to store results
+    results = []
+
+    # Call shap_tester_unity 10 times
+    for i in range(cross_validation):
+        result = shap_tester_unity(dataset_path, obfuscated_dataset_path, dataset)
+        results.append(result)
+
+    # Calculate average array
+    average_array = [sum(x) / len(results) for x in zip(*results)]
+
+    return average_array
+
+
+
+
+def shap_tester_unity(dataset_path: str, obfuscated_dataset_path: str, dataset: str):
     """
     Test SHAP on a given dataset and algorithm.
 
@@ -94,153 +113,203 @@ def shap_tester(dataset_path: str, obfuscated_dataset_path: str, dataset: str):
         break
     print("=======================================\n\n")
 
-    X_train = np.array(list(catch.extract_features(ground_truth_matrix, False).values()))
+    print("=GET EACH SERIES==================================\n\n")
+    t_obfuscated_matrix = obfuscated_matrix.T
+    t_ground_truth_matrix = ground_truth_matrix.T
 
+    print("\t\t\tNATERQ TRANSPOSE obfuscated_matrix Shape: ", t_obfuscated_matrix.shape)
+    print("\t\t\tNATERQ TRANSPOSE ground_truth_matrix Shape: ", t_ground_truth_matrix.shape)
+    print("=======================================\n\n")
+
+    print("=GET EACH FEATURES BY SERIES==================================\n\n")
+    X_train = []
+
+    for current_series in ground_truth_matrix.T :
+        X_train.append(np.array(list(catch.extract_features(current_series, False).values())))
+
+    X_train = np.array(X_train)
+
+    print("\nX_train : ", X_train.shape)
+    for x in X_train:
+        print("FEATURES : ", len(x), " = ", x)
+        break
+    print("=======================================\n\n")
+
+    print("=PREPARE TEST SET==================================\n\n")
     # Sample X_test from X_train; could optionally remove those samples from X_train to avoid overfitting
-    sample_indices = np.random.choice(X_train.shape[0], size=12, replace=False)  # Sample size of 3 is used as an example. Adjust as desired???
+
+    test_samples_limit = t_obfuscated_matrix.shape[0]//10
+
+    if test_samples_limit < 3:
+        test_samples_limit = 3
+
+    print("\ntest_samples_limit : ", test_samples_limit)
+
+    sample_indices = np.random.choice(X_train.shape[0], size=test_samples_limit, replace=False)  # Sample size of 3 is used as an example. Adjust as desired???
     X_test = X_train[sample_indices]
+
+    print("\t\t", X_test.shape)
+    for x in X_test:
+        print("TEST FEATURES : ", len(x), " = ", x)
+        break
+
+    X_train = np.delete(X_train, sample_indices, axis=0)
+    print("=======================================\n\n")
+
     total_weights_for_all_algorithms = []
 
-    print("\t\t", len(X_test))
-
-    print("\t\tNbr Algo : ", len(ALGORITHMS))
-
     for algorithm in ALGORITHMS:
+        print("\n\n\t\t===== LOOP ALGO ##############", algorithm, "####################")
 
-        print("####################", algorithm, "####################")
-
+        print("\t\t===== LOOP ALGO ### COMPUTE RMSE BY SERIES ==================================\n\n")
         config = load_config("../Optimizer/results/best_params_algorithm.json", algorithm, dataset)
 
-        # Assuming evaluate_params provides RMSE as per its signature.
-        my_rmse = Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config, selected_metrics=["rmse"])
+        rmse_errors = []  # Assuming evaluate_params provides RMSE as per its signature.
 
-        print("\n\t\tmy_rmse****** : ", my_rmse)
+        for i in range(0, t_ground_truth_matrix.shape[0]):
+            #print("\t\t\t\t# INNER LOOP ALGO ", i, " ### COMPUTE RMSE BY SERIES ==================================")
 
-        y_train = np.array(my_rmse["rmse"])
-        #y_train = X_train
+            ground_truth_series, obfuscated_series = [], []
 
-        # X_train = np.delete(X_train, sample_indices, axis=0)
-        # y_train = np.delete(y_train, sample_indices, axis=0)
+            ground_truth_series.append(t_ground_truth_matrix[i])
+            obfuscated_series.append(t_obfuscated_matrix[i])
 
-        print("\n\t\tX_train SHAPE : ", X_train.shape)
-        print("\n\t\tX_test SHAPE : ", X_test.shape)
-        print("\n\t\tX_train : ", *X_train)
-        print("\n\t\ty_train : ", y_train, "\n")
+            obfuscated_series = np.array(obfuscated_series)
+            ground_truth_series = np.array(ground_truth_series)
+
+            #print("\t\t\t\t# INNER LOOP ALGO ### ground_truth_series :", ground_truth_series.shape)
+            #print("\t\t\t\t# INNER LOOP ALGO ### obfuscated_series :", obfuscated_series.shape)
+
+            rmse_errors.append(Optimizer.evaluate_params.evaluate_params(ground_truth_series,
+                                                                        obfuscated_series,
+                                                                        algorithm, config,
+                                                                        selected_metrics=["rmse"]))
+
+        rmse_errors = np.array(rmse_errors)
+
+        print("\n\t\trmse_errors  : ", rmse_errors.shape)
+        for e in rmse_errors:
+            print("\n\t\trmse_errors  : ", e)
+            break
+
+
+        print("\t\t===== LOOP ALGO ### SET LABEL TRAIN (RMSE) BY SERIES ==================================\n\n")
+
+        y_train = []
+
+        for e in rmse_errors:
+            y_train.append(e["rmse"])
+        y_train = np.array(y_train)
+
+        print("\n\t\ty_train  : ", y_train.shape)
+
+
+        y_train = np.delete(y_train, sample_indices, axis=0)
+        print("\t\t=======================================\n\n")
+
+        print("\t\t===== LOOP ALGO ### COMPUTE THE REGRESSION MODEL ==================================\n\n")
+
+        print("\n\t\tX_train  : ", X_train.shape)
+        print("\n\t\tX_test  : ", X_test.shape)
+        print("\n\t\ty_train  : ", y_train.shape)
 
         # Train a random forest regressor
         model = RandomForestRegressor()
-        model.fit(X_train.reshape(-1, 1), np.repeat(y_train, 22)) #np.repeat(y_train, 22))
+        model.fit(X_train, y_train) #np.repeat(y_train, 22))
         # or model.fit(X_train.reshape(1, -1), [y_train])
+        print("\t\t=======================================\n\n")
 
+        print("\t\t===== LOOP ALGO ### COMPUTE SHAP VALUES ==================================\n\n")
         # Use SHAP to explain the test set
-        #exp = shap.KernelExplainer(model.predict, X_test.reshape(-1, 1))
-        exp = shap.Explainer(model)
-        shval = exp.shap_values(X_test.reshape(-1, 1))
+        exp = shap.KernelExplainer(model.predict, X_test)
+        #exp = shap.Explainer(model)
+        shval = exp.shap_values(X_test)
+        #shap_values = exp(X_test)
 
         print("shval", *shval, "\n\n")
+        print("\t\t=======================================\n\n")
 
-        shap.summary_plot(shval,
-                         X_test.reshape(-1, 1),
-                         #plot_type="beeswarm",
-                         feature_names=["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5",
-                                        "Feature 6", "Feature 7", "Feature 8", "Feature 9", "Feature 10",
-                                        "Feature 11", "Feature 12"]
-                         )
-        # Adjust feature names as needed
-        #shap.force_plot(exp.expected_value, shval)
-        #shap.plots.beeswarm(shval)
-        name = "shape_summary_"+algorithm+"_plot.png"
-        plt.savefig(name)
 
+        print("\t\t===== LOOP ALGO ### COMPUTE PLOTS ==================================\n\n")
+
+
+        shap.summary_plot(shval, X_test, plot_size=(25, 10), feature_names=FEATURES)
+        alpha = "./figs/"+dataset+"_"+algorithm+"_shap_summary_plot.png"
+        plt.savefig(alpha)
+        plt.close()
+
+        #shap.plots.beeswarm(shap_values, plot_size=(25,10), order=shap_values.abs.max(0))
+        #beta = "./figs/"+dataset+"_"+algorithm+"_shap_beeswarm_plot.png"
+        #plt.savefig(beta)
+
+        #shap.plots.bar(shap_values, max_display=12)
+        #gamma = "./figs/"+dataset+"_"+algorithm+"_shap_bar_plot.png"
+        #plt.savefig(gamma)
+
+        #shap.plots.waterfall(shap_values[0])
+        #delta = "./figs/"+dataset+"_"+algorithm+"_shap_waterfall_plot.png"
+        #plt.savefig(delta)
+        print("\t\t=======================================\n\n")
+
+
+        print("\t\t# LOOP ALGO ### COMPUTE THE TOTAL WEIGHTS ==================================\n\n")
         # Aggregate shapely values per element of X_test
         total_weights = [np.abs(shval.T[i]).mean(0) for i in range(len(shval[0]))]
-        total_weights_for_all_algorithms = np.append(total_weights_for_all_algorithms, total_weights)
+
+        # Convert to percentages
+        total_sum = np.sum(total_weights)
+        total_weights_percent = [(weight / total_sum) for weight in total_weights]
+
+        total_weights_for_all_algorithms = np.append(total_weights_for_all_algorithms, total_weights_percent)
 
     return total_weights_for_all_algorithms
 
 
-def myfunc(a):
-    x = a[0]
-    y = a[1]
-    return x + y;
-    #return x * x - y * y * y * y;
-
-def alpha_test ():
-
-    #X_train, X_test, y_train, y_test
-
-    # features, or other "arguments" for the "function" SHAP is studying
-    X_train = np.random.rand(200,2)
-
-    # the output of the function
-    y_train = np.array([myfunc(x) for x in X_train])
-
-    # same as X_train, can be either subset of X_train or separate
-    X_test = np.random.rand(101,2)
-
-    # regression model can be used if the output is a numerical value and cannot be modeled as a standard sklearn classifier/regressor/etc
-    model = RandomForestRegressor()
-    model.fit(X_train, y_train)
-
-    # launch the explainer of the test set
-    #exp = shap.Explainer(model, X_test)
-    exp = shap.KernelExplainer(model.predict, X_test)
-    # obtain shapely values from the same test set, preferably not too large
-    shval = exp.shap_values(X_test)
-
-    print(len(shval))
-    print(len(shval[0]))
-
-    #print(shval)
-
-    # aggregate shapely values per element of X_test fed to exp.shap_values() into a single array with just one value per function argument (=feature)
-    # use np.abs() to measure impact regardless of the numerical direction of the output (default)
-    total_weights = [np.abs(shval.T[i]).mean(0) for i in range(0, len(shval[0]))]
-
-    # SHAP output
-    print(total_weights / max(total_weights))
-
-    shap.summary_plot(shval,
-                     X_test.reshape(-1, 1),
-                     #plot_type="beeswarm",
-                     feature_names=["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5",
-                                    "Feature 6", "Feature 7", "Feature 8", "Feature 9", "Feature 10",
-                                    "Feature 11", "Feature 12"]
-                     )
-    # Adjust feature names as needed
-    #shap.force_plot(exp.expected_value, shval)
-    #shap.plots.beeswarm(shval)
-    name = "shape_"+algorithm+"_plot.png"
-    plt.savefig(name)
-
-    #total_weights = [shval.T[i].mean(0) for i in range(0, len(shval[0]))]
-
-    # SHAP output
-    #print(total_weights)
-
 
 datasets = [
-    # 'bafu',
+    'bafu',
     'chlorine',
-    # 'climate',
-    # 'drift',
-    # 'meteo'
+    'climate',
+    #'drift',
+    'meteo'
 ]
 
 dataset_files = [
-    # 'BAFU',
+    'BAFU',
     'cl2fullLarge',
-    # 'climate',
-    # 'batch10',
-    # 'meteo_total'
+    'climate',
+    #'batch10',
+    'meteo_total'
 ]
 
 ALGORITHMS = ["cdrec",
               "iim",
-              # "mrnn",
-              "stmvl"
+              #"mrnn",
+              #"stmvl"
             ]
 
+FEATURES = ["Longest stretch of above-mean values",
+            "Longest stretch of decreasing values",
+            "Transition matrix column variance",
+            "Proportion of high incremental changes in the series",
+            "5-bin histogram mode",
+            "10-bin histogram mode",
+            "Positive outlier timing",
+            "Negative outlier timing",
+            "Goodness of exponential fit to embedding distance distribution",
+            "Detrended fluctuation analysis (low-scale scaling)",
+            "Rescaled range fluctuation analysis (low-scale scaling)",
+            "First 1/e crossing of the ACF",
+            "First minimum of the ACF",
+            "Time reversibility",
+            "Histogram-based automutual information (lag 2, 5 bins)",
+            "First minimum of the AMI function",
+            "Change in autocorrelation timescale after incremental differencing",
+            "Power in the lowest 20% of frequencies",
+            "Centroid frequency",
+            "Wang's periodicity metric",
+            "Error of 3-point rolling mean forecast",
+            "Entropy of successive pairs in symbolized series"]
 
 for dataset, data_file in zip(datasets, dataset_files):
     raw_file_path = f"../Datasets/{dataset}/raw_matrices/{data_file}_eighth.txt"
@@ -250,9 +319,39 @@ for dataset, data_file in zip(datasets, dataset_files):
         raw_file_path = f"../Datasets/{dataset}/drift10/raw_matrices/{data_file}_eighth.txt"
         obf_file_path = f"../Datasets/{dataset}/obfuscated/{data_file}_eighth_obfuscated_10.txt"
 
-    shap_values = shap_tester(raw_file_path, obf_file_path, dataset)
+    shap_values = shap_tester(raw_file_path, obf_file_path, dataset, 1)
 
-    print(dataset + ": ",  len(shap_values), " - ", str(shap_values))
+    print(dataset + ": ",  len(shap_values), " - ", str(shap_values), "\n\n")
 
-    for i, algorithm in enumerate(ALGORITHMS):
-        print()
+    result_display = []
+    for x, sv in enumerate(shap_values):
+        if x < 22 :
+            result_display.append((x, ALGORITHMS[0], sv))
+        elif 44 > x >= 22:
+            result_display.append((x, ALGORITHMS[1], sv))
+        else:
+            result_display.append((x, ALGORITHMS[2], sv))
+
+    result_display = sorted(result_display, key=lambda tup: (tup[1], tup[2]), reverse=True)
+
+    inc = 0
+    for (id, algo, value) in result_display:
+        if math.isnan(value) == False:
+            p = int(value*100)
+        else:
+            p = value
+        m = id%22
+        inc = inc + 1
+
+        if p < 10:
+            if m < 10:
+                print(dataset, " || ", algo, " >> ", p ,"%  of impact for feature (",m, ") : ", FEATURES[m])
+            else:
+                print(dataset, " || ", algo, " >> ", p ,"%  of impact for feature (",m,"): ", FEATURES[m])
+        else:
+            if m < 10:
+                print(dataset, " || ", algo, " >> ", p, "% of impact for feature (", m, ") : ", FEATURES[m])
+            else:
+                print(dataset, " || ", algo, " >> ", p, "% of impact for feature (", m,"): ", FEATURES[m])
+        if inc%22 == 0:
+            print("\n")
