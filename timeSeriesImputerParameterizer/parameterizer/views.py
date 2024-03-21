@@ -10,6 +10,7 @@ import sys
 import numpy as np
 
 import Wrapper.algo_collection
+from Dataset_Categorizer.shap_explainer import shap_runner
 
 sys.path.insert(0, os.path.abspath(".."))
 from Utils_Thesis import utils, statistics
@@ -517,3 +518,30 @@ def process_matrix(matrix, data):
                 transposed_list[i][j] = None
 
     return transposed_list
+
+
+@csrf_exempt
+def shap_call_explainer(request):
+    if request.method == 'POST':
+        print("NATERQ PRINT request:", request)
+
+        data = load_from_request(request)
+        print("NATERQ PRINT data:", data)
+
+        data_value = data[0]['data']
+        data_set_value = data[0]['data_set']
+
+        print("NATERQ PRINT data_value:", data_value)
+        print("NATERQ PRINT data_set_value:", data_set_value)
+
+        shap_values = shap_runner([data_value], [data_set_value], ["cdrec"])
+        
+        print("NATERQ PRINT data_set_value: /||||||||||||||||||||||||||||||||||||||||||||||||||||", shap_values)
+
+        if shap_values is not None:
+            # Convert shap_values to dictionary
+            shap_values_dict = {"shap_values": shap_values}
+            # Serialize dictionary to JSON and set safe=False
+            return JsonResponse(shap_values_dict, status=200, safe=False)
+        else:
+            return JsonResponse({'message': 'Invalid request'}, status=400)

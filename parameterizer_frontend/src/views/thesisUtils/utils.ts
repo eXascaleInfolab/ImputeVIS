@@ -186,7 +186,7 @@ export const generateChartOptions = (title, seriesName) => ({
     },
     colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
     chart: {
-        height: 1000,
+        height: 900,
         type: 'line',
         zoomType: 'x',
         panning: true,

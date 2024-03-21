@@ -18,6 +18,7 @@ services:
       - ./Optimizer:/app/Optimizer
       - ./Results:/app/Results
       - ./Datasets:/app/Datasets
+      - ./parameterizer_frontend:/app/parameterizer_frontend
 
 
     ports:

@@ -44,7 +44,7 @@
             </div>
           </li>
 
-
+          <!--
           <li class="nav-item dropdown text-center me-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-algorithm" role="button"
                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,6 +57,7 @@
               <RouterLink class="dropdown-item" to="/datasets/categorizer">OLD : FE - Select Datasets</RouterLink>
             </div>
           </li>
+          -->
 
 
           <li class="nav-item ms-1 text-center">

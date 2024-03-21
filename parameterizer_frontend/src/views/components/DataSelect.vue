@@ -35,9 +35,14 @@
           <!--      <option value="meteo_total_quarter">Meteo 1/4 Size</option>-->
           <!--      <option value="meteo_total_sixth">Meteo 1/6 Size</option>-->
           <option value="meteo_total_eighth">Meteo</option>
-          <option value="upload">Upload...</option>
+          <option value="upload" @click="uploadFile" >Upload...</option>
         </select>
       </div>
+
+       <div v-if="selectedData === 'upload'">
+          <input type="file" ref="fileInput" @change="uploadFile" style="margin-top:6px; width:100px;  ">
+       </div>
+
     </div>
   </div>
 </template>
@@ -126,6 +131,17 @@ export default defineComponent({
       },
       set: function (newValue) {
         this.$emit('update:modelValue', newValue);
+      }
+    }
+  },
+  methods: {
+    uploadFile() {
+      const file = this.$refs.fileInput.files[0];
+      if (file) {
+        // Here you can write code to upload the file
+        console.log('File uploaded:', file.name);
+      } else {
+        console.log('Please select a file');
       }
     }
   },

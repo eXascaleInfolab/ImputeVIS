@@ -98,30 +98,31 @@
 
 
             <form ref="ref_algos" @submit.prevent="submitForm">
-              <div class="mt-4 me-5">
-                <label for="ref_algos" class="form-label">Select algorithm(s):</label>
-              <div class="row ms-2">
+              <div class="mt-4 me-6">
+                <label for="ref_algos" class="form-label">Imputation Family :</label>
+              <div class="row ms-1">
                 <div class="col form-check ">
                   <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames" checked >
-                  <label class="form-check-label" for="CDRec">Matrix</label>
+                  <label class="form-check-label" for="CDRec">Matrix-based</label>
                 </div>
                 <div class="col form-check ">
                   <input class="form-check-input" type="checkbox" value="ST-MVL" id="ST-MVL" v-model="checkedNames">
-                  <label class="form-check-label" for="ST-MVL">Pattern</label>
+                  <label class="form-check-label" for="ST-MVL">Pattern-based</label>
                 </div>
               </div>
-                <div class="row ms-2">
+              <div v-if="pre_implemented == true">
+                <div class="row ms-1">
                   <div class="col form-check ">
                     <input class="form-check-input" type="checkbox" value="M-RNN" id="MRNN" v-model="checkedNames">
-                    <label class="form-check-label" for="MRNN">RNNs</label>
+                    <label class="form-check-label" for="MRNN">NNs-based</label>
                   </div>
-                  <!--
                   <div class="col form-check ">
                     <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames">
-                    <label class="form-check-label" for="IIM">Regression</label>
-                  </div> -->
+                    <label class="form-check-label" for="IIM">Regression-based</label>
+                  </div>
                 </div>
-                <button type="submit" id="upload" class="btn btn-success" style="margin-top:6px; width:100px; ">Upload</button>
+              </div>
+                <button type="submit" id="upload_algo" class="btn btn-success" style="margin-top:6px; width:100px; ">Upload</button>
               </div>
 
 
@@ -145,6 +146,12 @@
                 <button type="submit" id="delta_reset" class="btn btn-danger" style="margin-top:36px; margin-left : 10%; width:100px; ">Reset</button>
               </div>
 
+              <div class="popup" id="popup">
+                <label><input type="checkbox" id="pre_implemented_checkbox">Pre-implemented</label><br>
+                <label><input type="checkbox" id="open_file_checkbox">Open-file</label><br>
+                <button type="submit" id="validate" className="btn btn-success" style="margin-top:25px; width:100px; ">Validate</button>
+              </div>
+
             </form>
           </div>
         </div>
@@ -153,7 +160,27 @@
   </main>
 </template>
 
+<style>
+  .popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 40px; /* Increase padding for larger popup */
+    border: 2px solid #ccc; /* Increase border size for larger popup */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4); /* Increase shadow for larger popup */
+    z-index: 9999;
+    font-size: 25px; /* Increase font size */
+  }
 
+  /* Style for checkboxes */
+  .popup input[type="checkbox"] {
+    transform: scale(2); /* Increase size of checkboxes */
+    margin: 30px; /* Increase margin between checkbox and label */
+  }
+</style>
 
 <script lang="ts">
 import {ref, watch, reactive, shallowReactive} from 'vue';
@@ -242,87 +269,22 @@ export default {
     let groundtruthMatrix = [];
     const checkedNames = ref([]);
     const imputedData = ref(false); // Whether imputation has been carried out
+    const pre_implemented = ref(false);
 
 
     const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
 
     const fetchData = async () => {
-      try {
-        loadingResults.value = true;
-        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-        const response = await axios.post('http://localhost:8000/api/fetchData/',
-            {
-              data_set: dataSet,
-              normalization: normalizationMode.value
-            },
-            {
-              headers: {
-                'Content-Type': 'application/text',
-              }
-            }
-        );
-        chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-        // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
-        clearErrorMetrics();
 
-        obfuscatedMatrix = response.data.matrix;
-        groundtruthMatrix = response.data.groundtruth;
-        obfuscatedMatrix.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(
-                index,
-                data,
-                dataSelect.value,
-                currentSeriesNames[index],
-                obfuscatedColors[index]
-            );
-          } else {
-            chartOptionsOriginal.value.series[index] = createSeries(
-                index,
-                data,
-                dataSelect.value,
-                undefined,
-                obfuscatedColors[index]
-            );
-          }
-        });
-        if(missingRate.value != "0")
-        {
-          // Adding ground truth series to the chart
-          groundtruthMatrix.forEach((data: number[], index: number) => {
-            chartOptionsOriginal.value.series.push(createSeries(
-                index,
-                data,
-                dataSelect.value,
-                currentSeriesNames[index] + " (MV)",
-                'dash',
-                1,
-                obfuscatedColors[index]
-            ));
-          });
-        }
+      if (dataSelect.value !== "upload") {
 
-      }
-      catch (error)
-      {
-        console.error(error);
-      }
-      finally
-      {
-        loadingResults.value = false;
-      }
-    }
-
-    const fetchParameters = async () => {
-      if (selectedParamOption.value !== 'default') {
         try {
-          const dataAbbreviation = getCategory(dataSelect.value);
+          loadingResults.value = true;
           let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-          const response = await axios.post('http://localhost:8000/api/fetchParameters/',
+          const response = await axios.post('http://localhost:8000/api/fetchData/',
               {
-                data_set: dataAbbreviation,
-                normalization: normalizationMode.value,
-                param_options: selectedParamOption.value
+                data_set: dataSet,
+                normalization: normalizationMode.value
               },
               {
                 headers: {
@@ -330,54 +292,121 @@ export default {
                 }
               }
           );
-          const parameters = response.data.params;
+          chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
+          // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+          clearErrorMetrics();
 
-          // CDRec Parameters
-          truncationRank = parameters['cdrec'][dataAbbreviation].best_params.rank || truncationRank;
-          epsilon = parameters['cdrec'][dataAbbreviation].best_params.eps || epsilon;
-          iterations = parameters['cdrec'][dataAbbreviation].best_params.iters || iterations;
+          obfuscatedMatrix = response.data.matrix;
+          groundtruthMatrix = response.data.groundtruth;
+          obfuscatedMatrix.forEach((data: number[], index: number) => {
+            if (currentSeriesNames.length > 0) {
+              chartOptionsOriginal.value.series[index] = createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  currentSeriesNames[index],
+                  obfuscatedColors[index]
+              );
+            } else {
+              chartOptionsOriginal.value.series[index] = createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  undefined,
+                  obfuscatedColors[index]
+              );
+            }
+          });
+          if (missingRate.value != "0") {
+            // Adding ground truth series to the chart
+            groundtruthMatrix.forEach((data: number[], index: number) => {
+              chartOptionsOriginal.value.series.push(createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  currentSeriesNames[index] + " (MV)",
+                  'dash',
+                  1,
+                  obfuscatedColors[index]
+              ));
+            });
+          }
 
-          // IIM Parameters
-          numberSelect = parameters['iim'][dataAbbreviation].best_params.learning_neighbours || numberSelect;
-          // typeSelect = parameters['iim'][dataAbbreviation].best_params.type_select || typeSelect;
-
-          // M-RNN Parameters
-          learningRate = parameters['mrnn'][dataAbbreviation].best_params.learning_rate || learningRate;
-          hiddenDim = parameters['mrnn'][dataAbbreviation].best_params.hidden_dim || hiddenDim;
-          iterationsMRNN = parameters['mrnn'][dataAbbreviation].best_params.iterations || iterationsMRNN;
-          keepProb = parameters['mrnn'][dataAbbreviation].best_params.keep_prob || keepProb;
-          // seqLen = parameters['iim'][dataAbbreviation].best_params.seq_len || seqLen;
-
-          // ST-MVL Parameters
-          windowSize = parameters['stmvl'][dataAbbreviation].best_params.window_size || windowSize;
-          gamma = parameters['stmvl'][dataAbbreviation].best_params.gamma || gamma;
-          alpha = parameters['stmvl'][dataAbbreviation].best_params.alpha || alpha;
-
-          // }
         } catch (error) {
           console.error(error);
+        } finally {
+          loadingResults.value = false;
         }
-      } else {
-        // Set parameters to default (author's choice)
-        truncationRank = String(CDREC_DEFAULTS.reductionValue);
-        epsilon = String(CDREC_DEFAULTS.epsilon);
-        iterations = CDREC_DEFAULTS.iterations;
+      }
+    }
 
-        // IIM Parameters
-        numberSelect = IIM_DEFAULTS.learningNeighbors;
-        // typeSelect.value = 'mean';
+    const fetchParameters = async () => {
+      if (dataSelect.value !== "upload") {
+        if (selectedParamOption.value !== 'default') {
+          try {
+            const dataAbbreviation = getCategory(dataSelect.value);
+            let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+            const response = await axios.post('http://localhost:8000/api/fetchParameters/',
+                {
+                  data_set: dataAbbreviation,
+                  normalization: normalizationMode.value,
+                  param_options: selectedParamOption.value
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/text',
+                  }
+                }
+            );
+            const parameters = response.data.params;
 
-        // M-RNN Parameters
-        learningRate = MRNN_DEFAULTS.learningRate;
-        hiddenDim = MRNN_DEFAULTS.hiddenDim;
-        iterationsMRNN = MRNN_DEFAULTS.iterations;
-        keepProb = MRNN_DEFAULTS.keepProb;
-        // seqLen.value = 7;
+            // CDRec Parameters
+            truncationRank = parameters['cdrec'][dataAbbreviation].best_params.rank || truncationRank;
+            epsilon = parameters['cdrec'][dataAbbreviation].best_params.eps || epsilon;
+            iterations = parameters['cdrec'][dataAbbreviation].best_params.iters || iterations;
 
-        // ST-MVL Parameters
-        windowSize = String(STMVL_DEFAULTS.windowSize);
-        gamma = String(STMVL_DEFAULTS.gamma);
-        alpha = String(STMVL_DEFAULTS.alpha);
+            // IIM Parameters
+            numberSelect = parameters['iim'][dataAbbreviation].best_params.learning_neighbours || numberSelect;
+            // typeSelect = parameters['iim'][dataAbbreviation].best_params.type_select || typeSelect;
+
+            // M-RNN Parameters
+            learningRate = parameters['mrnn'][dataAbbreviation].best_params.learning_rate || learningRate;
+            hiddenDim = parameters['mrnn'][dataAbbreviation].best_params.hidden_dim || hiddenDim;
+            iterationsMRNN = parameters['mrnn'][dataAbbreviation].best_params.iterations || iterationsMRNN;
+            keepProb = parameters['mrnn'][dataAbbreviation].best_params.keep_prob || keepProb;
+            // seqLen = parameters['iim'][dataAbbreviation].best_params.seq_len || seqLen;
+
+            // ST-MVL Parameters
+            windowSize = parameters['stmvl'][dataAbbreviation].best_params.window_size || windowSize;
+            gamma = parameters['stmvl'][dataAbbreviation].best_params.gamma || gamma;
+            alpha = parameters['stmvl'][dataAbbreviation].best_params.alpha || alpha;
+
+            // }
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          // Set parameters to default (author's choice)
+          truncationRank = String(CDREC_DEFAULTS.reductionValue);
+          epsilon = String(CDREC_DEFAULTS.epsilon);
+          iterations = CDREC_DEFAULTS.iterations;
+
+          // IIM Parameters
+          numberSelect = IIM_DEFAULTS.learningNeighbors;
+          // typeSelect.value = 'mean';
+
+          // M-RNN Parameters
+          learningRate = MRNN_DEFAULTS.learningRate;
+          hiddenDim = MRNN_DEFAULTS.hiddenDim;
+          iterationsMRNN = MRNN_DEFAULTS.iterations;
+          keepProb = MRNN_DEFAULTS.keepProb;
+          // seqLen.value = 7;
+
+          // ST-MVL Parameters
+          windowSize = String(STMVL_DEFAULTS.windowSize);
+          gamma = String(STMVL_DEFAULTS.gamma);
+          alpha = String(STMVL_DEFAULTS.alpha);
+        }
       }
     }
 
@@ -405,6 +434,9 @@ export default {
     }
 
     const handleCheckboxChange = async () => {
+
+    if (dataSelect.value !== "upload") {
+
       // Clear the existing series
       // chartOptionsImputed.value.series = [];
       loadingResults.value = true;
@@ -414,17 +446,45 @@ export default {
       await fetchParameters();
       clearErrorMetrics();
 
-      try
-      {
-        for (let checkedName of checkedNames.value)
-        {
-          const displayImputation =  true
+      try {
+        for (let checkedName of checkedNames.value) {
+          const displayImputation = true
           let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
 
-          if (checkedName.toLowerCase() === 'cdrec')
-          {
-            if (!fetchedData[checkedName])
-            {
+          obfuscatedMatrix.forEach((data: number[], index: number) => {
+            if (currentSeriesNames.length > 0) {
+              chartOptionsImputed.value.series[index] = createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  currentSeriesNames[index],
+                  obfuscatedColors[index]
+              );
+            } else {
+              chartOptionsImputed.value.series[index] = createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  undefined,
+                  obfuscatedColors[index]
+              );
+            }
+          });
+          // Adding ground truth series to the chart
+          groundtruthMatrix.forEach((data: number[], index: number) => {
+            chartOptionsImputed.value.series.push(createSeries(
+                index,
+                data,
+                dataSelect.value,
+                currentSeriesNames[index] + " (MV)",
+                'dash',
+                1,
+                obfuscatedColors[index]
+            ));
+          });
+
+          if (checkedName.toLowerCase() === 'cdrec') {
+            if (!fetchedData[checkedName]) {
               const response = await axios.post('http://localhost:8000/api/cdrec/',
                   {
                     data_set: dataSet,
@@ -451,33 +511,24 @@ export default {
             const newSeriesData = [];
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               //The push should theoretically ensure that we are just adding
-              if (currentSeriesNames.length > 0 && currentSeriesNames[index])
-              {
-                if (displayImputation)
-                {
+
+
+              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
+                if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
-                }
-                else
-                {
+                } else {
                   chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
                 }
-              }
-              else
-              {
-                if (displayImputation)
-                {
+              } else {
+                if (displayImputation) {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "CDRec: " + index));
-                }
-                else
-                {
+                } else {
                   chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
                 }
               }
             });
             imputedData.value = true;
-          }
-          else if (checkedName.toLowerCase() == 'iim')
-          {
+          } else if (checkedName.toLowerCase() == 'iim') {
             if (!fetchedData[checkedName]) {
               const formattedAlgCode = `iim ${numberSelect}${typeSelect}`;
               const response = await axios.post('http://localhost:8000/api/iim/',
@@ -516,9 +567,7 @@ export default {
               }
             });
             imputedData.value = true;
-          }
-          else if (checkedName.toLowerCase() === 'm-rnn')
-          {
+          } else if (checkedName.toLowerCase() === 'm-rnn') {
             if (!fetchedData[checkedName]) {
               const response = await axios.post('http://localhost:8000/api/mrnn/',
                   {
@@ -560,9 +609,7 @@ export default {
               }
             });
             imputedData.value = true;
-          }
-          else if (checkedName.toLowerCase() === 'st-mvl')
-          {
+          } else if (checkedName.toLowerCase() === 'st-mvl') {
             if (!fetchedData[checkedName]) {
               const response = await axios.post('http://localhost:8000/api/stmvl/',
                   {
@@ -601,22 +648,45 @@ export default {
                 }
               }
             });
+
             imputedData.value = true;
           }
         }
-      }
-      catch (error)
-      {
+
+
+      } catch (error) {
         console.error(error);
-      }
-      finally
-      {
+      } finally {
         loadingResults.value = false;
       }
+    }
     };
 
     const chartOptionsOriginal = ref(generateChartOptions('', 'Data'));
     const chartOptionsImputed = ref(generateChartOptions('', 'Data'));
+
+
+    function showPopup()
+    {
+      document.getElementById('popup').style.display = 'block';
+    }
+
+    function closePopup()
+    {
+        document.getElementById('popup').style.display = 'none';
+    }
+
+    function printCheckedValues()
+    {
+
+        var preImplementedChecked = document.getElementById('pre_implemented_checkbox').checked;
+        var openFileChecked = document.getElementById('open_file_checkbox').checked;
+
+        console.log("Pre-implemented checked:", preImplementedChecked);
+        console.log("Open-file checked:", openFileChecked);
+
+        pre_implemented.value = preImplementedChecked
+    }
 
 
     function clearFetchedData()
@@ -654,11 +724,19 @@ export default {
         clearErrorMetrics();
         await handleCheckboxChange();
       }
+      else if (document.activeElement.id === "upload_algo")
+      {
+        showPopup();
+      }
+       else if (document.activeElement.id === "validate")
+      {
+        printCheckedValues();
+        closePopup();
+      }
       else if (document.activeElement.id === "delta_reset")
       {
         location.reload();
       }
-      await handleCheckboxChange();
     }
 
 
@@ -708,6 +786,8 @@ export default {
     // watch(selectedParamOption, handleParamSelectChange, {immediate: true});
 
 
+
+
     return {
       submitForm,
       // Error Metrics
@@ -743,10 +823,13 @@ export default {
       handleCheckboxChange,
       // handleParamSelectChange,
       selectedParamOption,
-      loadingResults
+      loadingResults,
+      pre_implemented
     }
   }
 }
+
+
 </script>
 <style scoped>
 .sidebar {

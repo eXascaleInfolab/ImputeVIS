@@ -87,69 +87,65 @@ export default {
     const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
 
     const fetchData = async () => {
-      try
-      {
-        loadingResults.value = true;
-        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-        const response = await axios.post('http://localhost:8000/api/fetchData/',
-            {
-              data_set: dataSet,
-              normalization: normalizationMode.value
-            },
-            {
-              headers: {
-                'Content-Type': 'application/text',
+      if (dataSelect.value !== "upload") {
+        try {
+          loadingResults.value = true;
+          let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+          const response = await axios.post('http://localhost:8000/api/fetchData/',
+              {
+                data_set: dataSet,
+                normalization: normalizationMode.value
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/text',
+                }
               }
+          );
+
+          chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
+
+          obfuscatedMatrix = response.data.matrix;
+          groundtruthMatrix = response.data.groundtruth;
+          obfuscatedMatrix.forEach((data: number[], index: number) => {
+            if (currentSeriesNames.length > 0) {
+              chartOptionsOriginal.value.series[index] = createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  currentSeriesNames[index],
+                  obfuscatedColors[index]
+              );
+            } else {
+              chartOptionsOriginal.value.series[index] = createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  undefined,
+                  obfuscatedColors[index]
+              );
             }
-        );
-
-        chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-
-        obfuscatedMatrix = response.data.matrix;
-        groundtruthMatrix = response.data.groundtruth;
-        obfuscatedMatrix.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(
-                index,
-                data,
-                dataSelect.value,
-                currentSeriesNames[index],
-                obfuscatedColors[index]
-            );
-          } else {
-            chartOptionsOriginal.value.series[index] = createSeries(
-                index,
-                data,
-                dataSelect.value,
-                undefined,
-                obfuscatedColors[index]
-            );
-          }
-        });
-        if(missingRate.value != "0")
-        {
-          // Adding ground truth series to the chart
-          groundtruthMatrix.forEach((data: number[], index: number) => {
-            chartOptionsOriginal.value.series.push(createSeries(
-                index,
-                data,
-                dataSelect.value,
-                currentSeriesNames[index] + " Missing values",
-                'dash',
-                1,
-                obfuscatedColors[index]
-            ));
           });
-        }
+          if (missingRate.value != "0") {
+            // Adding ground truth series to the chart
+            groundtruthMatrix.forEach((data: number[], index: number) => {
+              chartOptionsOriginal.value.series.push(createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  currentSeriesNames[index] + " Missing values",
+                  'dash',
+                  1,
+                  obfuscatedColors[index]
+              ));
+            });
+          }
 
-      }
-      catch (error)
-      {
-        console.error(error);
-      }
-      finally
-      {
-        loadingResults.value = false;
+        } catch (error) {
+          console.error(error);
+        } finally {
+          loadingResults.value = false;
+        }
       }
     }
 

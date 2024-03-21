@@ -2,7 +2,7 @@
   <h4 class="mb-4 text-center" style="margin-top:40px;margin-bottom:40px;">Dataset Feature Extractor</h4>
   <div class="d-flex mb-auto">
     <div class="col-lg-10">
-      <div v-if="loading" class="d-flex justify-content-center mt-3">
+      <div v-if="loading" class="d-flex justify-content-center mt-3" style="margin-left : 320px;">
         <div class="alert alert-info d-flex align-items-center">
           <div class="spinner-border text-primary me-3" role="status"></div>
           Loading, please wait...
@@ -20,7 +20,7 @@
           <thead>
           <tr>
             <th style="width: 50%;">Feature Name</th>
-            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `Run N°${index + 1}` }}</th>
+            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `${my_data[index]}` }}</th>
           </tr>
           </thead>
 
@@ -32,7 +32,7 @@
               </div>
             </td>
             <td v-for="(category, categoryIndex) in featureResults" :key="categoryIndex">
-                <tr style="height: 10px;" v-for="(value, key) in category['Geometry']" :key="key">{{ value.toFixed(4) }}</tr>
+                <tr style="height: 10px;" v-for="(value, key) in category['Geometry']" :key="key">{{ (value.toFixed(4)).padEnd(7, '0') }}</tr>
             </td>
           </tr>
           </tbody>
@@ -44,7 +44,7 @@
           <thead>
           <tr>
             <th style="width: 50%;">Feature Name</th>
-            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `Run N°${index + 1}` }}</th>
+            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `${my_data[index]}` }}</th>
           </tr>
           </thead>
 
@@ -56,7 +56,7 @@
               </div>
             </td>
             <td v-for="(category, categoryIndex) in featureResults" :key="categoryIndex">
-              <tr style="height: 10px;" v-for="(value, key) in category['Correlation']" :key="key">{{ value.toFixed(4) }}</tr>
+              <tr style="height: 10px;" v-for="(value, key) in category['Correlation']" :key="key">{{ (value.toFixed(4)).padEnd(7, '0') }}</tr>
             </td>
           </tr>
           </tbody>
@@ -71,7 +71,7 @@
           <thead>
           <tr>
             <th style="width: 50%;">Feature Name</th>
-            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `Run N°${index + 1}` }}</th>
+            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `${my_data[index]}` }}</th>
           </tr>
           </thead>
 
@@ -83,7 +83,7 @@
               </div>
             </td>
             <td v-for="(category, categoryIndex) in featureResults" :key="categoryIndex">
-              <tr style="height: 10px;" v-for="(value, key) in category['Transformation']" :key="key">{{ value.toFixed(4) }}</tr>
+              <tr style="height: 10px;" v-for="(value, key) in category['Transformation']" :key="key">{{ (value.toFixed(4)).padEnd(7, '0') }}</tr>
             </td>
           </tr>
           </tbody>
@@ -95,7 +95,7 @@
           <thead>
           <tr>
             <th style="width: 50%;">Feature Name</th>
-            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `Run N°${index + 1}` }}</th>
+            <th v-for="(result, index) in featureResults" :key="index" style="width: 10%;">{{ `${my_data[index]}` }}</th>
           </tr>
           </thead>
 
@@ -107,7 +107,7 @@
               </div>
             </td>
             <td v-for="(category, categoryIndex) in featureResults" :key="categoryIndex">
-              <tr style="height: 10px;" v-for="(value, key) in category['Trend']" :key="key">{{ value.toFixed(4) }}</tr>
+              <tr style="height: 10px;" v-for="(value, key) in category['Trend']" :key="key">{{ (value.toFixed(4)).padEnd(7, '0') }}</tr>
             </td>
           </tr>
           </tbody>
@@ -169,6 +169,8 @@ export default {
     const loadedResults = ref(false);
     const categorizedFeatures = ref({});
     const featureResults = ref([]); // New data property to store results
+    const my_data = ref([]);
+    const my_data_set =ref("");
 
 
     // Define the features for each category
@@ -258,22 +260,24 @@ export default {
     }
 
     const fetchData = async () => {
-      try {
-        loadedResults.value = false;
-        let dataSet = `${dataSelect.value}_obfuscated_0`;
-        const response = await axios.post('http://localhost:8000/api/fetchData/',
-            {
-              data_set: dataSet,
-              normalization: normalizationMode.value,
-            },
-            {
-              headers: {
-                'Content-Type': 'application/text',
+      if (dataSelect.value !== "upload") {
+        try {
+          loadedResults.value = false;
+          let dataSet = `${dataSelect.value}_obfuscated_0`;
+          const response = await axios.post('http://localhost:8000/api/fetchData/',
+              {
+                data_set: dataSet,
+                normalization: normalizationMode.value,
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/text',
+                }
               }
-            }
-        );
-      } catch (error) {
-        console.error(error);
+          );
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
 
@@ -282,34 +286,56 @@ export default {
     }
 
     const fetchDataFeatures = async () => {
-      loading.value = true;
-      error.value = "";
-      loadedResults.value = false;
-      try {
-        let dataSet = `${dataSelect.value}_obfuscated_0`;
-        const response = await axios.post('http://localhost:8000/api/categorizeData/',
-            {
-              data_set: dataSet
+      if (dataSelect.value !== "upload") {
+        loading.value = true;
+        error.value = "";
+        loadedResults.value = false;
 
-            },
-            {
-              headers: {
-                'Content-Type': 'application/text',
+        switch (dataSelect.value) {
+          case "BAFU_onetwentyeigth":
+            my_data.value.push(`bafu`);
+            break;
+          case "cl2fullLarge_eighth":
+            my_data.value.push(`chlorine`);
+            break;
+          case "climate_eighth":
+            my_data.value.push(`climate`);
+            break;
+          case "batch10_eighth":
+            my_data.value.push(`drift`);
+            break;
+          case "meteo_total_eighth":
+            my_data.value.push(`meteo`);
+            break;
+        }
+
+
+        try {
+          let dataSet = `${dataSelect.value}_obfuscated_0`;
+          const response = await axios.post('http://localhost:8000/api/categorizeData/',
+              {
+                data_set: dataSet
+
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/text',
+                }
               }
-            }
-        );
+          );
 
-        features.value = response.data;
-        categorizedFeatures.value = categorizeFeatures(response.data);
-        featureResults.value.push(categorizedFeatures.value);
+          features.value = response.data;
+          categorizedFeatures.value = categorizeFeatures(response.data);
+          featureResults.value.push(categorizedFeatures.value);
 
 
-        loadedResults.value = true;
-      } catch (error) {
-        error.value = `Error: ${error.message}`;
-        console.error(error);
-      } finally {
-        loading.value = false;
+          loadedResults.value = true;
+        } catch (error) {
+          error.value = `Error: ${error.message}`;
+          console.error(error);
+        } finally {
+          loading.value = false;
+        }
       }
     }
 
@@ -344,7 +370,9 @@ export default {
       categorizedFeatures,
       categoryExists,
       submitForm,
-      featureResults
+      featureResults,
+      my_data,
+      my_data_set
     }
   }
 }

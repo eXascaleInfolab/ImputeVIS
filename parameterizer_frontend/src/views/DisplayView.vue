@@ -12,7 +12,7 @@
           <div class="col-lg-12">
             <highcharts class="mb-5 pb-5" :options="chartOptionsOriginal" style="margin-top: 30px;"></highcharts>
           </div>
-          <div class="col-lg-2" style="padding: 10px; position: absolute; z-index: 100; right: 150px; top:75px;">
+          <div class="col-lg-2" style="padding: 10px; position: absolute; z-index: 100; right: 250px; top:75px;">
             <form ref="ref_missingvalues" @submit.prevent="submitForm">
               <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
             </form>
@@ -71,51 +71,48 @@ export default {
 
 
     const fetchData = async () => {
-      try
-      {
-        loadingResults.value = true;
-        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-        const response = await axios.post('http://localhost:8000/api/fetchData/',
-            {
-              data_set: dataSet,
-              normalization: normalizationMode.value
-            },
-            {
-              headers: {
-                'Content-Type': 'application/text',
+      if (dataSelect.value !== "upload") {
+        try {
+          loadingResults.value = true;
+          let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+          const response = await axios.post('http://localhost:8000/api/fetchData/',
+              {
+                data_set: dataSet,
+                normalization: normalizationMode.value
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/text',
+                }
               }
+          );
+          chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
+          // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+
+          obfuscatedMatrix = response.data.matrix;
+
+          obfuscatedMatrix.forEach((data: number[], index: number) => {
+            if (currentSeriesNames.length > 0) {
+              chartOptionsOriginal.value.series[index] = createSeries(
+                  index,
+                  data,
+                  dataSelect.value,
+                  currentSeriesNames[index]
+              );
+            } else {
+              chartOptionsOriginal.value.series[index] = createSeries(
+                  index,
+                  data,
+                  dataSelect.value
+              );
             }
-        );
-        chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-        // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+          });
 
-        obfuscatedMatrix = response.data.matrix;
-
-        obfuscatedMatrix.forEach((data: number[], index: number) => {
-          if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(
-                index,
-                data,
-                dataSelect.value,
-                currentSeriesNames[index]
-            );
-          } else {
-            chartOptionsOriginal.value.series[index] = createSeries(
-                index,
-                data,
-                dataSelect.value
-            );
-          }
-        });
-
-      }
-      catch (error)
-      {
-        console.error(error);
-      }
-      finally
-      {
-        loadingResults.value = false;
+        } catch (error) {
+          console.error(error);
+        } finally {
+          loadingResults.value = false;
+        }
       }
     }
 
@@ -145,11 +142,13 @@ export default {
 
     // Define a new function that calls fetchData
     const handleDataSelectChange = async () => {
-      try {
-        imputedData.value = false;
-        await fetchData();
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      if (dataSelect.value !== "upload") {
+        try {
+          imputedData.value = false;
+          await fetchData();
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
       }
     }
 
