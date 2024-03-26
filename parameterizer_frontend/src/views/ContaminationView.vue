@@ -77,7 +77,7 @@ export default {
 
     //CDRec Parameters
     const missingRate = ref('0'); // Default missing rate
-    const scenarioMissingValues = ref('MCAR'); // Default scenarios
+    const scenarioMissingValues = ref('obfuscated'); // Default scenarios
 
     let obfuscatedMatrix = [];
     let groundtruthMatrix = [];
@@ -87,10 +87,13 @@ export default {
     const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
 
     const fetchData = async () => {
+
       if (dataSelect.value !== "upload") {
         try {
+
           loadingResults.value = true;
-          let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+          let dataSet = `${dataSelect.value}_${scenarioMissingValues.value}_${missingRate.value}`;
+
           const response = await axios.post('http://localhost:8000/api/fetchData/',
               {
                 data_set: dataSet,

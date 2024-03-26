@@ -496,7 +496,13 @@ def get_file_paths(search_string: str = 'BAFU_small') -> Tuple[str, str]:
     """
     folder_path = '../Datasets'
     clean_file_path = utils.find_non_obfuscated_file(folder_path, search_string.split('_obfuscate')[0])
+
+    if clean_file_path is None :
+        clean_file_path = utils.find_non_obfuscated_file(folder_path, search_string.split('_missingpourcentage')[0])
+
     print(f'Found clean file at: {clean_file_path}')
+
+
     obfuscated_file_path = utils.find_obfuscated_file(folder_path, search_string)
     print(f'Found obfuscated file at: {obfuscated_file_path}')
     return clean_file_path, obfuscated_file_path
