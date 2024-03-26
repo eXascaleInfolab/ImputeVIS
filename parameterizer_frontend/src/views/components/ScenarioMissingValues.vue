@@ -6,9 +6,12 @@
     <!-- Dropdown for MCAR Rate -->
     <div class="custom-select">
         <select v-model="scenarioMissingValues" id="scenarioMissingValues" class="form-control" @change="adjustScenarios">
-        <option value="MCAR">MCAR</option>
-        <option value="Blackout">Blackout</option>
-      </select>
+          <option value="obfuscated">MCAR</option>
+          <option value="missingpourcentage">Missing Pourcentage</option>
+          <option value="blackout">Blackout</option>
+          <option value="overlap">Overlap</option>
+          <option value="disjoint">Disjoint</option>
+        </select>
     </div>
   </div>
 </template>
