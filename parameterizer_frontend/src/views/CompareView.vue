@@ -14,19 +14,19 @@
         <div class="row me-1">
           <div class="col-lg-10">
             <highcharts v-if="imputedData" class="mb-5 pb-5" :options="chartOptionsImputed"></highcharts>
-            <highcharts v-if="!imputedData" :options="chartOptionsOriginal"></highcharts>
+            <highcharts v-if="!imputedData" class="mb-5 pb-5" :options="chartOptionsOriginal"></highcharts>
           </div>
           <div class="col-lg-2">
             <div class="row me-5">
               <div class="">
-                <form @submit.prevent="submitForm">
+                <form ref="ref_missingvalues" @submit.prevent="submitForm">
                   <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
                   <normalization-toggle v-model="normalizationMode"></normalization-toggle>
                   <missing-rate v-model="missingRate"/>
                 </form>
               </div>
             </div>
-            <form @submit.prevent="submitForm">
+            <form ref="ref_algos" @submit.prevent="submitForm">
               <div class="mt-4 me-5">
                 <h4>Select algorithm(s)</h4>
                 <div class="row ms-2">
@@ -75,7 +75,10 @@
                 </select>
               </div>
               <div class="d-flex justify-content-center mt-4 me-5">
-                <button type="submit" class="btn btn-primary align-center">Impute</button>
+                <button type="submit" id="alpha_run" class="btn btn-primary align-center">Run</button>
+              </div>
+              <div class="d-flex justify-content-center mt-4 me-5">
+                <button type="submit" id="delta_reset" class="btn btn-primary align-center">Reset</button>
               </div>
             </form>
             <div v-if="metricsCDRec" class="mt-4">
@@ -164,7 +167,7 @@ export default {
 
 
     //CDRec Parameters
-    const missingRate = ref('10'); // Default missing rate
+    const missingRate = ref('0'); // Default missing rate
     let truncationRank = '1' // Default truncation rank is 1, 0 means detect truncation automatically
     let epsilon = 'E-6'; // Default epsilon is E-6
     let iterations = (500); // Default number of iterations is 1000
@@ -212,7 +215,8 @@ export default {
 
 
     const fetchData = async () => {
-      try {
+      try
+      {
         loadingResults.value = true;
         let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
@@ -232,16 +236,42 @@ export default {
 
         obfuscatedMatrix = response.data.matrix;
         groundtruthMatrix = response.data.groundtruth;
-        response.data.matrix.forEach((data: number[], index: number) => {
+
+        obfuscatedMatrix.forEach((data: number[], index: number) => {
           if (currentSeriesNames.length > 0) {
-            chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index]);
+            chartOptionsOriginal.value.series[index] = createSeries(
+                index,
+                data,
+                dataSelect.value,
+                currentSeriesNames[index]
+            );
           } else {
-            chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value);
+            chartOptionsOriginal.value.series[index] = createSeries(
+                index,
+                data,
+                dataSelect.value
+            );
           }
         });
-      } catch (error) {
+
+        // Adding ground truth series to the chart
+        groundtruthMatrix.forEach((data: number[], index: number) => {
+          chartOptionsOriginal.value.series.push(createSeries(
+              index,
+              data,
+              dataSelect.value,
+              currentSeriesNames[index] + " Missing values",
+              'dash'
+          ));
+        });
+
+      }
+      catch (error)
+      {
         console.error(error);
-      } finally {
+      }
+      finally
+      {
         loadingResults.value = false;
       }
     }
@@ -343,15 +373,21 @@ export default {
       loadingResults.value = true;
       imputedData.value = false;
       chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length)
+      chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length)
       await fetchParameters();
       clearErrorMetrics();
 
-      try {
-        for (let checkedName of checkedNames.value) {
+      try
+      {
+        for (let checkedName of checkedNames.value)
+        {
           const displayImputation =  missingRate.value != '60' && missingRate.value != '80'
           let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
-          if (checkedName.toLowerCase() === 'cdrec') {
-            if (!fetchedData[checkedName]) {
+
+          if (checkedName.toLowerCase() === 'cdrec')
+          {
+            if (!fetchedData[checkedName])
+            {
               const response = await axios.post('http://localhost:8000/api/cdrec/',
                   {
                     data_set: dataSet,
@@ -378,22 +414,33 @@ export default {
             const newSeriesData = [];
             fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
               //The push should theoretically ensure that we are just adding
-              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                if (displayImputation) {
+              if (currentSeriesNames.length > 0 && currentSeriesNames[index])
+              {
+                if (displayImputation)
+                {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
-                } else {
+                }
+                else
+                {
                   chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
                 }
-              } else {
-                if (displayImputation) {
+              }
+              else
+              {
+                if (displayImputation)
+                {
                   chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "CDRec: " + index));
-                } else {
+                }
+                else
+                {
                   chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
                 }
               }
             });
             imputedData.value = true;
-          } else if (checkedName.toLowerCase() == 'iim') {
+          }
+          else if (checkedName.toLowerCase() == 'iim')
+          {
             if (!fetchedData[checkedName]) {
               const formattedAlgCode = `iim ${numberSelect}${typeSelect}`;
               const response = await axios.post('http://localhost:8000/api/iim/',
@@ -432,7 +479,9 @@ export default {
               }
             });
             imputedData.value = true;
-          } else if (checkedName.toLowerCase() === 'm-rnn') {
+          }
+          else if (checkedName.toLowerCase() === 'm-rnn')
+          {
             if (!fetchedData[checkedName]) {
               const response = await axios.post('http://localhost:8000/api/mrnn/',
                   {
@@ -474,7 +523,9 @@ export default {
               }
             });
             imputedData.value = true;
-          } else if (checkedName.toLowerCase() === 'st-mvl') {
+          }
+          else if (checkedName.toLowerCase() === 'st-mvl')
+          {
             if (!fetchedData[checkedName]) {
               const response = await axios.post('http://localhost:8000/api/stmvl/',
                   {
@@ -516,9 +567,13 @@ export default {
             imputedData.value = true;
           }
         }
-      } catch (error) {
+      }
+      catch (error)
+      {
         console.error(error);
-      } finally {
+      }
+      finally
+      {
         loadingResults.value = false;
       }
     };
@@ -527,13 +582,16 @@ export default {
     const chartOptionsImputed = ref(generateChartOptionsLarge('Imputed Data', 'Data'));
 
 
-    function clearFetchedData() {
-      for (let key in fetchedData) {
+    function clearFetchedData()
+    {
+      for (let key in fetchedData)
+      {
         delete fetchedData[key];
       }
     }
 
-    function getCategory(dataSelectValue: string): string {
+    function getCategory(dataSelectValue: string): string
+    {
       if (dataSelectValue.startsWith('BAFU')) {
         return 'bafu';
       } else if (dataSelectValue.startsWith('cl2fullLarge')) {
@@ -551,8 +609,17 @@ export default {
     }
 
     const submitForm = async () => {
-      imputedData.value = false;
-      clearFetchedData();
+
+      if (document.activeElement.id === "alpha_run")
+      {
+        imputedData.value = false;
+        clearFetchedData();
+        await handleCheckboxChange();
+      }
+      else if (document.activeElement.id === "delta_reset")
+      {
+        location.reload();
+      }
       await handleCheckboxChange();
     }
 
@@ -574,25 +641,31 @@ export default {
     };
 
     const handleParamSelectChange = async () => {
-      try {
+      try
+      {
         await fetchParameters();
         await submitForm();
-      } catch (error) {
+      }
+      catch (error)
+      {
         console.error("Error handling parameter selection:", error);
       }
     }
       const handleNormalizationModeChange = () => {
-      if (imputedData.value == true) {
+      if (imputedData.value == true)
+      {
           fetchData();
           submitForm();
-      } else {
+      }
+      else
+      {
           handleDataSelectChange();
       }
     }
 
     // Watch for changes and call fetchData when it changes
     watch([dataSelect, missingRate], handleDataSelectChange, {immediate: true});
-        watch(normalizationMode, handleNormalizationModeChange, {immediate: true});
+    watch(normalizationMode, handleNormalizationModeChange, {immediate: true});
     // Watch for changes and call fetchData when it changes
     // watch(selectedParamOption, handleParamSelectChange, {immediate: true});
 

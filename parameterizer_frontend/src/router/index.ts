@@ -17,6 +17,70 @@ const router = createRouter({
             component: () => import('../views/CompareView.vue')
         },
         {
+            path: '/contamination',
+            name: 'contamination',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/ContaminationView.vue')
+        },
+        {
+            path: '/display',
+            name: 'display',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/PresentDatasetView.vue')
+        },
+        {
+            path: '/display/:datasetName',
+            name: 'display-dataset',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/DisplayView.vue')
+        },
+        {
+            path: '/feature_extraction',
+            name: 'feature_extraction',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/FeatureExtractionView.vue')
+        },
+        {
+            path: '/user_optimizer',
+            name: 'user_optimizer',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/UserOptimizerView.vue')
+        },
+        {
+            path: '/auto_optimizer',
+            name: 'auto_optimizer',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/AutoOptimizerView.vue')
+        },
+        {
+            path: '/imputation',
+            name: 'imputation',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/ImputationManagerView.vue')
+        },
+        {
+            path: '/explainer',
+            name: 'explainer',
+            // route level code-splitting
+            // this generates a separate chunk (About.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import('../views/ExplainerView.vue')
+        },
+        {
             path: '/compare',
             name: 'compare',
             // route level code-splitting

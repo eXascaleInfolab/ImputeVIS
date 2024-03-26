@@ -21,52 +21,44 @@
 
       <!-- First Column for Compare -->
       <div class="col-md-3">
-        <p><b>Tools:</b></p>
+        <p><b>Datasets:</b></p>
         <ul>
           <li>
-            <RouterLink to="/compare">Imputation Comparison</RouterLink>
+            <RouterLink to="/display">Display</RouterLink>
           </li>
           <li>
-            <RouterLink to="/datasets/categorizer">Feature Extraction</RouterLink>
+            <RouterLink to="/feature_extraction">Feature Extraction</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/contamination">Contamination</RouterLink>
           </li>
         </ul>
       </div>
 
       <!-- Second Column for Algorithms -->
       <div class="col-md-3">
-        <p><b>Imputation Analysis:</b></p>
+        <p><b>Optimization:</b></p>
         <ul>
           <li>
-            <RouterLink to="/algorithms/cdrec">CDRec</RouterLink>
+            <RouterLink to="/user_optimizer">User-Defined</RouterLink>
           </li>
           <li>
-            <RouterLink to="/algorithms/iim">IIM</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/algorithms/m-rnn">M-RNN</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/algorithms/stmvl">ST-MVL</RouterLink>
+            <RouterLink to="/auto_optimizer">Auto-ML</RouterLink>
           </li>
         </ul>
       </div>
 
       <!-- Third Column for Algorithm Optimization -->
       <div class="col-md-3">
-        <p><b>Imputation Optimization:</b></p>
+        <p><b>Imputation:</b></p>
         <ul>
           <li>
-            <RouterLink to="/optimization/cdrec">CDRec</RouterLink>
+            <RouterLink to="/imputation">Imputation Management</RouterLink>
           </li>
           <li>
-            <RouterLink to="/optimization/iim">IIM</RouterLink>
+            <RouterLink to="/explainer">Explainer (SHAP)</RouterLink>
           </li>
-          <li>
-            <RouterLink to="/optimization/mrnn">M-RNN</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/optimization/stmvl">ST-MVL</RouterLink>
-          </li>
+
         </ul>
       </div>
 
@@ -118,6 +110,12 @@
 </template>
 
 <script lang="ts">
+import {defineComponent} from "vue";
+import {RouterLink} from "vue-router";
+
+export default defineComponent({
+  components: {RouterLink}
+})
 </script>
 <style scoped>
 .home {

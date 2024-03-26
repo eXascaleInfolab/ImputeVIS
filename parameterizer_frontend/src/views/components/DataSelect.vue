@@ -6,34 +6,43 @@
     <span class="glyphicon glyphicon-info-sign info-icon" data-toggle="tooltip" data-placement="right"
           title="For faster results, consider selecting the 1/8 size dataset"></span>
 
-    <div class="select-wrapper">
-      <select id="dataSelect" v-model="selectedData" class="form-control me-5 pe-5">
-        <!--            <option value="BAFU">BAFU</option>-->
-        <!--      <option value="BAFU_half">BAFU 1/2 Size</option>-->
-        <!--      <option value="BAFU_sixteenth">BAFU 1/16 Size</option>-->
-        <!--      <option value="BAFU_sixth">BAFU 1/6 Size</option>-->
-        <option value="BAFU_onetwentyeigth">BAFU</option>
-        <!--            <option value="cl2fullLarge">Chlorine</option>-->
-        <!--      <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>-->
-        <!--      <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>-->
-        <!--      <option value="cl2fullLarge_sixth">Chlorine 1/6 Size</option>-->
-        <option value="cl2fullLarge_eighth">Chlorine</option>
-        <!--            <option value="climate">Climate</option>-->
-        <!--      <option value="climate_half">Climate 1/2 Size</option>-->
-        <!--      <option value="climate_quarter">Climate 1/4 Size</option>-->
-        <!--      <option value="climate_sixth">Climate 1/6 Size</option>-->
-        <option value="climate_eighth">Climate</option>
-        <!--      <option value="drift">Drift</option>-->
-        <!--      <option value="batch10_half">Drift 1/2 Size</option>-->
-        <!--      <option value="batch10_quarter">Drift 1/4 Size</option>-->
-        <!--      <option value="batch10_sixth">Drift 1/6 Size</option>-->
-        <option value="batch10_eighth">Drift</option>
-        <!--            <option value="meteo_total">Meteo</option>-->
-        <!--      <option value="meteo_total_half">Meteo 1/2 Size</option>-->
-        <!--      <option value="meteo_total_quarter">Meteo 1/4 Size</option>-->
-        <!--      <option value="meteo_total_sixth">Meteo 1/6 Size</option>-->
-        <option value="meteo_total_eighth">Meteo</option>
-      </select>
+    <div class="mb-3" data-toggle="tooltip" data-placement="top" >
+      <div class="custom-select">
+
+        <select id="dataSelect" v-model="selectedData" class="form-control me-5 pe-5">
+          <!--            <option value="BAFU">BAFU</option>-->
+          <!--      <option value="BAFU_half">BAFU 1/2 Size</option>-->
+          <!--      <option value="BAFU_sixteenth">BAFU 1/16 Size</option>-->
+          <!--      <option value="BAFU_sixth">BAFU 1/6 Size</option>-->
+          <option value="BAFU_onetwentyeigth">BAFU</option>
+          <!--            <option value="cl2fullLarge">Chlorine</option>-->
+          <!--      <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>-->
+          <!--      <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>-->
+          <!--      <option value="cl2fullLarge_sixth">Chlorine 1/6 Size</option>-->
+          <option value="cl2fullLarge_eighth">Chlorine</option>
+          <!--            <option value="climate">Climate</option>-->
+          <!--      <option value="climate_half">Climate 1/2 Size</option>-->
+          <!--      <option value="climate_quarter">Climate 1/4 Size</option>-->
+          <!--      <option value="climate_sixth">Climate 1/6 Size</option>-->
+          <option value="climate_eighth">Climate</option>
+          <!--      <option value="drift">Drift</option>-->
+          <!--      <option value="batch10_half">Drift 1/2 Size</option>-->
+          <!--      <option value="batch10_quarter">Drift 1/4 Size</option>-->
+          <!--      <option value="batch10_sixth">Drift 1/6 Size</option>-->
+          <option value="batch10_eighth">Drift</option>
+          <!--            <option value="meteo_total">Meteo</option>-->
+          <!--      <option value="meteo_total_half">Meteo 1/2 Size</option>-->
+          <!--      <option value="meteo_total_quarter">Meteo 1/4 Size</option>-->
+          <!--      <option value="meteo_total_sixth">Meteo 1/6 Size</option>-->
+          <option value="meteo_total_eighth">Meteo</option>
+          <option value="upload" @click="uploadFile" >Upload...</option>
+        </select>
+      </div>
+
+       <div v-if="selectedData === 'upload'">
+          <input type="file" ref="fileInput" @change="uploadFile" style="margin-top:6px; width:100px;  ">
+       </div>
+
     </div>
   </div>
 </template>
@@ -122,6 +131,17 @@ export default defineComponent({
       },
       set: function (newValue) {
         this.$emit('update:modelValue', newValue);
+      }
+    }
+  },
+  methods: {
+    uploadFile() {
+      const file = this.$refs.fileInput.files[0];
+      if (file) {
+        // Here you can write code to upload the file
+        console.log('File uploaded:', file.name);
+      } else {
+        console.log('Please select a file');
       }
     }
   },

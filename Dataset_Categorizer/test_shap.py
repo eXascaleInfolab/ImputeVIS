@@ -73,9 +73,7 @@ def shap_tester(dataset_path: str, obfuscated_dataset_path: str, dataset: str):
         config = load_config("../Optimizer/results/best_params_algorithm.json", algorithm, dataset)
 
         # Assuming evaluate_params provides RMSE as per its signature.
-        y_train = (np.array(Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config,
-                                            selected_metrics=["rmse"])["rmse"]))
-
+        y_train = (np.array(Optimizer.evaluate_params.evaluate_params(ground_truth_matrix, obfuscated_matrix, algorithm, config, selected_metrics=["rmse"])["rmse"]))
 
         # X_train = np.delete(X_train, sample_indices, axis=0)
         # y_train = np.delete(y_train, sample_indices, axis=0)

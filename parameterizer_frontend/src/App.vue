@@ -6,55 +6,60 @@
         <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="30" height="30">
         <span class="ml-2">ImputeVIS</span>
       </a>
-<!--      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarNav"-->
-<!--              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">-->
-<!--        <span class="navbar-toggler-icon"></span>-->
-<!--      </button>-->
       <div class= "navbar-collapse justify-content-center ps-n3 ms-n3" id="navbarNav">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item dropdown text-center me-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-comparison" role="button"
                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Imputation Comparison
+              Datasets
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-comparison-select">
-              <RouterLink class="dropdown-item" to="/compare">Select Datasets</RouterLink>
+              <RouterLink class="dropdown-item" to="/display">Display</RouterLink>
+              <RouterLink class="dropdown-item" to="/feature_extraction">Feature Extraction</RouterLink>
+              <RouterLink class="dropdown-item" to="/contamination">Contamination</RouterLink>
             </div>
           </li>
-          <li class="nav-item dropdown text-center me-2">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button" data-bs-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">
-              Imputation Algorithms
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization-select">
-              <RouterLink class="dropdown-item" to="/algorithms/cdrec">CDRec</RouterLink>
-              <RouterLink class="dropdown-item" to="/algorithms/iim">IIM</RouterLink>
-              <RouterLink class="dropdown-item" to="/algorithms/m-rnn">M-RNN</RouterLink>
-              <RouterLink class="dropdown-item" to="/algorithms/stmvl">ST-MVL</RouterLink>
-            </div>
-          </li>
+
           <li class="nav-item dropdown text-center me-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-algorithm" role="button"
                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Imputation Optimization
+              Optimization
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-algorithm-select">
-              <RouterLink class="dropdown-item" to="/optimization/cdrec">CDRec</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/iim">IIM</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/mrnn">M-RNN</RouterLink>
-              <RouterLink class="dropdown-item" to="/optimization/stmvl">ST-MVL</RouterLink>
+
+              <RouterLink class="dropdown-item" to="/user_optimizer">User-Defined</RouterLink>
+              <RouterLink class="dropdown-item" to="/auto_optimizer">Auto-ML</RouterLink>
             </div>
           </li>
-          <!-- Add additional links here -->
+
+
           <li class="nav-item dropdown text-center me-2">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-categorizer" role="button"
-               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Feature Extraction
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button" data-bs-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+              Imputation
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown-categorizer-select">
-              <RouterLink class="dropdown-item" to="/datasets/categorizer">Select Datasets</RouterLink>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization-select">
+              <RouterLink class="dropdown-item" to="/imputation">Imputation Management</RouterLink>
+              <RouterLink class="dropdown-item" to="/explainer">Explainer (SHAP)</RouterLink>
             </div>
           </li>
+
+          <!--
+          <li class="nav-item dropdown text-center me-2">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-algorithm" role="button"
+               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              OLD
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-algorithm-select">
+              <RouterLink class="dropdown-item" to="/compare">OLD :Select Datasets</RouterLink>
+              <RouterLink class="dropdown-item" to="/optimization/cdrec">OLD : OPTI CDRec</RouterLink>
+              <RouterLink class="dropdown-item" to="/algorithms/cdrec">OLD : ALGO CDRec</RouterLink>
+              <RouterLink class="dropdown-item" to="/datasets/categorizer">OLD : FE - Select Datasets</RouterLink>
+            </div>
+          </li>
+          -->
+
+
           <li class="nav-item ms-1 text-center">
             <RouterLink class="nav-link" to="/about">About</RouterLink>
           </li>

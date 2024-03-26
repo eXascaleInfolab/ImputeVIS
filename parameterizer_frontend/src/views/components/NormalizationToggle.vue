@@ -1,5 +1,5 @@
 <template>
-  <div class="btn-group btn-group-sm mt-1 normalization mb-n5" role="group">
+  <div class="btn-group btn-group-sm mb-n5" role="group" style="margin-bottom: 12px; margin-top:12px;">
     <button type="button"
             class="btn btn-sm"
             :class="{'btn-secondary': displayMode === 'Normal', 'btn-outline-secondary': displayMode !== 'Normal'}"
@@ -8,6 +8,10 @@
             class="btn btn-sm"
             :class="{'btn-secondary': displayMode === 'Normalized', 'btn-outline-secondary': displayMode !== 'Normalized'}"
             @click="setDisplayMode('Normalized')">Z-Score</button>
+    <button type="button"
+            class="btn btn-sm"
+            :class="{'btn-secondary': displayMode === 'MinMax', 'btn-outline-secondary': displayMode !== 'MinMax'}"
+            @click="setDisplayMode('MinMax')">Min-Max</button>
   </div>
 </template>
 

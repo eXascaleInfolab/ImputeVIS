@@ -39,6 +39,16 @@
                 "iters": 100
             },
             "optimization_method": "bayesian_optimization"
+        },
+        "drift": {
+            "metric": "mi_corr",
+            "best_score": 0.468,
+            "best_params": {
+                "rank": 2,
+                "eps": 0.00133,
+                "iters": 177
+            },
+            "optimization_method": "bayesian_optimization"
         }
     },
     "iim": {
