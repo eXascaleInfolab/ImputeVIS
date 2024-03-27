@@ -19,7 +19,7 @@
           </div>
           <form ref="ref_missingvalues" @submit.prevent="submitForm">
             <div style="padding: 10px; position: absolute; z-index: 100; right: 0; top:100px;">
-              <normalization-toggle v-model="normalizationMode"   ></normalization-toggle>
+              <normalization-toggle v-model="normalizationMode" ></normalization-toggle>
             </div>
           </form>
 

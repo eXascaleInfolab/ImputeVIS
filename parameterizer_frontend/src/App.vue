@@ -15,20 +15,19 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-comparison-select">
               <RouterLink class="dropdown-item" to="/display">Display</RouterLink>
+              <RouterLink class="dropdown-item" to="/contamination">Contaminate</RouterLink>
               <RouterLink class="dropdown-item" to="/feature_extraction">Feature Extraction</RouterLink>
-              <RouterLink class="dropdown-item" to="/contamination">Contamination</RouterLink>
             </div>
           </li>
 
           <li class="nav-item dropdown text-center me-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-algorithm" role="button"
                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Optimization
+              Optimizer
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-algorithm-select">
-
-              <RouterLink class="dropdown-item" to="/user_optimizer">User-Defined</RouterLink>
-              <RouterLink class="dropdown-item" to="/auto_optimizer">Auto-ML</RouterLink>
+              <RouterLink class="dropdown-item" to="/auto_optimizer">Auto-ML Opt.</RouterLink>
+              <RouterLink class="dropdown-item" to="/user_optimizer">User-defined Opt.</RouterLink>
             </div>
           </li>
 
@@ -39,8 +38,8 @@
               Imputation
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization-select">
-              <RouterLink class="dropdown-item" to="/imputation">Imputation Management</RouterLink>
-              <RouterLink class="dropdown-item" to="/explainer">Explainer (SHAP)</RouterLink>
+              <RouterLink class="dropdown-item" to="/imputation">Impute</RouterLink>
+              <RouterLink class="dropdown-item" to="/explainer">Explainer</RouterLink>
             </div>
           </li>
 

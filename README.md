@@ -1,18 +1,19 @@
-# msc_thesis_timeseries
+# ImputeVIS
 
-Repository for my Master Thesis' code base, that is under the [eXascale](https://exascale.info/) institute at University
-of Fribourg, Switzerland.
+Repository built within the the [eXascale](https://exascale.info/) institute at University of Fribourg, Switzerland.
 
-The thesis on the general topic of Timeseries and focuses on:
 
-- Python Implementation of the IIM (Individual Imputation Model)
-- Implementing the shared information metric
-- Parametrizing algorithms timeseries recovery algorithms, based on the category: matrix-based, pattern-based,
-  neural-network-based, and regression-based.
-- Using a GUI that shows the effects of the different parameters on the different types of algorithms and their output
-  for reconstruction.
-- Possible characterizing datasets
-- Possibly suggesting optimal parameters and best algorithms.
+## Prerequisites
+
+- Ubuntu 20 or Ubuntu 22 (including Ubuntu derivatives, e.g., Xubuntu) or the same distribution under WSL2
+- Clone this repository.
+
+## Dependencies:
+
+- Node.js and npm (npm is distributed with Node.js) for the frontend dependencies in `package.json`.
+- Python (version 3.8 or later) and pip.
+- Django 4 (installed via pip with requirements.txt).
+
 
 ## Quick Start Linux (and Mac)
 Install docker and docker-compose. Then run the following commands:
@@ -44,110 +45,6 @@ Then navigate into the `parameterizer_frontend` directory, make sure that npm is
 npm install
 npm run dev
 ```
-
-## Prerequisites
-
-- Ubuntu 20 or Ubuntu 22 (including Ubuntu derivatives, e.g., Xubuntu) or the same distribution under WSL2
-- Clone this repository.
-
-Dependencies:
-
-- Node.js and npm (npm is distributed with Node.js) for the frontend dependencies in `package.json`.
-- Python (version 3.8 or later) and pip.
-- Django 4 (installed via pip with requirements.txt).
-
-## Manual Installation
-
-### Frontend
-
-Navigate to the frontend directory.
-
-```bash
-cd parameterizer_frontend
-```
-
-Install dependencies using npm.
-
-```bash
-npm install
-```
-
-To start the development server.
-
-```bash
-npm run dev
-```
-
-### Backend
-
-Navigate to the backend directory.
-
-```bash
-cd timeSeriesImputerParameterizer
-```
-
-Create a virtual environment and activate it.
-
-```bash
-python3 -m venv env
-source env/bin/activate  # On Windows use `env\Scripts\activate`
-```
-
-Install Django and other dependencies.
-
-```bash
-pip install -r requirements.txt
-```
-
-To start the development server.
-
-```bash
-python manage.py runserver
-```
-
-#### WSL (Minimum for Backend if not on Linux)
-
-Navigate to directory in which project has been cloned and into the server, e.g.:
-
-```bash
-cd d/Git/msc_thesis_timeseries/timeSeriesImputerParameterizer/parameterizer/
-```
-
-And then run the following command:
-
-```bash
-python manage.py runserver
-```
-
-Furthermore, the following dependency may be needed for WSL:
-
-```bash
-sudo apt-get install libopenblas-dev
-```
-
-## Browsers support
-
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Chrome |
-| --------- | --------- | --------- |
-| 116.X| 116.X| 116.X
-
-Unlisted configurations were not tested in-depth and may not work as expected, but generally all modern browsers should
-work.
-
-### Troubleshooting
-**Docker won't work for the frontend**  
-You are likely under Windows, using WSL2 for Docker.  
-"@esbuild/win32-x64" does not have the same binaries as "@esbuild/linux-x64",
-thus either start the frontend manually with `npm install` and `npm run dev` in the `parameterizer_frontend` directory,
-or manually navigate under your WSL2 installation to the `parameterizer_frontend` directory, install node within your WSL,
-and run `npm install`. Ensure that the node version used is the Linux and not Windows one.  
-After this, the issue should likely be fixed for `docker-compose up frontend`.
-
-**The frontend shows errors and won't start**  
-Ensure you are using `npm run dev` to start the frontend and not attempting to run `npm run build`.
-
-**The frontend runs but keeps loading forever**
-You may have browser extensions that block the tool from working properly. Try disabling them.
 
 ## Usage
 

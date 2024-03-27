@@ -14,7 +14,7 @@
       </div>
 
 
-      <div v-else class="mt-2 ms-5">
+      <div v-else class="mt-2 ms-5" v-if="featureResults.length > 0">
         <h4>Geometry</h4>
         <table class="table" style="margin-bottom: 50px;">
           <thead>
@@ -135,7 +135,7 @@
     <div class="col-lg-2" style="margin-top: 10px;">
       <div class="sidebar me-5">
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames" class="mb-5"/>
-        <button type="submit" class="btn btn-primary mt-5" @click="fetchDataFeatures">Explain</button>
+        <button type="submit" class="btn btn-primary mt-5" @click="fetchDataFeatures">Extract</button>
       </div>
     </div>
   </div>
