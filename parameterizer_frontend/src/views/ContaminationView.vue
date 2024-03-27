@@ -67,7 +67,7 @@ export default {
     ScenarioMissingValues
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'climate_eighth') // Default data is BAFU
+    const dataSelect = ref(route.params.datasetName || 'batch10_eighth') // Default data is BAFU
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const fetchedData = reactive({});

@@ -148,7 +148,8 @@
 
               <div class="popup" id="popup">
                 <label><input type="checkbox" id="pre_implemented_checkbox">Pre-implemented</label><br>
-                <label><input type="checkbox" id="open_file_checkbox">Open-file</label><br>
+                <input type="file" ref="fileInput" @change="uploadFile" style="margin-top:30px; margin-bottom:20px; width:140px;  "><br />
+
                 <button type="submit" id="validate" className="btn btn-success" style="margin-top:25px; width:100px; ">Validate</button>
               </div>
 
@@ -215,7 +216,7 @@ export default {
     MissingRate
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'climate_eighth') // Default data is BAFU
+    const dataSelect = ref(route.params.datasetName || 'batch10_eighth') // Default data is BAFU
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const fetchedData = reactive({});
@@ -678,12 +679,10 @@ export default {
 
     function printCheckedValues()
     {
-
         var preImplementedChecked = document.getElementById('pre_implemented_checkbox').checked;
-        var openFileChecked = document.getElementById('open_file_checkbox').checked;
+        //var openFileChecked = document.getElementById('open_file_checkbox').checked;
 
         console.log("Pre-implemented checked:", preImplementedChecked);
-        console.log("Open-file checked:", openFileChecked);
 
         pre_implemented.value = preImplementedChecked
     }

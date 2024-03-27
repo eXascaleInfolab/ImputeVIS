@@ -160,7 +160,7 @@ export default {
     NormalizationToggle
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'climate_eighth');
+    const dataSelect = ref(route.params.datasetName || 'batch10_eighth');
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});

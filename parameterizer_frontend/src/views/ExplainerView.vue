@@ -159,10 +159,12 @@
 
 
 
-    <div class="col-lg-2" style="margin-top: 10px;">
+    <div class="col-lg-2" style="margin-top: -10px;">
       <div class="sidebar me-5">
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames" class="mb-3"/>
-        <button type="submit" class="btn btn-primary mt-5" @click="fetchDataFeatures">Extract Features</button>
+        <algorithm-choice v-model="algorithmChoice"  @submit.prevent="submitFormCustom"  />
+
+        <button type="submit" class="btn btn-primary mt-5" @click="fetchDataFeatures">Explain</button>
       </div>
     </div>
   </div>
@@ -181,20 +183,23 @@ import {Chart} from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import HighchartsBoost from 'highcharts/modules/boost'
 import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
+import AlgorithmChoice from "@/views/components/AlgorithmChoice.vue";
 
 HighchartsBoost(Highcharts)
 
 
 export default {
   components: {
+    AlgorithmChoice,
     DataSelect,
     highcharts: Chart,
     MetricsDisplay,
     MissingRate,
-    NormalizationToggle
+    NormalizationToggle,
+    AlgorithmChoice,
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'cl2fullLarge_eighth');
+    const dataSelect = ref(route.params.datasetName || 'batch10_eighth');
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
@@ -204,6 +209,8 @@ export default {
     const chartOptionsOriginal = ref(generateChartOptions('Data', 'Data'));
     const categorizedFeatures = ref({});
     const shapValues = ref([]);
+    const algorithmChoice = ref('cdrec')
+
 
     const my_data = ref("");
     const my_data_set =ref("");
@@ -466,7 +473,8 @@ export default {
       my_data,
       my_data_set,
       my_path,
-      my_path_agg
+      my_path_agg,
+      algorithmChoice
     }
   }
 }

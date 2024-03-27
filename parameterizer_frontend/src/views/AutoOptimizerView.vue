@@ -26,7 +26,7 @@
         <div class="col-md-12">
           <form v-if="optimalParametersDetermined && imputedData && algorithmChoice == 'cdrec'" @submit.prevent="submitFormCustom">
             <div class="row">
-              <div class="col-md-6" style="padding: 20px; height: 100%; margin-top:100px;">
+              <div class="col-md-6" style="padding: 20px; height: 100%;">
                 <h5 style="text-align: center; margin-bottom: 20px;">Optimal Parameters</h5>
                 <div class="row"  style="margin:5%;">
                   <div class="col-12" style="height: 100%;">
@@ -54,14 +54,11 @@
                       </tbody>
                     </table>
                   </div>
-                  <div class="col-12" style="margin-top: 120px;;">
-                    <h5 style="text-align: center; margin-bottom: 20px;">Metrics</h5>
-                    <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
-                  </div>
                 </div>
               </div>
               <div class="col-md-5" style="padding: 20px; text-align: center; margin-left: 5%;">
-                <metrics2-kiviat-display v-if="imputedData" :metrics="metrics" style="height: 100%;"></metrics2-kiviat-display>
+                <h5 style="text-align: center; margin-bottom: 20px;">Metrics</h5>
+                <metrics-2-display v-if="imputedData" :metrics="metrics"></metrics-2-display>
               </div>
             </div>
           </form>
@@ -295,7 +292,7 @@ export default {
   },
   setup() {
     const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
-    const dataSelect = ref('climate_eighth') // Default data
+    const dataSelect = ref('batch10_eighth') // Default data
     const algorithmChoice = ref('cdrec')
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
