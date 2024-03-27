@@ -25,9 +25,8 @@
         </p>
         <p><b>Contributors</b><br></p>
         <ul>
-          <li><a href="https://www.linkedin.com/in/brian-schweigler/" target="_blank">Brian Schweigler</a></li>
-          <li><a href="https://exascale.info/members/zakhar-tymchenko/" target="_blank">Zakhar Tymchenko</a></li>
           <li><a href="https://www.linkedin.com/in/quentin-nater/" target="_blank">Quentin Nater</a></li>
+          <li><a href="https://www.linkedin.com/in/brian-schweigler/" target="_blank">Brian Schweigler</a></li>
         </ul>
         <p></p>
         <p><b>Teams</b><br></p>
@@ -46,3 +45,5 @@
   margin-left: 35px; /* Change this value to increase or decrease the margin */
 }
 </style>
+<script setup lang="ts">
+</script>

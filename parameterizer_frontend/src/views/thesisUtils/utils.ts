@@ -285,7 +285,7 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
     legend: {
         showCheckbox: true,
         title: {
-            text: '<span style="font-size: 16px; color: #666; font-weight: normal;">click on series to hide...</span>',
+            text: '<span style="font-size: 16px; color: #666; font-weight: normal;"></span>',
             style: {
                 fontStyle: 'italic'
             }

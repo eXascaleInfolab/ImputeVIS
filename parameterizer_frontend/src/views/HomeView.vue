@@ -65,7 +65,7 @@
     </div>
 
 
-    <p>
+    <!--<p>
       Its primary features empower users to:
       <ul>
         <li>Conduct a comprehensive comparison between CDRec, IIM, M-RNN, and ST-MVL based on imputation metrics such as
@@ -103,7 +103,7 @@
 
         </li>
       </ul>
-    </p>
+    </p>-->
 
   </main>
 
