@@ -59,7 +59,7 @@ export default defineComponent({
           labels: ['RMSE', 'MAE', 'MI', 'CORR'],
           datasets: [
             {
-              label: 'CDRec Metrics',
+              label: 'CDRec',
               data: normalizedValues[0],
               backgroundColor: 'rgba(255, 0, 0, 0.2)',
               borderColor: 'rgba(255, 0, 0, 1)',
@@ -69,7 +69,7 @@ export default defineComponent({
               pointHoverBorderColor: 'rgba(255, 0, 0, 1)',
             },
             {
-              label: 'IIM Metrics',
+              label: 'IIM',
               data: normalizedValues[1],
               backgroundColor: 'rgba(0, 255, 0, 0.2)',
               borderColor: 'rgba(0, 255, 0, 1)',
@@ -79,7 +79,7 @@ export default defineComponent({
               pointHoverBorderColor: 'rgba(0, 255, 0, 1)',
             },
             {
-              label: 'MRNN Metrics',
+              label: 'MRNN',
               data: normalizedValues[2],
               backgroundColor: 'rgba(0, 0, 255, 0.2)',
               borderColor: 'rgba(0, 0, 255, 1)',
@@ -89,7 +89,7 @@ export default defineComponent({
               pointHoverBorderColor: 'rgba(0, 0, 255, 1)',
             },
             {
-              label: 'STMVL Metrics',
+              label: 'STMVL',
               data: normalizedValues[3],
               backgroundColor: 'rgba(255, 255, 0, 0.2)',
               borderColor: 'rgba(255, 255, 0, 1)',

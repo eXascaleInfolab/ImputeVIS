@@ -20,17 +20,6 @@
             </div>
           </li>
 
-          <li class="nav-item dropdown text-center me-2">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-algorithm" role="button"
-               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Optimizer
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown-algorithm-select">
-              <RouterLink class="dropdown-item" to="/auto_optimizer">Auto-ML Opt.</RouterLink>
-              <RouterLink class="dropdown-item" to="/user_optimizer">User-defined Opt.</RouterLink>
-            </div>
-          </li>
-
 
           <li class="nav-item dropdown text-center me-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button" data-bs-toggle="dropdown"
@@ -39,6 +28,17 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization-select">
               <RouterLink class="dropdown-item" to="/imputation">Impute</RouterLink>
+              <RouterLink class="dropdown-item" to="/auto_optimizer">Auto-ML Opt.</RouterLink>
+              <RouterLink class="dropdown-item" to="/user_optimizer">User-defined Opt.</RouterLink>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown text-center me-2">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button" data-bs-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+              Explanation
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization-select">
               <RouterLink class="dropdown-item" to="/explainer">Explainer</RouterLink>
             </div>
           </li>

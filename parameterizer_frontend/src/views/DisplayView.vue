@@ -12,13 +12,13 @@
           <div class="col-lg-12">
             <highcharts class="mb-5 pb-5" :options="chartOptionsOriginal" style="margin-top: 30px;"></highcharts>
           </div>
-          <div class="col-lg-2" style="padding: 10px; position: absolute; z-index: 100; right: 250px; top:75px;">
+          <div class="col-lg-2" style="padding: 10px; position: absolute; z-index: 100; right: 250px; top:50px;">
             <form ref="ref_missingvalues" @submit.prevent="submitForm">
               <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
             </form>
           </div>
           <form ref="ref_missingvalues" @submit.prevent="submitForm">
-            <div style="padding: 10px; position: absolute; z-index: 100; right: 0; top:100px;">
+            <div style="padding: 10px; position: absolute; z-index: 100; right: 0; top:70px;">
               <normalization-toggle v-model="normalizationMode" ></normalization-toggle>
             </div>
           </form>
