@@ -110,13 +110,13 @@
                   <label class="form-check-label" for="ST-MVL">Pattern-based</label>
                 </div>
               </div>
-              <div v-if="pre_implemented == true">
+              <div>
                 <div class="row ms-1">
-                  <div class="col form-check ">
+                  <div class="col form-check " v-if="nns_checked == true" >
                     <input class="form-check-input" type="checkbox" value="M-RNN" id="MRNN" v-model="checkedNames">
                     <label class="form-check-label" for="MRNN">NNs-based</label>
                   </div>
-                  <div class="col form-check ">
+                  <div class="col form-check " v-if="reg_checked == true">
                     <input class="form-check-input" type="checkbox" value="IIM" id="IIM" v-model="checkedNames">
                     <label class="form-check-label" for="IIM">Regression-based</label>
                   </div>
@@ -147,8 +147,10 @@
               </div>
 
               <div class="popup" id="popup">
-                <label><input type="checkbox" id="pre_implemented_checkbox">Pre-implemented</label><br>
-                <input type="file" ref="fileInput" @change="uploadFile" style="margin-top:30px; margin-bottom:20px; width:140px;  "><br />
+                <label><input type="checkbox" id="nns_based" >NNs-based</label><br>
+                <label><input type="checkbox" id="reg_based" >Regression-based</label><br>
+
+                <input type="file" ref="fileInput" @change="uploadFile" style="margin-top:30px; margin-bottom:20px; width:145px;  "><br />
 
                 <button type="submit" id="validate" className="btn btn-success" style="margin-top:25px; width:100px; ">Validate</button>
               </div>
@@ -270,7 +272,8 @@ export default {
     let groundtruthMatrix = [];
     const checkedNames = ref([]);
     const imputedData = ref(false); // Whether imputation has been carried out
-    const pre_implemented = ref(false);
+    const nns_checked = ref(false);
+    const reg_checked = ref(false);
 
 
     const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
@@ -679,12 +682,16 @@ export default {
 
     function printCheckedValues()
     {
-        var preImplementedChecked = document.getElementById('pre_implemented_checkbox').checked;
+        var nns_checkedv = document.getElementById('nns_based').checked;
+        var reg_checkedv = document.getElementById('reg_based').checked;
         //var openFileChecked = document.getElementById('open_file_checkbox').checked;
 
-        console.log("Pre-implemented checked:", preImplementedChecked);
+        console.log("Pre-implemented checked nns_checked :", nns_checkedv);
+        console.log("Pre-implemented checked reg_checked:", reg_checkedv);
 
-        pre_implemented.value = preImplementedChecked
+        nns_checked.value = nns_checkedv
+        reg_checked.value = reg_checkedv
+
     }
 
 
@@ -823,7 +830,8 @@ export default {
       // handleParamSelectChange,
       selectedParamOption,
       loadingResults,
-      pre_implemented
+      nns_checked,
+      reg_checked
     }
   }
 }

@@ -20,6 +20,13 @@
           <br/>
           The server-side uses <a href="https://www.djangoproject.com/" target="_blank">Django</a>, with additional Python scripts for processing requests.
         </p>
+
+        <p class="ml-5">
+          This is a master thesis project by Brian Schweigler, supervised by Dr. Mourad Khayati, Prof. Philippe
+          Cudré-Mauroux, and Zakhar Tymchenko.
+          <!--      Done at the University of Fribourg, Switzerland at the eXascale Institue.-->
+          <!--      ImputeVIS is a built on a Vue front-end and a Django back-end.-->
+        </p>
         <p><b>Contact</b><br>
           <a href="https://exascale.info/members/mourad-khayati/" target="_blank">Dr. Mourad Khayati</a>
         </p>

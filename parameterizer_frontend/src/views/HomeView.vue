@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <main class="home">
-    <h3 class="mb-4 text-center">ImputeVIS</h3>
+  <main class="home" style="margin-right: 20px">
+    <h3 class="mb-4 text-center" style="margin-top: 50px;">ImputeVIS</h3>
     <p class="text-center">
       ImputeVis is an online tool that allows visualization, parameterization, and optimization of time series
       imputation algorithms.
@@ -8,55 +8,52 @@
       This tool was created at the <a href="http://exascale.info/" target="_blank">eXascale Infolab</a>, a research group
       at the <a href="http://www.unifr.ch/" target="_blank">University of Fribourg</a>, Switzerland.
     </p>
-    <p class="ml-5 text-center">
-      This is a master thesis project by Brian Schweigler, supervised by Dr. Mourad Khayati, Prof. Philippe
-      Cudré-Mauroux, and Zakhar Tymchenko.
-      <!--      Done at the University of Fribourg, Switzerland at the eXascale Institue.-->
-      <!--      ImputeVIS is a built on a Vue front-end and a Django back-end.-->
-    </p>
-    <h4 class="text-center"><strong>Features</strong></h4>
+
+    <h4 class="text-center" style="margin-top: 50px;"><strong>Features</strong></h4>
     <br/>
 
     <div class="row justify-content-center">
 
       <!-- First Column for Compare -->
-      <div class="col-md-3">
+      <div class="col-md-2" style="margin-left:170px;">
         <p><b>Datasets:</b></p>
         <ul>
           <li>
             <RouterLink to="/display">Display</RouterLink>
           </li>
           <li>
-            <RouterLink to="/feature_extraction">Feature Extraction</RouterLink>
+            <RouterLink to="/contamination">Contamination</RouterLink>
           </li>
           <li>
-            <RouterLink to="/contamination">Contamination</RouterLink>
+            <RouterLink to="/feature_extraction">Feature Extraction</RouterLink>
           </li>
         </ul>
       </div>
 
       <!-- Second Column for Algorithms -->
-      <div class="col-md-3">
-        <p><b>Optimization:</b></p>
+      <div class="col-md-2">
+        <p><b>Imputation:</b></p>
         <ul>
           <li>
-            <RouterLink to="/user_optimizer">User-Defined</RouterLink>
+            <RouterLink to="/imputation">Impute</RouterLink>
           </li>
           <li>
-            <RouterLink to="/auto_optimizer">Auto-ML</RouterLink>
+            <RouterLink to="/auto_optimizer">Auto-ML Opt.</RouterLink>
           </li>
+          <li>
+            <RouterLink to="/user_optimizer">User-defined  Opt.</RouterLink>
+          </li>
+
         </ul>
       </div>
 
       <!-- Third Column for Algorithm Optimization -->
-      <div class="col-md-3">
-        <p><b>Imputation:</b></p>
+      <div class="col-md-2">
+        <p><b>Explanation:</b></p>
         <ul>
+
           <li>
-            <RouterLink to="/imputation">Imputation Management</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/explainer">Explainer (SHAP)</RouterLink>
+            <RouterLink to="/explainer">Explainer</RouterLink>
           </li>
 
         </ul>
