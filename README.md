@@ -51,9 +51,6 @@ npm run dev
 After setting up the frontend and backend, you can access the application by opening http://localhost:5173 in your
 browser.
 
-## Contributing
-
-Might be possible after the thesis has finished, but currently this is not desired.
 
 ## License
 
