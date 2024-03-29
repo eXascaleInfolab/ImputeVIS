@@ -1,6 +1,6 @@
 # ImputeVIS
 
-Repository built within the the [eXascale](https://exascale.info/) institute at University of Fribourg, Switzerland.
+The repository was built within the [eXascale](https://exascale.info/) group at the University of Fribourg, Switzerland.
 
 
 ## Prerequisites
@@ -29,12 +29,12 @@ npm run dev
 ```
 
 This uses the docker-compose.yml file to build the frontend and backend and run them in containers.   
-The frontend is available at http://localhost:5173 (or http://172.19.0.3:5173/), 
-with the backend accessible under http://localhost:8000 (api calls only).
+The front end is available at http://localhost:5173 (or http://172.19.0.3:5173/),
+and the back end is accessible under http://localhost:8000 (API calls only).
 
 
 ## Quick Start Windows
-Install or update docker for windows under WSL, then run the following commands:
+Install or update docker for Windows under WSL, then run the following commands:
 
 ```bash
 # Build backend image
