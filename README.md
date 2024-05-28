@@ -62,7 +62,7 @@ ___
 
 ## Contributors
 
-Mourad Khayati (mkhayati@exascale.info), Quentin Nater, and Brian Schweigler.
+Mourad Khayati (mkhayati@exascale.info), Quentin Nater (quentin.nater@unifr.ch), and Brian Schweigler.
 
 ___
 
