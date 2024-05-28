@@ -58,13 +58,13 @@ ___
 After setting up the frontend and backend, you can access the application by opening http://localhost:5173 in your
 browser.
 
-
 ___
 
 ## Contributors
 
 Mourad Khayati (mkhayati@exascale.info), Quentin Nater, and Brian Schweigler.
 
+___
 
 ## License
 
