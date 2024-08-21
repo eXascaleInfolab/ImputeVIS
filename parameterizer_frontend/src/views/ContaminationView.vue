@@ -26,13 +26,18 @@
           </div>
           <div class="col-lg-2" style="margin-top: 60px;">
               <form ref="ref_missingvalues" @submit.prevent="submitForm">
-                <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+                <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames" />
                 <scenario-missing-values v-model="scenarioMissingValues" />
+
+                <div v-for="series in mySeries" :key="series" class="form-check">
+                  <input class="form-check-input" type="checkbox" :id="`checkbox-${series}`" :value="series" v-model="selectedSeries"/>
+                  <label class="form-check-label" :for="`checkbox-${series}`">{{ series.substring(3) }}</label>
+                </div>
+
                 <missing-rate v-model="missingRate"/>
                 <div class="d-flexs mt-4 me-5" >
                   <button type="submit" id="alpha_run" class="btn btn-primary" style="margin-top:36px;">Run</button>
                 </div>
-
               </form>
 
 
@@ -44,14 +49,16 @@
 </template>
 
 <script lang="ts">
-import {ref, watch, reactive, shallowReactive} from 'vue';
+import {ref, watch, reactive} from 'vue';
 import { useRoute } from 'vue-router'
 import DataSelect from './components/DataSelect.vue';
+import SeriesSelect from './components/SeriesSelect.vue';
 import MissingRate from './components/MissingRate.vue';
 import ScenarioMissingValues from './components/ScenarioMissingValues.vue';
 import NormalizationToggle from './components/NormalizationToggle.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
+import defaultConfig from'./../assets_naterq/default_values.json';
 import {
   createSeries,
   generateChartOptionsLarge
@@ -63,21 +70,29 @@ export default {
     NormalizationToggle,
     highcharts: Chart,
     DataSelect,
+    SeriesSelect,
     MissingRate,
     ScenarioMissingValues
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'batch10_eighth') // Default data is BAFU
-    const normalizationMode = ref('Normal')
+    const seriesSelect = ref('Series 1')
+
     let currentSeriesNames = []; // Names of series currently displayed
+    const mySeries = ref([]);
+
+
+    const dataSelect = ref(route.params.datasetName || defaultConfig.loading.load_dataset) // Default data is BAFU
+    const normalizationMode = ref(defaultConfig.loading.load_normalization)
+    const scenarioMissingValues = ref(defaultConfig.loading.load_scenario)
+    const selectedSeries = ref(defaultConfig.loading.load_series_contamination);
+    const missingRate = ref(defaultConfig.loading.load_missing_rate_contamination); // Default missing rate
+
+
     const fetchedData = reactive({});
     let loadingResults = ref(true);
     const selectedParamOption = ref('recommended'); // Default option
 
-
     //CDRec Parameters
-    const missingRate = ref('0'); // Default missing rate
-    const scenarioMissingValues = ref('obfuscated'); // Default scenarios
 
     let obfuscatedMatrix = [];
     let groundtruthMatrix = [];
@@ -86,18 +101,29 @@ export default {
 
     const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
 
+
     const fetchData = async () => {
 
-      if (dataSelect.value !== "upload") {
-        try {
-
+      if (dataSelect.value !== "upload")
+      {
+        try
+        {
           loadingResults.value = true;
-          let dataSet = `${dataSelect.value}_${scenarioMissingValues.value}_${missingRate.value}`;
+
+          let selection_series = ["-1:test"];
+
+          if (selectedSeries.value.length > 0)
+          {
+              selection_series = selectedSeries.value;
+          }
 
           const response = await axios.post('http://localhost:8000/api/fetchData/',
               {
-                data_set: dataSet,
-                normalization: normalizationMode.value
+                dataset: dataSelect.value,
+                normalization : normalizationMode.value,
+                scenario : scenarioMissingValues.value,
+                missing_rate: missingRate.value,
+                selected_series: selection_series
               },
               {
                 headers: {
@@ -107,11 +133,12 @@ export default {
           );
 
           chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-
           obfuscatedMatrix = response.data.matrix;
           groundtruthMatrix = response.data.groundtruth;
+
           obfuscatedMatrix.forEach((data: number[], index: number) => {
-            if (currentSeriesNames.length > 0) {
+            if (currentSeriesNames.length > 0)
+            {
               chartOptionsOriginal.value.series[index] = createSeries(
                   index,
                   data,
@@ -119,7 +146,9 @@ export default {
                   currentSeriesNames[index],
                   obfuscatedColors[index]
               );
-            } else {
+            }
+            else
+            {
               chartOptionsOriginal.value.series[index] = createSeries(
                   index,
                   data,
@@ -128,20 +157,33 @@ export default {
                   obfuscatedColors[index]
               );
             }
+
           });
-          if (missingRate.value != "0") {
+
+          if (missingRate.value != "0")
+          {
             // Adding ground truth series to the chart
             groundtruthMatrix.forEach((data: number[], index: number) => {
-              chartOptionsOriginal.value.series.push(createSeries(
-                  index,
-                  data,
-                  dataSelect.value,
-                  currentSeriesNames[index] + " Missing values",
-                  'dash',
-                  1,
-                  obfuscatedColors[index]
-              ));
+
+              if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
+              {
+                chartOptionsOriginal.value.series.push(createSeries(
+                    index,
+                    data,
+                    dataSelect.value,
+                    currentSeriesNames[index] + "_MV",
+                    'dash',
+                    1,
+                    obfuscatedColors[index]
+                ));
+              }
             });
+            }
+
+          mySeries.value = []
+          for (let i = -1; i < currentSeriesNames.length && i < 4; i++)
+          {
+            mySeries.value.push(`${i + 1}: ${currentSeriesNames[i+1]}`);
           }
 
         } catch (error) {
@@ -191,8 +233,17 @@ export default {
       }
     }
 
-    const updateSeriesNames = (newSeriesNames) => {
+        // Define a new function that calls fetchData
+    const handleSeriesSelectChange = async () => {
+      try {
+        fetchData();
+        submitForm();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
 
+    const updateSeriesNames = (newSeriesNames) => {
       currentSeriesNames = newSeriesNames;
     };
 
@@ -206,7 +257,16 @@ export default {
         console.error("Error handling parameter selection:", error);
       }
     }
-      const handleNormalizationModeChange = () => {
+    const handleNormalizationModeChange = () => {
+      if (imputedData.value == true) {
+        fetchData();
+        submitForm();
+      } else {
+        handleDataSelectChange();
+      }
+    }
+
+    const handleScenarioMissingValuesChange = () => {
       if (imputedData.value == true)
       {
           fetchData();
@@ -221,14 +281,19 @@ export default {
     // Watch for changes and call fetchData when it changes
     watch([dataSelect], handleDataSelectChange, {immediate: true});
     watch(normalizationMode, handleNormalizationModeChange, {immediate: true});
+    watch(scenarioMissingValues, handleScenarioMissingValuesChange, {immediate: true});
+
 
     return {
       submitForm,
       chartOptionsOriginal,
       dataSelect,
+      seriesSelect,
       normalizationMode,
       updateSeriesNames,
       missingRate,
+      mySeries,
+      selectedSeries,
       scenarioMissingValues,
       imputedData,
       checkedNames,

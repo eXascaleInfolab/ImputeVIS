@@ -53,7 +53,7 @@
         <ul>
 
           <li>
-            <RouterLink to="/explainer">Explainer</RouterLink>
+            <RouterLink to="/explainers">Explainer</RouterLink>
           </li>
 
         </ul>

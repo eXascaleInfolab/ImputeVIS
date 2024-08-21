@@ -54,6 +54,7 @@ def evaluate_params(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarr
                                                                  # seq_length=seq_len
                                                                  )
         recovered_matrix = np.array(recovered_matrix)
+        #recovered_matrix = np.asarray(recovered_matrix).transpose()
     elif algorithm == 'stmvl':
         window_size, gamma, alpha = config
         recovered_matrix = Wrapper.algo_collection.native_stmvl_param(
@@ -69,16 +70,12 @@ def evaluate_params(ground_truth_matrix: np.ndarray, obfuscated_matrix: np.ndarr
     if 'mse' in selected_metrics:
         error_measures['mse'] = mean_squared_error(ground_truth_matrix, recovered_matrix)
     if 'rmse' in selected_metrics:
-        error_measures['rmse'] = statistics.determine_rmse(ground_truth_matrix, recovered_matrix,
-                                                           obfuscated_matrix)
+        error_measures['rmse'] = statistics.determine_rmse(ground_truth_matrix, recovered_matrix, obfuscated_matrix)
     if 'mae' in selected_metrics:
-        error_measures['mae'] = statistics.determine_mae(ground_truth_matrix, recovered_matrix,
-                                                         obfuscated_matrix)
+        error_measures['mae'] = statistics.determine_mae(ground_truth_matrix, recovered_matrix, obfuscated_matrix)
     if 'mi' in selected_metrics:
-        error_measures['mi'] = 1 - statistics.normalized_mutual_info(ground_truth_matrix, recovered_matrix,
-                                                                           obfuscated_matrix)
+        error_measures['mi'] = 1 - statistics.normalized_mutual_info(ground_truth_matrix, recovered_matrix, obfuscated_matrix)
     if 'corr' in selected_metrics:
-        error_measures['corr'] = 1 - statistics.determine_correlation(ground_truth_matrix, recovered_matrix,
-                                                                      obfuscated_matrix)
+        error_measures['corr'] = 1 - statistics.determine_correlation(ground_truth_matrix, recovered_matrix, obfuscated_matrix)
 
     return error_measures

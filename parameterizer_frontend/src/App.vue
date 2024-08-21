@@ -39,7 +39,7 @@
               Explanation
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization-select">
-              <RouterLink class="dropdown-item" to="/explainer">Explainer</RouterLink>
+              <RouterLink class="dropdown-item" to="/explainers">Explainer</RouterLink>
             </div>
           </li>
 

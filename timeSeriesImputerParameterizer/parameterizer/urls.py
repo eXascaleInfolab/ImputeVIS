@@ -16,4 +16,5 @@ urlpatterns = [
     path('optimization/mrnn/', views.mrnn_optimization, name='mrnn_optimization'),
     path('optimization/stmvl/', views.stmvl_optimization, name='stmvl_optimization'),
     path('shapCallExplainer/', views.shap_call_explainer, name='shap_call_explainer'),
+    path('shapCallExplainers/', views.shap_call_explainers, name='shap_call_explainers'),
 ]

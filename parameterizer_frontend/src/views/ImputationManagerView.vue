@@ -23,12 +23,12 @@
 
 
             <div v-if="metricsCDRec || metricsIIM || metricsMRNN || metricsSTMVL" style="margin-left: 20%; margin-right: 20%; margin-top: 5%; width:60%; text-align:center;">
-              <kiviat-display v-if="imputedData" :metrics="{
+              <!--<kiviat-display v-if="imputedData" :metrics="{
                 CDRec :{rmse_1: rmseCDRec, mae_1: maeCDRec, mi_1: miCDRec, corr_1: corrCDRec },
                 IIM :{ rmse_2: rmseIIM, mae_2: maeIIM, mi_2: miIIM, corr_2: corrIIM },
                 MRNN :{ rmse_3: rmseMRNN, mae_3: maeMRNN, mi_3: miMRNN, corr_3: corrMRNN },
                 STMVL :{ rmse_4: rmseSTMVL, mae_4: maeSTMVL, mi_4: miSTMVL, corr_4: corrSTMVL }
-                }" />
+                }" /> -->
 
 
               <div v-if="metricsCDRec || metricsIIM || metricsMRNN || metricsSTMVL || imputedData" class="mt-4" style="margin: 3%;">
@@ -80,17 +80,18 @@
             </div>
 
 
-
-
-
-
           </div>
           <div class="col-lg-2" style="margin-top: 50px;">
             <div class="row me-5">
               <div class="">
                 <form ref="ref_missingvalues" @submit.prevent="submitForm">
-                  <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/><br />
-                  <missing-rate v-model="missingRate"/><br />
+                  <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
+                  <scenario-missing-values v-model="scenarioMissingValues" />
+                  <div v-for="series in mySeries" :key="series" class="form-check">
+                    <input class="form-check-input" type="checkbox" :id="`checkbox-${series}`" :value="series" v-model="selectedSeries" />
+                    <label class="form-check-label" :for="`checkbox-${series}`">{{ series.substring(3) }}</label>
+                  </div>
+                  <missing-rate v-model="missingRate"/>
                 </form>
               </div>
             </div>
@@ -142,13 +143,13 @@
               </div>
 
               <div class="d-flexs mt-4 me-10" >
-                <button type="submit" id="alpha_run" class="btn btn-primary" style="margin-top:36px;  width:100px; ">Impute</button>
-                <button type="submit" id="delta_reset" class="btn btn-danger" style="margin-top:36px; margin-left : 10%; width:100px; ">Reset</button>
+                <button type="submit" id="alpha_run" class="btn btn-primary" style="margin-top:10px;  width:100px; ">Impute</button>
+                <button type="submit" id="delta_reset" class="btn btn-danger" style="margin-top:10px; margin-left : 10%; width:100px; ">Reset</button>
               </div>
 
               <div class="popup" id="popup">
-                <label><input type="checkbox" id="nns_based" >NNs-based</label><br>
-                <label><input type="checkbox" id="reg_based" >Regression-based</label><br>
+                <label><input type="checkbox" id="nns_based" checked>NNs-based</label><br>
+                <label><input type="checkbox" id="reg_based" checked>Regression-based</label><br>
 
                 <input type="file" ref="fileInput" @change="uploadFile" style="margin-top:30px; margin-bottom:20px; width:145px;  "><br />
 
@@ -193,20 +194,18 @@ import MissingRate from './components/MissingRate.vue';
 import NormalizationToggle from './components/NormalizationToggle.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
+import ScenarioMissingValues from './components/ScenarioMissingValues.vue';
 
-import Highcharts from 'highcharts'
-import HighchartsBoost from "highcharts/modules/boost";
 import {IIM_DEFAULTS, CDREC_DEFAULTS, MRNN_DEFAULTS, STMVL_DEFAULTS} from './thesisUtils/defaultParameters';
 import {
   createSegmentedSeries,
   createSeries,
-  generateChartOptions, generateChartOptionsHeight,
-  generateChartOptionsLarge
+  generateChartOptions
 } from "@/views/thesisUtils/utils";
 import Metrics2Display from "@/views/components/Metrics2Display.vue";
 import KiviatDisplay from './components/KiviatDisplay.vue';
+import defaultConfig from'./../assets_naterq/default_values.json';
 
-// HighchartsBoost(Highcharts)
 
 export default {
   components: {
@@ -215,22 +214,42 @@ export default {
     NormalizationToggle,
     highcharts: Chart,
     DataSelect,
-    MissingRate
+    MissingRate,
+    ScenarioMissingValues
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'batch10_eighth') // Default data is BAFU
-    const normalizationMode = ref('Normal')
-    let currentSeriesNames = []; // Names of series currently displayed
+    const dataSelect = ref(route.params.datasetName || defaultConfig.loading.load_dataset)
+    const normalizationMode = ref(defaultConfig.loading.load_normalization);
+    const scenarioMissingValues = ref(defaultConfig.loading.load_scenario);
+    const missingRate = ref(defaultConfig.loading.load_missing_rate_contamination); // Default missing rate
+
+    let truncationRank = defaultConfig.cdrec.default_reduction_rank;
+    let epsilon = defaultConfig.cdrec.default_epsilon_str;
+    let iterations = defaultConfig.cdrec.default_iteration;
+
+    let numberSelect = defaultConfig.iim.default_neighbor;
+    let typeSelect = ''; // Default selected type is "Normal", denoted by an empty string
+
+    let learningRate = defaultConfig.mrnn.default_learning_rate;
+    let hiddenDim = defaultConfig.mrnn.default_hidden_dim;
+    let iterationsMRNN = defaultConfig.mrnn.default_iterations;
+    let keepProb = defaultConfig.mrnn.default_keep_prob;
+    let seqLen = defaultConfig.mrnn.default_sequence_length;
+
+    let windowSize = defaultConfig.stmvl.default_window_size;
+    let gamma = defaultConfig.stmvl.default_gamma;
+    let alpha = defaultConfig.stmvl.default_alpha;
+
+    let currentSeriesNames = [];
+    const mySeries = ref([]);
+    const selectedSeries = ref([]);
+
+
     const fetchedData = reactive({});
     let loadingResults = ref(false);
     const selectedParamOption = ref('recommended'); // Default option
 
-
     //CDRec Parameters
-    const missingRate = ref('0'); // Default missing rate
-    let truncationRank = '1' // Default truncation rank is 1, 0 means detect truncation automatically
-    let epsilon = 'E-6'; // Default epsilon is E-6
-    let iterations = (500); // Default number of iterations is 1000
     const rmseCDRec = ref(null);
     const maeCDRec = ref(null);
     const miCDRec = ref(null);
@@ -238,8 +257,6 @@ export default {
     const metricsCDRec = ref(false);
 
     //IIM Parameters
-    let numberSelect = 1; // Default selected learning neighbors is 1
-    let typeSelect = ''; // Default selected type is "Normal", denoted by an empty string
     const rmseIIM = ref(null);
     const maeIIM = ref(null);
     const miIIM = ref(null);
@@ -247,11 +264,6 @@ export default {
     const metricsIIM = ref(false);
 
     // M-RNN Parameters
-    let learningRate = 0.01; // Default learning rate is 0.01
-    let hiddenDim = 10; // Default hidden dimension size is 10
-    let iterationsMRNN = 500; // Default number of iterations is 1000
-    let keepProb = 0.5; // Default keep probability is 0.5
-    let seqLen = 7; // Default sequence length is 7
     const rmseMRNN = ref(null);
     const maeMRNN = ref(null);
     const miMRNN = ref(null);
@@ -259,9 +271,6 @@ export default {
     const metricsMRNN = ref(false);
 
     // ST-MVL Parameters
-    let windowSize = '2'; // Default window size is 2
-    let gamma = '0.5' // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
-    let alpha = '2' // Default power for spatial weight (alpha) is 2, must be larger than 0.0
     const rmseSTMVL = ref(null);
     const maeSTMVL = ref(null);
     const miSTMVL = ref(null);
@@ -272,68 +281,64 @@ export default {
     let groundtruthMatrix = [];
     const checkedNames = ref([]);
     const imputedData = ref(false); // Whether imputation has been carried out
-    const nns_checked = ref(false);
-    const reg_checked = ref(false);
+    const nns_checked = ref(true);
+    const reg_checked = ref(true);
 
 
     const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
 
     const fetchData = async () => {
 
-      if (dataSelect.value !== "upload") {
-
-        try {
+      if (dataSelect.value !== "upload")
+      {
+        try
+        {
           loadingResults.value = true;
-          let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+
+          let selection_series = ["-1:test"];
+          if (selectedSeries.value.length > 0)
+          {
+              selection_series = selectedSeries.value;
+          }
+
           const response = await axios.post('http://localhost:8000/api/fetchData/',
               {
-                data_set: dataSet,
-                normalization: normalizationMode.value
+                dataset: dataSelect.value,
+                normalization : normalizationMode.value,
+                scenario : scenarioMissingValues.value,
+                missing_rate: missingRate.value,
+                selected_series: selection_series
               },
               {
-                headers: {
+                headers:
+                {
                   'Content-Type': 'application/text',
                 }
               }
           );
+
           chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-          // chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
           clearErrorMetrics();
 
           obfuscatedMatrix = response.data.matrix;
           groundtruthMatrix = response.data.groundtruth;
           obfuscatedMatrix.forEach((data: number[], index: number) => {
-            if (currentSeriesNames.length > 0) {
-              chartOptionsOriginal.value.series[index] = createSeries(
-                  index,
-                  data,
-                  dataSelect.value,
-                  currentSeriesNames[index],
-                  obfuscatedColors[index]
-              );
-            } else {
-              chartOptionsOriginal.value.series[index] = createSeries(
-                  index,
-                  data,
-                  dataSelect.value,
-                  undefined,
-                  obfuscatedColors[index]
-              );
-            }
+              chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], obfuscatedColors[index])
           });
-          if (missingRate.value != "0") {
-            // Adding ground truth series to the chart
+          if (missingRate.value != "0")
+          {
             groundtruthMatrix.forEach((data: number[], index: number) => {
-              chartOptionsOriginal.value.series.push(createSeries(
-                  index,
-                  data,
-                  dataSelect.value,
-                  currentSeriesNames[index] + " (MV)",
-                  'dash',
-                  1,
-                  obfuscatedColors[index]
-              ));
+              if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
+              {
+                  chartOptionsOriginal.value.series.push(createSeries(index, data, dataSelect.value, currentSeriesNames[index] + "-MV", 'dash', 1, obfuscatedColors[index]));
+              }
             });
+          }
+
+          mySeries.value = []
+          for (let i = -1; i < currentSeriesNames.length && i < 4; i++)
+          {
+            mySeries.value.push(`${i + 1}: ${currentSeriesNames[i+1]}`);
           }
 
         } catch (error) {
@@ -345,11 +350,15 @@ export default {
     }
 
     const fetchParameters = async () => {
-      if (dataSelect.value !== "upload") {
-        if (selectedParamOption.value !== 'default') {
+      if (dataSelect.value !== "upload")
+      {
+        if (selectedParamOption.value !== 'default')
+        {
           try {
             const dataAbbreviation = getCategory(dataSelect.value);
             let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+
+            console.log("FDS:", selectedParamOption.value)
             const response = await axios.post('http://localhost:8000/api/fetchParameters/',
                 {
                   data_set: dataAbbreviation,
@@ -439,10 +448,8 @@ export default {
 
     const handleCheckboxChange = async () => {
 
-    if (dataSelect.value !== "upload") {
-
-      // Clear the existing series
-      // chartOptionsImputed.value.series = [];
+    if (dataSelect.value !== "upload")
+    {
       loadingResults.value = true;
       imputedData.value = false;
       chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length)
@@ -450,133 +457,145 @@ export default {
       await fetchParameters();
       clearErrorMetrics();
 
-      try {
-        for (let checkedName of checkedNames.value) {
+      try
+      {
+        for (let checkedName of checkedNames.value)
+        {
           const displayImputation = true
-          let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
+
+          let selection_series = ["-1:test"];
+          if (selectedSeries.value.length > 0)
+          {
+              selection_series = selectedSeries.value;
+          }
 
           obfuscatedMatrix.forEach((data: number[], index: number) => {
-            if (currentSeriesNames.length > 0) {
-              chartOptionsImputed.value.series[index] = createSeries(
-                  index,
-                  data,
-                  dataSelect.value,
-                  currentSeriesNames[index],
-                  obfuscatedColors[index]
-              );
-            } else {
-              chartOptionsImputed.value.series[index] = createSeries(
-                  index,
-                  data,
-                  dataSelect.value,
-                  undefined,
-                  obfuscatedColors[index]
-              );
-            }
+              chartOptionsImputed.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], obfuscatedColors[index]);
           });
-          // Adding ground truth series to the chart
           groundtruthMatrix.forEach((data: number[], index: number) => {
-            chartOptionsImputed.value.series.push(createSeries(
-                index,
-                data,
-                dataSelect.value,
-                currentSeriesNames[index] + " (MV)",
-                'dash',
-                1,
-                obfuscatedColors[index]
-            ));
+              if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
+              {
+                chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "-MV", 'dash', 1, obfuscatedColors[index]));
+              }
           });
 
-          if (checkedName.toLowerCase() === 'cdrec') {
-            if (!fetchedData[checkedName]) {
-              const response = await axios.post('http://localhost:8000/api/cdrec/',
+
+          if (checkedName.toLowerCase() === 'cdrec')
+          {
+              if (!fetchedData[checkedName])
+              {
+                  const response = await axios.post('http://localhost:8000/api/cdrec/',
+                      {
+                        dataset: dataSelect.value,
+                        normalization: normalizationMode.value,
+                        scenario : scenarioMissingValues.value,
+                        missing_rate : missingRate.value,
+                        selected_series : selection_series,
+                        truncation_rank: truncationRank,
+                        epsilon: epsilon,
+                        iterations: iterations,
+                      },
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                        }
+                      }
+                  );
+                  fetchedData[checkedName] = response.data;
+              }
+
+              rmseCDRec.value = fetchedData[checkedName].rmse.toFixed(3);
+              maeCDRec.value = fetchedData[checkedName].mae.toFixed(3);
+              miCDRec.value = fetchedData[checkedName].mi.toFixed(3);
+              corrCDRec.value = fetchedData[checkedName].corr.toFixed(3);
+              metricsCDRec.value = true;
+
+
+              fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) =>
+              {
+                if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
+                {
+                  if (currentSeriesNames.length > 0 && currentSeriesNames[index])
                   {
-                    data_set: dataSet,
-                    normalization: normalizationMode.value,
-                    truncation_rank: truncationRank,
-                    epsilon: epsilon,
-                    iterations: iterations,
-                  },
-                  {
-                    headers: {
-                      'Content-Type': 'application/json',
+                    if (displayImputation)
+                    {
+                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
                     }
                   }
-              );
-              fetchedData[checkedName] = response.data;
-            }
-            rmseCDRec.value = fetchedData[checkedName].rmse.toFixed(3);
-            maeCDRec.value = fetchedData[checkedName].mae.toFixed(3);
-            miCDRec.value = fetchedData[checkedName].mi.toFixed(3);
-            corrCDRec.value = fetchedData[checkedName].corr.toFixed(3);
-            metricsCDRec.value = true;
-
-            // Create a new array for the new series data
-            const newSeriesData = [];
-            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              //The push should theoretically ensure that we are just adding
-
-
-              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
-                } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
-                }
-              } else {
-                if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "CDRec: " + index));
-                } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
-                }
-              }
-            });
-            imputedData.value = true;
-          } else if (checkedName.toLowerCase() == 'iim') {
-            if (!fetchedData[checkedName]) {
-              const formattedAlgCode = `iim ${numberSelect}${typeSelect}`;
-              const response = await axios.post('http://localhost:8000/api/iim/',
+                  else
                   {
-                    data_set: dataSet,
-                    normalization: normalizationMode.value,
-                    alg_code: formattedAlgCode,
-                  },
-                  {
-                    headers: {
-                      'Content-Type': 'application/json',
+                    if (displayImputation)
+                    {
+                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "CDRec: " + index));
                     }
                   }
-              );
-              fetchedData[checkedName] = response.data;
-            }
-            rmseIIM.value = fetchedData[checkedName].rmse.toFixed(3);
-            maeIIM.value = fetchedData[checkedName].mae.toFixed(3);
-            miIIM.value = fetchedData[checkedName].mi.toFixed(3);
-            corrIIM.value = fetchedData[checkedName].corr.toFixed(3);
-            metricsIIM.value = true;
+                }
+              });
 
-            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "IIM: " + currentSeriesNames[index]));
-                } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "IIM: " + currentSeriesNames[index]));
-                }
-              } else {
-                if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "IIM: " + index));
-                } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
-                }
+              imputedData.value = true;
+          }
+          else if (checkedName.toLowerCase() == 'iim')
+          {
+              if (!fetchedData[checkedName])
+              {
+                const formattedAlgCode = `iim ${numberSelect}${typeSelect}`;
+                const response = await axios.post('http://localhost:8000/api/iim/',
+                    {
+                      dataset: dataSelect.value,
+                      normalization: normalizationMode.value,
+                      scenario : scenarioMissingValues.value,
+                      missing_rate : missingRate.value,
+                      selected_series : selection_series,
+                      alg_code: formattedAlgCode,
+                    },
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                      }
+                    }
+                );
+                fetchedData[checkedName] = response.data;
               }
-            });
-            imputedData.value = true;
-          } else if (checkedName.toLowerCase() === 'm-rnn') {
-            if (!fetchedData[checkedName]) {
+
+              rmseIIM.value = fetchedData[checkedName].rmse.toFixed(3);
+              maeIIM.value = fetchedData[checkedName].mae.toFixed(3);
+              miIIM.value = fetchedData[checkedName].mi.toFixed(3);
+              corrIIM.value = fetchedData[checkedName].corr.toFixed(3);
+              metricsIIM.value = true;
+
+              fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) =>
+              {
+                if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
+                {
+                  if (currentSeriesNames.length > 0 && currentSeriesNames[index])
+                  {
+                    if (displayImputation)
+                    {
+                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "IIM: " + currentSeriesNames[index]));
+                    }
+                  }
+                  else
+                  {
+                    if (displayImputation)
+                    {
+                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "IIM: " + index));
+                    }
+                  }
+                }
+              });
+              imputedData.value = true;
+          }
+          else if (checkedName.toLowerCase() === 'm-rnn')
+          {
+            if (!fetchedData[checkedName])
+            {
               const response = await axios.post('http://localhost:8000/api/mrnn/',
                   {
-                    data_set: dataSet,
+                    dataset: dataSelect.value,
                     normalization: normalizationMode.value,
+                    scenario : scenarioMissingValues.value,
+                    missing_rate : missingRate.value,
+                    selected_series : selection_series,
                     hidden_dim: hiddenDim,
                     learning_rate: learningRate,
                     iterations: iterationsMRNN,
@@ -591,34 +610,50 @@ export default {
               );
               fetchedData[checkedName] = response.data;
             }
+
             rmseMRNN.value = fetchedData[checkedName].rmse.toFixed(3);
             maeMRNN.value = fetchedData[checkedName].mae.toFixed(3);
             miMRNN.value = fetchedData[checkedName].mi.toFixed(3);
             corrMRNN.value = fetchedData[checkedName].corr.toFixed(3);
             metricsMRNN.value = true;
 
-            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "MRNN: " + currentSeriesNames[index]));
-                } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "MRNN: " + currentSeriesNames[index]));
+            console.log("fetchedData[checkedName]", fetchedData[checkedName])
+            console.log("rmseMRNN.value", rmseMRNN.value)
+            console.log("fetchedData[checkedName].matrix_imputed", fetchedData[checkedName].matrix_imputed)
+            console.log("obfuscatedMatrix", obfuscatedMatrix)
+
+            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) =>
+            {
+              if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
+              {
+                if (currentSeriesNames.length > 0 && currentSeriesNames[index])
+                {
+                  if (displayImputation)
+                  {
+                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "m-rnn: " + currentSeriesNames[index]));
+                  }
                 }
-              } else {
-                if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "MRNN: " + index));
-                } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
+                else
+                {
+                  if (displayImputation)
+                  {
+                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "m-rnn: " + index));
+                  }
                 }
               }
             });
             imputedData.value = true;
-          } else if (checkedName.toLowerCase() === 'st-mvl') {
+          }
+          else if (checkedName.toLowerCase() === 'st-mvl')
+          {
             if (!fetchedData[checkedName]) {
               const response = await axios.post('http://localhost:8000/api/stmvl/',
                   {
-                    data_set: dataSet,
+                    dataset: dataSelect.value,
                     normalization: normalizationMode.value,
+                    scenario : scenarioMissingValues.value,
+                    missing_rate : missingRate.value,
+                    selected_series : selection_series,
                     window_size: windowSize,
                     gamma: gamma,
                     alpha: alpha,
@@ -631,30 +666,42 @@ export default {
               );
               fetchedData[checkedName] = response.data;
             }
+
             rmseSTMVL.value = fetchedData[checkedName].rmse.toFixed(3);
             maeSTMVL.value = fetchedData[checkedName].mae.toFixed(3);
             miSTMVL.value = fetchedData[checkedName].mi.toFixed(3);
             corrSTMVL.value = fetchedData[checkedName].corr.toFixed(3);
             metricsSTMVL.value = true;
 
-            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) => {
-              if (currentSeriesNames.length > 0 && currentSeriesNames[index]) {
-                if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "ST-MVL: " + currentSeriesNames[index]));
-                } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value, "ST-MVL: " + currentSeriesNames[index]));
+            fetchedData[checkedName].matrix_imputed.forEach((data: number[], index: number) =>
+            {
+              if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
+              {
+                if (currentSeriesNames.length > 0 && currentSeriesNames[index])
+                {
+                  if (displayImputation)
+                  {
+                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "st-mvl: " + currentSeriesNames[index]));
+                  }
                 }
-              } else {
-                if (displayImputation) {
-                  chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], groundtruthMatrix[index], chartOptionsImputed.value, dataSelect.value, "ST-MVL: " + index));
-                } else {
-                  chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value));
+                else
+                {
+                  if (displayImputation)
+                  {
+                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "st-mvl: " + index));
+                  }
                 }
               }
             });
 
             imputedData.value = true;
           }
+        }
+
+        mySeries.value = []
+        for (let i = -1; i < currentSeriesNames.length && i < 4; i++)
+        {
+          mySeries.value.push(`${i + 1}: ${currentSeriesNames[i+1]}`);
         }
 
 
@@ -785,9 +832,23 @@ export default {
       }
     }
 
+
+    const handleScenarioMissingValuesChange = () => {
+      if (imputedData.value == true)
+      {
+          fetchData();
+          submitForm();
+      }
+      else
+      {
+          handleDataSelectChange();
+      }
+    }
+
     // Watch for changes and call fetchData when it changes
     watch([dataSelect, missingRate], handleDataSelectChange, {immediate: true});
     watch(normalizationMode, handleNormalizationModeChange, {immediate: true});
+    watch(scenarioMissingValues, handleScenarioMissingValuesChange, {immediate: true});
     // Watch for changes and call fetchData when it changes
     // watch(selectedParamOption, handleParamSelectChange, {immediate: true});
 
@@ -824,6 +885,9 @@ export default {
       normalizationMode,
       updateSeriesNames,
       missingRate,
+      mySeries,
+      selectedSeries,
+      scenarioMissingValues,
       imputedData,
       checkedNames,
       handleCheckboxChange,
