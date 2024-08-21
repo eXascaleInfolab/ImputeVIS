@@ -1,0 +1,4 @@
+[cdrec]
+default_reduction_rank = "2"
+default_epsilon = "0.000001"
+default_iteration = "100"

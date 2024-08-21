@@ -6,11 +6,11 @@
     <!-- Dropdown for MCAR Rate -->
     <div class="custom-select">
         <select v-model="scenarioMissingValues" id="scenarioMissingValues" class="form-control" @change="adjustScenarios">
-          <option value="obfuscated">MCAR</option>
-          <option value="missingpourcentage">Missing %</option>
+          <option value="mcar">MCAR</option>
           <option value="blackout">Blackout</option>
-          <option value="overlap">Overlap</option>
           <option value="disjoint">Disjoint</option>
+          <option value="overlap">Overlap</option>
+
         </select>
     </div>
   </div>
@@ -24,7 +24,7 @@ export default defineComponent({
   props: {
     modelValue: {
       type: String,
-      default: 'MCAR',
+      default: 'mcar',
     },
   },
   setup(props, { emit }) {

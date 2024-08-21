@@ -196,10 +196,9 @@ export default {
     MetricsDisplay,
     MissingRate,
     NormalizationToggle,
-    AlgorithmChoice,
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'batch10_eighth');
+    const dataSelect = ref(route.params.datasetName || 'chlorine');
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
@@ -321,34 +320,6 @@ export default {
     const fetchData = async () => {
 
       if (dataSelect.value !== "upload") {
-        try {
-          loadedResults.value = false;
-          let dataSet = `${dataSelect.value}_obfuscated_0`;
-          const response = await axios.post('http://localhost:8000/api/fetchData/',
-              {
-                data_set: dataSet,
-                normalization: normalizationMode.value,
-              },
-              {
-                headers: {
-                  'Content-Type': 'application/text',
-                }
-              }
-          );
-          chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-
-          response.data.matrix.forEach((data: number[], index: number) => {
-            // Replace NaN with 0
-            const cleanData = data.map(value => isNaN(value) ? 0 : value);
-            if (currentSeriesNames.length > 0) {
-              chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value, currentSeriesNames[index]);
-            } else {
-              chartOptionsOriginal.value.series[index] = createSeries(index, cleanData, dataSelect.value);
-            }
-          });
-        } catch (error) {
-          console.error(error);
-        }
       }
     }
 
@@ -362,38 +333,38 @@ export default {
         error.value = "";
         loadedResults.value = false;
 
-
-        try {
-
-          switch (dataSelect.value) {
-            case "BAFU_onetwentyeigth":
+        try
+        {
+          switch (dataSelect.value)
+          {
+            case "bafu":
               my_data.value = `bafu`;
               my_data_set.value = `BAFU`;
               break;
-            case "cl2fullLarge_eighth":
+            case "chlorine":
               my_data.value = `chlorine`;
               my_data_set.value = `cl2fullLarge`;
               break;
-            case "climate_eighth":
+            case "climate":
               my_data.value = `climate`;
               my_data_set.value = `climate`;
               break;
-            case "batch10_eighth":
+            case "drift":
               my_data.value = `drift`;
               my_data_set.value = `batch10`;
               break;
-            case "meteo_total_eighth":
+            case "meteo":
               my_data.value = `meteo`;
               my_data_set.value = `meteo_total`;
               break;
           }
 
-          my_path.value = "src/assets/" + my_data.value + "_cdrec_shap_plot.png"
-          my_path_agg.value = "src/assets/" + my_data.value + "_cdrec_shap_aggregate_plot.png"
+          my_path.value = "src/assets/" + dataSelect.value + "_cdrec_shap_plot.png"
+          my_path_agg.value = "src/assets/" + dataSelect.value + "_cdrec_shap_aggregate_plot.png"
 
           const shap_values = await axios.post('http://localhost:8000/api/shapCallExplainer/',
               {
-                data: my_data.value,
+                data: dataSelect.value,
                 data_set: my_data_set.value
               },
               {
@@ -403,17 +374,19 @@ export default {
               }
           );
           shapValues.value = shap_values.data
+
+          console.log("shapValues.value:", shapValues.value);
         } catch (error) {
           error.value = `Error: ${error.message}`;
           console.error(error);
         }
 
 
-        try {
-          let dataSet = `${dataSelect.value}_obfuscated_0`;
+        try
+        {
           const response = await axios.post('http://localhost:8000/api/categorizeData/',
               {
-                data_set: dataSet
+                data_set: dataSelect.value
               },
               {
                 headers: {
@@ -424,10 +397,14 @@ export default {
           features.value = response.data;
           categorizedFeatures.value = categorizeFeatures(response.data);
           loadedResults.value = true;
-        } catch (error) {
+        }
+        catch (error)
+        {
           error.value = `Error: ${error.message}`;
           console.error(error);
-        } finally {
+        }
+        finally
+        {
           loading.value = false;
         }
       }

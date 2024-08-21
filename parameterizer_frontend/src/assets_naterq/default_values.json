@@ -1,0 +1,26 @@
+{
+  "cdrec": {
+    "default_reduction_rank": 2,
+    "default_epsilon": 0.000001,
+    "default_epsilon_str": "E-6",
+    "default_iteration": 100
+  },
+  "stmvl": {
+    "default_window_size": 2,
+    "default_gamma": 0.85,
+    "default_alpha": 7
+  },
+  "iim": {
+    "default_neighbor": 10
+  },
+  "mrnn": {
+    "default_hidden_dim": 10,
+    "default_learning_rate": 0.01,
+    "default_iterations": 1000,
+    "default_keep_prob": 1.0
+  },
+  "explainer":{
+    "splitter" : 10,
+    "nbr_series" : 15
+  }
+}

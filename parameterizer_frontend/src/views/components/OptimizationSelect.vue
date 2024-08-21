@@ -11,15 +11,18 @@
       </div>
     </div>
 
+    <h3 v-if="naterq_error" style="color : red; margin-left : 20%" >The current algorithm does not match with the current optimization, no feature available...</h3>
+
+
     <!-- Bayesian Optimization parameters -->
     <div v-if="selectedOptimization === 'bayesianOptimization' && !natehidden">
       <div class="mb-3">
         <label for="nCalls" class="form-label">Number of Calls: {{ nCalls }}</label>
-        <input id="nCalls" v-model.number="nCalls" type="range" min="1" max="100" step="1" class="form-control">
+        <input id="nCalls" v-model.number="nCalls" type="range" min="1" max="10" step="1" class="form-control">
       </div>
       <div class="mb-3">
         <label for="nRandomStarts" class="form-label">Random Starts: {{ nRandomStarts }}</label>
-        <input id="nRandomStarts" v-model.number="nRandomStarts" type="range" min="1" max="100" step="1"
+        <input id="nRandomStarts" v-model.number="nRandomStarts" type="range" min="1" max="2" step="1"
                class="form-control">
       </div>
       <div class="mb-3">
@@ -30,8 +33,8 @@
             <option value="EI">EI</option>
             <option value="LCB">LCB</option>
             <option value="PI">PI</option>
-            <option value="EIps">EIps</option>
-            <option value="PIps">PIps</option>
+           <!-- <option value="EIps">EIps</option>
+            <option value="PIps">PIps</option>-->
           </select>
         </div>
       </div>
@@ -109,7 +112,7 @@ export default defineComponent({
     const selectedMetrics = ref(['rmse']);
 
     // Bayesian Optimization parameters
-    const nCalls = ref(3);
+    const nCalls = ref(2);
     const nRandomStarts = ref(2);
     const acqFunc = ref('gp_hedge');
 

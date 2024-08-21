@@ -10,31 +10,11 @@
       <div class="custom-select">
 
         <select id="dataSelect" v-model="selectedData" class="form-control me-5 pe-5">
-          <!--      <option value="drift">Drift</option>-->
-          <!--      <option value="batch10_half">Drift 1/2 Size</option>-->
-          <!--      <option value="batch10_quarter">Drift 1/4 Size</option>-->
-          <!--      <option value="batch10_sixth">Drift 1/6 Size</option>-->
-          <option value="batch10_eighth">Drift</option>
-          <!--            <option value="BAFU">BAFU</option>-->
-          <!--      <option value="BAFU_half">BAFU 1/2 Size</option>-->
-          <!--      <option value="BAFU_sixteenth">BAFU 1/16 Size</option>-->
-          <!--      <option value="BAFU_sixth">BAFU 1/6 Size</option>-->
-          <option value="BAFU_onetwentyeigth">BAFU</option>
-          <!--            <option value="cl2fullLarge">Chlorine</option>-->
-          <!--      <option value="cl2fullLarge_half">Chlorine 1/2 Size</option>-->
-          <!--      <option value="cl2fullLarge_quarter">Chlorine 1/4 Size</option>-->
-          <!--      <option value="cl2fullLarge_sixth">Chlorine 1/6 Size</option>-->
-          <option value="cl2fullLarge_eighth">Chlorine</option>
-          <!--            <option value="climate">Climate</option>-->
-          <!--      <option value="climate_half">Climate 1/2 Size</option>-->
-          <!--      <option value="climate_quarter">Climate 1/4 Size</option>-->
-          <!--      <option value="climate_sixth">Climate 1/6 Size</option>-->
-          <option value="climate_eighth">Climate</option>
-          <!--            <option value="meteo_total">Meteo</option>-->
-          <!--      <option value="meteo_total_half">Meteo 1/2 Size</option>-->
-          <!--      <option value="meteo_total_quarter">Meteo 1/4 Size</option>-->
-          <!--      <option value="meteo_total_sixth">Meteo 1/6 Size</option>-->
-          <option value="meteo_total_eighth">Meteo</option>
+          <option value="drift">Drift</option>
+          <option value="bafu">BAFU</option>
+          <option value="chlorine">Chlorine</option>
+          <option value="climate">Climate</option>
+          <option value="meteo">Meteo</option>
           <option value="upload" @click="uploadFile" >Upload...</option>
         </select>
       </div>
@@ -80,8 +60,12 @@ const climate_series_names = [
   'WET'
 ]
 
-// Based on https://archive.ics.uci.edu/dataset/270/gas+sensor+array+drift+dataset+at+different+concentrations
 const drift_series_names = [
+'DR_1', '|DR|_1', 'EMAi0.001_1', 'EMAi0.01_1', 'EMAi0.1_1', 'EMAd0.001_1', 'EMAd0.01_1', 'EMAd0.1_1',
+  'DR_2', '|DR|_2']
+
+// Based on https://archive.ics.uci.edu/dataset/270/gas+sensor+array+drift+dataset+at+different+concentrations
+const drift_series_names_full = [
   // '0-6_EMAi0.1_0',
   //   '1-10_|DR|_1',
   //   '2-28_EMAi0.01_3',
@@ -114,7 +98,46 @@ const meteo_series_names = [
   'tre000s0',
   'trssurs0',
   'ure000s0',
+  'tde000s1',
+  'tre000s1',
+  'trssurs1',
+  'ure000s1',
+  'tde000s2',
+  'tre000s2',
+  'trssurs2',
+  'ure000s2',
 ];
+
+const chlorine_series_names = [
+  'Series A',
+  'Series B',
+  'Series C',
+  'Series D',
+  'Series E',
+  'Series F',
+  'Series G',
+  'Series H',
+  'Series I',
+  'Series J',
+  'Series K',
+  'Series L',
+];
+
+const others = [
+  'Series A',
+  'Series B',
+  'Series C',
+  'Series D',
+  'Series E',
+  'Series F',
+  'Series G',
+  'Series H',
+  'Series I',
+  'Series J',
+  'Series K',
+  'Series L',
+];
+
 
 export default defineComponent({
   name: 'DataSelect',
@@ -157,14 +180,15 @@ export default defineComponent({
       const datasetMapping: { [key: string]: string[] } = {
         "bafu": bafu_series_names,
         "climate": climate_series_names,
-        "batch10": drift_series_names,
-        "meteo_total": meteo_series_names,
+        "drift": drift_series_names,
+        "meteo": meteo_series_names,
+        "chlorine": chlorine_series_names,
         // ... add other conditions for more datasets as needed
       };
 
       const selectedValue = selectedData.value.toString().toLowerCase();
 
-      let seriesNames: string[] = [];
+      let seriesNames: string[] = others; // Default assignment to 'others' array
 
       for (const [key, value] of Object.entries(datasetMapping)) {
         if (selectedValue.startsWith(key)) {

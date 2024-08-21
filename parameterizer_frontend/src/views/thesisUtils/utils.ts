@@ -9,7 +9,18 @@ const THIRTY_MINUTES = 1000 * 60 * 42;
 const VISIBILITY_THRESHOLD = 10;
 
 export const createSeries = (index: number, data: number[], datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series', lineT = 'line', l_size = 2, s_color = "") => {
+
     const datasetCode = datasetSelected.split('_')[0].toLowerCase();
+
+
+    let visible = 3;
+
+    if (lineT == "display")
+    {
+       visible = 100;
+       lineT = "line";
+    }
+
 
     return {
         name: `${seriesName} ${seriesName === 'Series' ? index + 1 : ''}`.trim(),
@@ -20,7 +31,7 @@ export const createSeries = (index: number, data: number[], datasetSelected: str
         },
         pointStart: Date.UTC(BASE_YEAR, BASE_MONTH, BASE_DAY),
         pointInterval: THIRTY_MINUTES,
-        visible: shouldShow(index, datasetCode),
+        visible: index < visible,  // This ensures only the first two series are visible
         tooltip: {
             valueDecimals: 2,
             fontSize:'20px'
@@ -51,45 +62,16 @@ const createSingleSeries = (data: number[], referenceData: number[]): (number | 
     });
 };
 
-// const createZonesFromReference = (referenceData: number[]): {value?: number, dashStyle?: string}[] => {
-//     const zones: {value?: number, dashStyle?: string}[] = [];
-//
-//     let inNullZone = false;
-//     for (let i = 0; i < referenceData.length; i++) {
-//         const xValue = POINT_START + (i * THIRTY_MINUTES);
-//         if (referenceData[i] === null && !inNullZone) {
-//             inNullZone = true;
-//             // Start of a new null zone, use dash style
-//             zones.push({
-//                 value: xValue,
-//                 dashStyle: 'Dot'
-//             });
-//         } else if (referenceData[i] !== null && inNullZone) {
-//             inNullZone = false;
-//             // End of the null zone, revert to default style
-//             zones.push({
-//                 value: xValue
-//             });
-//         }
-//     }
-//
-//     // If the last data point is also in the null zone, add a terminating zone
-//     if (inNullZone) {
-//         zones.push({});
-//     }
-//
-//     return zones;
-// };
 
 export const createSegmentedSeries = (index: number, data: number[], obfuscatedData: number[], groundtruthData: number[], chartOptions, datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series') => {
     const datasetCode = datasetSelected.split('_')[0].toLowerCase();
     const imputedData = createSingleSeries(data, obfuscatedData);
-    // const zones = createZonesFromReference(obfuscatedData);
     const mainSeriesId = `${seriesName}_${index}_main`;
     const imputedSeriesId = `${seriesName}_${index}_imputed`;
     const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
+    const imputationSeriesColor = chartOptions.colors_imp[index % (chartOptions.colors_imp.length)];
 
-    const isVisible = shouldShow(index, datasetCode);
+    //const isVisible = shouldShow(index, datasetCode);
     const isShownInNavigator = shouldShow(index, datasetCode);
     const seriesNameGenerated = seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName;
 
@@ -102,7 +84,7 @@ export const createSegmentedSeries = (index: number, data: number[], obfuscatedD
         animation: false,
         findNearestPointBy: 'xy',
         opacity: 0.9,
-        visible: isVisible,
+        //visible: isVisible,
         tooltip: {
             valueDecimals: 2
         },
@@ -116,8 +98,7 @@ export const createSegmentedSeries = (index: number, data: number[], obfuscatedD
         },
         scrollbar: {
             liveRedraw: false
-        },
-        // zoneAxis: 'x',
+        }
     };
 
     const mainSeries = {
@@ -135,7 +116,7 @@ export const createSegmentedSeries = (index: number, data: number[], obfuscatedD
         name: `(Imp.) ${seriesNameGenerated}`,
         data: imputedData,
         connectNulls: false,  // is false by default, added for ease of toggling
-        color: "#FF0000",
+        color: imputationSeriesColor,
         lineWidth: 2.5,
         // dashStyle: 'Dot',
         ...commonProperties,
@@ -145,8 +126,7 @@ export const createSegmentedSeries = (index: number, data: number[], obfuscatedD
             radius: 3.5,
         },
     }
-
-    return [imputedSeries, mainSeries];
+    return [imputedSeries];
 };
 
 export const generateChartOptions = (title, seriesName) => ({
@@ -167,7 +147,7 @@ export const generateChartOptions = (title, seriesName) => ({
     legend: {
         showCheckbox: true,
         title: {
-            text: '<span style="font-size: 20px; color: #666; font-weight: normal;">click on series to hide...</span>',
+            text: '<span style="font-size: 20px; color: #666; font-weight: normal;"></span>',
             style: {
                 fontStyle: 'italic'
             }
@@ -185,6 +165,7 @@ export const generateChartOptions = (title, seriesName) => ({
         type: 'datetime'
     },
     colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    colors_imp: ["#5a89ba", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
     chart: {
         height: 900,
         type: 'line',
@@ -193,7 +174,7 @@ export const generateChartOptions = (title, seriesName) => ({
         panKey: 'shift'
     },
     rangeSelector: {
-        selected: 1,
+        selected: 10,
         x: 0,
         // floating: true,
         style: {
@@ -256,14 +237,9 @@ export const generateChartOptions = (title, seriesName) => ({
         tooltip: {
             valueDecimals: 2,
         },
-    }],
-    // plotOptions: {
-    //   series: {
-    //     pointStart: Date.UTC(2010, 0, 1),
-    //     pointInterval: 100000 * 1000 // one day
-    //   }
-    // },
+    }]
 });
+
 
 export const generateChartOptionsLarge = (title, seriesName) => ({
     credits: {
@@ -311,10 +287,10 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         panKey: 'shift'
     },
     colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    colors_imp: ["#5a89ba", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
     rangeSelector: {
-        selected: 1,
+        selected: 4,
         x: 0,
-        // floating: true,
         style: {
             color: 'black',
             fontWeight: 'bold',
@@ -323,57 +299,25 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         },
         enabled: true,
         inputEnabled: false,
-        // inputDateFormat: '%y',
-        // inputEditDateFormat: '%y',
         buttons: [
-            {
-                type: 'hour',
-                count: 12,
-                text: '12H'
-            },
-            {
-                type: 'day',
-                count: 3,
-                text: '3D'
-            },
-
-            {
-                type: 'day',
-                count: 5,
-                text: '5D'
-            },
-            {
-                type: 'week',
-                count: 1,
-                text: 'W'
-            },
-            {
-                type: 'month',
-                count: 1,
-                text: 'M'
-            },
-
-            {
-                type: 'all',
-                text: 'All',
-                align: 'right',
-                x: 900,
-                y: 100,
-            }],
+            { type: 'hour', count: 12, text: '12H' },
+            { type: 'day', count: 3, text: '3D' },
+            { type: 'day', count: 5, text: '5D' },
+            { type: 'week', count: 1, text: 'W' },
+            { type: 'month', count: 1, text: 'M' },
+            { type: 'all', text: 'All', align: 'right', x: 900, y: 100}],
     },
     scrollbar: {
         liveRedraw: false
     },
     plotOptions: {
         series: {
-            showInNavigator: true,
-            // zoneAxis: 'x',
-
+            showInNavigator: true
         }
     },
     series: [{
         name: seriesName,
-        data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 0)),
+        data: Uint32Array.from({length: 10000}, () => Math.floor(Math.random() * 1)),
         animation: false,
         pointStart: Date.UTC(2010, 1, 1),
         findNearestPointBy: 'xy',
@@ -381,7 +325,6 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         tooltip: {
             valueDecimals: 2
         }
-        //dashStyle: 'dash'
     }]
 });
 
@@ -405,7 +348,7 @@ export const generateChartOptionsHeight = (title, seriesName) => ({
     legend: {
         showCheckbox: true,
         title: {
-            text: '<span style="font-size: 16px; color: #666; font-weight: normal;">click on series to hide...</span>',
+            text: '<span style="font-size: 16px; color: #666; font-weight: normal;"></span>',
             style: {
                 fontStyle: 'italic'
             }
@@ -431,8 +374,9 @@ export const generateChartOptionsHeight = (title, seriesName) => ({
         panKey: 'shift'
     },
     colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    colors_imp: ["#5a89ba", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
     rangeSelector: {
-        selected: 1,
+        selected: 10,
         x: 0,
         // floating: true,
         style: {

@@ -160,7 +160,7 @@ export default {
     NormalizationToggle
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'batch10_eighth');
+    const dataSelect = ref(route.params.datasetName || 'chlorine');
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
@@ -291,31 +291,31 @@ export default {
         error.value = "";
         loadedResults.value = false;
 
-        switch (dataSelect.value) {
-          case "BAFU_onetwentyeigth":
-            my_data.value.push(`bafu`);
-            break;
-          case "cl2fullLarge_eighth":
-            my_data.value.push(`chlorine`);
-            break;
-          case "climate_eighth":
-            my_data.value.push(`climate`);
-            break;
-          case "batch10_eighth":
-            my_data.value.push(`drift`);
-            break;
-          case "meteo_total_eighth":
-            my_data.value.push(`meteo`);
-            break;
-        }
+        //switch (dataSelect.value) {
+        //  case "BAFU_onetwentyeigth":
+        //    my_data.value.push(`bafu`);
+        //    break;
+        //  case "cl2fullLarge_eighth":
+        //    my_data.value.push(`chlorine`);
+        //    break;
+        //  case "climate_eighth":
+        //    my_data.value.push(`climate`);
+        //    break;
+        //  case "batch10_eighth":
+        //    my_data.value.push(`drift`);
+        //    break;
+        //  case "meteo_total_eighth":
+        //    my_data.value.push(`meteo`);
+        //    break;
+        // }
 
+        my_data.value.push(dataSelect.value);
 
         try {
           let dataSet = `${dataSelect.value}_obfuscated_0`;
           const response = await axios.post('http://localhost:8000/api/categorizeData/',
               {
                 data_set: dataSet
-
               },
               {
                 headers: {

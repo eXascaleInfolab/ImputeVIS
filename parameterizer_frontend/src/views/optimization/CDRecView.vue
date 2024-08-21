@@ -96,7 +96,7 @@ export default {
   },
   setup() {
     const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
-    const dataSelect = ref('climate_eighth') // Default data
+    const dataSelect = ref('chlorine') // Default data
     const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
     const missingRate = ref('10'); // Default missing rate
@@ -124,10 +124,10 @@ export default {
     const fetchData = async () => {
       imputedData.value = false;
       try {
-        let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
         const response = await axios.post('http://localhost:8000/api/fetchData/',
             {
-              data_set: dataSet,
+              data_set: dataSelect.value,
+              missing_rate : missingRate.value,
               normalization: normalizationMode.value,
             },
             {
@@ -156,13 +156,12 @@ export default {
 
     const submitForm = async () => {
       try {
-        let dataSet = `${dataSelect.value}_obfuscated_10`;
         loadingParameters.value = true;
         imputedData.value = false;
         const response = await axios.post('http://localhost:8000/api/optimization/cdrec/',
             {
               ...optimizationParameters.value, // Spread the optimization parameters into the post body
-              data_set: dataSet,
+              data_set: dataSelect.value,
               normalization: normalizationMode.value,
               algorithm: 'cdrec'
             },
@@ -190,10 +189,9 @@ export default {
       try {
         loadingResults.value = true;
         imputedData.value = false;
-        let dataSet = `${dataSelect.value}_obfuscated_10`;
         const response = await axios.post('http://localhost:8000/api/cdrec/',
             {
-              data_set: dataSet,
+              data_set: dataSelect.value,
               normalization: normalizationMode.value,
               truncation_rank: truncationRank.value,
               epsilon: "E-2",

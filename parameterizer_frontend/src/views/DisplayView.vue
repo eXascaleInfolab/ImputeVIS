@@ -71,14 +71,17 @@ export default {
 
 
     const fetchData = async () => {
+
+
       if (dataSelect.value !== "upload") {
         try {
           loadingResults.value = true;
-          let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
           const response = await axios.post('http://localhost:8000/api/fetchData/',
               {
-                data_set: dataSet,
-                normalization: normalizationMode.value
+                dataset : dataSelect.value,
+                selected_series: ["-1:none"],
+                normalization: normalizationMode.value,
+                missing_rate: "0"
               },
               {
                 headers: {
@@ -92,20 +95,7 @@ export default {
           obfuscatedMatrix = response.data.matrix;
 
           obfuscatedMatrix.forEach((data: number[], index: number) => {
-            if (currentSeriesNames.length > 0) {
-              chartOptionsOriginal.value.series[index] = createSeries(
-                  index,
-                  data,
-                  dataSelect.value,
-                  currentSeriesNames[index]
-              );
-            } else {
-              chartOptionsOriginal.value.series[index] = createSeries(
-                  index,
-                  data,
-                  dataSelect.value
-              );
-            }
+              chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], "display");
           });
 
         } catch (error) {
