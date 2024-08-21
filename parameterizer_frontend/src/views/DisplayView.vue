@@ -38,6 +38,8 @@ import ScenarioMissingValues from './components/ScenarioMissingValues.vue';
 import NormalizationToggle from './components/NormalizationToggle.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
+import defaultConfig from'./../assets_naterq/default_values.json';
+
 import {
   createSeries,
   generateChartOptionsLarge
@@ -53,17 +55,15 @@ export default {
     ScenarioMissingValues
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'climate_eighth') // Default data is BAFU
-    const normalizationMode = ref('Normal')
+    const dataSelect = ref(route.params.datasetName ||  defaultConfig.loading.load_dataset) // Default data is BAFU
+    const normalizationMode = ref( defaultConfig.loading.load_normalization)
+    const missingRate = ref(defaultConfig.loading.load_missing_rate_contamination); // Default missing rate
+    const scenarioMissingValues = ref(defaultConfig.loading.load_scenario); // Default scenarios
+
     let currentSeriesNames = []; // Names of series currently displayed
     const fetchedData = reactive({});
     let loadingResults = ref(false);
     const selectedParamOption = ref('recommended'); // Default option
-
-
-    //CDRec Parameters
-    const missingRate = ref('0'); // Default missing rate
-    const scenarioMissingValues = ref('MCAR'); // Default scenarios
 
     let obfuscatedMatrix = [];
     const checkedNames = ref([]);

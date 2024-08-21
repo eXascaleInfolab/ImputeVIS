@@ -312,18 +312,19 @@ export default {
     const default_learningRate = ref(defaultConfig.mrnn.default_learning_rate);
     const default_hiddenDim = ref(defaultConfig.mrnn.default_hidden_dim);
     const default_keepProb = ref(defaultConfig.mrnn.default_keep_prob);
+    const default_seq = ref(defaultConfig.mrnn.default_sequence_length);
     const default_iterations_ml = ref(defaultConfig.mrnn.default_iterations);
 
     const default_neighbor = ref(defaultConfig.iim.default_neighbor);
 
-    const optimizationParameters = ref({}); // To store the optimization parameters received from the child component
-    const dataSelect = ref('chlorine') // Default data
-    const algorithmChoice = ref('cdrec')
-    const normalizationMode = ref('Normal')
     let currentSeriesNames = []; // Names of series currently displayed
-    const missingRate = ref('10'); // Default missing rate
-    const scenarioMissingValues = ref("mcar");
-    const selection_series =  ref(["-3:all_except_two"])
+    const optimizationParameters = ref({});
+    const dataSelect = ref(defaultConfig.loading.load_dataset);
+    const algorithmChoice = ref(defaultConfig.loading.load_algorithm);
+    const normalizationMode = ref(defaultConfig.loading.load_normalization);
+    const missingRate = ref(defaultConfig.loading.load_missing_rate);
+    const scenarioMissingValues = ref(defaultConfig.loading.load_scenario);
+    const selection_series =  ref(defaultConfig.loading.load_series);
 
     const truncationRank = ref(default_truncationRank.value) // Default truncation rank is 1, 0 means detect truncation automatically
     const epsilon = ref(default_epsilon.value); // Default epsilon is E-6
@@ -341,7 +342,7 @@ export default {
     const learningRate = ref(default_learningRate.value); // Default learning rate is 0.01
     const hiddenDim = ref(default_hiddenDim.value); // Default hidden dimension size is 10
     const keepProb = ref(default_keepProb.value); // Default keep probability is 0.5
-    const seqLen = ref(7); // Default sequence length is 7
+    const seqLen = ref(default_seq.value); // Default sequence length is 7
 
     const rmse = ref(null);
     const mae = ref(null);
@@ -809,6 +810,7 @@ export default {
       default_learningRate,
       default_hiddenDim,
       default_keepProb,
+      default_seq,
       default_iterations_ml,
 
       default_neighbor

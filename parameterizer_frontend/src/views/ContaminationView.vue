@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import {ref, watch, reactive, shallowReactive} from 'vue';
+import {ref, watch, reactive} from 'vue';
 import { useRoute } from 'vue-router'
 import DataSelect from './components/DataSelect.vue';
 import SeriesSelect from './components/SeriesSelect.vue';
@@ -58,6 +58,7 @@ import ScenarioMissingValues from './components/ScenarioMissingValues.vue';
 import NormalizationToggle from './components/NormalizationToggle.vue'
 import axios from 'axios';
 import {Chart} from 'highcharts-vue'
+import defaultConfig from'./../assets_naterq/default_values.json';
 import {
   createSeries,
   generateChartOptionsLarge
@@ -74,21 +75,24 @@ export default {
     ScenarioMissingValues
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'chlorine') // Default data is BAFU
     const seriesSelect = ref('Series 1')
-    const normalizationMode = ref('Normal')
-    const scenarioMissingValues = ref('mcar')
 
-    let currentSeriesNames = ["test"]; // Names of series currently displayed
+    let currentSeriesNames = []; // Names of series currently displayed
     const mySeries = ref([]);
-    const selectedSeries = ref([]);
+
+
+    const dataSelect = ref(route.params.datasetName || defaultConfig.loading.load_dataset) // Default data is BAFU
+    const normalizationMode = ref(defaultConfig.loading.load_normalization)
+    const scenarioMissingValues = ref(defaultConfig.loading.load_scenario)
+    const selectedSeries = ref(defaultConfig.loading.load_series_contamination);
+    const missingRate = ref(defaultConfig.loading.load_missing_rate_contamination); // Default missing rate
+
+
     const fetchedData = reactive({});
     let loadingResults = ref(true);
     const selectedParamOption = ref('recommended'); // Default option
 
-
     //CDRec Parameters
-    const missingRate = ref('0'); // Default missing rate
 
     let obfuscatedMatrix = [];
     let groundtruthMatrix = [];
@@ -96,8 +100,6 @@ export default {
     const imputedData = ref(false); // Whether imputation has been carried out
 
     const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
-
-
 
 
     const fetchData = async () => {

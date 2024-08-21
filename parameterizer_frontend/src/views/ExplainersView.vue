@@ -281,8 +281,11 @@ export default {
     NormalizationToggle,
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'chlorine');
-    const normalizationMode = ref('Normal')
+    const dataSelect = ref(route.params.datasetName || defaultConfig.loading.load_dataset);
+    const normalizationMode = ref(defaultConfig.loading.load_normalization)
+    const algorithmChoice = ref(defaultConfig.loading.load_algorithm)
+
+
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
     const loading = ref(false)
@@ -291,23 +294,7 @@ export default {
     const chartOptionsOriginal = ref(generateChartOptions('Data', 'Data'));
     const categorizedFeatures = ref({});
 
-    const default_truncationRank = ref(defaultConfig.cdrec.default_reduction_rank);
-    const default_epsilon = ref(defaultConfig.cdrec.default_epsilon);
-    const default_iterations = ref(defaultConfig.cdrec.default_iteration);
-
-    const default_windowSize = ref(defaultConfig.stmvl.default_window_size);
-    const default_gamma = ref(defaultConfig.stmvl.default_gamma);
-    const default_alpha = ref(defaultConfig.stmvl.default_alpha);
-
-    const default_learningRate = ref(defaultConfig.mrnn.default_learning_rate);
-    const default_hiddenDim = ref(defaultConfig.mrnn.default_hidden_dim);
-    const default_keepProb = ref(defaultConfig.mrnn.default_keep_prob);
-    const default_iterations_ml = ref(defaultConfig.mrnn.default_iterations);
-
-    const default_neighbor = ref(defaultConfig.iim.default_neighbor);
-
     const shapValues = ref([]);
-    const algorithmChoice = ref('cdrec')
 
     const rangeValue = ref(defaultConfig.explainer.nbr_series)
     const splitterValue = ref(defaultConfig.explainer.splitter)
@@ -506,33 +493,12 @@ export default {
           error.value = `Error: ${error.message}`;
           console.error(error);
         }
-
-
-        try
-        {
-          const response = await axios.post('http://localhost:8000/api/categorizeData/',
-              {
-                data_set: dataSelect.value
-              },
-              {
-                headers: {
-                  'Content-Type': 'application/text',
-                }
-              }
-          );
-          features.value = response.data;
-          categorizedFeatures.value = categorizeFeatures(response.data);
-          loadedResults.value = true;
-        }
-        catch (error)
-        {
-          error.value = `Error: ${error.message}`;
-          console.error(error);
-        }
         finally
         {
           loading.value = false;
         }
+
+
       }
     }
 

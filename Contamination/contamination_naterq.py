@@ -180,17 +180,16 @@ def introduce_disjoint(ts, missing_rate, series_selected, keep_other = False):
             if series in series_selected:
                 for index in range (0, to_remove):
                     shift_computation = (index + start_index) + (to_remove * series)
-                    if shift_computation >= n_values:
-                        shift = shift_computation - n_values - to_remove
-                        shift_computation = start_index + shift
+                    while shift_computation >= n_values:
+                        shift_computation = shift_computation - population
+
                     ts_contaminated.iat[series, shift_computation] = np.nan
     else:
         for series in range(0, n_series):
             for index in range (0, to_remove):
                 shift_computation = (index + start_index) + (to_remove * series)
-                if shift_computation >= n_values:
-                    shift = shift_computation - n_values - to_remove
-                    shift_computation = start_index + shift
+                while shift_computation >= n_values:
+                    shift_computation = shift_computation - population
                 ts_contaminated.iat[series, shift_computation] = np.nan
 
     return ts_contaminated, ts_contaminated.to_numpy()
@@ -205,26 +204,25 @@ def introduce_overlap(ts, missing_rate, series_selected, factor=0.05, keep_other
     ts_contaminated = ts.copy()
     n_series, n_values = ts_contaminated.shape
 
-    start_index = int(math.ceil((n_values * FACTOR_S)))
+    start_index = int(math.ceil((n_values * (FACTOR_S))))
     population = (n_values - start_index)
+    start_index = start_index
     to_remove = int(math.ceil(population * missing_rate))
 
     if keep_other:
         for series in range(0, n_series):
             if series in series_selected:
                 for index in range(0, to_remove):
-                    shift_computation = (index + start_index) + (to_remove * series) - int(population * factor)
-                    if shift_computation >= n_values:
-                        shift = shift_computation - n_values - to_remove
-                        shift_computation = start_index + shift
+                    shift_computation = (index + start_index) + (to_remove * series) - (int(population * factor) * series)
+                    while shift_computation >= n_values:
+                        shift_computation = shift_computation - population
                     ts_contaminated.iat[series, shift_computation] = np.nan
     else:
         for series in range(0, n_series):
             for index in range(0, to_remove):
-                shift_computation = (index + start_index) + (to_remove * series) - int(population*factor)
-                if shift_computation >= n_values:
-                    shift = shift_computation - n_values - to_remove
-                    shift_computation = start_index + shift
+                shift_computation = (index + start_index) + (to_remove * series) - (int(population * factor) * series)
+                while shift_computation >= n_values:
+                    shift_computation = shift_computation - population
                 ts_contaminated.iat[series, shift_computation] = np.nan
 
     return ts_contaminated, ts_contaminated.to_numpy()

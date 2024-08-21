@@ -149,7 +149,7 @@ import MetricsDisplay from './components/MetricsDisplay.vue';
 import MissingRate from './components/MissingRate.vue';
 import NormalizationToggle from './components/NormalizationToggleOptimization.vue'
 import axios from 'axios';
-import {createSeries, generateChartOptions, generateChartOptionsLarge} from "@/views/thesisUtils/utils";
+import defaultConfig from'./../assets_naterq/default_values.json';
 
 
 export default {
@@ -160,8 +160,9 @@ export default {
     NormalizationToggle
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'chlorine');
-    const normalizationMode = ref('Normal')
+    const dataSelect = ref(route.params.datasetName || defaultConfig.loading.load_dataset);
+    const normalizationMode = ref(defaultConfig.loading.load_normalization)
+
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
     const loading = ref(false)
@@ -260,25 +261,8 @@ export default {
     }
 
     const fetchData = async () => {
-      if (dataSelect.value !== "upload") {
-        try {
-          loadedResults.value = false;
-          let dataSet = `${dataSelect.value}_obfuscated_0`;
-          const response = await axios.post('http://localhost:8000/api/fetchData/',
-              {
-                data_set: dataSet,
-                normalization: normalizationMode.value,
-              },
-              {
-                headers: {
-                  'Content-Type': 'application/text',
-                }
-              }
-          );
-        } catch (error) {
-          console.error(error);
-        }
-      }
+
+        console.log("Feature loader...")
     }
 
     function categoryExists(category: string): boolean {
@@ -291,31 +275,15 @@ export default {
         error.value = "";
         loadedResults.value = false;
 
-        //switch (dataSelect.value) {
-        //  case "BAFU_onetwentyeigth":
-        //    my_data.value.push(`bafu`);
-        //    break;
-        //  case "cl2fullLarge_eighth":
-        //    my_data.value.push(`chlorine`);
-        //    break;
-        //  case "climate_eighth":
-        //    my_data.value.push(`climate`);
-        //    break;
-        //  case "batch10_eighth":
-        //    my_data.value.push(`drift`);
-        //    break;
-        //  case "meteo_total_eighth":
-        //    my_data.value.push(`meteo`);
-        //    break;
-        // }
-
         my_data.value.push(dataSelect.value);
 
-        try {
-          let dataSet = `${dataSelect.value}_obfuscated_0`;
+        try
+        {
           const response = await axios.post('http://localhost:8000/api/categorizeData/',
+
               {
-                data_set: dataSet
+                dataset: dataSelect.value,
+                normalization: normalizationMode.value,
               },
               {
                 headers: {

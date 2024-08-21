@@ -204,8 +204,8 @@ import {
 } from "@/views/thesisUtils/utils";
 import Metrics2Display from "@/views/components/Metrics2Display.vue";
 import KiviatDisplay from './components/KiviatDisplay.vue';
+import defaultConfig from'./../assets_naterq/default_values.json';
 
-// HighchartsBoost(Highcharts)
 
 export default {
   components: {
@@ -218,22 +218,38 @@ export default {
     ScenarioMissingValues
   }, setup() {
     const route = useRoute()
-    const dataSelect = ref(route.params.datasetName || 'chlorine')
-    const normalizationMode = ref('Normal')
-    let currentSeriesNames = []; // Names of series currently displayed
+    const dataSelect = ref(route.params.datasetName || defaultConfig.loading.load_dataset)
+    const normalizationMode = ref(defaultConfig.loading.load_normalization);
+    const scenarioMissingValues = ref(defaultConfig.loading.load_scenario);
+    const missingRate = ref(defaultConfig.loading.load_missing_rate_contamination); // Default missing rate
+
+    let truncationRank = defaultConfig.cdrec.default_reduction_rank;
+    let epsilon = defaultConfig.cdrec.default_epsilon_str;
+    let iterations = defaultConfig.cdrec.default_iteration;
+
+    let numberSelect = defaultConfig.iim.default_neighbor;
+    let typeSelect = ''; // Default selected type is "Normal", denoted by an empty string
+
+    let learningRate = defaultConfig.mrnn.default_learning_rate;
+    let hiddenDim = defaultConfig.mrnn.default_hidden_dim;
+    let iterationsMRNN = defaultConfig.mrnn.default_iterations;
+    let keepProb = defaultConfig.mrnn.default_keep_prob;
+    let seqLen = defaultConfig.mrnn.default_sequence_length;
+
+    let windowSize = defaultConfig.stmvl.default_window_size;
+    let gamma = defaultConfig.stmvl.default_gamma;
+    let alpha = defaultConfig.stmvl.default_alpha;
+
+    let currentSeriesNames = [];
     const mySeries = ref([]);
     const selectedSeries = ref([]);
-    const scenarioMissingValues = ref('mcar')
-    const missingRate = ref('0'); // Default missing rate
+
 
     const fetchedData = reactive({});
     let loadingResults = ref(false);
     const selectedParamOption = ref('recommended'); // Default option
 
     //CDRec Parameters
-    let truncationRank = '1' // Default truncation rank is 1, 0 means detect truncation automatically
-    let epsilon = 'E-6'; // Default epsilon is E-6
-    let iterations = (500); // Default number of iterations is 1000
     const rmseCDRec = ref(null);
     const maeCDRec = ref(null);
     const miCDRec = ref(null);
@@ -241,8 +257,6 @@ export default {
     const metricsCDRec = ref(false);
 
     //IIM Parameters
-    let numberSelect = 1; // Default selected learning neighbors is 1
-    let typeSelect = ''; // Default selected type is "Normal", denoted by an empty string
     const rmseIIM = ref(null);
     const maeIIM = ref(null);
     const miIIM = ref(null);
@@ -250,11 +264,6 @@ export default {
     const metricsIIM = ref(false);
 
     // M-RNN Parameters
-    let learningRate = 0.01; // Default learning rate is 0.01
-    let hiddenDim = 10; // Default hidden dimension size is 10
-    let iterationsMRNN = 500; // Default number of iterations is 1000
-    let keepProb = 0.5; // Default keep probability is 0.5
-    let seqLen = 7; // Default sequence length is 7
     const rmseMRNN = ref(null);
     const maeMRNN = ref(null);
     const miMRNN = ref(null);
@@ -262,9 +271,6 @@ export default {
     const metricsMRNN = ref(false);
 
     // ST-MVL Parameters
-    let windowSize = '2'; // Default window size is 2
-    let gamma = '0.5' // Default smoothing parameter gamma is 0.5, min 0.0, max 1.0
-    let alpha = '2' // Default power for spatial weight (alpha) is 2, must be larger than 0.0
     const rmseSTMVL = ref(null);
     const maeSTMVL = ref(null);
     const miSTMVL = ref(null);

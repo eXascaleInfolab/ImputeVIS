@@ -709,6 +709,30 @@ def fetch_params(request):
 @csrf_exempt
 def categorize_data(request):
     if request.method == 'POST':
+
+        data, data_set = load_from_request(request)
+
+        print(">> #CATCHER NATERQ  data: ", data, "\n")
+
+        clean_file_path, _ = get_file_paths(data.get('dataset'))
+
+        normalization = data.get('normalization')
+
+        ground_truth_matrix, _ = run_contamination(clean_file_path, "0", "mcar", ["-1:all"], normalization)
+
+        extracted_features = catch.extract_features(ground_truth_matrix, True)
+
+        print("extracted_features", extracted_features)
+
+        if clean_file_path is not None:
+            return JsonResponse(extracted_features, status=200)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def categorize_data_old(request):
+    if request.method == 'POST':
         _, data_set = load_from_request(request)
         clean_file_path, _ = get_file_paths(data_set)
         if clean_file_path is not None:
