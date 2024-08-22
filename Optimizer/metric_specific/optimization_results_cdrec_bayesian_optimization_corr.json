@@ -48,5 +48,15 @@
     "best_score": 0.0002818179467143356,
     "dataset": "meteo",
     "time": 30.551413774490356
+  },
+  "electricity": {
+    "best_params": {
+      "rank": 3,
+      "eps": 0.8466887209052565,
+      "iters": 909
+    },
+    "best_score": 0.0002818179467143356,
+    "dataset": "electricity",
+    "time": 30.551413774490356
   }
 }

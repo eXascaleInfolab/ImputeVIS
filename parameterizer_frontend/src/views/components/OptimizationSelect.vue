@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="mb-3">
-      <label for="optimizationSelect" class="form-label">Optimization:</label> <br/>
+      <label for="optimizationSelect" class="form-label" style="font-weight: bold;">Optimization</label> <br/>
       <div class="custom-select" >
         <select id="optimizationSelect" v-model="selectedOptimization" class="form-control me-3" >
           <option value="bayesianOptimization">Bayesian Optimization</option>

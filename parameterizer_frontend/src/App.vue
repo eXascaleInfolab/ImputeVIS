@@ -15,8 +15,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-comparison-select">
               <RouterLink class="dropdown-item" to="/display">Display</RouterLink>
-              <RouterLink class="dropdown-item" to="/contamination">Contaminate</RouterLink>
-              <RouterLink class="dropdown-item" to="/feature_extraction">Feature Extraction</RouterLink>
+              <RouterLink class="dropdown-item" to="/feature_extraction">Features</RouterLink>
             </div>
           </li>
 
@@ -24,10 +23,21 @@
           <li class="nav-item dropdown text-center me-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button" data-bs-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
-              Imputation
+              Data Repair
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization-select">
+              <RouterLink class="dropdown-item" to="/contamination">Contaminate</RouterLink>
               <RouterLink class="dropdown-item" to="/imputation">Impute</RouterLink>
+            </div>
+          </li>
+
+
+         <li class="nav-item dropdown text-center me-2">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-optimization" role="button" data-bs-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+              Optimization
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-optimization-select">
               <RouterLink class="dropdown-item" to="/auto_optimizer">Auto-ML Opt.</RouterLink>
               <RouterLink class="dropdown-item" to="/user_optimizer">User-defined Opt.</RouterLink>
             </div>

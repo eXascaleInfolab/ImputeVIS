@@ -223,7 +223,6 @@
         </div>
       </div>
 
-
       <highcharts v-if="!imputedData"  :options="chartOptionsOriginal"></highcharts>
 
     </div>
@@ -235,7 +234,6 @@
         <algorithm-choice v-model="algorithmChoice"  @submit.prevent="submitFormCustom"  />
 
         <optimization-select v-model="optimizationSelect" :natehidden=nate_hidden @parametersChanged="handleParametersChanged"/>
-
 
         <br/>
         <div class="d-flexs mt-4 me-10" >
@@ -344,7 +342,6 @@ export default {
     const numberSelect = ref(default_neighbor.value); // Default selected learning neighbors is 1
     const typeSelect = ref(''); // Default selected type is "Normal", denoted by an empty string
 
-
     const learningRate = ref(default_learningRate.value); // Default learning rate is 0.01
     const hiddenDim = ref(default_hiddenDim.value); // Default hidden dimension size is 10
     const keepProb = ref(default_keepProb.value); // Default keep probability is 0.5
@@ -376,20 +373,20 @@ export default {
     let obfuscatedMatrix = [];
     let groundtruthMatrix = [];
 
+    const obfuscatedColors = defaultConfig.colors.chart;
+
+
     const handleParametersChanged = (newParams: any) => {
       optimizationParameters.value = newParams; // Update the optimization parameters
     };
 
-    const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
 
     const fetchData = async () => {
 
       if (dataSelect.value !== "upload")
       {
-        console.log(dataSelect.value + " - " + algorithmChoice.value + " - " + normalizationMode.value + " - " )
-        console.log(missingRate.value + " - " + scenarioMissingValues.value + " - " + selection_series.value + " - " )
-
         imputedData.value = false;
+
         try
         {
           const response = await axios.post('http://localhost:8000/api/fetchData/', {
@@ -405,18 +402,22 @@ export default {
                 }
               }
           );
+
           chartOptionsOriginal.value.series.splice(0, chartOptionsOriginal.value.series.length);
-          chartOptionsImputed.value.series.splice(0, chartOptionsOriginal.value.series.length);
+          chartOptionsImputed.value.series.splice(0, chartOptionsImputed.value.series.length);
+
 
           obfuscatedMatrix = response.data.matrix;
           groundtruthMatrix = response.data.groundtruth;
 
           obfuscatedMatrix.forEach((data: number[], index: number) => {
-              chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], obfuscatedColors[index]);
-              chartOptionsImputed.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], obfuscatedColors[index]);
+              chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], 'line', 2, obfuscatedColors[index])
+              chartOptionsImputed.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], 'line', 1, obfuscatedColors[index]);
           });
           groundtruthMatrix.forEach((data: number[], index: number) => {
-              chartOptionsOriginal.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "-MV", 'dash', 1, obfuscatedColors[index]));
+            if (index < 2) {
+              chartOptionsOriginal.value.series.push(createSeries(index, data, dataSelect.value, currentSeriesNames[index] + "_MV", 'dash', 2, obfuscatedColors[index], true));
+            }
           });
 
         }
@@ -434,8 +435,6 @@ export default {
       {
         location.reload();
       }
-
-      console.log("optimizationParameters.value", optimizationParameters.value)
 
       try
       {
@@ -497,7 +496,6 @@ export default {
       {
         console.error(error);
         naterq_error.value = true;
-
       }
       finally
       {
@@ -604,14 +602,14 @@ export default {
         const displayImputation = missingRate.value != '60' && missingRate.value != '80'
 
         groundtruthMatrix.forEach((data: number[], index: number) => {
-          chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "-MV", 'dash', 1, obfuscatedColors[index]));
+          chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "_MV", 'dash', 1, obfuscatedColors[index], false));
         });
 
         response.data.matrix_imputed.forEach((data: number[], index: number) =>
         {
             if (displayImputation)
             {
-              chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
+              chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]+"_imp"));
             }
         });
 

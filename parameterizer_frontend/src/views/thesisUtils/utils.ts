@@ -8,19 +8,17 @@ const POINT_START = Date.UTC(2010, 1, 1);
 const THIRTY_MINUTES = 1000 * 60 * 42;
 const VISIBILITY_THRESHOLD = 10;
 
-export const createSeries = (index: number, data: number[], datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series', lineT = 'line', l_size = 2, s_color = "") => {
+export const createSeries = (index: number, data: number[], datasetSelected: string = "BAFU_eighth", seriesName: string = 'Series', lineT = 'line', l_size = 2, s_color = "", legends=true) => {
 
     const datasetCode = datasetSelected.split('_')[0].toLowerCase();
 
-
-    let visible = 3;
+    let visible = 1;
 
     if (lineT == "display")
     {
        visible = 100;
        lineT = "line";
     }
-
 
     return {
         name: `${seriesName} ${seriesName === 'Series' ? index + 1 : ''}`.trim(),
@@ -43,7 +41,8 @@ export const createSeries = (index: number, data: number[], datasetSelected: str
         },
         dashStyle: lineT,
         color : s_color,
-        lineWidth: l_size
+        lineWidth: l_size,
+        showInLegend: legends
     };
 };
 
@@ -69,11 +68,13 @@ export const createSegmentedSeries = (index: number, data: number[], obfuscatedD
     const mainSeriesId = `${seriesName}_${index}_main`;
     const imputedSeriesId = `${seriesName}_${index}_imputed`;
     const mainSeriesColor = chartOptions.colors[index % (chartOptions.colors.length)];
-    const imputationSeriesColor = chartOptions.colors_imp[index % (chartOptions.colors_imp.length)];
+    const imputationSeriesColor = chartOptions.colors_new_imp[index % (chartOptions.colors_new_imp.length)];
 
     //const isVisible = shouldShow(index, datasetCode);
     const isShownInNavigator = shouldShow(index, datasetCode);
     const seriesNameGenerated = seriesName === 'Series' ? `${seriesName} ${index + 1}` : seriesName;
+
+    let visible = 1;
 
     const commonProperties = {
         marker: {
@@ -84,7 +85,7 @@ export const createSegmentedSeries = (index: number, data: number[], obfuscatedD
         animation: false,
         findNearestPointBy: 'xy',
         opacity: 0.9,
-        //visible: isVisible,
+        visible: index < visible,  // This ensures only the first two series are visible
         tooltip: {
             valueDecimals: 2
         },
@@ -113,10 +114,10 @@ export const createSegmentedSeries = (index: number, data: number[], obfuscatedD
 
     const imputedSeries = {
         id: `${mainSeriesId}_imputed`,
-        name: `(Imp.) ${seriesNameGenerated}`,
+        name: `${seriesNameGenerated}`,
         data: imputedData,
         connectNulls: false,  // is false by default, added for ease of toggling
-        color: imputationSeriesColor,
+        color: determineColor(seriesName),
         lineWidth: 2.5,
         // dashStyle: 'Dot',
         ...commonProperties,
@@ -164,8 +165,13 @@ export const generateChartOptions = (title, seriesName) => ({
     xAxis: {
         type: 'datetime'
     },
-    colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
-    colors_imp: ["#5a89ba", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
+    colors: ["#696969", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    colors_imp: ["#A9A9A9", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
+    colors_new_imp: [
+        "#DC143C", "#DC143C",
+        "#FF7F50", "#FF7F50",
+        "#FFB6C1", "#FFB6C1",
+        "#DA70D6", "#DA70D6"],
     chart: {
         height: 900,
         type: 'line',
@@ -286,8 +292,10 @@ export const generateChartOptionsLarge = (title, seriesName) => ({
         panning: true,
         panKey: 'shift'
     },
-    colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
-    colors_imp: ["#5a89ba", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
+    colors: ["#696969", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    colors_imp: ["#A9A9A9", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
+    colors_new_imp: ["#DC143C", "#FF7F50", "#FFB6C1", "#DA70D6", "#DC143C", "#FF7F50", "#FFB6C1", "#DC143C", "#FF7F50", "#FFB6C1", "#DA70D6"],
+
     rangeSelector: {
         selected: 4,
         x: 0,
@@ -373,8 +381,9 @@ export const generateChartOptionsHeight = (title, seriesName) => ({
         panning: true,
         panKey: 'shift'
     },
-    colors: ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
-    colors_imp: ["#5a89ba", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
+    colors: ["#696969", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"],
+    colors_imp: ["#A9A9A9", "#20736b", "#839f57", "#6a4e49", "#730e9a", "#bf7d48","#343437", "#b84b68", "#720000", "#6167b0", "#293f08", "#71b15f"],
+    colors_new_imp: ["#DC143C", "#FF7F50", "#FFB6C1", "#DA70D6", "#DC143C", "#FF7F50", "#FFB6C1", "#DC143C", "#FF7F50", "#FFB6C1", "#DA70D6"],
     rangeSelector: {
         selected: 10,
         x: 0,
@@ -516,9 +525,18 @@ function processSeriesName(seriesName: string, index: number): string {
 }
 
 const determineSymbol = (seriesName: string): string => {
-    if (seriesName.includes('CDRec')) return 'circle';
-    if (seriesName.includes('IIM')) return 'square';
-    if (seriesName.includes('M-RNN')) return 'diamond';
-    if (seriesName.includes('ST-MVL')) return 'triangle';
+    if (seriesName.includes('cdrec')) return 'circle';
+    if (seriesName.includes('iim')) return 'square';
+    if (seriesName.includes('mrnn')) return 'diamond';
+    if (seriesName.includes('stmvl')) return 'triangle';
     return 'diamond';  // default value if none of the above
+};
+
+const determineColor = (seriesName: string): string => {
+    if (seriesName.includes('cdrec')) return "#DC143C";
+    if (seriesName.includes('iim')) return "#FF7F50";
+    if (seriesName.includes('mrnn')) return "#00BFFF";
+    if (seriesName.includes('stmvl')) return "#DA70D6";
+    if (seriesName.includes('imp')) return "#DC143C";
+    return "#FFFFFF";  // default value if none of the above
 };

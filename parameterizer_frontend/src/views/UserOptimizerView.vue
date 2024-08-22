@@ -376,7 +376,7 @@ export default {
       optimizationParameters.value = newParams; // Update the optimization parameters
     };
 
-    const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
+    const obfuscatedColors = defaultConfig.colors.chart;
 
     const fetchData = async () => {
 
@@ -409,7 +409,9 @@ export default {
               chartOptionsImputed.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], obfuscatedColors[index]);
           });
           groundtruthMatrix.forEach((data: number[], index: number) => {
-              chartOptionsOriginal.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "-MV", 'dash', 1, obfuscatedColors[index]));
+            if (index < 2) {
+              chartOptionsOriginal.value.series.push(createSeries(index, data, dataSelect.value, currentSeriesNames[index] + "_MV", 'dash', 2, obfuscatedColors[index], true));
+            }
           });
 
         }
@@ -591,14 +593,14 @@ export default {
         const displayImputation = missingRate.value != '60' && missingRate.value != '80'
 
         groundtruthMatrix.forEach((data: number[], index: number) => {
-          chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "-MV", 'dash', 1, obfuscatedColors[index]));
+          chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "_MV", 'dash', 1, obfuscatedColors[index], false));
         });
 
         response.data.matrix_imputed.forEach((data: number[], index: number) =>
         {
             if (displayImputation)
             {
-              chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
+              chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]+"_imp"));
             }
         });
 

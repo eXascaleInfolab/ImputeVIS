@@ -16,40 +16,45 @@
 
       <!-- First Column for Compare -->
       <div class="col-md-2" style="margin-left:170px;">
-        <p><b>Datasets:</b></p>
+        <p><b>Datasets</b></p>
         <ul>
           <li>
             <RouterLink to="/display">Display</RouterLink>
           </li>
           <li>
-            <RouterLink to="/contamination">Contamination</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/feature_extraction">Feature Extraction</RouterLink>
+            <RouterLink to="/feature_extraction">Features</RouterLink>
           </li>
         </ul>
       </div>
 
       <!-- Second Column for Algorithms -->
       <div class="col-md-2">
-        <p><b>Imputation:</b></p>
+        <p><b>Data Repair</b></p>
         <ul>
+          <li>
+            <RouterLink to="/contamination">Contaminate</RouterLink>
+          </li>
           <li>
             <RouterLink to="/imputation">Impute</RouterLink>
           </li>
+        </ul>
+      </div>
+
+       <div class="col-md-2">
+        <p><b>Optimization</b></p>
+        <ul>
           <li>
             <RouterLink to="/auto_optimizer">Auto-ML Opt.</RouterLink>
           </li>
           <li>
             <RouterLink to="/user_optimizer">User-defined  Opt.</RouterLink>
           </li>
-
         </ul>
       </div>
 
       <!-- Third Column for Algorithm Optimization -->
       <div class="col-md-2">
-        <p><b>Explanation:</b></p>
+        <p><b>Explanation</b></p>
         <ul>
 
           <li>
@@ -59,6 +64,22 @@
         </ul>
       </div>
 
+
+
+
+       <div class="row justify-content-center">
+        <div  class="col-md-9">
+         <hr style="margin: 5%;">
+
+         <h4><strong>Publications</strong></h4>
+          <ol>
+              <li>Mourad Khayati, Quentin Nater, and Jacques Pasquier. <strong>“ImputeVIS: An Interactive Evaluator to Benchmark Imputation Techniques for Time Series Data.”</strong> In <i>Proceedings of the VLDB Endowment (to Appear)</i>, 2024</li>
+              <li>Mourad Khayati, Ines Arous, Zakhar Tymchenko, and Philippe Cudré-Mauroux. <strong>“ORBITS: Online Recovery of Missing Blocks in Multiple Time Series Streams.”</strong> In <i>Proceedings of the VLDB Endowment</i>, Vol. 14, 2021</li>
+              <li>Mourad Khayati, Alberto Lerner, Zakhar Tymchenko, and Philippe Cudré-Mauroux. <strong>“Mind the Gap: An Experimental Evaluation of Imputation of Missing Values Techniques in Time Series.”</strong> In <i>Proceedings of the VLDB Endowment</i>, Vol. 13, 2020.</li>
+              <li>Ines Arous, Mourad Khayati, Philippe Cudré-Mauroux, Ying Zhang, Martin Kersten, and Svetlin Stalinlov. <strong>“RecovDB: Accurate and Efficient Missing Blocks Recovery for Large Time Series.”</strong> In <i>35th IEEE International Conference on Data Engineering (ICDE 2019)</i>. Macau, China, 2019.</li>
+          </ol>
+        </div>
+       </div>
     </div>
 
 
@@ -101,6 +122,7 @@
         </li>
       </ul>
     </p>-->
+
 
   </main>
 
