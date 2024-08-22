@@ -10,6 +10,7 @@
         <option value="climate_eighth">Climate</option>
         <option value="batch10_eighth">Drift</option>
         <option value="meteo_total_eighth">Meteo</option>
+        <option value="Electricity">Electricity</option>
       </select>
     </div>
   </div>

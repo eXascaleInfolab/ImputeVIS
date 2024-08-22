@@ -1,7 +1,7 @@
 <template>
   <div class="mb-3" data-toggle="tooltip" data-placement="top"  style="margin-bottom: 12px; margin-top:12px;"
        title="Also impacts run-time, amount depends on algorithm.">
-    <label for="algos" class="form-label">Algorithm:</label>
+    <label for="algos" class="form-label" style="font-weight: bold;">Algorithm</label>
 
     <!-- Dropdown for MCAR Rate -->
     <div class="custom-select">

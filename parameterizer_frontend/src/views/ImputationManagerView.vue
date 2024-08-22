@@ -17,6 +17,9 @@
       <div class="col-lg-12">
         <div class="row me-1">
           <div class="col-lg-10">
+
+            <h3 v-if="naterq_error" style="color : red; margin-left : 20%" >Imputation not found with this pattern and this contamination...</h3>
+
             <highcharts v-if="imputedData" class="mb-3 pb-3" :options="chartOptionsImputed"></highcharts>
             <highcharts v-if="!imputedData" class="mb-3 pb-3" :options="chartOptionsOriginal"></highcharts>
 
@@ -87,10 +90,15 @@
                 <form ref="ref_missingvalues" @submit.prevent="submitForm">
                   <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames"/>
                   <scenario-missing-values v-model="scenarioMissingValues" />
-                  <div v-for="series in mySeries" :key="series" class="form-check">
-                    <input class="form-check-input" type="checkbox" :id="`checkbox-${series}`" :value="series" v-model="selectedSeries" />
-                    <label class="form-check-label" :for="`checkbox-${series}`">{{ series.substring(3) }}</label>
+                  <div v-if="scenarioMissingValues !== 'blackout'">
+                    <div class="checkbox-slider">
+                      <div v-for="series in mySeries" :key="series" class="form-check">
+                        <input class="form-check-input" type="checkbox" :id="`checkbox-${series}`" :value="series" v-model="selectedSeries"/>
+                        <label class="form-check-label" :for="`checkbox-${series}`">{{ series.substring(3) }}</label>
+                      </div>
+                    </div>
                   </div>
+
                   <missing-rate v-model="missingRate"/>
                 </form>
               </div>
@@ -100,7 +108,7 @@
 
             <form ref="ref_algos" @submit.prevent="submitForm">
               <div class="mt-4 me-6">
-                <label for="ref_algos" class="form-label">Imputation Family :</label>
+                <label for="ref_algos" class="form-label" style="font-weight: bold;">Imputation Technique</label>
               <div class="row ms-1">
                 <div class="col form-check ">
                   <input class="form-check-input" type="checkbox" value="CDRec" id="CDRec" v-model="checkedNames" checked >
@@ -130,10 +138,10 @@
               <!-- Parameter Options -->
               <div class="mb-3"  data-toggle="tooltip" data-placement="top" style="margin-top:36px;"
                    title="Also impacts run-time, amount depends on algorithm.">
-                <label for="parametrization" class="form-label">Parametrization:</label>
+                <label for="parametrization" class="form-label" style="font-weight: bold;" >Parametrization</label>
                 <div class="custom-select">
                   <select class="form-control" name="paramOption" v-model="selectedParamOption">
-                    <option value="recommended">Auto-ML (recommended)</option>
+                    <option value="recommended">Optimal (recommended)</option>
                     <option value="default">Default Params</option>
                     <option value="bayesian_optimization">Bayesian Optimization</option>
                     <option value="pso_optimization">Particle Swarm Optimization</option>
@@ -178,6 +186,12 @@
     z-index: 9999;
     font-size: 25px; /* Increase font size */
   }
+  .checkbox-slider {
+  height: 65px; /* Set the desired height */
+  overflow-y: scroll; /* Enable vertical scrolling */
+  border: 1px solid #ccc; /* Optional: Add a border */
+  padding: 10px; /* Optional: Add padding */
+}
 
   /* Style for checkboxes */
   .popup input[type="checkbox"] {
@@ -222,6 +236,8 @@ export default {
     const normalizationMode = ref(defaultConfig.loading.load_normalization);
     const scenarioMissingValues = ref(defaultConfig.loading.load_scenario);
     const missingRate = ref(defaultConfig.loading.load_missing_rate_contamination); // Default missing rate
+    const naterq_error = ref(false); // Whether imputation has been carried out
+
 
     let truncationRank = defaultConfig.cdrec.default_reduction_rank;
     let epsilon = defaultConfig.cdrec.default_epsilon_str;
@@ -243,7 +259,6 @@ export default {
     let currentSeriesNames = [];
     const mySeries = ref([]);
     const selectedSeries = ref([]);
-
 
     const fetchedData = reactive({});
     let loadingResults = ref(false);
@@ -284,8 +299,7 @@ export default {
     const nns_checked = ref(true);
     const reg_checked = ref(true);
 
-
-    const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
+    const obfuscatedColors = defaultConfig.colors.chart;
 
     const fetchData = async () => {
 
@@ -298,7 +312,11 @@ export default {
           let selection_series = ["-1:test"];
           if (selectedSeries.value.length > 0)
           {
-              selection_series = selectedSeries.value;
+               selection_series = selectedSeries.value;
+          }
+          if (scenarioMissingValues.value == "blackout")
+          {
+               selectedSeries.value = mySeries.value;
           }
 
           const response = await axios.post('http://localhost:8000/api/fetchData/',
@@ -323,14 +341,14 @@ export default {
           obfuscatedMatrix = response.data.matrix;
           groundtruthMatrix = response.data.groundtruth;
           obfuscatedMatrix.forEach((data: number[], index: number) => {
-              chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], obfuscatedColors[index])
+              chartOptionsOriginal.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], 'line', 2, obfuscatedColors[index])
           });
           if (missingRate.value != "0")
           {
             groundtruthMatrix.forEach((data: number[], index: number) => {
               if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
               {
-                  chartOptionsOriginal.value.series.push(createSeries(index, data, dataSelect.value, currentSeriesNames[index] + "-MV", 'dash', 1, obfuscatedColors[index]));
+                  chartOptionsOriginal.value.series.push(createSeries(index, data, dataSelect.value, currentSeriesNames[index] + "_MV", 'dash', 2, obfuscatedColors[index], false));
               }
             });
           }
@@ -341,9 +359,13 @@ export default {
             mySeries.value.push(`${i + 1}: ${currentSeriesNames[i+1]}`);
           }
 
-        } catch (error) {
+        } catch (error)
+        {
           console.error(error);
+          naterq_error.value = true;
+
         } finally {
+          naterq_error.value = false;
           loadingResults.value = false;
         }
       }
@@ -356,9 +378,7 @@ export default {
         {
           try {
             const dataAbbreviation = getCategory(dataSelect.value);
-            let dataSet = `${dataSelect.value}_obfuscated_${missingRate.value}`;
 
-            console.log("FDS:", selectedParamOption.value)
             const response = await axios.post('http://localhost:8000/api/fetchParameters/',
                 {
                   data_set: dataAbbreviation,
@@ -396,6 +416,7 @@ export default {
 
             // }
           } catch (error) {
+            naterq_error.value = true;
             console.error(error);
           }
         } else {
@@ -470,12 +491,12 @@ export default {
           }
 
           obfuscatedMatrix.forEach((data: number[], index: number) => {
-              chartOptionsImputed.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], obfuscatedColors[index]);
+              chartOptionsImputed.value.series[index] = createSeries(index, data, dataSelect.value, currentSeriesNames[index], 'line', 5, obfuscatedColors[index]);
           });
           groundtruthMatrix.forEach((data: number[], index: number) => {
               if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
               {
-                chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "-MV", 'dash', 1, obfuscatedColors[index]));
+                chartOptionsImputed.value.series.push(createSeries(index, data, dataSelect.value,currentSeriesNames[index] + "_MV", 'dash', 5, obfuscatedColors[index], false));
               }
           });
 
@@ -519,14 +540,14 @@ export default {
                   {
                     if (displayImputation)
                     {
-                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "CDRec: " + currentSeriesNames[index]));
+                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]+"_cdrec"));
                     }
                   }
                   else
                   {
                     if (displayImputation)
                     {
-                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "CDRec: " + index));
+                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, index+"_cdrec"));
                     }
                   }
                 }
@@ -571,14 +592,14 @@ export default {
                   {
                     if (displayImputation)
                     {
-                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "IIM: " + currentSeriesNames[index]));
+                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]+"_iim"));
                     }
                   }
                   else
                   {
                     if (displayImputation)
                     {
-                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "IIM: " + index));
+                      chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, index+"_iim"));
                     }
                   }
                 }
@@ -630,14 +651,14 @@ export default {
                 {
                   if (displayImputation)
                   {
-                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "m-rnn: " + currentSeriesNames[index]));
+                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]+"_mrnn"));
                   }
                 }
                 else
                 {
                   if (displayImputation)
                   {
-                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "m-rnn: " + index));
+                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, index+"_mrnn"));
                   }
                 }
               }
@@ -681,14 +702,14 @@ export default {
                 {
                   if (displayImputation)
                   {
-                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "st-mvl: " + currentSeriesNames[index]));
+                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, currentSeriesNames[index]+"_stmvl"));
                   }
                 }
                 else
                 {
                   if (displayImputation)
                   {
-                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, "st-mvl: " + index));
+                    chartOptionsImputed.value.series.push(...createSegmentedSeries(index, data, obfuscatedMatrix[index], null, chartOptionsImputed.value, dataSelect.value, index+"_stmvl"));
                   }
                 }
               }
@@ -704,8 +725,8 @@ export default {
           mySeries.value.push(`${i + 1}: ${currentSeriesNames[i+1]}`);
         }
 
-
       } catch (error) {
+        naterq_error.value = true;
         console.error(error);
       } finally {
         loadingResults.value = false;
@@ -797,10 +818,10 @@ export default {
     const handleDataSelectChange = async () => {
       try {
         imputedData.value = false;
-        // TODO Function to get the parameters for selected algorithm
         clearFetchedData();
         await fetchData();
       } catch (error) {
+        naterq_error.value = true;
         console.error("Error fetching data:", error);
       }
     }
@@ -817,6 +838,7 @@ export default {
       }
       catch (error)
       {
+        naterq_error.value = true;
         console.error("Error handling parameter selection:", error);
       }
     }
@@ -834,6 +856,10 @@ export default {
 
 
     const handleScenarioMissingValuesChange = () => {
+
+      missingRate.value = "0";
+      selectedSeries.value = [];
+
       if (imputedData.value == true)
       {
           fetchData();
@@ -895,7 +921,8 @@ export default {
       selectedParamOption,
       loadingResults,
       nns_checked,
-      reg_checked
+      reg_checked,
+      naterq_error
     }
   }
 }

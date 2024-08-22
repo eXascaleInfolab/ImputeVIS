@@ -1,7 +1,7 @@
 <template>
   <div class="mb-n5" data-toggle="tooltip" data-placement="top"
        title="For faster results, consider selecting the 1/8 size dataset">
-    <label for="dataSelect" class="form-label">Dataset:</label>
+    <label for="dataSelect" class="form-label" style="font-weight: bold;">Dataset</label>
     <br/>
     <span class="glyphicon glyphicon-info-sign info-icon" data-toggle="tooltip" data-placement="right"
           title="For faster results, consider selecting the 1/8 size dataset"></span>
@@ -15,6 +15,7 @@
           <option value="chlorine">Chlorine</option>
           <option value="climate">Climate</option>
           <option value="meteo">Meteo</option>
+          <option value="electricity">Electricity</option>
           <option value="upload" @click="uploadFile" >Upload...</option>
         </select>
       </div>
@@ -138,6 +139,16 @@ const others = [
   'Series L',
 ];
 
+const electricity_series_names = [
+  'MT_001',
+  'MT_002',
+  'MT_003',
+  'MT_004',
+  'MT_005',
+  'MT_006',
+  'MT_007'
+];
+
 
 export default defineComponent({
   name: 'DataSelect',
@@ -183,6 +194,7 @@ export default defineComponent({
         "drift": drift_series_names,
         "meteo": meteo_series_names,
         "chlorine": chlorine_series_names,
+        "electricity": electricity_series_names,
         // ... add other conditions for more datasets as needed
       };
 

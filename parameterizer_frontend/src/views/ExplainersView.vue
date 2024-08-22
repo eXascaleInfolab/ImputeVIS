@@ -60,6 +60,7 @@
               </tbody>
             </table>
 
+
           </div>
       </div>
 
@@ -210,11 +211,53 @@
 
           </div>
 
+          <hr style="margin-bottom: 5%">
+                 <h2 style="margin-bottom: 10px;">Features by Series</h2>
 
+                 <table class="table" style="margin-bottom: 10%;">
+                    <thead>
+                      <tr>
+                        <th style="width: 25%;">Dataset</th>
+                        <th style="width: 25%;">Series</th>
+                        <th style="width: 25%;">Type</th>
+                        <th style="width: 25%;">RMSE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                    <template v-for="(line, index) in shapValues" :key="index">
+                        <template  v-for="index in 1">
+                            <tr v-for="(rmse, ind) in line[index-1][7]" >
+                              <td>{{ dataSelect }}</td>
+                              <td>{{ ind }}</td>
+                              <td>
+                                    <span v-if="ind < splitterValue">Train set</span>
+                                    <span v-else-if="ind >= splitterValue">Test set</span>
+                              </td>
+                              <td>{{ rmse.toFixed(5) }}</td>
+                            </tr>
+                        </template>
+                    </template>
+                    </tbody>
+                  </table>
+
+                  <template v-if="my_data !== '' && my_data !== undefined"  >
+                      <div style="text-align:center;">
+                         <template v-for="x in [my_path_reverse_agg]" >
+                            <img :src="x" style="width:95%; margin-bottom:10%"/>
+                         </template>
+                      </div>
+                    </template>
+
+                    <template v-if="my_data !== '' && my_data !== undefined"  >
+                      <div style="text-align:center;">
+                         <template v-for="x in [my_path_reverse]" >
+                            <img :src="x" style="width:95%; margin-bottom:10%"/>
+                         </template>
+                      </div>
+                    </template>
       </div>
     </div>
-
-
 
 
 
@@ -239,12 +282,13 @@
         <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames" class="mb-3"/>
         <algorithm-choice v-model="algorithmChoice"  @submit.prevent="submitFormCustom"  /><br />
 
+        <!--
         <label style="margin-right : 10px;"  for="range">Number Series {{ rangeValue }} : </label>
         <input type="range" id="range" v-model="rangeValue" :min="10" :max="20" /><br /><br />
 
         <label style="margin-right : 10px;" for="range_splitter">Training Series {{ splitterValue }} : </label>
         <input type="range" id="range_splitter" v-model="splitterValue" :min="(rangeValue/2).toFixed(0)" :max="((rangeValue/3*2)+1).toFixed(0)" /><br />
-
+        -->
         <button type="submit" class="btn btn-primary mt-5" @click="fetchDataFeatures">Explain</button>
       </div>
     </div>
@@ -285,7 +329,6 @@ export default {
     const normalizationMode = ref(defaultConfig.loading.load_normalization)
     const algorithmChoice = ref(defaultConfig.loading.load_algorithm)
 
-
     let currentSeriesNames = []; // Names of series currently displayed
     const features = ref<Record<string, number>>({});
     const loading = ref(false)
@@ -307,112 +350,11 @@ export default {
     const my_path_trend =ref("");
     const my_path_transformation =ref("");
     const my_path_correlation =ref("");
-
-    // Function to train a placeholder model (replace this with your actual model training logic)
-    const trainModel = async () => {
-      // Placeholder linear regression model
-      const linearRegressionModel = {
-        predict: (input) => {
-          // Simple linear regression: sum of input features
-          return input.reduce((sum, feature) => sum + feature, 0);
-        },
-      };
-
-      // Return the trained model
-      return linearRegressionModel;
-    };
-
-
-    // Define the features for each category
-    const CATEGORIES = {
-      'Geometry': [
-        'SB_BinaryStats_mean_longstretch1',
-        'SB_BinaryStats_diff_longstretch0',
-        'SB_TransitionMatrix_3ac_sumdiagcov',
-        'MD_hrv_classic_pnn40',
-        'DN_HistogramMode_5',
-        'DN_HistogramMode_10',
-        'DN_OutlierInclude_p_001_mdrmd',
-        'DN_OutlierInclude_n_001_mdrmd',
-        'CO_Embed2_Dist_tau_d_expfit_meandiff',
-        'SC_FluctAnal_2_dfa_50_1_2_logi_prop_r1',
-        'SC_FluctAnal_2_rsrangefit_50_1_logi_prop_r1'
-      ],
-      'Correlation': [
-        'CO_f1ecac',
-        'CO_FirstMin_ac',
-        'CO_trev_1_num',
-        'CO_HistogramAMI_even_2_5',
-        'IN_AutoMutualInfoStats_40_gaussian_fmmi',
-        'FC_LocalSimple_mean1_tauresrat'
-      ],
-      'Transformation': [
-        'SP_Summaries_welch_rect_area_5_1',
-        'SP_Summaries_welch_rect_centroid'
-      ],
-      'Trend': [
-        'PD_PeriodicityWang_th0_01',
-        'FC_LocalSimple_mean3_stderr',
-        'SB_MotifThree_quantile_hh'
-      ]
-    };
-    type FeatureMap = { [key: string]: any };
-
-    const featureDescriptionMapper: { [key: string]: string } = {
-      "DN_HistogramMode_5": "5-bin histogram mode",
-      "DN_HistogramMode_10": "10-bin histogram mode",
-      "DN_OutlierInclude_p_001_mdrmd": "Positive outlier timing",
-      "DN_OutlierInclude_n_001_mdrmd": "Negative outlier timing",
-      "CO_f1ecac": "First 1/e crossing of the ACF",
-      "CO_FirstMin_ac": "First minimum of the ACF",
-      "SP_Summaries_welch_rect_area_5_1": "Power in the lowest 20% of frequencies",
-      "SP_Summaries_welch_rect_centroid": "Centroid frequency",
-      "FC_LocalSimple_mean3_stderr": "Error of 3-point rolling mean forecast",
-      "FC_LocalSimple_mean1_tauresrat": "Change in autocorrelation timescale after incremental differencing",
-      "MD_hrv_classic_pnn40": "Proportion of high incremental changes in the series",
-      "SB_BinaryStats_mean_longstretch1": "Longest stretch of above-mean values",
-      "SB_BinaryStats_diff_longstretch0": "Longest stretch of decreasing values",
-      "SB_MotifThree_quantile_hh": "Entropy of successive pairs in symbolized series",
-      "CO_HistogramAMI_even_2_5": "Histogram-based automutual information (lag 2, 5 bins)",
-      "CO_trev_1_num": "Time reversibility",
-      "IN_AutoMutualInfoStats_40_gaussian_fmmi": "First minimum of the AMI function",
-      "SB_TransitionMatrix_3ac_sumdiagcov": "Transition matrix column variance",
-      "PD_PeriodicityWang_th0_01": "Wang's periodicity metric",
-      "CO_Embed2_Dist_tau_d_expfit_meandiff": "Goodness of exponential fit to embedding distance distribution",
-      "SC_FluctAnal_2_rsrangeﬁt_50_1_logi_prop_r1": "Rescaled range fluctuation analysis (low-scale scaling)",
-      "SC_FluctAnal_2_dfa_50_1_2_logi_prop_r1": "Detrended fluctuation analysis (low-scale scaling)",
-      "mean": "Mean",
-      "DN_Spread_Std": "Standard deviation"
-    };
-
-    function replaceFeatureNameWithDescription(inputString: string, mapper: { [key: string]: string }): string {
-      for (const featureName in mapper) {
-        if (featureName == inputString) {
-          return mapper[featureName];
-        }
-      }
-      return "";
-    }
-
-    function categorizeFeatures(features: FeatureMap): { [category: string]: FeatureMap } {
-      const tempCategorizedFeatures: { [category: string]: FeatureMap } = {};
-
-      for (const category in CATEGORIES) {
-        tempCategorizedFeatures[category] = {};
-        for (const featureKey of CATEGORIES[category]) {
-          let featureVerbose = replaceFeatureNameWithDescription(featureKey, featureDescriptionMapper)
-          if (features[featureKey] !== undefined) {
-            tempCategorizedFeatures[category][featureVerbose] = features[featureKey];
-          }
-        }
-      }
-      return tempCategorizedFeatures;
-    }
+    const my_path_reverse =ref("");
+    const my_path_reverse_agg =ref("");
 
     const fetchData = async () => {
-
-      if (dataSelect.value !== "upload") {
-      }
+      console.log("Welcome to SHAP EXPLAINER")
     }
 
     function categoryExists(category: string): boolean {
@@ -459,6 +401,9 @@ export default {
           my_path_transformation.value = "src/assets_naterq/" + dataSelect.value + "_"+ algorithmChoice.value +"_shap_transformation_plot.png"
           my_path_correlation.value = "src/assets_naterq/" + dataSelect.value + "_"+ algorithmChoice.value +"_shap_correlation_plot.png"
 
+          my_path_reverse.value = "src/assets_naterq/" + dataSelect.value + "_"+ algorithmChoice.value +"_shap_reverse_plot.png"
+          my_path_reverse_agg.value = "src/assets_naterq/" + dataSelect.value + "_"+ algorithmChoice.value +"_shap_aggregate_reverse_plot.png"
+
           const shap_results = await axios.post('http://localhost:8000/api/shapCallExplainers/',
               {
                 dataset: dataSelect.value,
@@ -497,8 +442,6 @@ export default {
         {
           loading.value = false;
         }
-
-
       }
     }
 
@@ -519,11 +462,7 @@ export default {
       currentSeriesNames = newSeriesNames;
     };
 
-
-
     watch([dataSelect, normalizationMode], handleDataSelectChange, {immediate: true});
-
-
 
     return {
       dataSelect,
@@ -549,6 +488,8 @@ export default {
       my_path_trend,
       my_path_transformation,
       my_path_correlation,
+      my_path_reverse,
+      my_path_reverse_agg,
       algorithmChoice
     }
   }

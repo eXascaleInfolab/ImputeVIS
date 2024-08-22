@@ -7,14 +7,11 @@ from sklearn.ensemble import RandomForestRegressor
 import sys
 import os
 
-
-
 # Add the parent directory to the Python path
 current_directory = os.path.dirname(os.path.abspath(__file__))
 parent_directory = os.path.abspath(os.path.join(current_directory, ".."))
 sys.path.append(parent_directory)
 
-# Now you can import the module
 try:
     import Optimizer
     from Optimizer import evaluate_params
@@ -83,7 +80,21 @@ FEATURES = {"SB_BinaryStats_mean_longstretch1" : "Longest stretch of above-mean 
                 "SB_MotifThree_quantile_hh":"Entropy of successive pairs in symbolized series"}
 
 
-def convert_results(tmp, file, algo, descriptions, features, categories, mean_features):
+def convert_results(tmp, file, algo, descriptions, features, categories, mean_features, rmse):
+    """
+    Convert the SHAP brute result to a refined one to display in the front end
+    @author : Quentin Nater
+
+    :param tmp: Current results
+    :param file: Dataset used
+    :param algo: Algorithm used
+    :param descriptions: Description of each feature
+    :param features: Raw name of each feature
+    :param categories: Category of each feature
+    :param mean_features: Mean values of each feature
+    :param rmse: RMSE score of the imputation
+    :return: Perfect diplay for SHAP result
+    """
 
     print("\n\n----------CONVERT : ", tmp)
     print("\n\n----------CONVERT : ", np.array(tmp).shape)
@@ -93,13 +104,13 @@ def convert_results(tmp, file, algo, descriptions, features, categories, mean_fe
         if math.isnan(rate) == False:
             rate = float(round(rate, 2))
 
-        result_display.append((x, algo, rate, descriptions[0][x], features[0][x], categories[0][x], mean_features[x]))
+        result_display.append((x, algo, rate, descriptions[0][x], features[0][x], categories[0][x], mean_features[x], rmse))
 
     result_display = sorted(result_display, key=lambda tup: (tup[1], tup[2]), reverse=True)
 
-    for (x, algo, rate, description, feature, categorie, mean_features) in result_display:
+    for (x, algo, rate, description, feature, categorie, mean_features, rmse) in result_display:
         print(x, " : ", algo, " with a score of ", rate, "  (", description, " / ", feature, " / ", categorie, ")\n")
-        result_shap.append([file, algo, rate, description, feature, categorie, mean_features])
+        result_shap.append([file, algo, rate, description, feature, categorie, mean_features, rmse])
 
     print("----------CONVERT : ", np.array(result_shap).shape)
 
@@ -107,6 +118,19 @@ def convert_results(tmp, file, algo, descriptions, features, categories, mean_fe
 
 
 def launch_shap_model(x_dataset, x_information, y_dataset, file, algorithm, splitter=10):
+    """
+    Launch the SHAP model for explaining the features of the dataset
+    @author : Quentin Nater
+
+    :param x_dataset:  Dataset of features extraction with descriptions
+    :param x_information: Descriptions of all features group by categories
+    :param y_dataset: Label RMSE of each series
+    :param file: dataset used
+    :param algorithm: algorithm used
+    :param splitter: splitter from data training and testing
+    :return: results of the shap model
+    """
+
     print("\n\n======= SHAP >> MODEL ======= shape set : ", np.array(x_information).shape, "======= ======= ======= ======= ======= ======= ======= ======= ======= ")
 
     x_features, x_categories, x_descriptions = [], [], []
@@ -130,7 +154,6 @@ def launch_shap_model(x_dataset, x_information, y_dataset, file, algorithm, spli
     x_features = np.array(x_features)
     x_categories = np.array(x_categories)
     x_descriptions = np.array(x_descriptions)
-
 
     # NORMALIZATION ! ========================================
     #x_min = np.min(x_dataset)
@@ -156,8 +179,11 @@ def launch_shap_model(x_dataset, x_information, y_dataset, file, algorithm, spli
     model = RandomForestRegressor()
     model.fit(x_train, y_train)
 
+    #print("\t\t SHAP_MODEL >>  NATERQ model coefficients : \t", model.feature_importances_)
+
     exp = shap.KernelExplainer(model.predict, x_test)
     shval = exp.shap_values(x_test)
+    shap_values = exp(x_train)
 
     print("\t\t SHAP_MODEL >>  NATERQ shval selected : ", np.array(shval).shape, "************************************")
     print("\t\t SHAP_MODEL >>  NATERQ shval selected : \t", *shval)
@@ -166,11 +192,37 @@ def launch_shap_model(x_dataset, x_information, y_dataset, file, algorithm, spli
     for desc, group in zip(x_descriptions[0], x_categories[0]):
         optimal_display.append(desc + " (" + group + ")")
 
+    series_names = []
+    for names in range(0, np.array(x_test).shape[0]):
+        series_names.append("Series " + str(names + np.array(x_train).shape[0]))
+
     shap.summary_plot(shval, x_test, plot_size=(25, 10), feature_names=optimal_display)
     alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_shap_plot.png"
     plt.title("SHAP Details Results")
     plt.savefig(alpha)
     plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
+
+    shap.summary_plot(np.array(shval).T, np.array(x_test).T, feature_names=series_names)
+    alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_shap_reverse_plot.png"
+    plt.title("SHAP Features by Series")
+    plt.savefig(alpha)
+    plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
+
+    shap.plots.waterfall(shap_values[0])
+    alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_DTL_Waterfall.png"
+    plt.title("SHAP Waterfall Results")
+    plt.savefig(alpha)
+    plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
+
+    shap.plots.beeswarm(shap_values)
+    alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_DTL_Beeswarm.png"
+    plt.title("SHAP Beeswarm Results")
+    plt.savefig(alpha)
+    plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
 
     print("\n\n\t\t\tSHAP_BUILD_____________________________________________________________________")
     total_weights_for_all_algorithms = []
@@ -245,25 +297,28 @@ def launch_shap_model(x_dataset, x_information, y_dataset, file, algorithm, spli
     plt.title("SHAP details of geometry")
     plt.savefig(alpha)
     plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
 
     shap.summary_plot(np.array(transformation).T, np.array(transformationT).T, plot_size=(20, 10), feature_names=transformationDesc)
     alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_shap_transformation_plot.png"
     plt.title("SHAP details of transformation")
     plt.savefig(alpha)
     plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
 
     shap.summary_plot(np.array(correlation).T, np.array(correlationT).T, plot_size=(20, 10), feature_names=correlationDesc)
     alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_shap_correlation_plot.png"
     plt.title("SHAP details of correlation")
     plt.savefig(alpha)
     plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
 
     shap.summary_plot(np.array(trend).T, np.array(trendT).T, plot_size=(20, 8), feature_names=trendDesc)
     alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_shap_trend_plot.png"
     plt.title("SHAP details of Trend")
     plt.savefig(alpha)
     plt.close()
-
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
 
     aggregation_features.append(np.mean(geometry, axis=0))
     aggregation_features.append(np.mean(correlation, axis=0))
@@ -282,9 +337,17 @@ def launch_shap_model(x_dataset, x_information, y_dataset, file, algorithm, spli
     alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_shap_aggregate_plot.png"
     plt.title("SHAP Aggregation Results")
     plt.gca().axes.get_xaxis().set_visible(False)
-
     plt.savefig(alpha)
     plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
+
+    shap.summary_plot(np.array(aggregation_features).T, np.array(aggregation_test).T, feature_names=series_names)
+    alpha = "parameterizer_frontend/src/assets_naterq/" + file + "_" + algorithm + "_shap_aggregate_reverse_plot.png"
+    plt.title("SHAP Aggregation Features by Series")
+    plt.savefig(alpha)
+    plt.close()
+    print("\t\t\t SHAP_MODEL >>  GRAPH has benn computed : ", alpha)
+
 
     # Aggregate shapely values per element of X_test
     total_weights = [np.abs(shval.T[i]).mean(0) for i in range(len(shval[0]))]
@@ -295,13 +358,29 @@ def launch_shap_model(x_dataset, x_information, y_dataset, file, algorithm, spli
 
     total_weights_for_all_algorithms = np.append(total_weights_for_all_algorithms, total_weights_percent)
 
-    results_shap = convert_results(total_weights_for_all_algorithms, file, algorithm, x_descriptions, x_features, x_categories, mean_features)
+    results_shap = convert_results(total_weights_for_all_algorithms, file, algorithm, x_descriptions, x_features, x_categories, mean_features, y_dataset.tolist())
 
     return results_shap
 
 
 
 def shap_runner_naterq(dataset, algorithm, missing_values, scenario, selected_series, normalization, limitation, splitter, params, nbr_values=800):
+    """
+    Handle parameters and set the variables to launch a model SHAP
+    @author : Quentin Nater
+
+    :param dataset: dataset used
+    :param algorithm: algorithm used
+    :param missing_values: percentage of missing value for contamination
+    :param scenario: scenario for contamination
+    :param selected_series: select series for contamination
+    :param normalization: noramlization of the dataset
+    :param limitation: limitation of series for the model
+    :param splitter: limitation of training series for the model
+    :param params: parameters of algorithms
+    :param nbr_values: limitation of the number of values for each series
+    :return: ground_truth_matrixes, obfuscated_matrixes, output_metrics, input_params, shap_values
+    """
 
     path, _ = views.get_file_paths(dataset)
 

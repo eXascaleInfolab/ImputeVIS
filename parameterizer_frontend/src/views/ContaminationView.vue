@@ -29,9 +29,17 @@
                 <data-select v-model="dataSelect" @update:seriesNames="updateSeriesNames" />
                 <scenario-missing-values v-model="scenarioMissingValues" />
 
-                <div v-for="series in mySeries" :key="series" class="form-check">
-                  <input class="form-check-input" type="checkbox" :id="`checkbox-${series}`" :value="series" v-model="selectedSeries"/>
-                  <label class="form-check-label" :for="`checkbox-${series}`">{{ series.substring(3) }}</label>
+                <div v-if="scenarioMissingValues !== 'blackout' && scenarioMissingValues !== 'missing_pourcentage'">
+                  <div v-for="series in mySeries" :key="series" class="form-check">
+                    <input class="form-check-input" type="checkbox" :id="`checkbox-${series}`" :value="series" v-model="selectedSeries"/>
+                    <label class="form-check-label" :for="`checkbox-${series}`">{{ series.substring(3) }}</label>
+                  </div>
+                </div>
+                <div v-if="scenarioMissingValues == 'missing_pourcentage'">
+                  <div v-for="series in mySeries" :key="series" class="form-check">
+                    <input class="form-check-input" type="radio" :id="`radio-${series}`" :value="series" v-model="selectedSeriesRadio" name="seriesRadio"/>
+                    <label class="form-check-label" :for="`radio-${series}`">{{ series.substring(3) }}</label>
+                  </div>
                 </div>
 
                 <missing-rate v-model="missingRate"/>
@@ -85,6 +93,7 @@ export default {
     const normalizationMode = ref(defaultConfig.loading.load_normalization)
     const scenarioMissingValues = ref(defaultConfig.loading.load_scenario)
     const selectedSeries = ref(defaultConfig.loading.load_series_contamination);
+    const selectedSeriesRadio = ref(defaultConfig.loading.load_series_contamination);
     const missingRate = ref(defaultConfig.loading.load_missing_rate_contamination); // Default missing rate
 
 
@@ -99,7 +108,8 @@ export default {
     const checkedNames = ref([]);
     const imputedData = ref(false); // Whether imputation has been carried out
 
-    const obfuscatedColors = ["#7cb5ec", "#2b908f", "#a6c96a", "#876d5d", "#8f10ba", "#f7a35c", "#434348", "#f15c80", "#910000", "#8085e9", "#365e0c", "#90ed7d"];
+
+    const obfuscatedColors = defaultConfig.colors.chart;
 
 
     const fetchData = async () => {
@@ -114,8 +124,17 @@ export default {
 
           if (selectedSeries.value.length > 0)
           {
-              selection_series = selectedSeries.value;
+               selection_series = selectedSeries.value;
           }
+          if (scenarioMissingValues.value == "blackout")
+          {
+               selectedSeries.value = mySeries.value;
+          }
+          if (scenarioMissingValues.value == "missing_pourcentage" && selectedSeriesRadio.value.length != 0)
+          {
+               selection_series = [selectedSeriesRadio.value];
+          }
+
 
           const response = await axios.post('http://localhost:8000/api/fetchData/',
               {
@@ -137,26 +156,18 @@ export default {
           groundtruthMatrix = response.data.groundtruth;
 
           obfuscatedMatrix.forEach((data: number[], index: number) => {
-            if (currentSeriesNames.length > 0)
-            {
+
               chartOptionsOriginal.value.series[index] = createSeries(
                   index,
                   data,
                   dataSelect.value,
                   currentSeriesNames[index],
+                  'line',
+                  2,
                   obfuscatedColors[index]
               );
-            }
-            else
-            {
-              chartOptionsOriginal.value.series[index] = createSeries(
-                  index,
-                  data,
-                  dataSelect.value,
-                  undefined,
-                  obfuscatedColors[index]
-              );
-            }
+
+
 
           });
 
@@ -167,15 +178,7 @@ export default {
 
               if (selection_series.some(sel => sel.includes(currentSeriesNames[index].toString())))
               {
-                chartOptionsOriginal.value.series.push(createSeries(
-                    index,
-                    data,
-                    dataSelect.value,
-                    currentSeriesNames[index] + "_MV",
-                    'dash',
-                    1,
-                    obfuscatedColors[index]
-                ));
+                chartOptionsOriginal.value.series.push(createSeries(index, data, dataSelect.value, currentSeriesNames[index] + "_MV", 'dash', 1, obfuscatedColors[index]));
               }
             });
             }
@@ -267,6 +270,10 @@ export default {
     }
 
     const handleScenarioMissingValuesChange = () => {
+
+      selectedSeries.value = []
+      selectedSeriesRadio.value = []
+
       if (imputedData.value == true)
       {
           fetchData();
@@ -294,6 +301,7 @@ export default {
       missingRate,
       mySeries,
       selectedSeries,
+      selectedSeriesRadio,
       scenarioMissingValues,
       imputedData,
       checkedNames,

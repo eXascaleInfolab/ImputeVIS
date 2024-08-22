@@ -14,24 +14,54 @@ SEED = 42
 BLOCK_SIZE = 10
 
 def load_timeseries (filename) :
+    """
+    Load timeseries dataset from file (ROW : Values/COL : Series)
+    @author Quentin Nater
+
+    :param filename: path of the file
+    :return: panda set of series transposed
+    """
+
     print("\t\t >> LOAD SERIES " + str(filename))
     sets = pd.read_csv(filename, delim_whitespace=True, header=None)
-
     sets = sets.transpose()
+
+    if "electricity" in filename:
+        sets = sets.transpose()
 
     return sets
 
 
 def load_timeseries_trim(filename, limit_series=10, limit_values=800):
+    """
+    Load timeseries dataset from file (ROW : Values/COL : Series) with limitation
+    @author Quentin Nater
+
+    :param filename: path of the file
+    :param limit_series : Number max of series
+    :param limit_values : Number max of values for each series
+    :return: panda set of series transposed
+    """
+
     print("\t\t >> LOAD SERIES " + str(filename))
     sets = pd.read_csv(filename, delim_whitespace=True, header=None)
-    sets = sets.iloc[:limit_values, :limit_series]
 
-    sets = sets.transpose()
-    
+    if "electricity" not in filename:
+        sets = sets.iloc[:limit_values, :limit_series]
+        sets = sets.transpose()
+    else:
+        sets = sets.iloc[:limit_series, :limit_values]
+
     return sets
 
 def print_load(ts):
+    """
+    Display the new series
+    @author Quentin Nater
+
+    :param ts: Series to diplay
+    """
+
     if not isinstance(ts, pd.DataFrame):
         ts = pd.DataFrame(ts)
 
@@ -40,6 +70,14 @@ def print_load(ts):
 
 
 def normalize_min_max(ts):
+    """
+    Normalization of a dataset with MIN/MAX
+    @author Quentin Nater
+
+    :param ts: timeseries to normalize
+    :return: Normalized set
+    """
+
     print("\t\t >> NORMALIZATION MIN/MAX")
 
     if not isinstance(ts, pd.DataFrame):
@@ -51,6 +89,15 @@ def normalize_min_max(ts):
 
 
 def plot_ts(ts, title='Time Series Data', ind=5):
+    """
+    Plot a set of time series
+    @author Quentin Nater
+
+    :param ts: timeseries to display
+    :param title: title of the plot
+    :param ind: number of series printed
+    """
+
     plt.figure(figsize=(14, 7))
     inc = 0
 
@@ -68,26 +115,46 @@ def plot_ts(ts, title='Time Series Data', ind=5):
     plt.show()
 
 
-
-print(">> STARTING OPERATION : NATERQ CHINA TESTS *****************************")
-
-
-
 # =====================================================================================
 
-
 def converter(ts):
+    """
+    Convert panda set of series to numpy
+    @author Quentin Nater
+
+    :param ts: set to transform
+    :return: set transformed
+    """
+
     if isinstance(ts, pd.DataFrame):
         ts.to_numpy()
     return ts
 
 def disconverter(ts):
+    """
+    Convert numpy set of series to panda
+    @author Quentin Nater
+
+    :param ts: set to transform
+    :return: set transformed
+    """
+
     if not isinstance(ts, pd.DataFrame):
         ts = pd.DataFrame(ts)
     return ts
 
 
 def introduce_mcar(ts, missing_rate, series_selected, keep_other=False):
+    """
+    Contamination with MCAR scenario
+    @author Quentin Nater
+
+    :param ts: time series to contaminate
+    :param missing_rate: percentage of contamination
+    :param series_selected: series to contaminate
+    :param keep_other: keep all series or only the contaminated one
+    :return: the contaminated time series
+    """
 
     ts = disconverter(ts)
 
@@ -134,7 +201,54 @@ def introduce_mcar(ts, missing_rate, series_selected, keep_other=False):
 
 
 
+def introduce_missingpourcentage(ts, missing_rate, series_selected, keep_other=False):
+    """
+    Contamination with Missing-Pourcentage scenario
+    @author Quentin Nater
+
+    :param ts: time series to contaminate
+    :param missing_rate: percentage of contamination
+    :param series_selected: series to contaminate
+    :param keep_other: keep all series or only the contaminated one
+    :return: the contaminated time series
+    """
+
+    ts = disconverter(ts)
+
+    print("\t\t\t>> MISSING POURCENTAGE : RATE ", missing_rate, " / keep other ", keep_other, " / series selected ", *series_selected, "*****\n")
+
+    ts_contaminated = ts.copy()
+    n_series, n_values = ts_contaminated.shape
+    start_index = int(math.ceil((n_values * FACTOR_S)))
+    population = (n_values - start_index)
+    to_remove = int(math.ceil(population * missing_rate))
+
+    if keep_other:
+        for series in range(0, n_series):
+            for col in range(population):
+                if series in series_selected:
+                    if col <= to_remove:
+                        ts_contaminated.iat[series, col+start_index] = np.nan
+    else:
+        for series in range(0, n_series):
+            for col in range(population):
+                    if col <= to_remove:
+                        ts_contaminated.iat[series, col+start_index] = np.nan
+
+    return ts_contaminated, ts_contaminated.to_numpy()
+
+
 def introduce_blackout(ts, missing_rate, series_selected, keep_other=False):
+    """
+    Contamination with BLACKOUT scenario
+    @author Quentin Nater
+
+    :param ts: time series to contaminate
+    :param missing_rate: percentage of contamination
+    :param series_selected: series to contaminate
+    :param keep_other: keep all series or only the contaminated one
+    :return: the contaminated time series
+    """
 
     ts = disconverter(ts)
 
@@ -162,6 +276,16 @@ def introduce_blackout(ts, missing_rate, series_selected, keep_other=False):
 
 
 def introduce_disjoint(ts, missing_rate, series_selected, keep_other = False):
+    """
+    Contamination with DISJOINT scenario
+    @author Quentin Nater
+
+    :param ts: time series to contaminate
+    :param missing_rate: percentage of contamination
+    :param series_selected: series to contaminate
+    :param keep_other: keep all series or only the contaminated one
+    :return: the contaminated time series
+    """
 
     ts = disconverter(ts)
 
@@ -196,6 +320,17 @@ def introduce_disjoint(ts, missing_rate, series_selected, keep_other = False):
 
 
 def introduce_overlap(ts, missing_rate, series_selected, factor=0.05, keep_other = False):
+    """
+    Contamination with OVERLAP scenario
+    @author Quentin Nater
+
+    :param ts: time series to contaminate
+    :param missing_rate: percentage of contamination
+    :param series_selected: series to contaminate
+    :param factor : percentage of overlapping between two series
+    :param keep_other: keep all series or only the contaminated one
+    :return: the contaminated time series
+    """
 
     ts = disconverter(ts)
 

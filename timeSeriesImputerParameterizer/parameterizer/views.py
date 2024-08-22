@@ -50,6 +50,11 @@ def run_contamination(path, missing_rate, pattern, selected_series, normalizatio
                 selection_ids.append(int(i))
             print(">> #CONTAMINATION NATERQ ALL SERIES (", limit_series,") selected with ", *selection_ids, "\n")
             break
+        elif str(my_ids) == "-4":     # select all series within the limit
+            for i in range(0, limit_series):
+                selection_ids.append(int(i))
+            print(">> #CONTAMINATION NATERQ ALL SERIES (", limit_series,") selected with ", *selection_ids, "\n")
+            break
 
         selection_ids.append(int(my_ids))
 
@@ -58,6 +63,7 @@ def run_contamination(path, missing_rate, pattern, selected_series, normalizatio
     print(">> #CONTAMINATION NATERQ  path: ", path, "\n")
     print(">> #CONTAMINATION NATERQ  display: ", display, "\n")
     print(">> #CONTAMINATION NATERQ  scenario: ", pattern, "\n")
+    print(">> #CONTAMINATION NATERQ  normalization: ", normalization, "\n")
     print(">> #CONTAMINATION NATERQ  normalization: ", normalization, "\n")
     print(">> #CONTAMINATION NATERQ  missing_rate: ", missing_rate, "\n")
     print(">> #CONTAMINATION NATERQ  selection_ids: ", *selection_ids, "\n")
@@ -70,6 +76,8 @@ def run_contamination(path, missing_rate, pattern, selected_series, normalizatio
                 _, obfuscated_matrix = contamination_naterq.introduce_mcar(ground_truth_matrix, missing_rate, selection_ids, True)
             elif pattern == "blackout":
                 _, obfuscated_matrix = contamination_naterq.introduce_blackout(ground_truth_matrix, missing_rate, selection_ids, True)
+            elif pattern == "missing_pourcentage":
+                _, obfuscated_matrix = contamination_naterq.introduce_missingpourcentage(ground_truth_matrix, missing_rate, selection_ids, True)
             elif pattern == "overlap":
                 _, obfuscated_matrix = contamination_naterq.introduce_overlap(ground_truth_matrix, missing_rate, selection_ids, 0.05, True)
             elif pattern == "disjoint":
@@ -580,7 +588,6 @@ def fetch_data(request):
                                                data.get('selected_series'),
                                                data.get('normalization'))
 
-
         response_data = {}
         response_data['matrix'] = obfuscated_matrix
         response_data['groundtruth'] = ground_truth_matrix
@@ -793,6 +800,8 @@ def get_file_paths(search_string: str = 'bafu') -> Tuple[str, str]:
         folder_path = '../Datasets/climate/climate_normal.txt'
     elif "meteo" in search_string:
         folder_path = '../Datasets/meteo/meteo_normal.txt'
+    elif "electricity" in search_string:
+        folder_path = '../Datasets/electricity/electricity.txt'
 
     print("## NATERQ SEARCH DIR SELECTED:", folder_path)
 
